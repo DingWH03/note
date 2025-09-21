@@ -30,6 +30,12 @@ def generate_index_page(books, output_folder):
         print(f"Error loading template: {e}")
         return
 
+    # 替换书名中的空格为连字符
+    for book in books:
+        book_title = book.get('title', '')
+        if book_title:
+            book['url_title'] = book_title.replace(' ', '-')
+
     # 渲染模板，并生成 HTML 内容
     html_content = template.render(books=books)
 
@@ -49,9 +55,12 @@ def copy_book_folders(books, source_folder, output_folder):
             print("Warning: No title found for book. Skipping.")
             continue
 
+        # 替换书名中的空格为连字符
+        sanitized_title = book_title.replace(' ', '-')
+
         # 定义书籍的源文件夹和目标文件夹路径
         book_folder = os.path.join(source_folder, book_title)
-        destination_folder = os.path.join(output_folder, book_title)
+        destination_folder = os.path.join(output_folder, sanitized_title)
 
         # 检查源文件夹是否存在，如果存在，则复制文件夹
         if os.path.exists(book_folder):
