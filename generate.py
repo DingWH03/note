@@ -13,17 +13,29 @@ def load_toml_files_from_folder(folder):
         if filename.endswith(".toml"):
             file_path = os.path.join(folder, filename)
 
-            # 获取 Git 提交的时间戳
-            git_commit_time = get_git_commit_time(file_path)
-
+            # 读取 TOML 文件
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = toml.load(f)
                 # 假设每个 TOML 文件只包含一个 'book' 表
                 if 'book' in data:
                     book = data['book']
-                    # 将 Git 提交的时间戳添加到书籍数据中
-                    book['last_updated'] = git_commit_time
-                    books.append(book)
+                    book_title = book.get('title', None)
+                    if book_title:
+                        # 构建 print.html 的路径
+                        book_folder = os.path.join("book", book_title)
+                        print_html_path = os.path.join(book_folder, 'print.html')
+
+                        # 确保 print.html 文件存在
+                        if os.path.exists(print_html_path):
+                            # 获取 print.html 文件的最后修改时间
+                            last_updated = get_git_commit_time(print_html_path)
+                            # 将时间戳添加到书籍数据中
+                            book['last_updated'] = last_updated
+                            books.append(book)
+                        else:
+                            print(f"Warning: print.html not found for book '{book_title}' in {book_folder}. Skipping.")
+                    else:
+                        print(f"Warning: No 'title' key found for book in {filename}. Skipping.")
                 else:
                     print(f"Warning: No 'book' key found in {filename}. Skipping file.")
     return books
