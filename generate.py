@@ -4,6 +4,7 @@ import shutil
 from jinja2 import Environment, FileSystemLoader
 import datetime
 import subprocess
+import pytz
 
 # 定义函数：从文件夹读取所有的 toml 文件
 def load_toml_files_from_folder(folder):
@@ -30,22 +31,33 @@ def load_toml_files_from_folder(folder):
 # 获取文件的 Git 提交时间戳
 def get_git_commit_time(file_path):
     try:
-        # 使用 git log 获取文件的最后提交时间
+        # 使用 git log 获取文件的最后提交时间，带有时区信息
         result = subprocess.run(
-            ['git', 'log', '-1', '--format=%ad', '--', file_path],
+            ['git', 'log', '-1', '--format=%ad', '--date=iso', '--', file_path],
             capture_output=True, text=True, check=True
         )
         commit_time_str = result.stdout.strip()
-        # 将提交时间字符串转换为时间戳
-        commit_time = datetime.datetime.strptime(commit_time_str, '%a %b %d %H:%M:%S %Y %z')
-        return commit_time.timestamp()
+        print(f"Commit time string: {commit_time_str}")  # 调试输出查看日期字符串
+
+        # 将提交时间字符串转换为 datetime 对象（带时区信息）
+        commit_time = datetime.datetime.fromisoformat(commit_time_str)
+
+        # 将时间转换为 UTC+8 时区（北京时间）
+        utc_plus_8 = pytz.timezone('Asia/Shanghai')
+        commit_time_utc8 = commit_time.astimezone(utc_plus_8)
+
+        return commit_time_utc8
     except subprocess.CalledProcessError as e:
         print(f"Error retrieving Git commit time for {file_path}: {e}")
-        return 0  # 如果无法获取时间，则返回 0
+        return None  # 如果无法获取时间，则返回 None
 
 # 定义一个自定义过滤器，将时间戳转换为可读日期
 def datetimeformat(value):
-    return datetime.datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S')
+    # 确保 value 是一个 datetime 对象，并且包含时区信息
+    if isinstance(value, datetime.datetime):
+        # 格式化日期时间，包括时区偏移
+        return value.strftime('%Y-%m-%d %H:%M:%S %Z%z')  # 输出: 2025-09-21 14:30:00 UTC+0200
+    return value  # 如果不是 datetime 对象，返回原始值
 
 # 定义函数：生成书籍的索引页面
 def generate_index_page(books, output_folder):
