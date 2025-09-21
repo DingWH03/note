@@ -2,6 +2,8 @@ import os
 import toml
 import shutil
 from jinja2 import Environment, FileSystemLoader
+import datetime
+import subprocess
 
 # 定义函数：从文件夹读取所有的 toml 文件
 def load_toml_files_from_folder(folder):
@@ -9,20 +11,47 @@ def load_toml_files_from_folder(folder):
     for filename in os.listdir(folder):
         if filename.endswith(".toml"):
             file_path = os.path.join(folder, filename)
+
+            # 获取 Git 提交的时间戳
+            git_commit_time = get_git_commit_time(file_path)
+
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = toml.load(f)
                 # 假设每个 TOML 文件只包含一个 'book' 表
                 if 'book' in data:
-                    books.append(data['book'])  # 提取 'book' 键下的数据
+                    book = data['book']
+                    # 将 Git 提交的时间戳添加到书籍数据中
+                    book['last_updated'] = git_commit_time
+                    books.append(book)
                 else:
                     print(f"Warning: No 'book' key found in {filename}. Skipping file.")
     return books
 
+# 获取文件的 Git 提交时间戳
+def get_git_commit_time(file_path):
+    try:
+        # 使用 git log 获取文件的最后提交时间
+        result = subprocess.run(
+            ['git', 'log', '-1', '--format=%ad', '--', file_path],
+            capture_output=True, text=True, check=True
+        )
+        commit_time_str = result.stdout.strip()
+        # 将提交时间字符串转换为时间戳
+        commit_time = datetime.datetime.strptime(commit_time_str, '%a %b %d %H:%M:%S %Y %z')
+        return commit_time.timestamp()
+    except subprocess.CalledProcessError as e:
+        print(f"Error retrieving Git commit time for {file_path}: {e}")
+        return 0  # 如果无法获取时间，则返回 0
+
+# 定义一个自定义过滤器，将时间戳转换为可读日期
+def datetimeformat(value):
+    return datetime.datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S')
 
 # 定义函数：生成书籍的索引页面
 def generate_index_page(books, output_folder):
     # 创建一个模板引擎对象
     env = Environment(loader=FileSystemLoader('templates'))
+    env.filters['datetimeformat'] = datetimeformat  # 注册过滤器
 
     try:
         template = env.get_template('index_template.html')
@@ -46,7 +75,6 @@ def generate_index_page(books, output_folder):
     with open(os.path.join(output_folder, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(html_content)
 
-
 # 定义函数：将每个书籍的文件夹复制到 output 目录
 def copy_book_folders(books, source_folder, output_folder):
     for book in books:
@@ -69,7 +97,6 @@ def copy_book_folders(books, source_folder, output_folder):
         else:
             print(f"Warning: Folder for {book_title} not found in {source_folder}.")
 
-
 # 定义函数：复制 404 页面到 output 文件夹
 def copy_404_page(output_folder):
     # 假设 404.html 位于项目根目录
@@ -81,7 +108,6 @@ def copy_404_page(output_folder):
         shutil.copy(source_404_path, destination_404_path)
     else:
         print("Warning: 404.html file not found.")
-
 
 # 主函数：读取 list 文件夹中的 toml 文件并生成索引页面
 def main():
@@ -106,7 +132,6 @@ def main():
     copy_404_page(output_folder)
 
     print("索引页面已生成，保存在 'output' 文件夹内。")
-
 
 # 执行主函数
 if __name__ == '__main__':

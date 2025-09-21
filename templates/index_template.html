@@ -76,7 +76,7 @@
                 <span>{{ book['title'] }}</span>
                 <div class="book-info">
                     <span>Author: {{ book['authors'] | join(', ') }}</span>
-                    <span>Language: {{ book['language'] }}</span>
+                    <span>Last Updated: {{ book['last_updated'] | datetimeformat }}</span>
                 </div>
             </a>
         </li>
