@@ -31,6 +31,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -145,6 +147,9 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
 
                     </div>
                 </div>
@@ -212,6 +217,9 @@
 <h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
 <p>size(): 返回vector中存放元素的实际数量（ 实际存储元素的个数）。返回值为size_type（无符号整数类型）
 capacity(): 返回vector在内存中，开辟空间的容量（最多能放所少个元素）。返回值为size_type（无符号整数类型）</p>
+<div style="break-before: page; page-break-before: always;"></div><p>back to content...</p>
+<!-- 使用 HTML meta 标签进行重定向 -->
+<meta http-equiv="refresh" content="0; url=../index.html" />
 
                     </main>
 
@@ -250,7 +258,9 @@ capacity(): 返回vector在内存中，开辟空间的容量（最多能放所�
 
         <script>
         window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
         });
         </script>
 
