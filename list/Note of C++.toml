@@ -1,0 +1,6 @@
+[book]
+authors = ["DingVero"]
+language = "zh"
+src = "src"
+title = "Note of C++"
+

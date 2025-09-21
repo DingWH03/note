@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书籍目录</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .book-list { list-style-type: none; }
+        .book-list li { margin: 10px 0; }
+        .book-list a { text-decoration: none; color: #1a73e8; }
+    </style>
+</head>
+<body>
+    <h1>书籍目录</h1>
+    <ul class="book-list">
+        {% for book in books %}
+        <li>
+            <a href="{{ book['title'] }}/index.html">{{ book['title'] }}</a><br>
+            作者: {{ book['authors'] | join(', ') }}<br>
+            语言: {{ book['language'] }}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
