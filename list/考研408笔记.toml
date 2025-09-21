@@ -13,8 +13,8 @@ mathjax-support = true
 git-repository-url = "https://github.com/DingWH03/note-408"
 edit-url-template = "https://github.com/DingWH03/note-408/edit/master/{path}"
 input-404 = "404.md"
-site-url =  "https://408.note.cxhap.top/"
-cname = "408.note.cxhap.top"
+site-url =  "https://note.cxhap.top/%E8%80%83%E7%A0%94408%E7%AC%94%E8%AE%B0/"
+cname = "note.cxhap.top"
 
 [output.html.fold]
 enable = true
