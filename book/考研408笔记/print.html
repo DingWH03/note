@@ -1,0 +1,1750 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>考研408笔记</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">考研408笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-408" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="说明"><a class="header" href="#说明">说明</a></h1>
+<p>本book将根据各课本及辅导书以及互联网上内容进行整理得到的考验408笔记，欢迎folk本仓库贡献你的知识。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="2025大纲"><a class="header" href="#2025大纲">2025大纲</a></h1>
+<blockquote>
+<p>2025年408考纲为2024年9月公布，是2024年12月参加硕士研究生考试的考纲。2026年考纲将于2025年9月发布。信息收集自互联网。</p>
+</blockquote>
+<h2 id="考试性质"><a class="header" href="#考试性质">考试性质</a></h2>
+<p>        计算机学科专业基础考试是为高等院校和科研院所招收计算机科学与技术学科的硕士研究生而设置的具有选拔性质的全国统一入学考试科目。其目的是科学、公正、有效地测试考生掌握计算机科学与技术学科大学本科阶段专业基础知识、基本理论、基本方法的水平和分析问题、解决问题的能力，评价的标准是高等院校计算机科学与技术学科优秀本科毕业生所能达到的及格或及格以上的水平，以利于各高等院校和科研院所择优选拔，确保硕士研究生的招生质量。</p>
+<h2 id="考察目标"><a class="header" href="#考察目标">考察目标</a></h2>
+<p>        计算机学科专业基础考试涵盖数据结构、计算机组成原理、操作系统和计算机网络等学科专业基础课程。要求考生系统地掌握上述专业基础课程的基本概念、基本原理和基本方法，能够综合运用所学的基本原理和基本方法分析、判断和解决有关理论问题和实际问题。</p>
+<h2 id="考试形式和试卷结构"><a class="header" href="#考试形式和试卷结构">考试形式和试卷结构</a></h2>
+<h3 id="一试卷满分及考试时间"><a class="header" href="#一试卷满分及考试时间">一、试卷满分及考试时间</a></h3>
+<p>本试卷满分为150分，考试时间为180分钟。</p>
+<h3 id="二答题方式"><a class="header" href="#二答题方式">二、答题方式</a></h3>
+<p>闭卷、笔试。</p>
+<h3 id="三试卷内容结构"><a class="header" href="#三试卷内容结构">三、试卷内容结构</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">内容</th><th style="text-align: center">分值</th></tr></thead><tbody>
+<tr><td style="text-align: center">数据结构</td><td style="text-align: center">45分</td></tr>
+<tr><td style="text-align: center">计算机组成原理</td><td style="text-align: center">45分</td></tr>
+<tr><td style="text-align: center">操作系统</td><td style="text-align: center">35分</td></tr>
+<tr><td style="text-align: center">计算机网络</td><td style="text-align: center">25分</td></tr>
+</tbody></table>
+</div>
+<h3 id="四试卷题型结构"><a class="header" href="#四试卷题型结构">四、试卷题型结构</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">题型</th><th style="text-align: center">分值</th></tr></thead><tbody>
+<tr><td style="text-align: center">单项选择题</td><td style="text-align: center">80分(40题*2分)</td></tr>
+<tr><td style="text-align: center">综合应用题</td><td style="text-align: center">70分(共7题)</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th style="text-align: center">题号</th><th style="text-align: center">描述</th></tr></thead><tbody>
+<tr><td style="text-align: center">41</td><td style="text-align: center">数据结构算法题</td></tr>
+<tr><td style="text-align: center">42</td><td style="text-align: center">数据结构分析题</td></tr>
+<tr><td style="text-align: center">43</td><td style="text-align: center">计算机组成原理</td></tr>
+<tr><td style="text-align: center">44</td><td style="text-align: center">计算机组成原理</td></tr>
+<tr><td style="text-align: center">45</td><td style="text-align: center">操作系统</td></tr>
+<tr><td style="text-align: center">46</td><td style="text-align: center">操作系统</td></tr>
+<tr><td style="text-align: center">47</td><td style="text-align: center">计算机网络</td></tr>
+</tbody></table>
+</div>
+<h2 id="考查内容"><a class="header" href="#考查内容">考查内容</a></h2>
+<h3 id="数据结构"><a class="header" href="#数据结构">数据结构</a></h3>
+<blockquote>
+<p>参考教材：《数据结构C语言》（严蔚敏版）</p>
+</blockquote>
+<h4 id="考查目标"><a class="header" href="#考查目标">[考查目标]</a></h4>
+<ol>
+<li>掌握数据结构的基本概念、基本原理和基本方法。</li>
+<li>掌握数据的逻辑结构、存储结构及基本操作的实现，能够对算法进行基本的时间复杂度和空间复杂度的分析。<a href="https://blog.cxhap.top/2024/07/25/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E2%80%94%E2%80%94%E7%AE%97%E6%B3%95%E6%95%88%E7%8E%87%E7%9A%84%E5%BA%A6%E9%87%8F/">算法效率的度量</a></li>
+<li>能够运用数据结构的基本原理和方法进行问题的分析与求解，具备采用C或C++语言设计和实现算法的能力。</li>
+</ol>
+<h4 id="一基本概念新增"><a class="header" href="#一基本概念新增"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">一、基本概念【新增】</a></a></h4>
+<h5 id="一数据结构的基本概念"><a class="header" href="#一数据结构的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）数据结构的基本概念</a></a></h5>
+<h5 id="二算法的基本概念"><a class="header" href="#二算法的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E7%AE%97%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（二）算法的基本概念</a></a></h5>
+<h4 id="二线性表"><a class="header" href="#二线性表"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8.html">二、线性表</a></a></h4>
+<h5 id="一线性表的基本概念"><a class="header" href="#一线性表的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8/%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）线性表的基本概念</a></a></h5>
+<h5 id="二线性表的实现"><a class="header" href="#二线性表的实现"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8/%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0.html">（二）线性表的实现</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8/%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0/%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8.html">顺序存储</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8/%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E5%AE%9E%E7%8E%B0/%E9%93%BE%E5%BC%8F%E5%AD%98%E5%82%A8.html">链式存储</a></li>
+</ol>
+<h5 id="三线性表的应用"><a class="header" href="#三线性表的应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%BF%E6%80%A7%E8%A1%A8/%E7%BA%BF%E6%80%A7%E8%A1%A8%E7%9A%84%E5%BA%94%E7%94%A8.html">（三）线性表的应用</a></a></h5>
+<h4 id="三栈队列和数组"><a class="header" href="#三栈队列和数组"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84.html">三、栈、队列和数组</a></a></h4>
+<h5 id="一栈和队列的基本概念"><a class="header" href="#一栈和队列的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）栈和队列的基本概念</a></a></h5>
+<h5 id="二栈和队列的顺序存储结构"><a class="header" href="#二栈和队列的顺序存储结构"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97%E7%9A%84%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.html">（二）栈和队列的顺序存储结构</a></a></h5>
+<h5 id="三栈和队列的链式存储结构"><a class="header" href="#三栈和队列的链式存储结构"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97%E7%9A%84%E9%93%BE%E5%BC%8F%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.html">（三）栈和队列的链式存储结构</a></a></h5>
+<h5 id="四多维数组的存储"><a class="header" href="#四多维数组的存储"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E5%AD%98%E5%82%A8.html">（四）多维数组的存储</a></a></h5>
+<h5 id="五特殊矩阵的压缩存储"><a class="header" href="#五特殊矩阵的压缩存储"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E7%89%B9%E6%AE%8A%E7%9F%A9%E9%98%B5%E7%9A%84%E5%8E%8B%E7%BC%A9%E5%AD%98%E5%82%A8.html">（五）特殊矩阵的压缩存储</a></a></h5>
+<h5 id="六栈队列和数组的应用"><a class="header" href="#六栈队列和数组的应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84/%E6%A0%88%E3%80%81%E9%98%9F%E5%88%97%E5%92%8C%E6%95%B0%E7%BB%84%E7%9A%84%E5%BA%94%E7%94%A8.html">（六）栈、队列和数组的应用</a></a></h5>
+<h4 id="四树与二叉树"><a class="header" href="#四树与二叉树"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91.html">四、树与二叉树</a></a></h4>
+<h5 id="一树的基本概念"><a class="header" href="#一树的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）树的基本概念</a></a></h5>
+<h5 id="二二叉树"><a class="header" href="#二二叉树"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91.html">（二）二叉树</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%85%B6%E4%B8%BB%E8%A6%81%E7%89%B9%E5%BE%81.html">二叉树的定义及其主要特征</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E5%92%8C%E9%93%BE%E5%BC%8F%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.html">二叉树的顺序存储结构和链式存储结构</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86.html">二叉树的遍历</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E4%BA%8C%E5%8F%89%E6%A0%91/%E7%BA%BF%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E6%9E%84%E9%80%A0.html">线索二叉树的基本概念和构造</a></li>
+</ol>
+<h5 id="三树森林"><a class="header" href="#三树森林"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E3%80%81%E6%A3%AE%E6%9E%97.html">（三）树、森林</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E3%80%81%E6%A3%AE%E6%9E%97/%E6%A0%91%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.html">树的存储结构</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E3%80%81%E6%A3%AE%E6%9E%97/%E6%A3%AE%E6%9E%97%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BD%AC%E6%8D%A2.html">森林与二叉树的转换</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E3%80%81%E6%A3%AE%E6%9E%97/%E6%A0%91%E5%92%8C%E6%A3%AE%E6%9E%97%E7%9A%84%E9%81%8D%E5%8E%86.html">树和森林的遍历</a></li>
+</ol>
+<h5 id="四树与二叉树的应用"><a class="header" href="#四树与二叉树的应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BA%94%E7%94%A8.html">（四）树与二叉树的应用</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BA%94%E7%94%A8/%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91%E5%92%8C%E5%93%88%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81.html">哈夫曼(Huffman)树和哈夫曼编码</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BA%94%E7%94%A8/%E5%B9%B6%E6%9F%A5%E9%9B%86%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8.html">并查集及其应用</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91/%E6%A0%91%E4%B8%8E%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BA%94%E7%94%A8/%E5%A0%86%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8.html">堆及其应用【新增】</a></li>
+</ol>
+<h4 id="五图"><a class="header" href="#五图"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE.html">五、图</a></a></h4>
+<h5 id="一图的基本概念"><a class="header" href="#一图的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）图的基本概念</a></a></h5>
+<h5 id="二图的存储及基本操作"><a class="header" href="#二图的存储及基本操作"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html">（二）图的存储及基本操作</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5.html">邻接矩阵</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E9%82%BB%E6%8E%A5%E8%A1%A8%E6%B3%95.html">邻接表法</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E9%82%BB%E6%8E%A5%E5%A4%9A%E9%87%8D%E8%A1%A8%EF%BC%8C%E5%8D%81%E5%AD%97%E9%93%BE%E8%A1%A8.html">邻接多重表，十字链表</a></li>
+</ol>
+<h5 id="三图的遍历"><a class="header" href="#三图的遍历"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86.html">（三）图的遍历</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2.html">深度优先搜索</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2.html">广度优先搜索</a></li>
+</ol>
+<h5 id="四图的基本应用"><a class="header" href="#四图的基本应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8.html">（四）图的基本应用</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91.html">最小（代价）生成树</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8/%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84.html">最短路径</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8/%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F.html">拓扑排序</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE/%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8/%E5%85%B3%E9%94%AE%E8%B7%AF%E5%BE%84.html">关键路径</a></li>
+</ol>
+<h4 id="六查找"><a class="header" href="#六查找"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE.html">六、查找</a></a></h4>
+<h5 id="一查找的基本概念"><a class="header" href="#一查找的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%9F%A5%E6%89%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）查找的基本概念</a></a></h5>
+<h5 id="二顺序查找法"><a class="header" href="#二顺序查找法"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E9%A1%BA%E5%BA%8F%E6%9F%A5%E6%89%BE%E6%B3%95.html">（二）顺序查找法</a></a></h5>
+<h5 id="三分块查找法"><a class="header" href="#三分块查找法"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E5%88%86%E5%9D%97%E6%9F%A5%E6%89%BE%E6%B3%95.html">（三）分块查找法</a></a></h5>
+<h5 id="四折半查找法"><a class="header" href="#四折半查找法"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E6%B3%95.html">（四）折半查找法</a></a></h5>
+<h5 id="五树形查找"><a class="header" href="#五树形查找"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%A0%91%E5%BD%A2%E6%9F%A5%E6%89%BE.html">（五）树形查找</a></a></h5>
+<ol>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%A0%91%E5%BD%A2%E6%9F%A5%E6%89%BE/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91.html">二叉搜索树</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%A0%91%E5%BD%A2%E6%9F%A5%E6%89%BE/%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91.html">平衡二叉树</a></li>
+<li><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%A0%91%E5%BD%A2%E6%9F%A5%E6%89%BE/%E7%BA%A2%E9%BB%91%E6%A0%91.html">红黑树</a></li>
+</ol>
+<h5 id="六b-树及其基本操作b-树的基本概念"><a class="header" href="#六b-树及其基本操作b-树的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/B%E6%A0%91%E5%8F%8A%E5%85%B6%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E3%80%81B+%E6%A0%91%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（六）B 树及其基本操作、B+ 树的基本概念</a></a></h5>
+<h5 id="七散列hash表"><a class="header" href="#七散列hash表"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%95%A3%E5%88%97%E8%A1%A8.html">（七）散列(hash)表</a></a></h5>
+<h5 id="八字符串模式匹配"><a class="header" href="#八字符串模式匹配"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D.html">（八）字符串模式匹配</a></a></h5>
+<h5 id="九查找算法的分析及其应用"><a class="header" href="#九查找算法的分析及其应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%9F%A5%E6%89%BE/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95%E7%9A%84%E5%88%86%E6%9E%90%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8.html">（九）查找算法的分析及其应用</a></a></h5>
+<h4 id="七排序"><a class="header" href="#七排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F.html">七、排序</a></a></h4>
+<h5 id="一排序的基本概念"><a class="header" href="#一排序的基本概念"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E6%8E%92%E5%BA%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">（一）排序的基本概念</a></a></h5>
+<h5 id="二直接插入排序"><a class="header" href="#二直接插入排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E7%9B%B4%E6%8E%A5%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F.html">（二）直接插入排序</a></a></h5>
+<h5 id="三折半插入排序"><a class="header" href="#三折半插入排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E6%8A%98%E5%8D%8A%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F.html">（三）折半插入排序</a></a></h5>
+<h5 id="四起泡排序bubble-sort"><a class="header" href="#四起泡排序bubble-sort"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E8%B5%B7%E6%B3%A1%E6%8E%92%E5%BA%8F.html">（四）起泡排序(bubble sort)</a></a></h5>
+<h5 id="五简单选择排序"><a class="header" href="#五简单选择排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E7%AE%80%E5%8D%95%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F.html">（五）简单选择排序</a></a></h5>
+<h5 id="六希尔排序shell-sort"><a class="header" href="#六希尔排序shell-sort"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F.html">（六）希尔排序(shell sort)</a></a></h5>
+<h5 id="七快速排序"><a class="header" href="#七快速排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F.html">（七）快速排序</a></a></h5>
+<h5 id="八堆排序"><a class="header" href="#八堆排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E5%A0%86%E6%8E%92%E5%BA%8F.html">（八）堆排序</a></a></h5>
+<h5 id="九二路归并排序merge-sort"><a class="header" href="#九二路归并排序merge-sort"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E4%BA%8C%E8%B7%AF%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.html">（九）二路归并排序(merge sort)</a></a></h5>
+<h5 id="十基数排序"><a class="header" href="#十基数排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F.html">（十）基数排序</a></a></h5>
+<h5 id="十一外部排序"><a class="header" href="#十一外部排序"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E5%A4%96%E9%83%A8%E6%8E%92%E5%BA%8F.html">（十一）外部排序</a></a></h5>
+<h5 id="十二排序算法的分析和应用"><a class="header" href="#十二排序算法的分析和应用"><a href="./%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%8E%92%E5%BA%8F/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E7%9A%84%E5%88%86%E6%9E%90%E5%92%8C%E5%BA%94%E7%94%A8.html">（十二）排序算法的分析和应用</a></a></h5>
+<h3 id="计算机组成原理"><a class="header" href="#计算机组成原理">计算机组成原理</a></h3>
+<blockquote>
+<p>参考教材：《计算机组成原理》（唐朔飞）</p>
+</blockquote>
+<h4 id="考查目标-1"><a class="header" href="#考查目标-1">[考查目标]</a></h4>
+<ol>
+<li>掌握单处理器计算机系统中主要部件的工作原理、组成结构以及相互连接方式。</li>
+<li>掌握指令集体系结构的基本知识和基本实现方法，对计算机硬件相关问题进行分析，并能够对相关部件进行设计。</li>
+<li>能够综合运用计算机组成的基本原理和基本方法，对有关计算机硬件系统中的理论和实际问题进行计算、分析，对一些基本部件进行简单设计；并能对高级程序设计语言(如 C语言)中的相关问题进行分析。</li>
+</ol>
+<h4 id="一计算机系统概述"><a class="header" href="#一计算机系统概述">一、计算机系统概述</a></h4>
+<h5 id="一计算机系统层次结构"><a class="header" href="#一计算机系统层次结构">（一）计算机系统层次结构</a></h5>
+<ol>
+<li>计算机系统的基本组成</li>
+<li>计算机硬件的基本结构</li>
+<li>计算机软件和硬件的关系</li>
+<li>计算机系统的工作原理</li>
+</ol>
+<p>“存储程序”工作方式，高级语言程序与机器语言程序之间的转换，程序和指令的执行过程。</p>
+<h5 id="二计算机的性能指标"><a class="header" href="#二计算机的性能指标">（二）计算机的性能指标</a></h5>
+<p>吞吐量、响应时间;CPU 时钟周期、主频、CPI、CPU 执行时间;MIPS、 MFLOPS 、GFLOPS、TFLOPS、PFLOPS、EFLOPS、ZFLOPS。</p>
+<h4 id="二数据的表示和运算"><a class="header" href="#二数据的表示和运算">二、数据的表示和运算</a></h4>
+<h5 id="一数制与编码"><a class="header" href="#一数制与编码">（一）数制与编码</a></h5>
+<ol>
+<li>定点计数制及其数据之间的相互转换</li>
+<li>定点数的编码表示</li>
+</ol>
+<h5 id="二运算方法和运算电路"><a class="header" href="#二运算方法和运算电路">（二）运算方法和运算电路</a></h5>
+<ol>
+<li>基本运算部件
+加法器，算数逻辑单元(ALU)。</li>
+<li>加/减运算
+补码加/减运算器，标志位的生成。</li>
+<li>乘/除运算
+乘/除法运算的的基本原理，乘法电路和除法电路的基本结构。</li>
+</ol>
+<h5 id="三整数的表示和运算"><a class="header" href="#三整数的表示和运算">（三）整数的表示和运算</a></h5>
+<ol>
+<li>无符号整数的表示和运算</li>
+<li>带符号整数的表示和运算</li>
+</ol>
+<h5 id="四浮点数的表示和运算"><a class="header" href="#四浮点数的表示和运算">（四）浮点数的表示和运算</a></h5>
+<ol>
+<li>浮点数的表示
+IEEE 754标准。</li>
+<li>浮点数的加/减运算</li>
+</ol>
+<h4 id="三存储器层次结构"><a class="header" href="#三存储器层次结构">三、存储器层次结构</a></h4>
+<h5 id="一存储器的分类"><a class="header" href="#一存储器的分类">（一）存储器的分类</a></h5>
+<h5 id="二层次化存储器的基本结构"><a class="header" href="#二层次化存储器的基本结构">（二）层次化存储器的基本结构</a></h5>
+<h5 id="三半导体随机存取存储器"><a class="header" href="#三半导体随机存取存储器">（三）半导体随机存取存储器</a></h5>
+<ol>
+<li>SRAM 存储器</li>
+<li>DRAM 存储器</li>
+<li>Flash 存储器</li>
+</ol>
+<h5 id="四主存储器"><a class="header" href="#四主存储器">（四）主存储器</a></h5>
+<ol>
+<li>DRAM 芯片和内存条</li>
+<li>多模块存储器</li>
+<li>主存和CPU之间的连接</li>
+</ol>
+<h5 id="五外部存储器"><a class="header" href="#五外部存储器">（五）外部存储器</a></h5>
+<ol>
+<li>磁盘存储器</li>
+<li>固态硬盘（SSD）</li>
+</ol>
+<h5 id="六高速缓存存储器cache"><a class="header" href="#六高速缓存存储器cache">（六）高速缓存存储器（Cache）</a></h5>
+<ol>
+<li>Cache 的基本原理</li>
+<li>Cache 和主存之间的映射方式</li>
+<li>Cache 中主存块的替换算法</li>
+<li>Cache 写策略</li>
+</ol>
+<h5 id="七虚拟存储器"><a class="header" href="#七虚拟存储器">（七）虚拟存储器</a></h5>
+<ol>
+<li>虚拟存储器的基本概念</li>
+<li>页式虚拟存储器
+基本原理，页表，地址转换，TLB（快表）。</li>
+<li>段式虚拟存储器的基本原理</li>
+<li>段页式虚拟存储器的基本原理</li>
+</ol>
+<h4 id="四指令系统"><a class="header" href="#四指令系统">四、指令系统</a></h4>
+<h5 id="一指令系统的基本概念"><a class="header" href="#一指令系统的基本概念">（一）指令系统的基本概念</a></h5>
+<h5 id="二指令格式"><a class="header" href="#二指令格式">（二）指令格式</a></h5>
+<h5 id="三寻址方式"><a class="header" href="#三寻址方式">（三）寻址方式</a></h5>
+<h5 id="四数据的对齐和大小端存放方式"><a class="header" href="#四数据的对齐和大小端存放方式">（四）数据的对齐和大/小端存放方式</a></h5>
+<h5 id="五cisc和risc的基本概念"><a class="header" href="#五cisc和risc的基本概念">（五）CISC和RISC的基本概念</a></h5>
+<h5 id="六高级语言程序与与机器级代码之间的对应"><a class="header" href="#六高级语言程序与与机器级代码之间的对应">（六）高级语言程序与与机器级代码之间的对应</a></h5>
+<ol>
+<li>编译器、汇编器和链接器的基本概念</li>
+<li>选择结构语句的机器级表示</li>
+<li>循环结构语句的机器级表示</li>
+<li>过程（函数）调用对应的机器级表示</li>
+</ol>
+<h4 id="五中央处理器cpu"><a class="header" href="#五中央处理器cpu">五、中央处理器（CPU）</a></h4>
+<h5 id="一cpu的功能和基本结构"><a class="header" href="#一cpu的功能和基本结构">（一）CPU的功能和基本结构</a></h5>
+<h5 id="二指令执行过程"><a class="header" href="#二指令执行过程">（二）指令执行过程</a></h5>
+<h5 id="三数据通路的功能和基本结构"><a class="header" href="#三数据通路的功能和基本结构">（三）数据通路的功能和基本结构</a></h5>
+<h5 id="四控制器的功能和工作原理"><a class="header" href="#四控制器的功能和工作原理">（四）控制器的功能和工作原理</a></h5>
+<h5 id="五异常和中断机制"><a class="header" href="#五异常和中断机制">（五）异常和中断机制</a></h5>
+<ol>
+<li>异常和中断的基本概念</li>
+<li>异常和中断的分类</li>
+<li>异常和中断的检测与响应</li>
+</ol>
+<h6 id="六指令流水线"><a class="header" href="#六指令流水线">（六）指令流水线</a></h6>
+<ol>
+<li>指令流水线的基本概念</li>
+<li>指令流水线的基本实现</li>
+<li>结构冒险、数据冒险和控制冒险的处理</li>
+<li>超标量和动态流水线的基本概念</li>
+</ol>
+<h5 id="七多处理器基本概念"><a class="header" href="#七多处理器基本概念">（七）多处理器基本概念</a></h5>
+<ol>
+<li>SISD、SIMD、MIMD、向量处理器的基本概念</li>
+<li>硬件多线程的基本概念</li>
+<li>多核(multi-core)处理器的基本概念</li>
+<li>共享内存多处理器(SMP)的基本概念</li>
+</ol>
+<h4 id="六总线和输入输出系统"><a class="header" href="#六总线和输入输出系统">六、总线和输入/输出系统</a></h4>
+<h5 id="一总线"><a class="header" href="#一总线">（一）总线</a></h5>
+<ol>
+<li>总线的基本概念</li>
+<li>总线的组成及性能指标</li>
+<li>总线事务和定时</li>
+</ol>
+<h5 id="二io接口io控制器"><a class="header" href="#二io接口io控制器">（二）I/O接口（I/O控制器）</a></h5>
+<ol>
+<li>I/O接口的功能和基本结构</li>
+<li>I/O接口及其编址</li>
+</ol>
+<h5 id="三io方式"><a class="header" href="#三io方式">（三）I/O方式</a></h5>
+<ol>
+<li>程序查询方式</li>
+<li>程序中断方式
+中断的基本概念，中断响应过程，中断处理过程，多重中断和中断屏蔽的概念。</li>
+<li>DMA方式
+DMA控制器的组成，DMA传送过程。</li>
+</ol>
+<h3 id="操作系统"><a class="header" href="#操作系统">操作系统</a></h3>
+<blockquote>
+<p>参考教材：《计算机操作系统第四版》（汤子瀛版）</p>
+</blockquote>
+<h4 id="考查目标-2"><a class="header" href="#考查目标-2">[考查目标]</a></h4>
+<ol>
+<li>掌握操作系统的基本概念、方法和原理，了解操作系统的结构、功能和服务，理解操作系统所采用的策略算法和机制。</li>
+<li>能够从计算机系统的角度理解并描述应用程序、操作系统内核和计算机硬件协同完成任务的过程。</li>
+<li>能够运用操作系统的原理，分析并解决计算机系统中与操作系统相关的问题。</li>
+</ol>
+<h4 id="一操作系统基础"><a class="header" href="#一操作系统基础">一、操作系统基础</a></h4>
+<h5 id="一操作系统的基本概念"><a class="header" href="#一操作系统的基本概念">（一）操作系统的基本概念</a></h5>
+<h5 id="二操作系统的发展历程"><a class="header" href="#二操作系统的发展历程">（二）操作系统的发展历程</a></h5>
+<h5 id="三程序的运行环境"><a class="header" href="#三程序的运行环境">（三）程序的运行环境</a></h5>
+<ol>
+<li>CPU 运行环境
+内核模式，用户模式。</li>
+<li>中断和异常的处理</li>
+<li>系统调用</li>
+<li>程序的链接与装入</li>
+<li>程序运行时的内存映像与地址空间</li>
+</ol>
+<h5 id="四操作系统结构"><a class="header" href="#四操作系统结构">（四）操作系统结构</a></h5>
+<p>分层，模块化，宏内核，微内核，外核。</p>
+<h5 id="五操作系统引导"><a class="header" href="#五操作系统引导">（五）操作系统引导</a></h5>
+<h5 id="六虚拟机"><a class="header" href="#六虚拟机">（六）虚拟机</a></h5>
+<h4 id="二进程管理"><a class="header" href="#二进程管理">二、进程管理</a></h4>
+<h5 id="一进程与线程"><a class="header" href="#一进程与线程">（一）进程与线程</a></h5>
+<ol>
+<li>进程与线程的基本概念</li>
+<li>进程的状态与转换</li>
+<li>线程的实现
+内核支持的线程，线程库支持的线程。</li>
+<li>进程与线程的组织与控制</li>
+<li>进程间通信</li>
+</ol>
+<p>共享内存，消息传递，管道，<strong>信号</strong>【变动】。</p>
+<h5 id="二cpu-调度与上下文切换"><a class="header" href="#二cpu-调度与上下文切换">（二）CPU 调度与上下文切换</a></h5>
+<ol>
+<li>调度的基本概念</li>
+<li>调度的目标</li>
+<li>调度的实现
+调度器/调度程序(scheduler)，调度的时机与调度方式（抢占式/非抢占式），闲逛进程，内核级线程与用户级线程调度。</li>
+<li>CPU调度算法【变动】</li>
+<li>多处理机调度【变动】</li>
+<li>上下文及其切换机制</li>
+</ol>
+<blockquote>
+<p>2025新大纲中“4. 典型调度算法：先来先服务调度算法，短作业（短进程、短线程）优先调度算法，时间片轮转调度算法，优先级调度算法，高响应比优先调度算法，多级队列调度算法，多级反馈队列调度算法。“被去除。</p>
+</blockquote>
+<h5 id="三同步与互斥"><a class="header" href="#三同步与互斥">（三）同步与互斥</a></h5>
+<ol>
+<li>同步与互斥的基本概念</li>
+<li>基本的实现方法
+软件方法，硬件方法。</li>
+<li>锁</li>
+<li>信号量</li>
+<li>条件变量</li>
+<li>经典同步问题</li>
+</ol>
+<p>生产者-消费者问题，读者-写者问题，哲学家进餐问题等。</p>
+<h5 id="四死锁"><a class="header" href="#四死锁">（四）死锁</a></h5>
+<ol>
+<li>死锁的基本概念</li>
+<li>死锁预防</li>
+<li>死锁避免</li>
+<li>死锁检测和解除</li>
+</ol>
+<h4 id="三内存管理"><a class="header" href="#三内存管理">三、内存管理</a></h4>
+<h5 id="一内存管理基础"><a class="header" href="#一内存管理基础">（一）内存管理基础</a></h5>
+<ol>
+<li>内存管理的基本概念
+逻辑地址空间与物理地址空间，地址变换，内存共享，内存保护，内存分配与回收。</li>
+<li>连续分配管理方式</li>
+<li>页式管理</li>
+<li>段式管理</li>
+<li>段页式管理</li>
+</ol>
+<h5 id="二虚拟内存管理"><a class="header" href="#二虚拟内存管理">（二）虚拟内存管理</a></h5>
+<ol>
+<li>虚拟内存的基本概念</li>
+<li>请求页式管理</li>
+<li>页框分配<strong>与回收</strong>【变动】</li>
+<li>页面置换算法
+最佳置换算法(OPT);先进先出置换算法(FIFO);最近最少使用置换算法(LRU);时钟置换算法(CLOCK)。</li>
+<li>内存映射文件(Memory-Mapped Flies)</li>
+<li>虚拟存储器性能的影响因素及改进方法</li>
+</ol>
+<h4 id="四文件管理"><a class="header" href="#四文件管理">四、文件管理</a></h4>
+<h5 id="一文件"><a class="header" href="#一文件">（一）文件</a></h5>
+<ol>
+<li>文件的基本概念</li>
+<li>文件元数据和索引结点(inode)</li>
+<li>文件的操作
+建立，删除，打开，关闭，读，写。</li>
+<li>文件的保护</li>
+<li>文件的逻辑结构</li>
+<li>文件的物理结构</li>
+</ol>
+<h5 id="二目录"><a class="header" href="#二目录">（二）目录</a></h5>
+<ol>
+<li>目录的基本概念</li>
+<li>树形目录</li>
+<li>目录的操作</li>
+<li>硬链接和软链接</li>
+</ol>
+<h5 id="三文件系统"><a class="header" href="#三文件系统">（三）文件系统</a></h5>
+<ol>
+<li>文件系统的全局结构(layout)
+文件系统在外存中的结构，文件系统在内存中的结构。</li>
+<li>外存空闲空间管理方法</li>
+<li>虚拟文件系统</li>
+<li>文件系统挂载(mounting)</li>
+</ol>
+<h4 id="五输入输出io管理"><a class="header" href="#五输入输出io管理">五、输入/输出(I/O)管理</a></h4>
+<h5 id="一io-管理基础"><a class="header" href="#一io-管理基础">（一）I/O 管理基础</a></h5>
+<ol>
+<li>设备
+设备的基本概念，设备的分类，I/O 接口，I/O 端口。</li>
+<li>I/O 控制方式
+轮询方式，中断方式，DMA 方式。</li>
+<li>I/O 软件层次结构
+中断处理程序，驱动程序，设备独立软件，用户层I/O软件。</li>
+<li>输入/输出应用程序接口
+字符设备接口，块设备接口，网络设备接口，阻塞/非阻塞I/O。</li>
+</ol>
+<h5 id="二设备独立文件"><a class="header" href="#二设备独立文件">（二）设备独立文件</a></h5>
+<ol>
+<li>缓存区管理</li>
+<li>设备分配和回收</li>
+<li>假脱机技术(SPOOLing)</li>
+<li>设备驱动程序接口</li>
+</ol>
+<h5 id="三外存管理"><a class="header" href="#三外存管理">（三）外存管理</a></h5>
+<ol>
+<li>磁盘
+磁盘结构，格式化，分区，磁盘调度方法。</li>
+<li>固态硬盘
+读写性能特性，磨损均衡。</li>
+</ol>
+<h3 id="计算机网络"><a class="header" href="#计算机网络">计算机网络</a></h3>
+<blockquote>
+<p>参考教材：《计算机网络第8版》（谢希仁版）</p>
+</blockquote>
+<h4 id="考查目标-3"><a class="header" href="#考查目标-3">[考查目标]</a></h4>
+<ol>
+<li>掌握计算机网络的基本概念、基本原理和基本方法。</li>
+<li>掌握计算机网络的体系结构和典型网络协议，了解典型网络设备的组成和特点，理解典型网络设备的工作原理。</li>
+<li>能够运用计算机网络的基本概念、基本原理和基本方法进行网络系统的分析、设计和应用。</li>
+</ol>
+<h4 id="一计算机网络概述"><a class="header" href="#一计算机网络概述">一、计算机网络概述</a></h4>
+<h5 id="一计算机网络基本概念"><a class="header" href="#一计算机网络基本概念">（一）计算机网络基本概念</a></h5>
+<ol>
+<li>计算机网络的定义、组成与功能</li>
+<li>计算机网络的分类</li>
+<li>计算机网络的主要性能指标</li>
+</ol>
+<h5 id="二计算机网络体系结构"><a class="header" href="#二计算机网络体系结构">（二）计算机网络体系结构</a></h5>
+<ol>
+<li>计算机网络分层结构</li>
+<li>计算机网络协议、接口、服务等概念</li>
+<li>ISO / OSI参考模型和TCP / IP模型</li>
+</ol>
+<h4 id="二物理层"><a class="header" href="#二物理层">二、物理层</a></h4>
+<h5 id="一通信基础"><a class="header" href="#一通信基础">（一）通信基础</a></h5>
+<ol>
+<li>信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念</li>
+<li>奈奎斯特定理与香农定理</li>
+<li>编码与调制</li>
+<li>电路交换、报文交换与分组交换</li>
+<li>数据报与虚电路</li>
+</ol>
+<h5 id="二传输介质"><a class="header" href="#二传输介质">（二）传输介质</a></h5>
+<ol>
+<li>双绞线、同轴电缆、光纤与无线传输介质</li>
+<li>物理层接口的特性</li>
+</ol>
+<h5 id="三物理层设备"><a class="header" href="#三物理层设备">（三）物理层设备</a></h5>
+<ol>
+<li>中继器</li>
+<li>集线器</li>
+</ol>
+<h4 id="三数据链路层"><a class="header" href="#三数据链路层">三、数据链路层</a></h4>
+<h5 id="一数据链路层的功能"><a class="header" href="#一数据链路层的功能">（一）数据链路层的功能</a></h5>
+<h5 id="二组帧"><a class="header" href="#二组帧">（二）组帧</a></h5>
+<h5 id="三差错控制"><a class="header" href="#三差错控制">（三）差错控制</a></h5>
+<ol>
+<li>检错编码</li>
+<li>纠错编码</li>
+</ol>
+<h5 id="四流量控制与可靠传输机制"><a class="header" href="#四流量控制与可靠传输机制">（四）流量控制与可靠传输机制</a></h5>
+<ol>
+<li>流量控制、可靠传输与滑动窗口机制</li>
+<li>停止 - 等待协议</li>
+<li>后退N帧协议( GBN )</li>
+<li>选择重传协议( SR )</li>
+</ol>
+<h5 id="五介质访问控制"><a class="header" href="#五介质访问控制">（五）介质访问控制</a></h5>
+<ol>
+<li>信道划分
+频分多路复用、时分多路复用、波分多路复用、码分多路复用的概念和基本原理。</li>
+<li>随机访问
+ALOHA 协议;CSMA 协议;CSMA/CD 协议;CSMA/CA 协议。</li>
+<li>轮询访问
+令牌传递协议。</li>
+</ol>
+<h5 id="六局域网"><a class="header" href="#六局域网">（六）局域网</a></h5>
+<ol>
+<li>局域网的基本概念与体系结构</li>
+<li>以太网与IEEE 802.3</li>
+<li>IEEE 802.11无线局域网</li>
+<li>VLAN 基本概念与基本原理</li>
+</ol>
+<h5 id="七广域网"><a class="header" href="#七广域网">（七）广域网</a></h5>
+<ol>
+<li>广域网的基本概念</li>
+<li>PPP 协议</li>
+</ol>
+<h5 id="八数据链路层设备"><a class="header" href="#八数据链路层设备">（八）数据链路层设备</a></h5>
+<p>以太网交换机及其工作原理</p>
+<h4 id="四网络层"><a class="header" href="#四网络层">四、网络层</a></h4>
+<h5 id="一网络层的功能"><a class="header" href="#一网络层的功能">（一）网络层的功能</a></h5>
+<ol>
+<li>异构网络互连</li>
+<li>路由和转发</li>
+<li>SDN 基本概念</li>
+<li>阻塞控制</li>
+</ol>
+<h5 id="二路由算法"><a class="header" href="#二路由算法">（二）路由算法</a></h5>
+<ol>
+<li>静态路由与动态路由</li>
+<li>距离-向量路由算法</li>
+<li>链路状态路由算法</li>
+<li>层次路由</li>
+</ol>
+<h5 id="三ipv4"><a class="header" href="#三ipv4">（三）IPv4</a></h5>
+<ol>
+<li>IPv4 分组</li>
+<li>IPv4 地址与 NAT</li>
+<li>子网划分、路由聚集、子网掩码与 CIDR</li>
+<li>ARP 协议、DHCP 协议与 ICMP 协议</li>
+</ol>
+<h5 id="四ipv6"><a class="header" href="#四ipv6">（四）IPv6</a></h5>
+<ol>
+<li>Ipv6 的主要特点</li>
+<li>IPv6 地址</li>
+</ol>
+<h5 id="五路由协议"><a class="header" href="#五路由协议">（五）路由协议</a></h5>
+<ol>
+<li>自治系统</li>
+<li>域内路由与域间路由</li>
+<li>RIP 路由协议</li>
+<li>OSPF 路由协议</li>
+<li>BGP 路由协议</li>
+</ol>
+<h5 id="六ip组播"><a class="header" href="#六ip组播">（六）IP组播</a></h5>
+<ol>
+<li>组播的概念</li>
+<li>IP 组播地址</li>
+</ol>
+<h5 id="七移动-ip"><a class="header" href="#七移动-ip">（七）移动 IP</a></h5>
+<ol>
+<li>移动 IP 的概念</li>
+<li>移动 IP 的通信过程</li>
+</ol>
+<h5 id="八网络层设备"><a class="header" href="#八网络层设备">（八）网络层设备</a></h5>
+<ol>
+<li>路由器的组成和功能</li>
+<li>路由表与分组转发</li>
+</ol>
+<h4 id="五传输层"><a class="header" href="#五传输层">五、传输层</a></h4>
+<h5 id="一传输层提供的服务"><a class="header" href="#一传输层提供的服务">（一）传输层提供的服务</a></h5>
+<ol>
+<li>传输层的功能</li>
+<li>传输层寻址与端口</li>
+<li>无连接服务与面向连接服务</li>
+</ol>
+<h5 id="二udp-协议"><a class="header" href="#二udp-协议">（二）UDP 协议</a></h5>
+<ol>
+<li>UDP 数据报</li>
+<li>UDP 校验</li>
+</ol>
+<h5 id="三tcp-协议"><a class="header" href="#三tcp-协议">（三）TCP 协议</a></h5>
+<ol>
+<li>TCP 段</li>
+<li>TCP 连接管理</li>
+<li>TCP 可靠传输</li>
+<li>TCP 流量控制</li>
+<li>TCP 拥塞控制</li>
+</ol>
+<h4 id="六应用层"><a class="header" href="#六应用层">六、应用层</a></h4>
+<h5 id="一网络应用模型"><a class="header" href="#一网络应用模型">（一）网络应用模型</a></h5>
+<ol>
+<li>客户/服务端(C/S)模型</li>
+<li>对等(P2P)模型</li>
+</ol>
+<h5 id="二dns-系统"><a class="header" href="#二dns-系统">（二）DNS 系统</a></h5>
+<ol>
+<li>层次域名空间</li>
+<li>域名服务器</li>
+<li>域名解析过程</li>
+</ol>
+<h5 id="三ftp"><a class="header" href="#三ftp">（三）FTP</a></h5>
+<ol>
+<li>FTP 协议的工作原理</li>
+<li>控制连接与数据连接</li>
+</ol>
+<h5 id="四电子邮件"><a class="header" href="#四电子邮件">（四）电子邮件</a></h5>
+<ol>
+<li>电子邮件系统的组成结构</li>
+<li>电子邮件的结构与 MIME</li>
+<li>SMTP 协议与POP3 协议</li>
+</ol>
+<h5 id="五www"><a class="header" href="#五www">（五）WWW</a></h5>
+<ol>
+<li>WWW 的概念与组成结构</li>
+<li>HTTP 协议</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据结构-1"><a class="header" href="#数据结构-1">数据结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="基本概念"><a class="header" href="#基本概念">基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据结构的基本概念"><a class="header" href="#数据结构的基本概念">数据结构的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="算法的基本概念"><a class="header" href="#算法的基本概念">算法的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线性表"><a class="header" href="#线性表">线性表</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线性表的基本概念"><a class="header" href="#线性表的基本概念">线性表的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线性表的实现"><a class="header" href="#线性表的实现">线性表的实现</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="顺序存储"><a class="header" href="#顺序存储">顺序存储</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="链式存储"><a class="header" href="#链式存储">链式存储</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线性表的应用"><a class="header" href="#线性表的应用">线性表的应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="栈队列和数组"><a class="header" href="#栈队列和数组">栈、队列和数组</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="栈和队列的基本概念"><a class="header" href="#栈和队列的基本概念">栈和队列的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="栈和队列的顺序存储结构"><a class="header" href="#栈和队列的顺序存储结构">栈和队列的顺序存储结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="栈和队列的链式存储结构"><a class="header" href="#栈和队列的链式存储结构">栈和队列的链式存储结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="多维数组的存储"><a class="header" href="#多维数组的存储">多维数组的存储</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="特殊矩阵的压缩存储"><a class="header" href="#特殊矩阵的压缩存储">特殊矩阵的压缩存储</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="栈队列和数组的应用"><a class="header" href="#栈队列和数组的应用">栈、队列和数组的应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树与二叉树"><a class="header" href="#树与二叉树">树与二叉树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树的基本概念"><a class="header" href="#树的基本概念">树的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树"><a class="header" href="#二叉树">二叉树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树的定义及特征"><a class="header" href="#二叉树的定义及特征">二叉树的定义及特征</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树的顺序存储结构"><a class="header" href="#二叉树的顺序存储结构">二叉树的顺序存储结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树的链式存储结构"><a class="header" href="#二叉树的链式存储结构">二叉树的链式存储结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树的遍历"><a class="header" href="#二叉树的遍历">二叉树的遍历</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线索二叉树的基本概念和构造"><a class="header" href="#线索二叉树的基本概念和构造">线索二叉树的基本概念和构造</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树森林"><a class="header" href="#树森林">树、森林</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树的存储结构"><a class="header" href="#树的存储结构">树的存储结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="森林与二叉树的转换"><a class="header" href="#森林与二叉树的转换">森林与二叉树的转换</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树和森林的遍历"><a class="header" href="#树和森林的遍历">树和森林的遍历</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树与二叉树的应用"><a class="header" href="#树与二叉树的应用">树与二叉树的应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="哈夫曼树和哈夫曼编码"><a class="header" href="#哈夫曼树和哈夫曼编码">哈夫曼树和哈夫曼编码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="并查集及其应用"><a class="header" href="#并查集及其应用">并查集及其应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="堆及其应用"><a class="header" href="#堆及其应用">堆及其应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="图"><a class="header" href="#图">图</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="图的基本概念"><a class="header" href="#图的基本概念">图的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="图的存储及基本操作"><a class="header" href="#图的存储及基本操作">图的存储及基本操作</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="邻接矩阵"><a class="header" href="#邻接矩阵">邻接矩阵</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="邻接表法"><a class="header" href="#邻接表法">邻接表法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="邻接多重表十字链表"><a class="header" href="#邻接多重表十字链表">邻接多重表，十字链表</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="图的遍历"><a class="header" href="#图的遍历">图的遍历</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="深度优先搜索"><a class="header" href="#深度优先搜索">深度优先搜索</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="广度优先搜索"><a class="header" href="#广度优先搜索">广度优先搜索</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="图的基本应用"><a class="header" href="#图的基本应用">图的基本应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="最小生成树"><a class="header" href="#最小生成树">最小生成树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="最短路径"><a class="header" href="#最短路径">最短路径</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="拓扑排序"><a class="header" href="#拓扑排序">拓扑排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="关键路径"><a class="header" href="#关键路径">关键路径</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="查找"><a class="header" href="#查找">查找</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="查找的基本概念"><a class="header" href="#查找的基本概念">查找的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="顺序查找法"><a class="header" href="#顺序查找法">顺序查找法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="分块查找法"><a class="header" href="#分块查找法">分块查找法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="折半查找法"><a class="header" href="#折半查找法">折半查找法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="树形查找"><a class="header" href="#树形查找">树形查找</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉搜索树"><a class="header" href="#二叉搜索树">二叉搜索树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="平衡二叉树"><a class="header" href="#平衡二叉树">平衡二叉树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="红黑树"><a class="header" href="#红黑树">红黑树</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="b树及其基本操作"><a class="header" href="#b树及其基本操作">B树及其基本操作</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="散列表"><a class="header" href="#散列表">散列表</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="字符串模式匹配"><a class="header" href="#字符串模式匹配">字符串模式匹配</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="查找算法的分析及其应用"><a class="header" href="#查找算法的分析及其应用">查找算法的分析及其应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="排序"><a class="header" href="#排序">排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="排序的基本概念"><a class="header" href="#排序的基本概念">排序的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="直接插入排序"><a class="header" href="#直接插入排序">直接插入排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="折半插入排序"><a class="header" href="#折半插入排序">折半插入排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="冒泡排序"><a class="header" href="#冒泡排序">冒泡排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="简单选择排序"><a class="header" href="#简单选择排序">简单选择排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="希尔排序"><a class="header" href="#希尔排序">希尔排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="快速排序"><a class="header" href="#快速排序">快速排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="堆排序"><a class="header" href="#堆排序">堆排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二路归并排序"><a class="header" href="#二路归并排序">二路归并排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="基数排序"><a class="header" href="#基数排序">基数排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="外部排序"><a class="header" href="#外部排序">外部排序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="排序算法的分析和应用"><a class="header" href="#排序算法的分析和应用">排序算法的分析和应用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机组成原理-1"><a class="header" href="#计算机组成原理-1">计算机组成原理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机系统概述"><a class="header" href="#计算机系统概述">计算机系统概述</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机系统层次结构"><a class="header" href="#计算机系统层次结构">计算机系统层次结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机系统的基本组成"><a class="header" href="#计算机系统的基本组成">计算机系统的基本组成</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机硬件的基本结构"><a class="header" href="#计算机硬件的基本结构">计算机硬件的基本结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机软件和硬件的关系"><a class="header" href="#计算机软件和硬件的关系">计算机软件和硬件的关系</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机系统的工作原理"><a class="header" href="#计算机系统的工作原理">计算机系统的工作原理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机的性能指标"><a class="header" href="#计算机的性能指标">计算机的性能指标</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="吞吐量与响应时间"><a class="header" href="#吞吐量与响应时间">吞吐量与响应时间</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cpu性能指标"><a class="header" href="#cpu性能指标">CPU性能指标</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据的表示和运算"><a class="header" href="#数据的表示和运算">数据的表示和运算</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数制与编码"><a class="header" href="#数制与编码">数制与编码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="定点计数制及转换"><a class="header" href="#定点计数制及转换">定点计数制及转换</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="定点数的编码表示"><a class="header" href="#定点数的编码表示">定点数的编码表示</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="运算方法和运算电路"><a class="header" href="#运算方法和运算电路">运算方法和运算电路</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="基本运算部件alu"><a class="header" href="#基本运算部件alu">基本运算部件：ALU</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="加减运算与补码"><a class="header" href="#加减运算与补码">加减运算与补码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="乘除运算原理与电路"><a class="header" href="#乘除运算原理与电路">乘除运算原理与电路</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="整数及浮点数的表示与运算"><a class="header" href="#整数及浮点数的表示与运算">整数及浮点数的表示与运算</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="整数表示与运算"><a class="header" href="#整数表示与运算">整数表示与运算</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="浮点数表示与运算"><a class="header" href="#浮点数表示与运算">浮点数表示与运算</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="存储器层次结构"><a class="header" href="#存储器层次结构">存储器层次结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="存储器分类与结构"><a class="header" href="#存储器分类与结构">存储器分类与结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="半导体随机存储器"><a class="header" href="#半导体随机存储器">半导体随机存储器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="主存储器与外部存储器"><a class="header" href="#主存储器与外部存储器">主存储器与外部存储器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="高速缓存与虚拟存储器"><a class="header" href="#高速缓存与虚拟存储器">高速缓存与虚拟存储器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="指令系统"><a class="header" href="#指令系统">指令系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="指令系统概念与格式"><a class="header" href="#指令系统概念与格式">指令系统概念与格式</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据对齐与寻址方式"><a class="header" href="#数据对齐与寻址方式">数据对齐与寻址方式</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cisc与risc概念"><a class="header" href="#cisc与risc概念">CISC与RISC概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="高级语言程序与机器级代码"><a class="header" href="#高级语言程序与机器级代码">高级语言程序与机器级代码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="中央处理器cpu"><a class="header" href="#中央处理器cpu">中央处理器（CPU）</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cpu功能与结构"><a class="header" href="#cpu功能与结构">CPU功能与结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="指令执行与数据通路"><a class="header" href="#指令执行与数据通路">指令执行与数据通路</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="控制器原理与异常处理"><a class="header" href="#控制器原理与异常处理">控制器原理与异常处理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="指令流水线与多处理器"><a class="header" href="#指令流水线与多处理器">指令流水线与多处理器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="总线和输入输出系统"><a class="header" href="#总线和输入输出系统">总线和输入/输出系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="总线概念与性能"><a class="header" href="#总线概念与性能">总线概念与性能</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="io接口与io方式"><a class="header" href="#io接口与io方式">I/O接口与I/O方式</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统-1"><a class="header" href="#操作系统-1">操作系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统基础"><a class="header" href="#操作系统基础">操作系统基础</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统的基本概念"><a class="header" href="#操作系统的基本概念">操作系统的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统的发展历程"><a class="header" href="#操作系统的发展历程">操作系统的发展历程</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="程序的运行环境"><a class="header" href="#程序的运行环境">程序的运行环境</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cpu运行环境"><a class="header" href="#cpu运行环境">CPU运行环境</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="中断和异常的处理"><a class="header" href="#中断和异常的处理">中断和异常的处理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="系统调用"><a class="header" href="#系统调用">系统调用</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="程序的链接与装入"><a class="header" href="#程序的链接与装入">程序的链接与装入</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存映像与地址空间"><a class="header" href="#内存映像与地址空间">内存映像与地址空间</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统结构"><a class="header" href="#操作系统结构">操作系统结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作系统引导"><a class="header" href="#操作系统引导">操作系统引导</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="虚拟机"><a class="header" href="#虚拟机">虚拟机</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程管理"><a class="header" href="#进程管理">进程管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程与线程"><a class="header" href="#进程与线程">进程与线程</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程与线程的基本概念"><a class="header" href="#进程与线程的基本概念">进程与线程的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程的状态与转换"><a class="header" href="#进程的状态与转换">进程的状态与转换</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="线程的实现"><a class="header" href="#线程的实现">线程的实现</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程与线程的组织与控制"><a class="header" href="#进程与线程的组织与控制">进程与线程的组织与控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="进程间通信"><a class="header" href="#进程间通信">进程间通信</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cpu调度与上下文切换"><a class="header" href="#cpu调度与上下文切换">CPU调度与上下文切换</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="调度的基本概念与目标"><a class="header" href="#调度的基本概念与目标">调度的基本概念与目标</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="调度的实现与算法"><a class="header" href="#调度的实现与算法">调度的实现与算法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="多处理机调度"><a class="header" href="#多处理机调度">多处理机调度</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="上下文及其切换机制"><a class="header" href="#上下文及其切换机制">上下文及其切换机制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="同步与互斥"><a class="header" href="#同步与互斥">同步与互斥</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="同步与互斥的基本概念"><a class="header" href="#同步与互斥的基本概念">同步与互斥的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="基本的实现方法"><a class="header" href="#基本的实现方法">基本的实现方法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="锁信号量与条件变量"><a class="header" href="#锁信号量与条件变量">锁、信号量与条件变量</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="经典同步问题"><a class="header" href="#经典同步问题">经典同步问题</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="死锁"><a class="header" href="#死锁">死锁</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="死锁的基本概念"><a class="header" href="#死锁的基本概念">死锁的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="死锁预防与避免"><a class="header" href="#死锁预防与避免">死锁预防与避免</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="死锁检测和解除"><a class="header" href="#死锁检测和解除">死锁检测和解除</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存管理"><a class="header" href="#内存管理">内存管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存管理基础"><a class="header" href="#内存管理基础">内存管理基础</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存管理的基本概念"><a class="header" href="#内存管理的基本概念">内存管理的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="连续分配管理方式"><a class="header" href="#连续分配管理方式">连续分配管理方式</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="页式管理与段式管理"><a class="header" href="#页式管理与段式管理">页式管理与段式管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="虚拟内存管理"><a class="header" href="#虚拟内存管理">虚拟内存管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="虚拟内存的基本概念"><a class="header" href="#虚拟内存的基本概念">虚拟内存的基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="请求页式管理与置换算法"><a class="header" href="#请求页式管理与置换算法">请求页式管理与置换算法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存映射文件与性能改进"><a class="header" href="#内存映射文件与性能改进">内存映射文件与性能改进</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件管理"><a class="header" href="#文件管理">文件管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件的基本概念与操作"><a class="header" href="#文件的基本概念与操作">文件的基本概念与操作</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件元数据与索引结点"><a class="header" href="#文件元数据与索引结点">文件元数据与索引结点</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件保护与结构"><a class="header" href="#文件保护与结构">文件保护与结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="目录管理"><a class="header" href="#目录管理">目录管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="目录的基本概念与操作"><a class="header" href="#目录的基本概念与操作">目录的基本概念与操作</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="硬链接与软链接"><a class="header" href="#硬链接与软链接">硬链接与软链接</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件系统"><a class="header" href="#文件系统">文件系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="文件系统结构与管理方法"><a class="header" href="#文件系统结构与管理方法">文件系统结构与管理方法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="虚拟文件系统与挂载"><a class="header" href="#虚拟文件系统与挂载">虚拟文件系统与挂载</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="输入输出io管理"><a class="header" href="#输入输出io管理">输入/输出(I/O)管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="io管理基础"><a class="header" href="#io管理基础">I/O管理基础</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="设备的基本概念与控制方式"><a class="header" href="#设备的基本概念与控制方式">设备的基本概念与控制方式</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="io软件层次结构与接口"><a class="header" href="#io软件层次结构与接口">I/O软件层次结构与接口</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="设备独立和驱动程序"><a class="header" href="#设备独立和驱动程序">设备独立和驱动程序</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="设备分配与假脱机技术"><a class="header" href="#设备分配与假脱机技术">设备分配与假脱机技术</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="设备驱动程序接口"><a class="header" href="#设备驱动程序接口">设备驱动程序接口</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="外存管理"><a class="header" href="#外存管理">外存管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="磁盘与固态硬盘管理"><a class="header" href="#磁盘与固态硬盘管理">磁盘与固态硬盘管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络-1"><a class="header" href="#计算机网络-1">计算机网络</a></h1>
+<h2 id="计算机网络概述"><a class="header" href="#计算机网络概述"><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0.html">计算机网络概述</a></a></h2>
+<h3 id="1-计算机网络基本概念"><a class="header" href="#1-计算机网络基本概念">1. <a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">计算机网络基本概念</a></a></h3>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AE%9A%E4%B9%89%E3%80%81%E7%BB%84%E6%88%90%E4%B8%8E%E5%8A%9F%E8%83%BD.html">计算机网络的定义、组成与功能</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%88%86%E7%B1%BB.html">计算机网络的分类</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E4%B8%BB%E8%A6%81%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87.html">计算机网络的主要性能指标</a></li>
+</ol>
+<h3 id="2-计算机网络体系结构"><a class="header" href="#2-计算机网络体系结构">2. <a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.html">计算机网络体系结构</a></a></h3>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84.html">计算机网络分层结构</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E3%80%81%E6%8E%A5%E5%8F%A3%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AD%89%E6%A6%82%E5%BF%B5.html">计算机网络协议、接口、服务等概念</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ISO_OSI%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B%E5%92%8CTCP_IP%E6%A8%A1%E5%9E%8B.html">ISO / OSI参考模型和TCP / IP模型</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络概述-1"><a class="header" href="#计算机网络概述-1">计算机网络概述</a></h1>
+<h2 id="1-计算机网络基本概念-1"><a class="header" href="#1-计算机网络基本概念-1">1. <a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">计算机网络基本概念</a></a></h2>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AE%9A%E4%B9%89%E3%80%81%E7%BB%84%E6%88%90%E4%B8%8E%E5%8A%9F%E8%83%BD.html">计算机网络的定义、组成与功能</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%88%86%E7%B1%BB.html">计算机网络的分类</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E4%B8%BB%E8%A6%81%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87.html">计算机网络的主要性能指标</a></li>
+</ol>
+<h2 id="2-计算机网络体系结构-1"><a class="header" href="#2-计算机网络体系结构-1">2. <a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.html">计算机网络体系结构</a></a></h2>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84.html">计算机网络分层结构</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E3%80%81%E6%8E%A5%E5%8F%A3%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AD%89%E6%A6%82%E5%BF%B5.html">计算机网络协议、接口、服务等概念</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ISO_OSI%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B%E5%92%8CTCP_IP%E6%A8%A1%E5%9E%8B.html">ISO / OSI参考模型和TCP / IP模型</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络基本概念"><a class="header" href="#计算机网络基本概念">计算机网络基本概念</a></h1>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AE%9A%E4%B9%89%E3%80%81%E7%BB%84%E6%88%90%E4%B8%8E%E5%8A%9F%E8%83%BD.html">计算机网络的定义、组成与功能</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%88%86%E7%B1%BB.html">计算机网络的分类</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E4%B8%BB%E8%A6%81%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87.html">计算机网络的主要性能指标</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络的定义组成与功能"><a class="header" href="#计算机网络的定义组成与功能">计算机网络的定义、组成与功能</a></h1>
+<h2 id="一计算机网络的定义"><a class="header" href="#一计算机网络的定义">（一）计算机网络的定义</a></h2>
+<p>一般认为，计算机网络是一个将众多分散的、自治的计算机系统，通过通信设备与线路连接起来，由功能完善的软件实现资源共享和信息传递的系统。</p>
+<h3 id="1-计算机网络简称网络"><a class="header" href="#1-计算机网络简称网络">1. 计算机网络(简称网络)</a></h3>
+<p>由若干<strong>结点</strong>(node，或译为节点)和连接这些结点的<strong>链路</strong>(link)组成。网络中的结点可以是计算机、集线器、交换机或路由器等。</p>
+<h3 id="2-internet互连网"><a class="header" href="#2-internet互连网">2. internet(互连网)</a></h3>
+<p>是一个通用名词，泛指由多个计算机网络互连而成的计算机网络。计算机网络之间可通过路由器互连，构成一个覆盖范围更广的计算机网络，这样的网络称为互连网(internet)，因此互连网通常被称为网络的网络。计算机网络把许多计算机连在一起，而互连网则把许多网络通过路由器连在一起。组成互连网的计算机网络之间可以使用<strong>任意的通信协议</strong>作为通信规则，不一定非要使用 TCP/IP 协议。</p>
+<h3 id="3-internet互联网或因特网"><a class="header" href="#3-internet互联网或因特网">3. Internet(互联网或因特网)</a></h3>
+<p>是一个专用名词，指当前全球最大的、开放的、由众多网络和路由器互连而成的特定计算机网络，它采用 <strong>TCP/IP</strong> 协议族作为通信规则。</p>
+<p>因此，(计算机)网络把许多计算机连接在一起，而互连网(internet)则把许多网络通过一些路由器连接在一起。与网络相连的计算机常称为主机。互联网(Internet)是全球性的也是最大范围的互连网。</p>
+<h2 id="二计算机网络的组成"><a class="header" href="#二计算机网络的组成">（二）计算机网络的组成</a></h2>
+<p>从不同的角度看，可以将计算机网络看成不同的组成。</p>
+<h3 id="1-从组成部分看"><a class="header" href="#1-从组成部分看">1. 从组成部分看</a></h3>
+<p>计算机网络主要由<strong>硬件</strong>、<strong>软件</strong>、<strong>协议</strong>三大部分组成。</p>
+<p>硬件主要由主机(也称端系统)、通信链路(如双绞线、光纤)、交换设备(如路由器、交换机等)和通信处理机(如网卡)等组成。</p>
+<p>软件主要包括各种实现资源共享的软件和方便用户使用的各种工具软件(如E-mail 程序、FTP程序、聊天程序等)。</p>
+<p>协议是计算机网络的核心，如同交通规则制约汽车驾驶一样，协议规定了网络传输数据时所遵循的规范。</p>
+<h3 id="2-从工作方式看"><a class="header" href="#2-从工作方式看">2. 从工作方式看</a></h3>
+<blockquote>
+<p>课本p9-p12详细介绍了计算机网络的边缘部分，其中着重强调了端系统之间的两种通信方式，p12-p17着重介绍了计算机网络的核心部分以及介绍了三种交换方式的不同，三种交换方式的介绍放在后文第（五）部分中介绍。</p>
+</blockquote>
+<p>计算机网络(这里主要指 Internet，即互联网)可分为<strong>边缘部分</strong>和<strong>核心部分</strong>。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/images/%E4%BA%92%E8%81%94%E7%BD%91%E7%9A%84%E8%BE%B9%E7%BC%98%E9%83%A8%E5%88%86%E4%B8%8E%E6%A0%B8%E5%BF%83%E9%83%A8%E5%88%86.jpg" alt="互联网的边缘部分与核心部分" /></p>
+<p><strong>边缘部分</strong>由所有连接到互联网上的供用户直接使用的主机组成，用来进行<strong>通信(如传输数据、音频或视频)和资源共享</strong>。</p>
+<p>在网络边缘的端系统之间的通信方式通常可划分为两大类：客户-服务器方式(C/S方式)和对等方式(P2P方式)。</p>
+<p><strong>核心部分</strong>由大量网络和连接这些网络的路由器组成，它为边缘部分<strong>提供连通性和交换服务</strong>。</p>
+<p>网络核心部分是互联网中最复杂的部分，因为网络中的核心部分要向网络边缘部分中的大量主机提供连通性，使边缘部分中的任何一台主机都能够与其他主机通信。</p>
+<p>在网络核心部分起特殊作用的是<strong>路由器</strong>(router)，它是一种专用计算机(但不叫作主机)。路由器是实现<strong>分组交换</strong>(packet switching)的关键构件，其任务是转发收到的分组，这是网络核心部分最重要的功能。</p>
+<h3 id="3-从功能组成上看"><a class="header" href="#3-从功能组成上看">3. 从功能组成上看</a></h3>
+<p>计算机网络由<strong>通信子网</strong>和<strong>资源子网</strong>组成。</p>
+<p>通信子网由各种传输介质、通信设备和相应的网络协议组成，它使网络具有数据传输、交换、控制和存储的能力，实现联网计算机之间的数据通信。</p>
+<p>资源子网是实现资源共享功能的设备及其软件的集合，向网络用户提供共享其他计算机上的硬件资源、软件资源和数据资源的服务。</p>
+<h2 id="三计算机网络的功能"><a class="header" href="#三计算机网络的功能">（三）计算机网络的功能</a></h2>
+<p>计算机网络的功能很多，现今的很多应用都与网络有关，主要有以下五大功能。</p>
+<h3 id="1-数据通信"><a class="header" href="#1-数据通信">1. 数据通信</a></h3>
+<p>数据通信是计算机网络最基本和最重要的功能，用来实现联网计算机之间各种信息的传输，并联系分散在不同地理位置的计算机，进行统一的调配、控制和管理。例如，文件传输、电子邮件等应用，离开了计算机网络就无法实现。</p>
+<h3 id="2-资源共享"><a class="header" href="#2-资源共享">2. 资源共享</a></h3>
+<p>资源共享既可是软件共享、数据共享受又可是硬件共享，它使计算机网络中的资源互通有无、分工协作，从而极大地提高了硬件资源、软件资源和数据资源的利用率。</p>
+<h3 id="3-分布式处理"><a class="header" href="#3-分布式处理">3. 分布式处理</a></h3>
+<p>当计算机网络中的某个计算机系统负荷过重时，可将其处理的某个复杂任务分配给网络中的其他计算机系统，从而利用空闲计算机资源来提高整个系统的利用率。</p>
+<h3 id="4-提高可靠性"><a class="header" href="#4-提高可靠性">4. 提高可靠性</a></h3>
+<p>计算机网络中的各台计算机可以通过网络互为替代机。</p>
+<h3 id="5-负载均衡"><a class="header" href="#5-负载均衡">5. 负载均衡</a></h3>
+<p>将工作任务均衡地分配给计算机网络中的各台计算机。</p>
+<p>除了以上几大主要功能，计算机网络还可实现电子化办公与服务、远程教育、娱乐等功能，满足了社会的需求，方便了人们的学习、工作和生活，具有巨大的经济效益。</p>
+<h2 id="四互联网的基本特点"><a class="header" href="#四互联网的基本特点">（四）互联网的基本特点</a></h2>
+<h3 id="1-连通性"><a class="header" href="#1-连通性">1. 连通性</a></h3>
+<p>所谓连通性(connectivity)，就是互联网使上网用户之间，不管相距多远(例如，相距数千公里)，都可以非常便捷、非常经济地(在很多情况下甚至是免费的)交换各种信息(数据，以及各种音频、视频)，好像这些用户终端都彼此直接连通一样。这与使用传统的电信网络有着很大的区别。我们知道,传统的电信网向用户提供的最重要的服务就是人与人之间的电话通信，因此电信网也具有连通性这个特点。但使用电信网的电话用户，往往要为此向电信网的运营商缴纳相当昂贵的费用，特别是长距离的越洋通信。但应注意，互联网具有虚拟的特点。例如，当你从互联网上收到一封电子邮件时，你可能无法准确知道对方是谁(朋友还是骗子)，也无法知道发信人的地点(在附近，还是在地球对面)。</p>
+<h3 id="2-共享"><a class="header" href="#2-共享">2. 共享</a></h3>
+<p>所谓共享就是指资源共享。资源共享的含义是多方面的，可以是信息共享、软件共享，也可以是硬件共享。例如，互联网上有许多服务器(就是一种专用的计算机)存储了大量有价值的电子文档(包括音频和视频文件)，可供上网的用户很方便地读取或下载(无偿或有偿)。由于网络的存在，这些资源好像就在用户身边一样，使用非常方便。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络的分类"><a class="header" href="#计算机网络的分类">计算机网络的分类</a></h1>
+<h2 id="1-按分布范围分类"><a class="header" href="#1-按分布范围分类">1. 按分布范围分类</a></h2>
+<ol>
+<li>广域网(WAN)。广域网的任务是提供长距离通信，运送主机所发送的数据，其覆盖范围通常是直径为几十到几千千米的区域。广域网是互联网的核心部分。连接广域网的各结点交换机的链路一般都是高速链路，具有较大的通信容量。</li>
+<li>城域网(MAN)。城域网的覆盖范围可以跨越几个街区甚至整个城市，覆盖区域的直径为5~50km。城域网大多采用以太网技术，因此有时也常并入局域网的范围讨论。</li>
+<li>局域网(LAN)。局域网一般用主机通过高速线路相连，覆盖范围较小，通常是直径为几十到几千米的区域。传统上，局域网使用广播技术，而广域网使用交换技术。</li>
+<li>个人区域网(PAN)。个人区域网是指在个人工作的地方将消费电子设备(如平板电脑、智能手机等)用无线技术连接起来的网络，也称无线个人区域网(WPAN)。</li>
+</ol>
+<h2 id="2-按传输技术分类"><a class="header" href="#2-按传输技术分类">2. 按传输技术分类</a></h2>
+<ol>
+<li>广播式网络。所有联网计算机都共享一个公共通信信道。当一台计算机利用共享通信信道发送报文分组时，所有其他计算机都会“收听”到这个分组。接收到该分组的计算机将通过检查目的地址来决定是否接收该分组。局域网基本上都采用广播式通信技术，广域网中的无线、卫星通信网络也采用广播式通信技术。</li>
+<li>点对点网络。每条物理线路连接一对计算机。若通信的两台主机之间没有直接连接的路，则它们之间的分组传输就要通过中间结点进行存储和转发，直至目的结点。</li>
+</ol>
+<h2 id="3-按拓扑结构分类"><a class="header" href="#3-按拓扑结构分类">3. 按拓扑结构分类</a></h2>
+<p>网络拓扑结构是指由网中结点(路由器、主机等)与通信线路之间的几何关系表示的网络主要指通信子网的拓扑结构。按网络的拓扑结构，可分为总线形、星形、环形和网状网络等。如下图所示。星形、总线形和环形网络多用于局域网，网状网络多用于广域网。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/images/%E5%87%A0%E7%A7%8D%E4%B8%8D%E5%90%8C%E7%9A%84%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84.jpg" alt="几种不同的网络拓扑结构" /></p>
+<ol>
+<li>总线形网络。用单根传输线把计算机连接起来。优点是建网容易、增/减结点方便、节省线路。缺点是重负载时通信效率不高、总线任意一处对故障敏感。</li>
+<li>星形网络。每个终端或计算机都以单独的线路与中央设备相连。中央设备一般是交换机或路由器。优点是便于集中控制和管理。缺点是成本高、中央设备对故障敏感。</li>
+<li>环形网络。所有计算机接口设备连接成一个环。环形网络最典型的例子是令牌环局域网。环既可以是单环，又可以是双环，环中信号是单向传输的。</li>
+<li>网状网络。一般情况下，每个结点至少有两条路径与其他结点相连，多用在广域网中。其有规则型和非规则型两种。优点是可靠性高。缺点是控制复杂、线路成本高。</li>
+</ol>
+<p>以上4种基本的网络拓扑结构可以互连为更复杂的网络。</p>
+<h2 id="4-按使用者分类"><a class="header" href="#4-按使用者分类">4. 按使用者分类</a></h2>
+<ol>
+<li>公用网(Publie Network)。指电信公司出资建造的大型网络。“公用”的意思是指所有愿意按电信公司的规定缴纳费用的人都可使用这种网络。</li>
+<li>专用网(Private Network)。指某个部门为满足本单位特殊业务的需要而建造的网络。这种网络不向本单位外的人提供服务,如铁路、电力、军队等部门的专用网。</li>
+</ol>
+<h2 id="5-按传输介质分类"><a class="header" href="#5-按传输介质分类">5. 按传输介质分类</a></h2>
+<p>传输介质可分为有线和无线两大类，因此网络可分为有线网络和无线网络。有线网络又可分双绞线网络、同轴电缆网络等，而无线网络又可分为蓝牙、微波、无线电等类型。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络的主要性能指标"><a class="header" href="#计算机网络的主要性能指标">计算机网络的主要性能指标</a></h1>
+<p>性能指标从不同方面度量计算机网络的性能。常用的性能指标如下。</p>
+<ol>
+<li>
+<p>速率(Speed)。指连接到网络上的结点在数字信道上传送数据的速率，也称数据传输速率、数据传输率、数据率或比特率，单位为b/s(比特/秒)或bit/s(有时也写为bps)。当数据率较高时，可用kb/s(k=10)、Mb/s (M=10)或Gb/s(G=10)表示。</p>
+</li>
+<li>
+<p>带宽(Bandwidth)。带宽原本表示通信线路允许通过的信号频率范围，单位是赫兹(Hz)。但在计算机网络中，带宽表示网络的通信线路所能传送数据的能力，是数字信道所能传送的“最高数据传输速率”的同义语，单位是比特/秒(b/s)。</p>
+</li>
+<li>
+<p>吞吐量(Throughput)。指单位时间内通过某个网络(或吐量)常用在对实际网络的测量中，受网络带宽的限制。</p>
+</li>
+<li>
+<p>时延(Delay)。指数据(一个报文或分组)从网络(或链路)的一端传送到另一端所需的总时间，它由4部分构成：发送时延、传播时延、处理时延和排队时延。</p>
+</li>
+<li>
+<p>时延带宽积。指发送端发送的第一个比特即将到达终点时，发送端已发出了多少比特，又称以比特为单位的链路长度，即时延带宽积=传播时延x信道带宽。如下图所示，考虑一个代表链路的圆柱形管道，其长度表示链路的传播时延，横截面积表示链路带宽，则时延带宽积表示该管道可以容纳的比特数量。
+<img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/images/%E6%97%B6%E5%BB%B6%E5%B8%A6%E5%AE%BD%E7%A7%AF.jpg" alt="时延带宽积" /></p>
+</li>
+<li>
+<p>往返时延(Round-Trip Time，RTT)。指从发送端发出一个短分组，到发送端收到来自接收端的确认(接收端收到数据后立即发送确认)总共经历的时延。在互联网中，往返时延还包括各中间结点的处理时延、排队时延及转发数据时的发送时延。</p>
+</li>
+<li>
+<p>信道利用率。用以指出某个信道有百分之多少的时间是有数据通过的。
+信道利用率=有数据通过时间/(有+无)数据通过时间</p>
+</li>
+</ol>
+<blockquote>
+<p>分组交换网中各种时延的计算(2010、2013、2023)</p>
+<ul>
+<li>发送时延，也称传输时延。结点将分组的所有比特推向链路所需的时间，即从发送分组的第一个比特算起，到该分组的最后一个比特发送完毕所需的时间。</li>
+</ul>
+<p>发送时延=分组长度/发送速率</p>
+<ul>
+<li>传播时延。电磁波在信道(传输介质)中传播一定的距离所花的时间，即一个比特从链路的一端传播到另一端所需的时间。</li>
+</ul>
+<p>传播时延=信道长度/电磁波在信道上的传播速率</p>
+<p>区分传输时延和传播时延。传输时延是路由器将分组推出所需的时间，是分组长度和链路谕速率的函数。传播时延是一个比特从一台路由器传播至另一台路由器所需的时间，是两台由器之间距离的函数，而与分组长度或链路传输速率无关。</p>
+<ul>
+<li>处理时延。数据在交换结点为存储转发而进行的一些必要处理所花的时间。例如，分析分组的首部、从分组中提取数据、差错检验或查找合适的路由等。</li>
+<li>排队时延。分组在进入路由器后要先在输入队列中排队等待处理。路由器确定转发端口后，还要在输出队列中排队等待转发。这就产生了排队时延。因此，数据在网络中经历的总时延就是以上4部分时延之和：
+总时延=发送时延+传播时延+处理时延+排队时延</li>
+</ul>
+<p>处理时延和排队时延通常可忽略不计(除非另有说明)。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络体系结构"><a class="header" href="#计算机网络体系结构">计算机网络体系结构</a></h1>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84.html">计算机网络分层结构</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E3%80%81%E6%8E%A5%E5%8F%A3%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AD%89%E6%A6%82%E5%BF%B5.html">计算机网络协议、接口、服务等概念</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ISO_OSI%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B%E5%92%8CTCP_IP%E6%A8%A1%E5%9E%8B.html">ISO / OSI参考模型和TCP / IP模型</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络分层结构"><a class="header" href="#计算机网络分层结构">计算机网络分层结构</a></h1>
+<p>计算机网络的各层及其协议的集合称为网络的体系结构(Architecture)。换言之，计算机网络的体系结构就是这个计算机网络及其所应完成的功能的精确定义。要强调的是，这些功能究竟是用何种硬件或软件完成的，是一个遵循这种体系结构的实现(Implementation)问题。体系结构是抽象的，而实现则是具体的，是真正在运行的计算机硬件和软件。计算机网络体系结构通常都具有可分层的特性，它将复杂的大系统分成若干较容易实现的层次。</p>
+<p>分层的基本原则如下:</p>
+<ol>
+<li>每层都实现一种相对独立的功能，降低大系统的复杂度。</li>
+<li>各层之间的接口自然清晰，易于理解，相互交流尽可能少。</li>
+<li>各层功能的精确定义独立于具体的实现方法，可以采用最合适的技术来实现。</li>
+<li>保持下层对上层的独立性，上层单向使用下层提供的服务。</li>
+<li>整个分层结构应能促进标准化工作。</li>
+</ol>
+<p>在计算机网络分层结构中，第n层中的活动元素通常称为第n层<strong>实体</strong>。具体来说，实体指任何可发送或接收信息的硬件或软件进程，通常是某个特定的软件模块。不同机器上的同一层称为<strong>对等层</strong>，同一层的实体称为<strong>对等实体</strong>。第n层实体实现的服务为第n+1层所用。在这种情况下，第n层称为服务提供者，第n+1层则服务于用户。</p>
+<p>在计算机网络体系结构中，对等层之间传送的数据单位称为该层的协议数据单元(PDU)，第n层的 PDU 记为n-PDU。各层的 PDU 都分为数据和控制信息两部分。</p>
+<p>服务数据单元(SDU)：为完成用户所要求的功能而传送的数据。第n层的SDU记为n-SDU。</p>
+<p>协议控制信息(PCI)：控制协议操作的信息。第n层的PCI记为n-PCI。</p>
+<p>每层的协议数据单元都有一个通俗的名称，如物理层的PDU称为比特流，数据链路层的PDU称为帧，网络层的PDU称为分组，传输层的PDU称为报文段。当在各层之间传输数据时，将从第n+1层收到的PDU作为第n层的SDU，加上第n层的PCI,就封装成了第n层的PDU，交给第n-1层后作为SDU发送，接收方接收时做相反的处理，因此可知三者的关系为<strong>n-SDU+n-PCI=n-PDU=(n-1)-SDU</strong>，其变换过程如下图所示。</p>
+<p>具体地，层次结构的含义包括如下几方面：</p>
+<ol>
+<li>第n层的实体不仅要使用第n-1层的服务来实现自身定义的功能，而且要向第n+1层提供本层的服务，该服务是第n层及其下面各层提供的服务总和。</li>
+<li>最低层只提供服务，是整个层次结构的基础：最高层面向用户提供服务。</li>
+<li>上一层只能通过相邻层间的接口使用下一层的服务，而不能调用其他层的服务。</li>
+<li>当两台主机通信时，对等层在逻辑上有一个直接信道，表现为能直接将信息传送到对方。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="计算机网络协议接口服务等概念"><a class="header" href="#计算机网络协议接口服务等概念">计算机网络协议、接口、服务等概念</a></h1>
+<h2 id="1-协议"><a class="header" href="#1-协议">1. 协议</a></h2>
+<p>要在网络中做到有条不紊地交换数据，就必须遵循一些事先约定好的规则，其规定了所交换数据的格式及有关的同步问题。为了在网络中进行数据交换而建立的这些规则、标准或约定称为网络协议(Network Protocol)，是控制在<strong>对等实体</strong>之间进行通信的规则的集合，是水平的。不对等实体之间是没有协议的，如用TCP/IP协议栈通信的两个结点A和结点B，结点A的传输层和结点B的传输层之间存在协议，但结点A的传输层和结点B的网络层之间不存在协议。</p>
+<p>协议由语法、语义和同步三部分组成。</p>
+<ol>
+<li>语法。数据与控制信息的格式。例如,TCP报文段格式就是由TCP协议的语法定义的。</li>
+<li>语义。即需要发出何种控制信息、完成何种动作及做出何种应答。例如，在建立TCP连接的三次握手时所执行的操作就是由TCP协议的语义定义的。</li>
+<li>同步(或时序)。执行各种操作的条件、时序关系等，即事件实现顺序的详细说明。例如，建立TCP连接的三次握手操作的时序关系就是由TCP协议的同步定义的。</li>
+</ol>
+<h2 id="2-接口"><a class="header" href="#2-接口">2. 接口</a></h2>
+<p>同一结点内相邻两层的实体交换信息的逻辑接口称为服务访问点(Service Access Point，SAP)。每层只能为紧邻的层之间定义接口，而不能跨层定义接口。服务是通过SAP提供给上层使用的，第n层的SAP就是第n+1层可以访问第n层服务的地方。</p>
+<p>再次强调5个不得不知的专业术语:</p>
+<ol>
+<li>服务数据单元(SDU)。第n层的服务数据单元，记作 n-SDU。</li>
+<li>协议控制信息(PCI)。第n层的协议控制信息，记作n-PCI。</li>
+<li>接口控制信息(ICI)。第n层的接口控制信息，记作n-ICI。</li>
+<li>协议数据单元(PDU)。第n层的服务数据单元(SDU)+第n层的协议控制信息(PCI)=第n层的协议数据单元，即n-SDU+n-PCI=n-PDU,表示的是同等层对等实体间传送的数据单元。另外，n-PDU=(n-1)-SDU。这个公式看完，后面的内容就会很清楚。例如，网络层的整个IP分组交到数据链路层，整个IP分组成为数据链路层的数据部分(现在不理解可直接跳过)。</li>
+<li>接口数据单元(IDU)。第n层的服务数据单元(SDU)+第n层的接口控制信息(ICI)=第n层的接口数据单元，即n-SDU+-ICI=n-IDU，表示的是在相邻层接口间传送的数据单元。</li>
+</ol>
+<h2 id="3-服务"><a class="header" href="#3-服务">3. 服务</a></h2>
+<p>服务是指下层为紧邻的上层提供的功能调用，是垂直的。对等实体在协议的控制下，使得本层能为上层提供服务，但要实现本层协议，还需要使用下层提供的服务。当上层使用下层提供的服务时，必须与下层交换一些命令，这些命令称为服务原语。OSI参考模型将原语划分为四类：</p>
+<ol>
+<li>请求(Request)。由服务用户发往服务提供者，请求完成某项工作。</li>
+<li>指示(Indication)。由服务提供者发往服务用户，指示用户做某件事情。</li>
+<li>响应(Response)。由服务用户发往服务提供者，作为对指示的响应。</li>
+<li>证实(Confirmation)。由服务提供者发往服务用户,作为对请求的证实。</li>
+</ol>
+<p>这四类原语用于不同的功能，如建立连接、传输数据和断开连接等。有应答服务包括全部四类原语，而无应答服务则只有请求和指示两类原语。</p>
+<p>注意，协议和服务概念上是不一样的。首先，只有本层协议的实现才能保证向上一层提供服务。本层的服务用户只能看见服务而无法看见下面的协议，即下面的协议对上层的服务用户是透明的。其次，协议是“水平的”，即协议是控制对等实体之间通信的规则。但是，服务是“垂真的”，即服务是由下层通过层间接口向上层提供的。另外，并非在一层内完成的全部功能都称为服务，只有那些能够被高一层实体“看得见”的功能才称为服务。</p>
+<h3 id="三种计算机网络提供的服务"><a class="header" href="#三种计算机网络提供的服务">三种计算机网络提供的服务</a></h3>
+<p>计算机网络提供的服务可按以下三种方式分类。</p>
+<h4 id="1面向连接服务与无连接服务"><a class="header" href="#1面向连接服务与无连接服务">(1)面向连接服务与无连接服务</a></h4>
+<p>在面向连接服务中，通信前双方必须先建立连接，分配相应的资源(如缓冲区)，以保证通信能正常进行，传输结束后释放连接和占用的资源。因此这种服务可分为连接建立、数据传输和连接释放三个阶段。例如，TCP就是一种面向连接服务的协议。</p>
+<p>在无连接服务中，通信前双方不需要先建立连接，需要发送数据时可直接发送，将每个带有目的地址的包(报文分组)传送到线路上，由系统选定路线进行传输。这种服务常被描述为“尽最大努力交付”，是一种不可靠的服务。例如，IP、UDP 就是一种无连接服务的协议。</p>
+<h4 id="2可靠服务和不可靠服务"><a class="header" href="#2可靠服务和不可靠服务">(2)可靠服务和不可靠服务</a></h4>
+<p>可靠服务是指网络具有纠错、检错、应答机制，能保证数据正确、可靠地传送到目的地。不可靠服务是指网络只是尽量让数据正确、可靠地传送到目的地，是一种尽力而为的服务。</p>
+<p>对于提供不可靠服务的网络，其网络的正确性、可靠性要由应用或用户来保障。例如，用户收到信息后要判断信息的正确性，若不正确，则用户就要把出错信息报告给信息的发送者，以便发送者采取纠正措施。通过用户的这些措施，可将不可靠服务变成可靠服务。</p>
+<h4 id="3有应答服务和无应答服务"><a class="header" href="#3有应答服务和无应答服务">(3)有应答服务和无应答服务</a></h4>
+<p>有应答服务是指接收方在收到数据后向发送方给出相应的应答，该应答由传输系统内部自动实现，而不由用户实现。发送的应答既可以是肯定应答，又可以是否定应答，通常在接收到的数据有错误时发送否定应答。例如，文件传输服务就是一种有应答服务。</p>
+<p>无应答服务是指接收方收到数据后不自动给出应答。若需要应答，则由高层实现。例如，对于 WWW服务，客户端收到服务器发送的页面文件后不给出应答。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="iso--osi参考模型和tcp--ip模型"><a class="header" href="#iso--osi参考模型和tcp--ip模型">ISO / OSI参考模型和TCP / IP模型</a></h1>
+<p>OSI的七层协议体系结构的概念清楚，理论也较完整，但它既复杂又不实用。TCP/IP体系结构则不同，它现在得到了非常广泛的应用。TCP/IP 是一个四层的体系结构，它包含应用层，运输层，网际层和链路层 (网络接口层)。用网际层这个名字是强调本层解决不同网络的互连间题。在互联网的标准文栏[RFC 1122, STD3]中，体系结构中的底层叫作链路层，但接着又说明了链路层就是媒体接入层。但也有把链路层称为网络接口层的[COME06]或子网层的[PETE12]。从实质上讲，TCP/IP只有最上面的三层，因为最下面的链路层并没有属于 TCP/IP 体系的具体协议。链路层所使用的各种局域网标准，并非由IETF而是由IEEE的802委员会下属的各工作组负责制定的。在讲授计算机网络原理时往往采取另外的办法，即综合OSI和TCP/IP的优点，采用如图所示的五层协议的体系结构，这对阐述计算机网络的原理是十分方便的。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/images/%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="参考模型示意图" /></p>
+<h2 id="1-osi参考模型"><a class="header" href="#1-osi参考模型">1. OSI参考模型</a></h2>
+<p>国际标准化组织 (ISO) 提出的网络体系结构模型称为开放系统互连参考模型 (OSI/RM)，通常简称为OSI参考模型。OSI参考模型有 7层，自下而上依次为物理层，数据链路层，网络层，传输层，会话层，表示层，应用层。低三层统称通信子网，是为联网而附加的通信设备，完成数据的传输功能：高三层统称资源子网，相当于计算机系统，完成数据的处理等功能。传输层承上启下。</p>
+<div class="table-wrapper"><table><thead><tr><th>层级</th><th>名称</th><th>功能描述</th><th>常见协议/技术</th><th>数据单位</th></tr></thead><tbody>
+<tr><td>7</td><td>应用层 (Application)</td><td>提供网络服务给用户应用程序，如文件传输、电子邮件、远程登录等。</td><td>HTTP, FTP, SMTP, DNS</td><td>数据 (Data)</td></tr>
+<tr><td>6</td><td>表示层 (Presentation)</td><td>负责数据格式的转换、加密解密、数据压缩等工作，确保数据在应用层可以被正确理解。</td><td>SSL/TLS, JPEG, MPEG</td><td>数据 (Data)</td></tr>
+<tr><td>5</td><td>会话层 (Session)</td><td>管理应用程序之间的会话，负责建立、管理和终止会话，支持对话控制和数据同步。</td><td>RPC, NetBIOS, PPTP</td><td>数据 (Data)</td></tr>
+<tr><td>4</td><td>传输层 (Transport)</td><td>提供端到端的数据传输服务，确保数据包的完整性与顺序，支持流量控制、差错检测与纠正。</td><td>TCP, UDP</td><td>段 (Segment)</td></tr>
+<tr><td>3</td><td>网络层 (Network)</td><td>负责数据包的路由选择和转发，通过逻辑地址（如IP地址）将数据包从源节点发送到目的节点，可能跨越多个网络。</td><td>IP, ICMP, OSPF, BGP</td><td>数据包 (Packet)</td></tr>
+<tr><td>2</td><td>数据链路层 (Data Link)</td><td>负责将数据封装成帧，并提供物理地址（MAC地址）的访问和控制，确保数据帧的无误传输，处理错误检测和纠正。</td><td>Ethernet, PPP, MAC</td><td>帧 (Frame)</td></tr>
+<tr><td>1</td><td>物理层 (Physical)</td><td>定义了物理设备的标准，如电缆、信号、电压等，负责比特流在物理介质上的传输。</td><td>光纤, 同轴电缆, RJ-45, USB</td><td>比特 (Bit)</td></tr>
+</tbody></table>
+</div>
+<h3 id="1物理层"><a class="header" href="#1物理层">(1)物理层</a></h3>
+<p>物理层的传输单位是<strong>比特</strong>，功能是在物理介质上为数据端设备透明地传输原始比特流。物理层主要研究：</p>
+<ol>
+<li>通信链路与通信节点的连接的电路接口的参数，如机械形状和尺寸、引脚的数量和排列等，例如Rj45网线接口。</li>
+<li>物理层规定了通信链路上所传输的信号的意义与电气特征，例如指定某种信号的表示为0或1,这种信号可以是高低电平或其他信号。</li>
+</ol>
+<p>物理层协议并不包括例如双绞线、光缆与无线介质等物理介质，这些传输介质在物理层协议下面，因此有人将物理介质当作第0层。</p>
+<h3 id="2数据链路层"><a class="header" href="#2数据链路层">(2)数据链路层</a></h3>
+<p>数据链路层的传输单位是<strong>帧</strong>。两台主机之间的数据传输总是在一段一段的链路上进行的，这就需要使用专门的链路层协议。主要作用是加强物理层传输原始比特流的功能，将物理层提供的可能出错的物理连接改造为逻辑上无差错的数据链路。数据链路层将网络层交来的IP分组封装成帧，并且可靠地传输到相邻节点的网络层，实现节点之间的<strong>差错控制</strong>和<strong>流量控制</strong>的功能。</p>
+<p>广播式网络在数据链路层还要处理新的问题，即如何控制对共享信道的访问(例如无线局域网)。</p>
+<h3 id="3网络层"><a class="header" href="#3网络层">(3)网络层</a></h3>
+<p>网络层的传输单位是<strong>数据报</strong>，它关心的是通信子网的运行控制，主要任务是将网络层的协议数据单元(分组)从源主机传输到目的主机，为分组交换网上的不同主机提供通信服务。关键问题是对分组进行路径选择，并实现流量控制、拥塞控制、差错控制和网际互联等功能。网络层既提供有连接可靠的虚电路服务，又提供无连接不可靠的数据报服务。</p>
+<p>工作在网络层的路由器进行转发工作时，会根据网络情况，利用相应的路由算法选择出一条合适的路径。</p>
+<h3 id="4传输层"><a class="header" href="#4传输层">(4)传输层</a></h3>
+<p>传输层也称为运输层，负责主机两个进程之间的通信，提供端到端的流量控制、差错控制、连接建立与释放、可靠传输管理等服务，传输层仅提供有连接可靠的服务。</p>
+<p>数据链路层提供的是点对点的通信，即主机到主机之间的通信，而网络层提供的是端到端的通信，即运行在两个主机上的不同进程之间的通信，两者不同。</p>
+<p>通过传输层的屏蔽，高层用户看不到通信子网的交替与变化。因为一台主机可同时运行多个进程，所以传输层具有<strong>复用和分用</strong>的功能。复用是指多个应用层进程可同时使用下面传输层的服务，分用是指传输层将收到的信息分别交付给上面应用层中相应的进程。</p>
+<blockquote>
+<p>在OSI参考模型中，数据链路层、网络层、传输层都有流量控制的功能，但三层侧重点各有不同：</p>
+<ol>
+<li>数据链路层是相邻节点间的流量控制</li>
+<li>网络层是整个网络中的流量控制</li>
+<li>传输层是端到端的流量控制</li>
+</ol>
+</blockquote>
+<h3 id="5会话层"><a class="header" href="#5会话层">(5)会话层</a></h3>
+<p>会话层允许不同主机上的各个进程之间进行会话。这种服务主要为表示层实体或用户进程建立连接，并在连接上有序的传输数据，这就是会话，也称<strong>建立同步</strong>(SYN)。会话层负责管理主机间的会话进程。包括建立、管理和终止进程间的会话。会话层包含一种称为<strong>检查点</strong>的机制来维持可靠会话，使通信会话在通信失效时从检查点继续恢复通信，即断点下载的原理。</p>
+<h3 id="6表示层"><a class="header" href="#6表示层">(6)表示层</a></h3>
+<p>表示层主要处理在不同主机中交换信息的表示方式。不同机器采用的编码和表示方式不同，为了使不同表示方法的数据和信息之间能够互相交换，表示层采用抽象的标准方法定义数据结构，并采用标准的编码方式。此外，数据压缩、加密和解密也是表示层的功能。</p>
+<h3 id="7应用层"><a class="header" href="#7应用层">(7)应用层</a></h3>
+<p>应用层是OSI参考模型的最高层，是用户与网络的接口。应用层为特定类型的网络应用提供访问OSI参考模型环境的手段。用户的实际应用多种多样，这就要求应用层采用不同的应用协议来满足不同类型的应用要求，因此应用层是最复杂的一层，使用的协议也最多。</p>
+<h2 id="2-tcpip模型"><a class="header" href="#2-tcpip模型">2. TCP/IP模型</a></h2>
+<p>TCP/IP因为得到广泛的应用而成为事实上的国际标准。</p>
+<p>IP是互联网中的核心协议，TCP/IP可以为各式各样的应用提供服务(即everything over IP)，TCP/IP还允许IP在各种网络构成的互联网上运行(所谓IP over everything)。</p>
+<div class="table-wrapper"><table><thead><tr><th>层级</th><th>名称</th><th>功能描述</th><th>常见协议/技术</th><th>数据单位</th></tr></thead><tbody>
+<tr><td>4</td><td>应用层 (Application Layer)</td><td>提供应用程序之间的通信服务，涵盖了OSI模型中的应用层、表示层和会话层的功能。支持各种应用协议如HTTP、FTP、DNS、SMTP等。</td><td>HTTP, FTP, SMTP, DNS, SSH, Telnet</td><td>数据 (Data)</td></tr>
+<tr><td>3</td><td>传输层 (Transport Layer)</td><td>负责端到端的数据传输，确保数据的可靠性和顺序传递。提供流量控制、差错检测与纠正。主要协议有TCP和UDP。</td><td>TCP, UDP</td><td>段 (Segment)</td></tr>
+<tr><td>2</td><td>网络层 (Internet Layer)</td><td>负责逻辑地址的处理（如IP地址），数据包的路由选择和转发。确保数据包能够跨越不同的网络到达目的地。对应OSI模型中的网络层。</td><td>IP, ICMP, ARP, RIP, OSPF, BGP</td><td>数据包 (Packet)</td></tr>
+<tr><td>1</td><td>网络接口层 (Network Interface Layer)</td><td>处理数据链路层和物理层的功能，负责将数据帧通过物理介质进行传输。确保数据在同一局域网或链路上传输，包含数据帧的封装、地址访问和物理传输。</td><td>Ethernet, Wi-Fi, Token Ring, PPP</td><td>帧/比特 (Frame/Bit)</td></tr>
+</tbody></table>
+</div>
+<h3 id="1网络接口层"><a class="header" href="#1网络接口层">(1)网络接口层</a></h3>
+<p>网络接口层的功能类似于OSI参考模型的的物理层和数据链路层，其作用是从主机或节点接受IP分组，并将它们发送到指定的物理网络上。但TCP/IP并未具体描述网络接口层的功能和协议，只是指出主机必须使用某种协议与网络连接，以便在其上传送IP分组。具体的物理网络可以是各种类型的局域网，如以太网、令牌环网等，又可以是电话网、ATM等公共数据网络。</p>
+<h3 id="2网际层"><a class="header" href="#2网际层">(2)网际层</a></h3>
+<p>网际层(主机-主机)是TCP/IP体系结构的关键部分，功能上它与OSI参考模型的网络层非常相似。网际层将分组发往任何网络，并为其独立地选择合适的路由，但不保证各个分组有序地到达，各个分组的有序和可靠交付由高层负责。网际层仅提供无连接不可靠的IP，数据传输的单位是<strong>IP数据报</strong>。当前采用的普遍是IPV4，下一版本是IPV6。</p>
+<h3 id="3传输层"><a class="header" href="#3传输层">(3)传输层</a></h3>
+<p>传输层(应用-应用或进程-进程)的功能同样与OSI参考模型中的传输层类似，即使得发送端和目的端主机上的对等实体进行会话。</p>
+<p>传输层主要使用以下两种协议：</p>
+<ol>
+<li>传输控制协议(Transmission Control Protocol, TCP)。它是面向连接的，传输数据之前必须先建立连接，能够进行可靠的交付。数据传输的单位是<strong>报文段</strong>。</li>
+<li>用户数据报协议(user Datagram Protocol, UDP)。它是无连接的，不保证提供可靠的交付，只能“尽最大努力交付”。数据传输的基本单位是<strong>用户数据报</strong>。</li>
+</ol>
+<h3 id="4应用层"><a class="header" href="#4应用层">(4)应用层</a></h3>
+<p>应用层(用户-用户)包含所有的高层协议，如虚拟终端协议(Telnet)、文件传输协议(FTP)、域名解析服务(DNS)、电子邮件协议(SMTP)和超文本传输协议(HTTP)</p>
+<h2 id="3-tcpip模型与osi参考模型的比较"><a class="header" href="#3-tcpip模型与osi参考模型的比较">3. TCP/IP模型与OSI参考模型的比较</a></h2>
+<p>相似之处：</p>
+<ol>
+<li>二者都分层</li>
+<li>二者都基于独立的协议栈的概念</li>
+<li>二者都解决异构网络的互联</li>
+</ol>
+<p>不同之处：</p>
+<ol>
+<li>OSI精确定义了协议、服务、接口，而TCP/IP模型没有加以区分</li>
+<li>OSI有七层，而TCP/IP只有四层，进行了一些层的合并与逻辑简化</li>
+<li>OSI先有模型，后有协议规范，通用性良好，适合描述各种网络。而TCP/IP模型恰好相反，即先有协议栈，后建立模型，因此不适用于其他的任何非TCP/IP的网络。</li>
+<li>OSI参考模型在网络层支持有连接和无连接的通信，而在传输层仅有面向连接的通信。而TCP/IP模型则认为可靠性是端到端的问题，因此它在网际层仅有一种无连接的通信模式。但传输层支持无连接和面向连接的两种模式。</li>
+</ol>
+<h2 id="4-结合两种模型的五层参考模型"><a class="header" href="#4-结合两种模型的五层参考模型">4. 结合两种模型的五层参考模型</a></h2>
+<p>在学习中我们往往采取折中的想法，即结合OSI参考模型和TCP/IP模型的5层模型，如下表所示：</p>
+<div class="table-wrapper"><table><thead><tr><th>层级</th><th>名称</th><th>对应OSI模型的层级</th><th>对应TCP/IP模型的层级</th><th>功能描述</th></tr></thead><tbody>
+<tr><td>5</td><td>应用层 (Application)</td><td>应用层、表示层、会话层</td><td>应用层</td><td>提供各种网络服务与应用程序的交互。</td></tr>
+<tr><td>4</td><td>传输层 (Transport)</td><td>传输层</td><td>传输层</td><td>提供端到端的数据传输服务，确保数据完整性与可靠传递。</td></tr>
+<tr><td>3</td><td>网络层 (Network)</td><td>网络层</td><td>网络层</td><td>负责逻辑地址的处理与路由选择，确保数据包到达正确的目的地。</td></tr>
+<tr><td>2</td><td>数据链路层 (Data Link)</td><td>数据链路层</td><td>网络接口层</td><td>负责数据帧的封装与传输，处理物理地址的访问与控制。</td></tr>
+<tr><td>1</td><td>物理层 (Physical)</td><td>物理层</td><td>网络接口层</td><td>处理数据在物理介质上的传输，如电缆和信号。</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="物理层"><a class="header" href="#物理层">物理层</a></h1>
+<p>首先要强调指出，物理层考虑的是怎样才能在连接各种计算机的传输媒体上传输数据比特流，而不是指具体的传输媒体。大家知道，现有的计算机网络中的硬件设备和传输媒体的种类非常繁多，而通信手段也有许多不同方式。物理层的作用正是要尽可能地屏敲掉这些传输媒体和道信手段的差异，使物理层上面的数据链路层感觉不到这些差异，这样就可使数据链路层只需要考虑如何完成本层的协议和服务，而不必考虑网络具体的传输媒体和通信手段是什么。用于物理层的协议也常称为物理层规程(procedure)。其实物理层规程就是物理层协议。只是在 "协议" 这个名词出现之前人们就先使用了 "规程" 这一名词。</p>
+<p>可以将物理层的主要任务描述为确定与传输媒体的接口有关的一些特性，即:</p>
+<ol>
+<li>机械特性：指明接口所用接线器的形状和尺寸，引脚数目和排列，固定和锁定装置等。平时常见的各种规格的接插件都有严格的标准化的规定。</li>
+<li>电气特性：指明在接口电缆的各条线上出现的电压的范围。</li>
+<li>功能特性：指明某条线上出现的某一电平的电压的意义。</li>
+<li>过程特性：指明对于不同功能的各种可能事件的出现顺序。</li>
+</ol>
+<p>以上便是物理层接口的特性。</p>
+<p>大家知道，数据在计算机内部多采用并行传输方式。但数据在通信线路(传输媒体)上的传输方式一般都是串行传输(这是出于经济上的考虑)，即逐个比特按照时间顺序传输。因此物理层还要完成传输方式的转换。</p>
+<p>具体的物理层协议种类较多。这是因为物理连接的方式很多(例如，可以是点对点的，也可以采用多点连接或广播连接)，而传输媒体的种类也非常之多(如架空明线。双绞线，对称电缆，同轴电缆，光缆，以及各种波段的无线信道等)。因此在学习物理层时，应将重点放在掌握基本概念上。</p>
+<h2 id="1-通信基础"><a class="header" href="#1-通信基础">1. <a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80.html">通信基础</a></a></h2>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E4%BF%A1%E9%81%93%E3%80%81%E4%BF%A1%E5%8F%B7%E3%80%81%E5%B8%A6%E5%AE%BD%E3%80%81%E7%A0%81%E5%85%83%E3%80%81%E6%B3%A2%E7%89%B9%E3%80%81%E9%80%9F%E7%8E%87%E3%80%81%E4%BF%A1%E6%BA%90%E4%B8%8E%E4%BF%A1%E5%AE%BF%E7%AD%89%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E5%A5%88%E5%A5%8E%E6%96%AF%E7%89%B9%E5%AE%9A%E7%90%86%E4%B8%8E%E9%A6%99%E5%86%9C%E5%AE%9A%E7%90%86.html">奈奎斯特定理与香农定理</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%B0%83%E5%88%B6.html">编码与调制</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2%E3%80%81%E6%8A%A5%E6%96%87%E4%BA%A4%E6%8D%A2%E4%B8%8E%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.html">电路交换、报文交换与分组交换</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E6%95%B0%E6%8D%AE%E6%8A%A5%E4%B8%8E%E8%99%9A%E7%94%B5%E8%B7%AF.html">数据报与虚电路</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="通信基础"><a class="header" href="#通信基础">通信基础</a></h1>
+<ol>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E4%BF%A1%E9%81%93%E3%80%81%E4%BF%A1%E5%8F%B7%E3%80%81%E5%B8%A6%E5%AE%BD%E3%80%81%E7%A0%81%E5%85%83%E3%80%81%E6%B3%A2%E7%89%B9%E3%80%81%E9%80%9F%E7%8E%87%E3%80%81%E4%BF%A1%E6%BA%90%E4%B8%8E%E4%BF%A1%E5%AE%BF%E7%AD%89%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.html">信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E5%A5%88%E5%A5%8E%E6%96%AF%E7%89%B9%E5%AE%9A%E7%90%86%E4%B8%8E%E9%A6%99%E5%86%9C%E5%AE%9A%E7%90%86.html">奈奎斯特定理与香农定理</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A0%81%E4%B8%8E%E8%B0%83%E5%88%B6.html">编码与调制</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2%E3%80%81%E6%8A%A5%E6%96%87%E4%BA%A4%E6%8D%A2%E4%B8%8E%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.html">电路交换、报文交换与分组交换</a></li>
+<li><a href="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/%E6%95%B0%E6%8D%AE%E6%8A%A5%E4%B8%8E%E8%99%9A%E7%94%B5%E8%B7%AF.html">数据报与虚电路</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="信道信号带宽码元波特速率信源与信宿等基本概念"><a class="header" href="#信道信号带宽码元波特速率信源与信宿等基本概念">信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念</a></h1>
+<p>通信的目的是在信源和信宿之间传送<strong>消息(message)</strong>。消息可以是语音、文字、图像、视频等各种信息表现形式，而 <strong>数据(data)</strong> 是承载和传递消息的实体。数据是经过特定方式编码后的信息，通常表现为有意义的符号序列或二进制序列。</p>
+<h2 id="1-数据"><a class="header" href="#1-数据">1. 数据</a></h2>
+<p><strong>数据</strong>是用于表示消息的符号序列或比特序列。在计算机网络中，数据通常以二进制的形式表示，即由“0”和“1”组成的比特序列。数据可以表示文字、音频、视频、图像等各种信息。</p>
+<h2 id="2-信号"><a class="header" href="#2-信号">2. 信号</a></h2>
+<p><strong>信号(signal)</strong> 是数据的电气或电磁表现形式。信号用于在传输介质上传递数据，根据信号的不同形式，可以将其分为以下两类：</p>
+<ul>
+<li>
+<p><strong>模拟信号（或连续信号）</strong> ：信号的参数（如幅度、频率、相位等）的取值是连续的。在模拟信号中，代表信息的物理量在一个范围内可以取任意值。例如，声音在空气中的传播是一种模拟信号。</p>
+</li>
+<li>
+<p><strong>数字信号（或离散信号）</strong> ：信号的参数的取值是离散的。在数字信号中，信息用有限的、离散的电平表示，通常是二进制形式（如0和1）。数字信号在现代计算机网络中应用广泛。</p>
+</li>
+</ul>
+<p>此外，根据信号的频谱范围和传输方式，信号可以进一步分为基带信号和宽带信号：</p>
+<ul>
+<li>
+<p><strong>基带信号</strong> 是原始的未经过调制的信号，通常直接表示数据的形式，如计算机输出的二进制数据流直接用不同的电压来表示。基带信号的频率范围从零开始，并且其最高频率通常等于其数据速率。基带信号通常用于短距离的有线传输，例如以太网。</p>
+</li>
+<li>
+<p><strong>宽带信号</strong> 则是经过调制后的信号，频率范围较宽，适合在更高频率上传输数据。宽带信号常用于远距离的有线或无线传输，例如通过调制将基带信号转换为高频信号，以适应长距离传输需求。</p>
+</li>
+</ul>
+<blockquote>
+<p>基带信号使用不同的电压表示数字信号0和1，然后送到数字信道上运输，称为<strong>基带传输</strong>，宽带信号首先将基带信号进行调制，形成频分复用模拟信号，然后送到模拟信道上进行传输，称为<strong>宽带传输</strong>。</p>
+</blockquote>
+<h2 id="3-信道"><a class="header" href="#3-信道">3. 信道</a></h2>
+<p><strong>信道(channel)</strong> 是传输信号的介质或路径，一般用来表示向某个方向传送信息的媒体，因此一条通信电路一般包含一条发送信道和一条接收信道。信道按传输介质分类，可以是有线信道（如双绞线、电缆、光纤）或无线信道（如无线电波、微波）；按传输信号形式的不同，信道分为传输模拟信号的模拟信道和传输数字信号的数字信道。信道的主要功能是将信号从发送端传递到接收端。在信道上传输信号时，可能会受到噪声、干扰和衰减等影响，导致信号的失真或丢失。</p>
+<p>从通信的双方信息交互的方式来看，可以有以下三种基本方式:</p>
+<ol>
+<li>单向通信：又称为单工通信，即只能有一个方向的通信而没有反方向的交互。无线电广播或有线电广攝以及电视广攝就属于这种类型。</li>
+<li>双向交替通信：又称为半双工通信，即通信的双方都可以发送信息，但不能双方同时发送(当然也就不能同时接收)。这种通信方式是一方发送另一方接收，过一段时间后可以再反过来。</li>
+<li>双向同时通信：又称为全双工通信，即通信的双方可以同时发送和接收信息。单向通信只需要一条信道，而双向交替通信或双向同时通信则都需要两条信道(每个方向各一条)，显然，双向同时通信的传输效率最高。</li>
+</ol>
+<blockquote>
+<p>有时人们也常用“单工”这个名词表示“双向交替通信”，如常说的“单工电台”并不是只能进行单向通信。正因为如此，ITU-T才不采用“单工”“半双工”和“全双工”这些容易弄混的术语作为正式的名词。
+数据传输方式分为串行传输和并行传输。串行传输是指逐比特地按序依次传输，并行传输是指若干比特通过多个通信信道同时传输。<code>串行传输适用于长距离通信，如计算机网络。</code>并行传输适用于近距离通信，常用于计算机内部，如CPU 与主存之间。</p>
+</blockquote>
+<h2 id="4-带宽"><a class="header" href="#4-带宽">4. 带宽</a></h2>
+<p><strong>带宽(bandwidth)</strong> 通常有两个含义：</p>
+<ol>
+<li>在模拟信号系统中是指信道能够传输的信号频率范围，即最高频率与最低频率只差，通常以赫兹（Hz）为单位表示。</li>
+<li>在通信中，带宽也常用于表示单位时间内传输数据的最大速率，通常以比特每秒（bps或b/s）为单位。带宽越大，信道的传输能力越强，可以传输更高的数据速率。</li>
+</ol>
+<h2 id="5-码元"><a class="header" href="#5-码元">5. 码元</a></h2>
+<p><strong>码元(symbol)</strong> 是信号的基本单位，每一个码元代表了若干比特的数据。码元的取值决定了数字信号的具体形式。常见的码元形式包括电压、电流、频率等不同的电气信号。</p>
+<blockquote>
+<p>码元与比特的区别？</p>
+<ul>
+<li>
+<p>码元是用于表示信息的最小单元。在数字通信系统中，码元可以是一个电压水平、一段时间的光脉冲、或者任何能够在通信系统中传输和被接收的信号。</p>
+</li>
+<li>
+<p>比特是信息的最小单位，它只能表示两种状态之一，通常用0和1来表示。一个比特可以看作是一个简单的“开”或“关”状态、一个“是”或“否”的决定、或者是“0”和“1”中的一个。</p>
+</li>
+<li>
+<p>码元和比特是不同的概念，但它们之间有关系。一个码元可以包含一个或多个比特。比如，在一个通信系统中，假设一个码元有4种不同的状态（比如4种不同的电压），那么这些状态可以用2个比特（00、01、10、11）来表示。因此，一个码元可能包含多个比特信息。</p>
+</li>
+<li>
+<p>如果一个码元有n种状态，则其最多可以表示出\(log_2(n)\)位比特数。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="6-波特"><a class="header" href="#6-波特">6. 波特</a></h2>
+<p><strong>波特 (Baud)</strong> 是码元传输速率的单位，表示每秒钟传输的码元数。一个码元可以表示一个或多个比特，因此波特率与数据速率（比特率）密切相关，但两者并不完全相同。波特率仅指每秒钟传输的码元数，而数据速率则考虑了每个码元所表示的比特数。如果一个码元表示多个比特，则数据速率（比特率）会高于波特率。例如，在一个调制方式中，每个码元表示2个比特，那么如果波特率是1000波特，数据速率将是2000 bps。</p>
+<h2 id="7-速率"><a class="header" href="#7-速率">7. 速率</a></h2>
+<p><strong>速率 (Rate)</strong> 在通信中通常指<strong>数据速率 (Data Rate)</strong>，即单位时间内传输的数据量。速率通常以比特每秒（bps）为单位表示。数据速率包括两个重要的概念：</p>
+<ul>
+<li>
+<p><strong>码元传输速率 (Symbol Rate)</strong>：也称为波特率，表示每秒钟传输的码元数量，单位为波特（Baud）。码元传输速率决定了信号的基本传输速率，但不直接反映传输的实际信息量。</p>
+</li>
+<li>
+<p><strong>信息传输速率 (Information Rate)</strong>：也称为比特率，表示每秒钟传输的比特数，单位为bps（比特每秒）。信息传输速率考虑了每个码元中携带的比特数，因此比特率通常等于码元传输速率乘以每个码元携带的比特数。信息传输速率直接影响通信的效率和传输质量。</p>
+</li>
+</ul>
+<h2 id="8-信源与信宿"><a class="header" href="#8-信源与信宿">8. 信源与信宿</a></h2>
+<p><strong>信源(source)</strong> 是产生和发送消息的设备或系统，而 <strong>信宿(destination)</strong> 是接收和处理消息的设备或系统。在一个通信系统中，信源和信宿之间通过信道进行数据传输。信源生成数据并将其转换为信号，通过信道传输到信宿，信宿接收到信号并将其解码还原为原始数据。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E9%80%9A%E4%BF%A1%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B.png" alt="通信系统模型" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="奈奎斯特定理与香农定理"><a class="header" href="#奈奎斯特定理与香农定理">奈奎斯特定理与香农定理</a></h1>
+<p>奈氏准则和香农公式的意义是不同的，奈氏准则激励工程人员不断探索更加先进的编码技术，使每一个码元携带更多比特的信息量。香农公式则告诚工程人员，在有噪声的实际信道上，不论采用多么复杂的编码技术，都不可能突破信息传输速率的绝对极限。</p>
+<h2 id="1-奈奎斯特定理"><a class="header" href="#1-奈奎斯特定理">1. 奈奎斯特定理</a></h2>
+<p>奈奎斯特定理在1924年由奈奎斯特提出，又成奈氏准则。奈氏准则给出了理想条件下码元传输速率的上限值，即：</p>
+<p>在带宽为W(z)的低通信道中，若不考虑噪声影响，则码元传输的最高速率是2W(码元/秒)。传输速率超过此上限，就会出现严重的码间串扰的问题，使接收端对码元的判决(即识别)成为不可能。</p>
+<h2 id="2-香农定理"><a class="header" href="#2-香农定理">2. 香农定理</a></h2>
+<p>实际的信道都是有噪声的，因此奈氏准则始终是理想情况，1948年香农推导出的香农准则则更好的刻画出了真实情况下的信道极限信息传输速率。香农公式指出:</p>
+<p>信道的极限信息传输速率C是
+\[
+C = W*log_2(1+S/N)(bit/s)
+\]
+式中，W为信道的帶宽(以Hz为单位)，S为信道内所传信号的平均功率，N为信道内部的高斯噪声功率。</p>
+<p>香农公式表明，信道的带宽或信道中的信噪比越大，信息的极限传输速率就越高。香农公式指出了信息传输速率的上限。香农公式的意义在于：只要信息传输速率低于信道的极限信息传输速率，就一定存在某种办法来实现无差错的传输。</p>
+<blockquote>
+<p>信噪比</p>
+<p>噪声存在于所有的电子设备和通信信道中。由于噪声是随机产生的，它的瞬时值有时会很大，因此噪声会使接收端对码元的判決产生错误(1误判为0或0误判为1)。但噪声的影响是相对的。如果信号相对较强，那么噪声的影响就相对较小，因此，信噪比就很重要。所谓信噪比就是信号的平均功率和噪声的平均功率之比，常记为S/N。但通常大家都是使用分贝(dB)作为度量单位。即
+\[
+10*log_10(S/N) (dB)
+\]
+例如，当S/N=10时，信噪比等于10dB，当S/N=1000时，信噪比为30dB。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="编码与调制"><a class="header" href="#编码与调制">编码与调制</a></h1>
+<blockquote>
+<p>参考<a href="https://www.bilibili.com/video/BV1c4411d7jb?p=17&amp;vd_source=7dc2d8cc8f3730d0c9e372b2b2a8bff2">湖科大教书匠计算机网络微课堂</a></p>
+</blockquote>
+<p>在通信系统中，数据可以分为模拟数据和数字数据。信号是数据的具体表现形式，它可以是模拟信号，也可以是数字信号。将数据转换为模拟信号的过程称为<strong>调制</strong>，将数据转换为数字信号的过程称为编码。</p>
+<p>数字数据可通过数字发送器转换为数字信号传输，也可通过调制器转换成模拟信号传输；同样，模拟数据可通过PCM编码器转换成数字信号传输，也可通过放大器调制器转换成模拟信号传输。这样，就形成了如下4种编码与调制方式。</p>
+<h2 id="1-模拟数据的模拟调制"><a class="header" href="#1-模拟数据的模拟调制">1. 模拟数据的模拟调制</a></h2>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7%E7%9A%84%E6%A8%A1%E6%8B%9F%E8%B0%83%E5%88%B6.gif" alt="模拟信号的模拟调制(维基百科)" /></p>
+<p>模拟数据的模拟调制是指将模拟数据通过调制器转换为模拟信号进行传输的过程。为了实现传输的有效性，可能需要较高的频率，并且这种调制方式还可以使用频分复用(FDM)技术，充分利用带宽资源。</p>
+<p>这种方式的优点是技术相对成熟，实现简单，但缺点是信号容易受噪声影响，信号衰减和干扰会明显影响接收质量。</p>
+<h2 id="2-模拟数据的数字编码"><a class="header" href="#2-模拟数据的数字编码">2. 模拟数据的数字编码</a></h2>
+<p><strong>模拟数据的数字编码</strong> 是将模拟数据转换为数字信号的过程。这一过程通常包括采样、量化和编码三个步骤，常用于对音频信号进行编码的PCM编码。</p>
+<ol>
+<li><strong>采样 (Sampling)</strong>：对模拟信号在时间轴上进行定时采样，将连续的模拟信号离散化为一系列时间点的信号值。根据奈奎斯特定理，采样频率必须大于或等于模拟信号最大频率的两倍。</li>
+<li><strong>量化 (Quantization)</strong>：将采样得到的离散电平幅值按照一定的分级标度转换为对应的数值并取整，这样就将连续的电平幅值转换为离散的数字量。采样和量化的实质就是分割和转换。</li>
+<li><strong>编码 (Encoding)</strong>：将量化后的信号值转换为数字码字，通常是二进制码。这种数字码字可以用来表示原始的模拟数据。</li>
+</ol>
+<p>采样定理(奈奎斯特定理)：在将模拟信号转换成数字信号时，假设原始信号中的最大频率为\(f\)，那么采样率必须大于或等于最大频率\(f\)的2倍，才能保证采样后的数字信号完整保留原模拟信号的信息 。</p>
+<p>数字编码后的信号可以传输在数字信道中，常见的应用场景包括音频信号的数字化（如PCM）和图像信号的数字化。</p>
+<h2 id="3-数字数据的模拟调制"><a class="header" href="#3-数字数据的模拟调制">3. 数字数据的模拟调制</a></h2>
+<p>{% asset_img 数字信号的模拟调制示意图.jpg 数字信号的模拟调制示意图.jpg(课本) %}
+<img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E7%9A%84%E6%A8%A1%E6%8B%9F%E8%B0%83%E5%88%B6%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="数字信号的模拟调制示意图(课本)" /></p>
+<p><strong>数字数据的模拟调制</strong> 是将数字数据转换为模拟信号的过程，常用于将数字数据传输在模拟信道中。常见的调制方式有：</p>
+<ul>
+<li>
+<p><strong>ASK (Amplitude Shift Keying, 幅移键控)</strong>：也叫调幅(AM)，通过改变载波的幅度来表示数字数据。常见的二进制ASK中，0和1分别对应两种不同的载波幅度。<strong>这种方式抗干扰能力较差</strong>。</p>
+</li>
+<li>
+<p><strong>FSK (Frequency Shift Keying, 频移键控)</strong>：也叫调频(FM)，通过改变载波的频率来表示数字数据。常见的二进制FSK中，0和1分别对应两种不同的载波频率。这种方式容易实现，抗干扰能力强，应用广泛。</p>
+</li>
+<li>
+<p><strong>PSK (Phase Shift Keying, 相移键控)</strong>：也叫调相(PM)，通过改变载波的相位来表示数字数据。常见的二进制PSK中，0和1分别对应两种不同的载波相位。</p>
+</li>
+</ul>
+<blockquote>
+<p>PSK（相移键控）是一种通过改变载波相位来表示数字数据的调制方式。常见的二进制PSK（BPSK）中，数字信号“0”和“1”分别对应两种不同的载波相位。PSK 是一种广泛使用的数字调制技术，具有抗干扰能力强、频谱利用率高等优点。其分为绝对调相（Absolute Phase Shift Keying）和相对调相（Differential Phase Shift Keying, DPSK）两种形式。</p>
+<p>绝对调相是 PSK 的一种形式，其中载波的相位直接与数字数据的状态关联。在二进制 PSK (BPSK) 中，这通常意味着“0”和“1”分别对应于载波的两个固定相位（例如，0 度和 180 度）。每次调制时，载波的相位都会根据当前的数字数据位切换到相应的固定相位。绝对调相的特点是相位变化直接对应数据位的值，因此解调器通过检测当前载波的绝对相位即可恢复原始数据。绝对调相由于其实现简单、易于理解的特点，常用于一些基本的通信系统中，如无线电通信和低速数据传输。</p>
+<p>相对调相（也称为差分相移键控，DPSK）是 PSK 的另一种形式，其中数字数据通过载波相位的变化相对于前一比特的相位进行编码。换句话说，当前的数字数据位“0”或“1”决定了载波相位相对于上一比特相位的增量。这样，相位的变化而非绝对相位用于表示数据。</p>
+<ul>
+<li><strong>DPSK示例</strong>：
+<ul>
+<li>“0”表示载波相位与上一比特相位相同。</li>
+<li>“1”表示载波相位相对于上一比特相位变化 180 度。</li>
+</ul>
+</li>
+</ul>
+<p>相对调相的优势在于，在接收端不需要同步载波，因为解调只需要检测相邻比特之间的相位差异，而不是绝对相位。相对调相更适用于环境噪声较大的场合或移动通信中。DPSK 常用于无线通信和卫星通信中，特别是在信道容易受到多径效应和相位抖动影响的场景下。</p>
+</blockquote>
+<ul>
+<li><strong>QAM (Quadrature Amplitude Modulation, 正交幅度调制)</strong>：通过同时改变载波的幅度和相位来表示数字数据。QAM结合了ASK和PSK的特点，具有更高的频谱效率，常用于现代通信系统，如无线通信和有线调制解调器。</li>
+</ul>
+<blockquote>
+<p>设波特率为B，采用m个相位，每个相位有n种振幅，则该QAM的数据传输速率R为
+\[
+R=B*log_2(mn)
+\]</p>
+</blockquote>
+<h2 id="4-数字数据的数字编码"><a class="header" href="#4-数字数据的数字编码">4. 数字数据的数字编码</a></h2>
+<p><strong>数字数据的数字编码</strong> 是指将数字数据转换为另一种形式的数字信号，通常为了适应传输信道的要求或提高传输效率。常见的编码方式有以下几种，如图：</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E6%95%B0%E5%AD%97%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F.png" alt="数字数据编码方式(王道)" /></p>
+<h3 id="1归零编码-return-to-zero-rz"><a class="header" href="#1归零编码-return-to-zero-rz">(1)归零编码 (Return to Zero, RZ)</a></h3>
+<p>归零编码是一种信号编码方式，在每个比特周期内信号都会返回到零电平（归零）。在 RZ 编码中，每个比特周期分为两个部分：</p>
+<ul>
+<li><strong>高电平</strong>：表示“1”时，信号在比特周期的前半部分为高电平，后半部分返回到零电平。</li>
+<li><strong>低电平</strong>：表示“0”时，信号在比特周期的前半部分为低电平，后半部分返回到零电平。</li>
+</ul>
+<p>RZ 编码的优点包括：</p>
+<ul>
+<li><strong>同步性强</strong>：由于信号在每个比特周期内都会返回到零电平，接收器能够通过检测信号的回归位置实现自同步。</li>
+<li><strong>直流分量低</strong>：信号在每个比特周期内返回零电平，减少了直流分量的出现。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>带宽占用高</strong>：由于归零部分占用一部分带宽，信号频繁变化，带宽需求较高。</li>
+</ul>
+<h3 id="2非归零编码-non-return-to-zero-nrz"><a class="header" href="#2非归零编码-non-return-to-zero-nrz">(2)非归零编码 (Non-Return to Zero, NRZ)</a></h3>
+<p>非归零编码是一种简单的数字编码方式，其中数字数据直接映射为高低电平，而没有中间的归零状态，因此NRZ编码的收发双方存在同步问题，为此需要双方都带有时钟同步线。NRZ 信号在比特周期内保持恒定电平，表示“1”和“0”时，信号分别为高电平和低电平。</p>
+<ul>
+<li><strong>NRZ-L（NRZ-Level）</strong>：最常见的 NRZ 编码方式，“1” 对应高电平，“0” 对应低电平。</li>
+<li><strong>NRZ-I（NRZ-Inverted）</strong>：表示“1”时信号电平发生变化，表示“0”时信号电平保持不变。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li><strong>带宽效率高</strong>：由于信号不需要频繁变化，带宽利用效率较高。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>同步性差</strong>：长时间的连续“1”或“0”可能导致接收器失去同步。</li>
+<li><strong>直流分量大</strong>：连续的“1”或“0”可能导致较大的直流分量。</li>
+</ul>
+<h3 id="3反向非归零编码-nrzi-non-return-to-zero-inverted"><a class="header" href="#3反向非归零编码-nrzi-non-return-to-zero-inverted">(3)反向非归零编码 (NRZI, Non-Return to Zero Inverted)</a></h3>
+<p>反向非归零编码（NRZI）是一种通过电平变化而非绝对电平来表示数据位的编码方式。它是对传统 NRZ 编码的一种改进，旨在增强信号的同步性和抗干扰性。NRZI 编码的关键特征在于它并不直接用高低电平表示“1”或“0”，而是通过电平是否翻转来表示比特值。</p>
+<ul>
+<li><strong>表示“1”</strong>：在 NRZI 编码中，数据位“1”表示信号电平在当前比特周期的起始位置发生翻转（即从高电平变为低电平，或从低电平变为高电平）。</li>
+<li><strong>表示“0”</strong>：数据位“0”表示信号电平在当前比特周期的起始位置保持不变（即电平与前一个比特周期的结束电平相同）。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li><strong>提高同步性</strong>：由于“1”会引起电平变化，即使是长时间的连续“0”也不会导致同步丢失。接收器可以通过检测信号的变化来保持同步。</li>
+<li><strong>抗干扰能力强</strong>：电平变化比绝对电平更容易在噪声环境中识别，从而增强了抗干扰能力。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>复杂性略高</strong>：与传统的 NRZ 编码相比，NRZI 编码和解码的过程稍微复杂，因为它依赖于前一个比特的电平状态。</li>
+<li><strong>依赖初始状态</strong>：NRZI 编码的结果取决于初始电平状态，因此初始电平的选择可能影响整个序列的编码。</li>
+</ul>
+<p>NRZI 编码广泛应用于需要高可靠性和抗干扰能力的通信系统中。它常见于磁带存储、光纤通信和 USB 协议等场景。NRZI 编码特别适合那些信号恢复难度较大的环境，因为它可以通过电平变化简化信号的检测和恢复过程。</p>
+<h3 id="4曼彻斯特编码-manchester-encoding"><a class="header" href="#4曼彻斯特编码-manchester-encoding">(4)曼彻斯特编码 (Manchester Encoding)</a></h3>
+<p>曼彻斯特编码是一种自同步的数字信号编码技术，广泛应用于通信系统中，尤其是在以太网标准中。曼彻斯特编码通过在每个比特周期内产生一次电平跳变，利用跳变的位置来表示比特值。由于每个比特周期内都有一个电平变化，这种编码方式能够提供强大的自同步能力，并且不会产生直流分量。</p>
+<p>曼彻斯特编码通过以下方式来表示数字数据：</p>
+<ul>
+<li><strong>表示“1”</strong>：在比特周期的中间位置，信号从低电平跳变到高电平。这意味着，在一个完整的比特周期内，前半周期是低电平，后半周期是高电平。</li>
+<li><strong>表示“0”</strong>：在比特周期的中间位置，信号从高电平跳变到低电平。在一个完整的比特周期内，前半周期是高电平，后半周期是低电平。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li><strong>自同步能力</strong>：由于每个比特周期内都会发生一次跳变，接收器可以通过检测跳变位置来保持与发送器的同步。这种自同步特性使得曼彻斯特编码在不需要额外的同步信号的情况下，也能实现精确的数据传输。</li>
+<li><strong>无直流分量</strong>：每个比特周期内都包含高电平和低电平，信号的平均电平接近于零，这消除了直流分量的产生。无直流分量的特性使得曼彻斯特编码在长距离传输中更加稳定。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>带宽需求高</strong>：由于曼彻斯特编码每个比特周期内有两次电平变化，实际传输的波形频率是原始数据速率的两倍。这意味着相比于其他编码方式，曼彻斯特编码需要更高的带宽来传输相同的数据量。</li>
+</ul>
+<h3 id="5差分曼彻斯特编码-differential-manchester-encoding"><a class="header" href="#5差分曼彻斯特编码-differential-manchester-encoding">(5)差分曼彻斯特编码 (Differential Manchester Encoding)</a></h3>
+<p>差分曼彻斯特编码是一种基于曼彻斯特编码的变体，进一步增强了抗干扰能力和同步性。与曼彻斯特编码不同的是，差分曼彻斯特编码并不直接通过电平高低来表示数据位，而是通过相邻比特周期内的电平变化方向来编码数据。这种编码方式在信道质量较差或容易受到干扰的通信环境中表现出色。</p>
+<p>差分曼彻斯特编码的编码规则如下：</p>
+<ul>
+<li><strong>跳变位置</strong>：每个比特周期的中间位置总是发生一次跳变，确保信号的自同步能力。</li>
+<li><strong>表示“1”</strong>：如果当前比特是“1”，信号在比特周期的起始位置不发生电平翻转，即电平保持与上一个比特周期的结束电平相同。</li>
+<li><strong>表示“0”</strong>：如果当前比特是“0”，信号在比特周期的起始位置发生电平翻转，即电平与上一个比特周期的结束电平相反。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li><strong>抗干扰能力强</strong>：由于编码依赖于相邻比特周期间的电平变化，而非绝对电平，差分曼彻斯特编码在噪声较大的环境中更具优势。如果传输过程中发生了电平反转错误，影响仅限于当前比特，不会扩散到后续比特。</li>
+<li><strong>自同步能力</strong>：与曼彻斯特编码类似，差分曼彻斯特编码在每个比特周期中都有一次跳变，这种特性保证了信号的自同步能力。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>带宽需求高</strong>：差分曼彻斯特编码与曼彻斯特编码一样，实际传输的频率是原始数据速率的两倍，因此需要较高的带宽来传输相同的数据量。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="电路交换报文交换与分组交换"><a class="header" href="#电路交换报文交换与分组交换">电路交换、报文交换与分组交换</a></h1>
+<p>在网络核心部分起重要作用的是路由器(router)，它对收到的分组进行存储转发来实现分组交换。要了解分组交换的原理，首先就要学习电路交换的相关概念。</p>
+<h2 id="1-电路交换"><a class="header" href="#1-电路交换">1. 电路交换</a></h2>
+<h3 id="1电路交换的概念"><a class="header" href="#1电路交换的概念">(1)电路交换的概念</a></h3>
+<p>最典型的电路交换网是传统电话网，如下图所示。从通信资源分配的角度看，交换就是按照某种方式动态地分配传输线路的资源。电路交换分为三步：连接建立、数据传输和连接释放。在进行数据传输前，两个结点之间必须先建立一条专用(双方独占)的物理通信路径(由通信双方之间的交换设备和链路逐段连接而成)，该路径可能经过许多中间结点。在数据传输过程中，这一物理通信路径始终被用户独占，直到通信结束后才被释放。</p>
+<p>在电路交换的整个通信阶段，比特流连续地从源点直达终点，就好像在一个管道中传送。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2.jpg" alt="电路交换" /></p>
+<h3 id="2电路交换的优点"><a class="header" href="#2电路交换的优点">(2)电路交换的优点</a></h3>
+<ol>
+<li>通信时延小。因为通信线路为通信双方专用，数据直达，所以传输时延非常小。</li>
+<li>有序传输。双方通信时按发送顺序传送数据，不存在失序问题。</li>
+<li>没有冲突。不同的通信双方拥有不同的信道，不会出现争用物理信道的问题。</li>
+<li>适用范围广。电路交换既适用于传输模拟信号，又适用于传输数字信号。</li>
+<li>实时性强。通信双方之间的物理通路一旦建立，双方就可随时通信。</li>
+<li>控制简单。电路交换的交换设备(交换机等)及控制均较简单。</li>
+</ol>
+<h3 id="3电路交换的缺点"><a class="header" href="#3电路交换的缺点">(3)电路交换的缺点</a></h3>
+<ol>
+<li>建立连接时间长。电路交换的平均连接建立时间对计算机通信来说太长。</li>
+<li>线路利用率低。物理通路被通信双方独占,即使线路空闲,也不能供其他用户使用。</li>
+<li>灵活性差。物理通路中的任何一点出现故障,就必须重新拨号建立新的连接。</li>
+<li>难以规格化。不同类型、不同规格、不同速率的终端很难相互进行通信。</li>
+<li>难以实现差错控制。中间结点不具备存储和检验数据的能力,无法发现并纠正错误</li>
+</ol>
+<h2 id="2-报文交换"><a class="header" href="#2-报文交换">2. 报文交换</a></h2>
+<h3 id="1报文交换的概念"><a class="header" href="#1报文交换的概念">(1)报文交换的概念</a></h3>
+<p>数据交换的单位是报文，用户数据加上源地址、目的地址等信息后，后封装成报文(message)。报文交换采用存储转发技术，整个报文先传送到相邻的结点，全部存储后查找转发表，转发到下一个结点，如此重复，直至到达目的结点。每个报文都可单独选择到达目的结点的路径。</p>
+<h3 id="2报文交换技术的优点"><a class="header" href="#2报文交换技术的优点">(2)报文交换技术的优点</a></h3>
+<ol>
+<li>无须建立连接。通信前无须建立连接,没有建立连接时延,用户可随时发送报文。</li>
+<li>动态分配线路。交换设备存储整个报文后,选择一条合适的空闲线路,转发报文。</li>
+<li>线路可靠性高。若某条传输路径发生故障,则可重新选择另一条路径传输数据。</li>
+<li>线路利用率高。报文在哪段链路上传送时才占用这段链路的通信资源。</li>
+<li>提供多目标服务。一个报文可以同时发送给多个目的地址。</li>
+</ol>
+<h3 id="3报文交换技术的缺点"><a class="header" href="#3报文交换技术的缺点">(3)报文交换技术的缺点</a></h3>
+<ol>
+<li>转发时延高。交换结点要将报文整体接收完后,才能查找转发表转发到下一个结点。</li>
+<li>缓存开销大。报文的大小没有限制,这就要求交换结点拥有较大的缓存空间。</li>
+<li>错误处理低效。报文较长时,发生错误的概率相对更大,重传整个报文的代价也很大。</li>
+</ol>
+<h2 id="3-分组交换"><a class="header" href="#3-分组交换">3. 分组交换</a></h2>
+<h3 id="1分组交换的概念"><a class="header" href="#1分组交换的概念">(1)分组交换的概念</a></h3>
+<p>分组交换也采用存储转发技术，但解决了报文交换中报文过长的问题。若报文太长，则对交换结点的缓存容量就有很大的需求，在错误处理方面也比较低效。源结点在发送之前，先把较长的报文划分成若干较小的等长数据段，在每个数据段前面添加一些由必要控制信息(如源地址、目的地址和编号信息等)组成的首部，构成分组(Packet)，如下图所示。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.jpg" alt="分组交换" /></p>
+<p>源结点将分组发送到分组交换网中，分组交换网中的分组交换机收到一个分组后，先将其缓存，然后从其首部中提取目的地址，据此查找自己的转发表,再后将分组转发给下一个分组交换机。经过多个分组交换机的存储转发后，分组最终到达目的结点。</p>
+<h3 id="2分组交换的优点"><a class="header" href="#2分组交换的优点">(2)分组交换的优点</a></h3>
+<ol>
+<li>无建立时延。通信前无须建立连接,没有建立连接时延,用户可随时发送分组。</li>
+<li>线路利用率高。分组在哪段链路上传送时才占用这段链路的通信资源。相比采用电路交换传送突发式的计算机数据,分组交换的通信线路利用率大大提高。</li>
+<li>简化了存储管理(相对于报文交换)。因为分组的长度固定,相应缓冲区的大小也固定,在交换结点中存储器的管理通常被简化为对缓冲区的管理,相对比较容易。</li>
+<li>加速传输。分组是逐个传输的,可以使后一个分组的存储操作与前一个分组的转发操作并行,这种流水线方式减少了报文的传输时间。此外,传输一个分组比传输一次报文所需的缓冲区小得多,这样,因缓冲区不足而等待发送的概率及时间必然也少得多。</li>
+<li>减小了出错概率和重发数据量。因为分组较短,其出错概率必然减小,所以每次重发的数据量也就大大减少,这样不仅提高了可靠性,而且减小了传输时延。</li>
+</ol>
+<h3 id="3分组交换的缺点"><a class="header" href="#3分组交换的缺点">(3)分组交换的缺点</a></h3>
+<ol>
+<li>存在存储转发时延。尽管分组交换比报文交换的传输时延小，但相对于电路交换仍存在存储转发时延，且其结点交换机必须具有更强的处理能力。</li>
+<li>需要传输额外的信息量。每个小数据段都要加上控制信息以构成分组，这使得传送的信息量增大了5%~10%，进而使得控制复杂，降低了通信效率，增大了处理的时延。</li>
+<li>当分组交换网采用数据报服务时,可能出现失序、丢失或重复分组的情况，分组到达目的结点时,要对分组按编号进行排序等工作，而这些工作很麻烦。若采用虚电路服务，则虽然没有失序问题，但有呼叫建立、数据传输和虚电路释放三个过程。</li>
+</ol>
+<h2 id="4-三种交换技术的示意图"><a class="header" href="#4-三种交换技术的示意图">4. 三种交换技术的示意图</a></h2>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%89%A9%E7%90%86%E5%B1%82/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80/images/%E4%B8%89%E7%A7%8D%E4%BA%A4%E6%8D%A2%E5%AF%B9%E6%AF%94.jpg" alt="三种交换对比" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据报与虚电路"><a class="header" href="#数据报与虚电路">数据报与虚电路</a></h1>
+<p>在计算机网络体系结构中，物理层负责在设备间透明传输原始比特流，数据链路层通过帧封装与差错控制实现相邻节点的可靠传输。而网络层作为通信子网的核心，向上层提供两种本质不同的分组交换服务模式：</p>
+<ol>
+<li>面向连接的虚电路服务（Virtual Circuit）和无连接的数据报服务（Datagram）。</li>
+<li>这两种服务的核心差异在于通信路径的建立方式与分组处理逻辑。</li>
+</ol>
+<blockquote>
+<p>注：虽然传输层TCP提供类似虚电路的可靠服务，UDP提供类似数据报的服务，但二者本质是<strong>终端系统实现的端到端功能</strong>，而非网络层的基础服务。在TCP/IP体系结构中，网络层（IP层）仅提供无连接的数据报服务，这是互联网架构的根基设计，传输层中通过TCP与UDP协议实现了两种服务的抽象。</p>
+<p>在OSI模型中，网络层必须同时支持数据报和虚电路两种方式，但是TCP/IP模型为了减轻网络设备负担，从而在网络层仅支持数据报方式，将虚电路的实现交由高层实现。</p>
+</blockquote>
+<h2 id="1-虚电路"><a class="header" href="#1-虚电路">1. 虚电路</a></h2>
+<p>在虚电路方式中，当两台计算机进行通信时，应当先建立网络层的连接，也就是建立一条逻辑上的虚电路(Virtual Circuit, VC)，连接一旦建立，就固定了虚电路对应的物理路径。与电路交换类似，整个通信过程分为三个阶段：虚电路建立、数据传输与虚电路释放。</p>
+<p>每次建立虚电路时，将一个未用过的<strong>虚电路号</strong>(VCID)分配给该虚电路，以区别本系统中的其他虚电路，然后双方就沿着已建立的虚电路传送分组。</p>
+<h2 id="2-数据报"><a class="header" href="#2-数据报">2. 数据报</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="传输介质"><a class="header" href="#传输介质">传输介质</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="双绞线同轴电缆光纤与无线传输介质"><a class="header" href="#双绞线同轴电缆光纤与无线传输介质">双绞线、同轴电缆、光纤与无线传输介质</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="物理层接口的特性"><a class="header" href="#物理层接口的特性">物理层接口的特性</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="物理层设备"><a class="header" href="#物理层设备">物理层设备</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="中继器"><a class="header" href="#中继器">中继器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="集线器"><a class="header" href="#集线器">集线器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据链路层"><a class="header" href="#数据链路层">数据链路层</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据链路层的功能"><a class="header" href="#数据链路层的功能">数据链路层的功能</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="组帧"><a class="header" href="#组帧">组帧</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="差错控制"><a class="header" href="#差错控制">差错控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="检错编码"><a class="header" href="#检错编码">检错编码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="纠错编码"><a class="header" href="#纠错编码">纠错编码</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="流量控制与可靠传输机制"><a class="header" href="#流量控制与可靠传输机制">流量控制与可靠传输机制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="流量控制可靠传输与滑动窗口机制"><a class="header" href="#流量控制可靠传输与滑动窗口机制">流量控制、可靠传输与滑动窗口机制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="停止---等待协议"><a class="header" href="#停止---等待协议">停止 - 等待协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="后退n帧协议gbn"><a class="header" href="#后退n帧协议gbn">后退N帧协议(GBN)</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="选择重传协议sr"><a class="header" href="#选择重传协议sr">选择重传协议(SR)</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="介质访问控制"><a class="header" href="#介质访问控制">介质访问控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="信道划分"><a class="header" href="#信道划分">信道划分</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="随机访问"><a class="header" href="#随机访问">随机访问</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="轮询访问"><a class="header" href="#轮询访问">轮询访问</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="局域网"><a class="header" href="#局域网">局域网</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="广域网"><a class="header" href="#广域网">广域网</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据链路层设备"><a class="header" href="#数据链路层设备">数据链路层设备</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="网络层"><a class="header" href="#网络层">网络层</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="网络层的功能"><a class="header" href="#网络层的功能">网络层的功能</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="异构网络互连"><a class="header" href="#异构网络互连">异构网络互连</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="路由和转发"><a class="header" href="#路由和转发">路由和转发</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="sdn-基本概念"><a class="header" href="#sdn-基本概念">SDN 基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="阻塞控制"><a class="header" href="#阻塞控制">阻塞控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="路由算法"><a class="header" href="#路由算法">路由算法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="静态路由与动态路由"><a class="header" href="#静态路由与动态路由">静态路由与动态路由</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="距离-向量路由算法"><a class="header" href="#距离-向量路由算法">距离-向量路由算法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="链路状态路由算法"><a class="header" href="#链路状态路由算法">链路状态路由算法</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="层次路由"><a class="header" href="#层次路由">层次路由</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv4"><a class="header" href="#ipv4">IPv4</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv4-分组"><a class="header" href="#ipv4-分组">IPv4 分组</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv4-地址与-nat"><a class="header" href="#ipv4-地址与-nat">IPv4 地址与 NAT</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="子网划分路由聚集子网掩码与-cidr"><a class="header" href="#子网划分路由聚集子网掩码与-cidr">子网划分、路由聚集、子网掩码与 CIDR</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="arp-协议dhcp-协议与-icmp-协议"><a class="header" href="#arp-协议dhcp-协议与-icmp-协议">ARP 协议、DHCP 协议与 ICMP 协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv6"><a class="header" href="#ipv6">IPv6</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv6-的主要特点"><a class="header" href="#ipv6-的主要特点">IPv6 的主要特点</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ipv6-地址"><a class="header" href="#ipv6-地址">IPv6 地址</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="路由协议"><a class="header" href="#路由协议">路由协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="自治系统"><a class="header" href="#自治系统">自治系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="域内路由与域间路由"><a class="header" href="#域内路由与域间路由">域内路由与域间路由</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rip-路由协议"><a class="header" href="#rip-路由协议">RIP 路由协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ospf-路由协议"><a class="header" href="#ospf-路由协议">OSPF 路由协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="bgp-路由协议"><a class="header" href="#bgp-路由协议">BGP 路由协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ip组播"><a class="header" href="#ip组播">IP组播</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="组播的概念"><a class="header" href="#组播的概念">组播的概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ip-组播地址"><a class="header" href="#ip-组播地址">IP 组播地址</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="移动ip"><a class="header" href="#移动ip">移动IP</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="移动-ip-的概念"><a class="header" href="#移动-ip-的概念">移动 IP 的概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="移动-ip-的通信过程"><a class="header" href="#移动-ip-的通信过程">移动 IP 的通信过程</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="网络层设备"><a class="header" href="#网络层设备">网络层设备</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="路由器的组成和功能"><a class="header" href="#路由器的组成和功能">路由器的组成和功能</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="路由表与分组转发"><a class="header" href="#路由表与分组转发">路由表与分组转发</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="传输层"><a class="header" href="#传输层">传输层</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="传输层提供的服务"><a class="header" href="#传输层提供的服务">传输层提供的服务</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="传输层的功能"><a class="header" href="#传输层的功能">传输层的功能</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="传输层寻址与端口"><a class="header" href="#传输层寻址与端口">传输层寻址与端口</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="无连接服务与面向连接服务"><a class="header" href="#无连接服务与面向连接服务">无连接服务与面向连接服务</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="udp协议"><a class="header" href="#udp协议">UDP协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="udp-数据报"><a class="header" href="#udp-数据报">UDP 数据报</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="udp-校验"><a class="header" href="#udp-校验">UDP 校验</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp协议"><a class="header" href="#tcp协议">TCP协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp-段"><a class="header" href="#tcp-段">TCP 段</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp-连接管理"><a class="header" href="#tcp-连接管理">TCP 连接管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp-可靠传输"><a class="header" href="#tcp-可靠传输">TCP 可靠传输</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp-流量控制"><a class="header" href="#tcp-流量控制">TCP 流量控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="tcp-拥塞控制"><a class="header" href="#tcp-拥塞控制">TCP 拥塞控制</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="应用层"><a class="header" href="#应用层">应用层</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="网络应用模型"><a class="header" href="#网络应用模型">网络应用模型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="客户服务端cs模型"><a class="header" href="#客户服务端cs模型">客户/服务端(C/S)模型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="对等p2p模型"><a class="header" href="#对等p2p模型">对等(P2P)模型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dns系统"><a class="header" href="#dns系统">DNS系统</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="层次域名空间"><a class="header" href="#层次域名空间">层次域名空间</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="域名服务器"><a class="header" href="#域名服务器">域名服务器</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="域名解析过程"><a class="header" href="#域名解析过程">域名解析过程</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ftp"><a class="header" href="#ftp">FTP</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ftp-协议的工作原理"><a class="header" href="#ftp-协议的工作原理">FTP 协议的工作原理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="控制连接与数据连接"><a class="header" href="#控制连接与数据连接">控制连接与数据连接</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="电子邮件"><a class="header" href="#电子邮件">电子邮件</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="电子邮件系统的组成结构"><a class="header" href="#电子邮件系统的组成结构">电子邮件系统的组成结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="电子邮件的结构与-mime"><a class="header" href="#电子邮件的结构与-mime">电子邮件的结构与 MIME</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="smtp-协议与pop3协议"><a class="header" href="#smtp-协议与pop3协议">SMTP 协议与POP3协议</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="www"><a class="header" href="#www">WWW</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="www-的概念与组成结构"><a class="header" href="#www-的概念与组成结构">WWW 的概念与组成结构</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="http-协议"><a class="header" href="#http-协议">HTTP 协议</a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

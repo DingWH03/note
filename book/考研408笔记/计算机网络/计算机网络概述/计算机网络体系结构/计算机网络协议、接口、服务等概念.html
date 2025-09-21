@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>计算机网络协议、接口、服务等概念 - 考研408笔记</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">考研408笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-408" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-408/edit/master/src/计算机网络/计算机网络概述/计算机网络体系结构/计算机网络协议、接口、服务等概念.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="计算机网络协议接口服务等概念"><a class="header" href="#计算机网络协议接口服务等概念">计算机网络协议、接口、服务等概念</a></h1>
+<h2 id="1-协议"><a class="header" href="#1-协议">1. 协议</a></h2>
+<p>要在网络中做到有条不紊地交换数据，就必须遵循一些事先约定好的规则，其规定了所交换数据的格式及有关的同步问题。为了在网络中进行数据交换而建立的这些规则、标准或约定称为网络协议(Network Protocol)，是控制在<strong>对等实体</strong>之间进行通信的规则的集合，是水平的。不对等实体之间是没有协议的，如用TCP/IP协议栈通信的两个结点A和结点B，结点A的传输层和结点B的传输层之间存在协议，但结点A的传输层和结点B的网络层之间不存在协议。</p>
+<p>协议由语法、语义和同步三部分组成。</p>
+<ol>
+<li>语法。数据与控制信息的格式。例如,TCP报文段格式就是由TCP协议的语法定义的。</li>
+<li>语义。即需要发出何种控制信息、完成何种动作及做出何种应答。例如，在建立TCP连接的三次握手时所执行的操作就是由TCP协议的语义定义的。</li>
+<li>同步(或时序)。执行各种操作的条件、时序关系等，即事件实现顺序的详细说明。例如，建立TCP连接的三次握手操作的时序关系就是由TCP协议的同步定义的。</li>
+</ol>
+<h2 id="2-接口"><a class="header" href="#2-接口">2. 接口</a></h2>
+<p>同一结点内相邻两层的实体交换信息的逻辑接口称为服务访问点(Service Access Point，SAP)。每层只能为紧邻的层之间定义接口，而不能跨层定义接口。服务是通过SAP提供给上层使用的，第n层的SAP就是第n+1层可以访问第n层服务的地方。</p>
+<p>再次强调5个不得不知的专业术语:</p>
+<ol>
+<li>服务数据单元(SDU)。第n层的服务数据单元，记作 n-SDU。</li>
+<li>协议控制信息(PCI)。第n层的协议控制信息，记作n-PCI。</li>
+<li>接口控制信息(ICI)。第n层的接口控制信息，记作n-ICI。</li>
+<li>协议数据单元(PDU)。第n层的服务数据单元(SDU)+第n层的协议控制信息(PCI)=第n层的协议数据单元，即n-SDU+n-PCI=n-PDU,表示的是同等层对等实体间传送的数据单元。另外，n-PDU=(n-1)-SDU。这个公式看完，后面的内容就会很清楚。例如，网络层的整个IP分组交到数据链路层，整个IP分组成为数据链路层的数据部分(现在不理解可直接跳过)。</li>
+<li>接口数据单元(IDU)。第n层的服务数据单元(SDU)+第n层的接口控制信息(ICI)=第n层的接口数据单元，即n-SDU+-ICI=n-IDU，表示的是在相邻层接口间传送的数据单元。</li>
+</ol>
+<h2 id="3-服务"><a class="header" href="#3-服务">3. 服务</a></h2>
+<p>服务是指下层为紧邻的上层提供的功能调用，是垂直的。对等实体在协议的控制下，使得本层能为上层提供服务，但要实现本层协议，还需要使用下层提供的服务。当上层使用下层提供的服务时，必须与下层交换一些命令，这些命令称为服务原语。OSI参考模型将原语划分为四类：</p>
+<ol>
+<li>请求(Request)。由服务用户发往服务提供者，请求完成某项工作。</li>
+<li>指示(Indication)。由服务提供者发往服务用户，指示用户做某件事情。</li>
+<li>响应(Response)。由服务用户发往服务提供者，作为对指示的响应。</li>
+<li>证实(Confirmation)。由服务提供者发往服务用户,作为对请求的证实。</li>
+</ol>
+<p>这四类原语用于不同的功能，如建立连接、传输数据和断开连接等。有应答服务包括全部四类原语，而无应答服务则只有请求和指示两类原语。</p>
+<p>注意，协议和服务概念上是不一样的。首先，只有本层协议的实现才能保证向上一层提供服务。本层的服务用户只能看见服务而无法看见下面的协议，即下面的协议对上层的服务用户是透明的。其次，协议是“水平的”，即协议是控制对等实体之间通信的规则。但是，服务是“垂真的”，即服务是由下层通过层间接口向上层提供的。另外，并非在一层内完成的全部功能都称为服务，只有那些能够被高一层实体“看得见”的功能才称为服务。</p>
+<h3 id="三种计算机网络提供的服务"><a class="header" href="#三种计算机网络提供的服务">三种计算机网络提供的服务</a></h3>
+<p>计算机网络提供的服务可按以下三种方式分类。</p>
+<h4 id="1面向连接服务与无连接服务"><a class="header" href="#1面向连接服务与无连接服务">(1)面向连接服务与无连接服务</a></h4>
+<p>在面向连接服务中，通信前双方必须先建立连接，分配相应的资源(如缓冲区)，以保证通信能正常进行，传输结束后释放连接和占用的资源。因此这种服务可分为连接建立、数据传输和连接释放三个阶段。例如，TCP就是一种面向连接服务的协议。</p>
+<p>在无连接服务中，通信前双方不需要先建立连接，需要发送数据时可直接发送，将每个带有目的地址的包(报文分组)传送到线路上，由系统选定路线进行传输。这种服务常被描述为“尽最大努力交付”，是一种不可靠的服务。例如，IP、UDP 就是一种无连接服务的协议。</p>
+<h4 id="2可靠服务和不可靠服务"><a class="header" href="#2可靠服务和不可靠服务">(2)可靠服务和不可靠服务</a></h4>
+<p>可靠服务是指网络具有纠错、检错、应答机制，能保证数据正确、可靠地传送到目的地。不可靠服务是指网络只是尽量让数据正确、可靠地传送到目的地，是一种尽力而为的服务。</p>
+<p>对于提供不可靠服务的网络，其网络的正确性、可靠性要由应用或用户来保障。例如，用户收到信息后要判断信息的正确性，若不正确，则用户就要把出错信息报告给信息的发送者，以便发送者采取纠正措施。通过用户的这些措施，可将不可靠服务变成可靠服务。</p>
+<h4 id="3有应答服务和无应答服务"><a class="header" href="#3有应答服务和无应答服务">(3)有应答服务和无应答服务</a></h4>
+<p>有应答服务是指接收方在收到数据后向发送方给出相应的应答，该应答由传输系统内部自动实现，而不由用户实现。发送的应答既可以是肯定应答，又可以是否定应答，通常在接收到的数据有错误时发送否定应答。例如，文件传输服务就是一种有应答服务。</p>
+<p>无应答服务是指接收方收到数据后不自动给出应答。若需要应答，则由高层实现。例如，对于 WWW服务，客户端收到服务器发送的页面文件后不给出应答。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../计算机网络/计算机网络概述/计算机网络体系结构/计算机网络分层结构.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../计算机网络/计算机网络概述/计算机网络体系结构/ISO_OSI参考模型和TCP_IP模型.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../计算机网络/计算机网络概述/计算机网络体系结构/计算机网络分层结构.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../计算机网络/计算机网络概述/计算机网络体系结构/ISO_OSI参考模型和TCP_IP模型.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
+
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
