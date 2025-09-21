@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>书籍目录</title>
+    <title>Content of Note</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,13 +40,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
         }
 
         .book-list a {
             text-decoration: none;
-            color: #1a73e8;
-            font-weight: bold;
-            font-size: 18px;
+            color: inherit; /* 让链接继承父元素颜色 */
+            width: 100%; /* 让 a 标签占满整个 li */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .book-info {
@@ -61,20 +64,21 @@
 
         .book-list li:hover {
             background-color: #e9f0fe;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>书籍目录</h1>
+    <h1>Content of Note</h1>
     <ul class="book-list">
         {% for book in books %}
         <li>
-            <a href="{{ book['url_title'] }}/index.html">{{ book['title'] }}</a>
-            <div class="book-info">
-                <span>作者: {{ book['authors'] | join(', ') }}</span>
-                <span>语言: {{ book['language'] }}</span>
-            </div>
+            <a href="{{ book['url_title'] }}/index.html">
+                <span>{{ book['title'] }}</span>
+                <div class="book-info">
+                    <span>Author: {{ book['authors'] | join(', ') }}</span>
+                    <span>Language: {{ book['language'] }}</span>
+                </div>
+            </a>
         </li>
         {% endfor %}
     </ul>
