@@ -1007,6 +1007,112 @@ int main() {
 </code></pre>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdset"><a class="header" href="#stdset">std::set</a></h1>
+<p><code>std::set</code> 是一个排序的集合容器，它存储唯一的元素，并根据元素的顺序进行自动排序。与 <code>std::list</code> 不同，<code>std::set</code> 提供了对元素的高效查找、插入和删除操作，但不支持直接的索引访问。其底层通常是基于平衡二叉树实现（如红黑树），因此在查找、插入和删除操作上的时间复杂度通常为 O(log n)。</p>
+<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;set&gt;
+</code></pre>
+<h2 id="2-存储方式-3"><a class="header" href="#2-存储方式-3">2. 存储方式</a></h2>
+<p><code>std::set</code> 是基于平衡二叉树（通常是红黑树）实现的容器。与 <code>std::list</code> 和 <code>std::vector</code> 不同，<code>std::set</code> 具有自动排序的特性，元素会按升序（默认情况下）进行排列。每个元素都是唯一的，无法存储重复的元素。</p>
+<p>在 <code>std::set</code> 中，元素会以节点的形式存储，每个节点包含一个元素以及指向父节点、左子节点和右子节点的指针。通过这种方式，<code>std::set</code> 保证了所有元素的排序特性，并支持高效的查找、插入和删除操作。</p>
+<ul>
+<li><strong>插入</strong>：由于元素在插入时会自动排序并且不允许重复，插入一个新元素的时间复杂度为 O(log n)，这也保证了元素始终保持有序。</li>
+<li><strong>查找</strong>：在 <code>std::set</code> 中查找元素的时间复杂度为 O(log n)，这是因为它依赖于平衡二叉树的结构。</li>
+<li><strong>删除</strong>：删除操作也有 O(log n) 的时间复杂度，因为删除节点时需要保持树的平衡。</li>
+</ul>
+<p>与 <code>std::vector</code> 和 <code>std::list</code> 不同，<code>std::set</code> 的元素是按照某种顺序排列的，因此它支持基于顺序的迭代。由于不允许重复元素，<code>std::set</code> 会自动忽略重复的插入请求。</p>
+<p>尽管 <code>std::set</code> 提供了很高效的插入、删除和查找操作，但它并不支持快速的随机访问。要访问集合中的某个元素，必须按顺序遍历元素，无法通过索引直接访问。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultiset"><a class="header" href="#stdmultiset">std::multiset</a></h1>
+<p><code>std::multiset</code> 是一个排序的集合容器，允许存储重复的元素，并且自动根据元素的顺序进行排序。与 <code>std::set</code> 相似，<code>std::multiset</code> 也基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
+<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;set&gt;
+</code></pre>
+<h2 id="2-存储方式-4"><a class="header" href="#2-存储方式-4">2. 存储方式</a></h2>
+<p><code>std::multiset</code> 是基于平衡二叉树（如红黑树）实现的容器，元素会按照一定的顺序（默认升序）进行排序，并且允许存储重复的元素。每个元素都会在树中作为一个独立的节点存储，树的结构保证了元素的排序。</p>
+<ul>
+<li><strong>插入</strong>：与 <code>std::set</code> 不同，<code>std::multiset</code> 允许插入重复元素，因此可以有多个相同值的元素。</li>
+<li><strong>查找</strong>：在 <code>std::multiset</code> 中，查找操作的时间复杂度为 O(log n)，同样是基于平衡二叉树的结构。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度也是 O(log n)。</li>
+</ul>
+<p><code>std::multiset</code> 和 <code>std::set</code> 最大的区别是，<code>std::multiset</code> 允许元素重复，这使得它在存储多个相同元素时更为灵活。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdmap"><a class="header" href="#stdmap">std::map</a></h1>
+<p><code>std::map</code> 是一个排序的关联容器，用于存储键值对，其中每个键是唯一的，并根据键的顺序自动排序。<code>std::map</code> 基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
+<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;map&gt;
+</code></pre>
+<h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
+<p><code>std::map</code> 是基于平衡二叉树（如红黑树）实现的容器。每个元素由一对键值（key-value）组成，并且键值对根据键的顺序进行自动排序。每个键在 <code>std::map</code> 中是唯一的，不能有重复的键。</p>
+<ul>
+<li><strong>插入</strong>：插入一个新的键值对时，键会自动按照排序规则插入到树中，且每个键都是唯一的。</li>
+<li><strong>查找</strong>：查找操作的时间复杂度为 O(log n)，由于平衡二叉树的结构，查找过程非常高效。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度为 O(log n)，删除时需要重新调整树的结构。</li>
+</ul>
+<p><code>std::map</code> 不允许重复的键，因此每个键只能对应一个值。如果尝试插入一个已存在的键，插入操作会被忽略。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultimap"><a class="header" href="#stdmultimap">std::multimap</a></h1>
+<p><code>std::multimap</code> 是一个排序的关联容器，用于存储键值对，其中每个键可以对应多个值。与 <code>std::map</code> 相比，<code>std::multimap</code> 允许键的重复，因此在存储具有相同键的多个元素时非常有用。</p>
+<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;map&gt;
+</code></pre>
+<h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
+<p><code>std::multimap</code> 也是基于平衡二叉树（如红黑树）实现的容器，元素以键值对的形式存储，并且根据键的顺序进行排序。与 <code>std::map</code> 不同，<code>std::multimap</code> 允许多个元素具有相同的键，因此它能够存储多个具有相同键的值。</p>
+<ul>
+<li><strong>插入</strong>：在 <code>std::multimap</code> 中，多个相同的键可以插入，而每个键对应的值是允许重复的。</li>
+<li><strong>查找</strong>：查找操作的时间复杂度为 O(log n)，这是因为 <code>std::multimap</code> 也是基于平衡二叉树实现的。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度为 O(log n)，删除一个键值对时会重新平衡树。</li>
+</ul>
+<p>与 <code>std::map</code> 的最大区别在于，<code>std::multimap</code> 允许存储具有重复键的元素，这使得它非常适用于需要存储多个相同键值对的场景。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_set"><a class="header" href="#stdunordered_set">std::unordered_set</a></h1>
+<p><code>std::unordered_set</code> 是一个基于哈希表实现的容器，存储唯一的元素。与 <code>std::set</code> 类似，它保证元素的唯一性，但是不保证元素的顺序。<code>std::unordered_set</code> 使用哈希函数来确定元素的存储位置，从而提供较快的查找、插入和删除操作。</p>
+<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;unordered_set&gt;
+</code></pre>
+<h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
+<p><code>std::unordered_set</code> 使用哈希表（hash table）来存储元素。每个元素的存储位置由哈希函数计算出来，因此它不保证元素的顺序。哈希表允许非常高效的查找、插入和删除操作，通常时间复杂度为 O(1)，但在哈希冲突的情况下，最坏情况的时间复杂度可能退化为 O(n)。</p>
+<ul>
+<li><strong>插入</strong>：插入一个元素时，哈希函数会计算该元素的哈希值，并将元素存储在哈希表中。</li>
+<li><strong>查找</strong>：查找操作的时间复杂度为 O(1)，但是哈希冲突可能导致时间复杂度退化为 O(n)。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度通常为 O(1)，但最坏情况下可能退化为 O(n)。</li>
+</ul>
+<p><code>std::unordered_set</code> 与 <code>std::set</code> 最大的区别是，它使用哈希表来存储元素，因此没有顺序性，无法进行按顺序的遍历。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_multiset"><a class="header" href="#stdunordered_multiset">std::unordered_multiset</a></h1>
+<p><code>std::unordered_multiset</code> 是一个基于哈希表实现的容器，用于存储多个相同的元素，并且不保证元素的顺序。与 <code>std::unordered_set</code> 类似，<code>std::unordered_multiset</code> 使用哈希表来存储元素，允许插入重复的元素。</p>
+<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;unordered_set&gt;
+</code></pre>
+<h2 id="2-存储方式-8"><a class="header" href="#2-存储方式-8">2. 存储方式</a></h2>
+<p><code>std::unordered_multiset</code> 使用哈希表来存储元素。每个元素的位置是通过哈希函数计算的，存储时不保证元素的顺序。与 <code>std::unordered_set</code> 不同，<code>std::unordered_multiset</code> 允许重复元素的插入，因此可以存储多个相同的元素。</p>
+<ul>
+<li><strong>插入</strong>：插入一个新元素时，哈希函数会计算元素的哈希值，并将其存储在哈希表中。如果插入的元素已经存在，<code>std::unordered_multiset</code> 会允许插入重复元素。</li>
+<li><strong>查找</strong>：查找操作的时间复杂度通常为 O(1)，但是在哈希冲突的情况下，可能退化为 O(n)。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度通常为 O(1)，但最坏情况下可能退化为 O(n)。</li>
+</ul>
+<p><code>std::unordered_multiset</code> 与 <code>std::unordered_set</code> 最大的区别是，它允许存储重复元素，适用于需要存储多个相同元素的场景。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_map"><a class="header" href="#stdunordered_map">std::unordered_map</a></h1>
+<p><code>std::unordered_map</code> 是一个基于哈希表实现的容器，用于存储键值对。它提供快速的查找、插入和删除操作，但不保证元素的顺序。与 <code>std::map</code> 相比，<code>std::unordered_map</code> 使用哈希函数来决定元素的存储位置，因此其查找效率更高，通常为 O(1)，但无法保证元素的顺序。</p>
+<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;unordered_map&gt;
+</code></pre>
+<h2 id="2-存储方式-9"><a class="header" href="#2-存储方式-9">2. 存储方式</a></h2>
+<p><code>std::unordered_map</code> 使用哈希表（hash table）来存储键值对。每个元素由一对键值（key-value）组成，元素的位置是通过哈希函数计算出的，因此它不保证元素按顺序存储。哈希表的结构使得在最理想的情况下，插入、查找和删除操作的时间复杂度为 O(1)。</p>
+<ul>
+<li><strong>插入</strong>：插入一个键值对时，哈希函数会计算键的哈希值，并将元素存储在对应的桶（bucket）中。</li>
+<li><strong>查找</strong>：由于哈希表的结构，查找一个元素的时间复杂度为 O(1)，但在最坏情况下（哈希冲突），复杂度会退化为 O(n)。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度通常为 O(1)，但在哈希冲突的情况下，也可能退化为 O(n)。</li>
+</ul>
+<p><code>std::unordered_map</code> 的元素没有顺序，它是根据哈希值来存储和访问的，因此不能进行按顺序的遍历。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_multimap"><a class="header" href="#stdunordered_multimap">std::unordered_multimap</a></h1>
+<p><code>std::unordered_multimap</code> 是一个基于哈希表实现的容器，用于存储键值对，并允许一个键对应多个值。它不保证元素的顺序，适用于需要存储多个相同键值对的场景。<code>std::unordered_multimap</code> 提供了高效的查找、插入和删除操作，通常为 O(1)，但无法保证元素的顺序。</p>
+<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;unordered_map&gt;
+</code></pre>
+<h2 id="2-存储方式-10"><a class="header" href="#2-存储方式-10">2. 存储方式</a></h2>
+<p><code>std::unordered_multimap</code> 使用哈希表来存储键值对。每个元素由一对键值（key-value）组成，存储位置通过哈希函数计算得出。与 <code>std::unordered_map</code> 不同，<code>std::unordered_multimap</code> 允许多个相同的键出现，因此可以存储多个具有相同键的值。</p>
+<ul>
+<li><strong>插入</strong>：插入一个新的键值对时，哈希函数会计算键的哈希值，并将元素存储在对应的桶中。如果键重复，<code>std::unordered_multimap</code> 会允许插入相同键的多个值。</li>
+<li><strong>查找</strong>：查找操作的时间复杂度通常为 O(1)，但在哈希冲突的情况下，复杂度可能退化为 O(n)。</li>
+<li><strong>删除</strong>：删除操作的时间复杂度通常为 O(1)，但是也有可能退化为 O(n)。</li>
+</ul>
+<p><code>std::unordered_multimap</code> 与 <code>std::unordered_map</code> 最大的区别是，它允许多个相同的键存在。</p>
 <div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
     // 获取当前页面的 URL
     var currentUrl = window.location.href;
