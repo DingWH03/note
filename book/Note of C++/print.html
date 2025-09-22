@@ -214,6 +214,28 @@
 <tr><td><strong>适用场景</strong></td><td>频繁在中间插入/删除</td><td>需要高效随机访问</td><td>需要在头尾快速插入/删除</td></tr>
 <tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
 </tbody></table>
+</div>
+<h2 id="2-关联容器"><a class="header" href="#2-关联容器">2. 关联容器</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::set</strong></th><th><strong>std::multiset</strong></th><th><strong>std::map</strong></th><th><strong>std::multimap</strong></th></tr></thead><tbody>
+<tr><td><strong>内存结构</strong></td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td></tr>
+<tr><td><strong>访问性能</strong></td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td></tr>
+<tr><td><strong>插入/删除性能</strong></td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持键的有序</td><td>插入、删除时会自动保持键的有序</td></tr>
+<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
+<tr><td><strong>适用场景</strong></td><td>需要唯一元素且不重复的集合</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
+<tr><td><strong>键值对</strong></td><td>不存在值，只有键（元素）</td><td>不存在值，只有键（元素）</td><td>存在键值对，键映射到一个值</td><td>存在键值对，键映射到多个值（允许重复）</td></tr>
+<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+</tbody></table>
+</div>
+<h2 id="3-无序容器"><a class="header" href="#3-无序容器">3. 无序容器</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::unordered_set</strong></th><th><strong>std::unordered_multiset</strong></th><th><strong>std::unordered_map</strong></th><th><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
+<tr><td><strong>内存结构</strong></td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td></tr>
+<tr><td><strong>访问性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
+<tr><td><strong>插入/删除性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
+<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
+<tr><td><strong>适用场景</strong></td><td>需要存储唯一元素且不关心顺序</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
+<tr><td><strong>键值对</strong></td><td>存储键，无值</td><td>存储键，无值</td><td>存储键值对，键映射到一个值</td><td>存储键值对，键映射到多个值</td></tr>
+<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+</tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
 <p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
 <h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
@@ -592,8 +614,6 @@ lst.remove(3);  // 删除所有值为3的元素，lst 变为 {1, 2, 4, 5}
 </li>
 <li>
 <p><code>void remove_if (bool (*pred)(const T&amp;));</code>: pred: 一个谓词（通常是一个函数或函数对象），用于判断元素是否满足删除条件。pred 返回 true 表示删除该元素，返回 false 表示保留该元素。用于删除满足特定条件的所有元素。与 remove 不同的是，remove_if 允许你使用自定义的条件来判断哪些元素需要被删除。</p>
-</li>
-</ol>
 <p>remove_if 会遍历整个容器，将所有满足谓词 pred 条件的元素移到容器的末尾，并返回一个指向容器中第一个不满足条件的元素的迭代器。然后可以使用 erase 来删除这些元素。</p>
 <p>需要注意的是，remove_if 并不会实际删除元素，它只是将符合条件的元素移动到容器的末尾，删除操作需要通过 erase 来完成。</p>
 <p>假设我们有一个 std::list，并希望删除所有大于 3 的元素：</p>
@@ -638,6 +658,8 @@ int main() {
     return 0;
 }
 </code></pre>
+</li>
+</ol>
 <h3 id="5-遍历函数"><a class="header" href="#5-遍历函数">(5) 遍历函数</a></h3>
 <ol>
 <li>
@@ -962,8 +984,6 @@ deq2.assign(deq1.begin(), deq1.end());  // deq2 变为 {1, 2, 3}
 </li>
 <li>
 <p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。分配器负责容器内存的管理，包括内存的分配、释放等操作。在默认情况下，C++ 标准库容器使用 std::allocator 作为默认的分配器。通过调用 get_allocator()，你可以获取容器使用的分配器，并利用该分配器进行自定义内存操作，或者检查容器如何管理内存。</p>
-</li>
-</ol>
 <pre><code class="language-c++">#include &lt;iostream&gt;
 #include &lt;vector&gt;
 
@@ -985,6 +1005,8 @@ int main() {
     return 0;
 }
 </code></pre>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
     // 获取当前页面的 URL
     var currentUrl = window.location.href;

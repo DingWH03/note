@@ -413,8 +413,6 @@ deq2.assign(deq1.begin(), deq1.end());  // deq2 变为 {1, 2, 3}
 </li>
 <li>
 <p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。分配器负责容器内存的管理，包括内存的分配、释放等操作。在默认情况下，C++ 标准库容器使用 std::allocator 作为默认的分配器。通过调用 get_allocator()，你可以获取容器使用的分配器，并利用该分配器进行自定义内存操作，或者检查容器如何管理内存。</p>
-</li>
-</ol>
 <pre><code class="language-c++">#include &lt;iostream&gt;
 #include &lt;vector&gt;
 
@@ -436,6 +434,8 @@ int main() {
     return 0;
 }
 </code></pre>
+</li>
+</ol>
 
                     </main>
 

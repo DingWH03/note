@@ -208,6 +208,28 @@
 <tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
 </tbody></table>
 </div>
+<h2 id="2-关联容器"><a class="header" href="#2-关联容器">2. 关联容器</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::set</strong></th><th><strong>std::multiset</strong></th><th><strong>std::map</strong></th><th><strong>std::multimap</strong></th></tr></thead><tbody>
+<tr><td><strong>内存结构</strong></td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td></tr>
+<tr><td><strong>访问性能</strong></td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td></tr>
+<tr><td><strong>插入/删除性能</strong></td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持键的有序</td><td>插入、删除时会自动保持键的有序</td></tr>
+<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
+<tr><td><strong>适用场景</strong></td><td>需要唯一元素且不重复的集合</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
+<tr><td><strong>键值对</strong></td><td>不存在值，只有键（元素）</td><td>不存在值，只有键（元素）</td><td>存在键值对，键映射到一个值</td><td>存在键值对，键映射到多个值（允许重复）</td></tr>
+<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+</tbody></table>
+</div>
+<h2 id="3-无序容器"><a class="header" href="#3-无序容器">3. 无序容器</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::unordered_set</strong></th><th><strong>std::unordered_multiset</strong></th><th><strong>std::unordered_map</strong></th><th><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
+<tr><td><strong>内存结构</strong></td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td></tr>
+<tr><td><strong>访问性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
+<tr><td><strong>插入/删除性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
+<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
+<tr><td><strong>适用场景</strong></td><td>需要存储唯一元素且不关心顺序</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
+<tr><td><strong>键值对</strong></td><td>存储键，无值</td><td>存储键，无值</td><td>存储键值对，键映射到一个值</td><td>存储键值对，键映射到多个值</td></tr>
+<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
