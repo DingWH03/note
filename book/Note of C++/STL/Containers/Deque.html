@@ -1,0 +1,491 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Deque - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Deque.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="stddeque"><a class="header" href="#stddeque">std::deque</a></h1>
+<p><code>std::deque</code>（双端队列）是一个支持在两端快速插入和删除元素的顺序容器。与 <code>std::vector</code> 不同，<code>std::deque</code> 在内存中采用分段连续的存储方式，即它的元素分布在多个不连续的内存块中，这些内存块通过指针数组进行管理。由于这一内存布局，<code>std::deque</code> 可以在头尾两端高效地进行插入和删除操作，并且支持随机访问(可以使用<code>operator[]</code>)。尽管如此，它的随机访问性能较 <code>std::vector</code> 差一些，因为每个内存块并不连续。</p>
+<p><code>std::deque</code> 不需要像 <code>std::vector</code> 一样每次扩展时重新分配整个内存空间，而是通过扩展指向内存块的指针数组来增加容量。这使得它在动态变化的场景中，尤其是在需要频繁在两端插入和删除元素时，表现得尤为高效。</p>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<pre><code class="language-C++">#include &lt;deque&gt;
+</code></pre>
+<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<p>std::deque 是双端队列，支持在两端进行高效的插入和删除。为了实现这一点，std::deque 使用的是一种分段连续的内存结构。它的内存布局由多个固定大小的内存块（即“段”）组成，每个块内的元素是连续存储的，但这些块在内存中并不连续。通过维护一个指向这些块的指针数组，std::deque 可以实现高效的两端插入和删除操作。</p>
+<p>当 std::deque 容量不足时，它会动态扩展新的内存块，并在原有的内存块之间插入新的块。这样，由于每个块都是独立分配的，std::deque 既能保证高效的插入和删除操作，又能提供支持随机访问的能力（虽然随机访问性能不如 std::vector）。</p>
+<p>与 std::vector 不同的是，std::deque 不需要一次性重新分配整个内存空间，它只是扩展指向内存块的指针数组。这样，std::deque 可以高效地在头尾进行扩展，并且仍然保持较好的访问性能。</p>
+<h3 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h3>
+<h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>deque()</code>: 创建一个空的 <code>std::deque</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq;
+</code></pre>
+</li>
+<li>
+<p><code>deque(size_t nSize)</code>: 创建一个包含 <code>nSize</code> 个默认构造元素的 <code>std::deque</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq(10);  // 创建一个包含10个默认构造元素的 deque
+</code></pre>
+</li>
+<li>
+<p><code>deque(size_t nSize, const T&amp; value)</code>: 创建一个包含 <code>nSize</code> 个元素，且每个元素的值为 <code>value</code> 的 <code>std::deque</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq(10, 5);  // 创建一个包含10个元素，值都为5的 deque
+</code></pre>
+</li>
+<li>
+<p><code>deque(const deque&amp;)</code>: 复制构造函数，创建一个与另一个 <code>std::deque</code> 完全相同的副本。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq1 = {1, 2, 3, 4, 5};
+std::deque&lt;int&gt; deq2(deq1);  // deq2 是 deq1 的一个复制版本
+</code></pre>
+</li>
+<li>
+<p><code>deque(begin, end)</code>: 使用另一个容器或迭代器区间中的元素初始化 <code>std::deque</code>。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+std::deque&lt;int&gt; deq(vec.begin(), vec.end());  // 复制 vector 的元素到 deque
+</code></pre>
+</li>
+</ol>
+<h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>size_t size() const</code>: 返回 <code>std::deque</code> 中元素的个数。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4};
+std::cout &lt;&lt; deq.size();  // 输出 4
+</code></pre>
+</li>
+<li>
+<p><code>bool empty() const</code>: 检查 <code>std::deque</code> 是否为空，若为空返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq;
+if (deq.empty()) {
+    std::cout &lt;&lt; "Deque is empty." &lt;&lt; std::endl;
+}
+</code></pre>
+</li>
+<li>
+<p><code>void resize(size_t size)</code>: 调整 <code>std::deque</code> 的大小。若新大小大于当前大小，<code>std::deque</code> 会插入默认值的元素；若小于当前大小，则会删除多余的元素。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+deq.resize(5, 10);  // 增加两个元素，元素值为 10
+</code></pre>
+</li>
+<li>
+<p><code>void shrink_to_fit()</code>: 调整队列预留内存刚好适应当前的大小，节省内存</p>
+</li>
+<li>
+<p><code>size_t max_size() const</code>: 返回最大可允许的vector元素数量值</p>
+</li>
+</ol>
+<h3 id="3-增加函数"><a class="header" href="#3-增加函数">(3) 增加函数</a></h3>
+<ol>
+<li>
+<p><code>push_back(const T&amp; value)</code>: 将元素 <code>value</code> 添加到 <code>std::deque</code> 的末尾。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+deq.push_back(4);  // 向 deq 中添加元素 4，deq 变为 {1, 2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>push_front(const T&amp; value)</code>: 将元素 <code>value</code> 添加到 <code>std::deque</code> 的开头。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {2, 3, 4};
+deq.push_front(1);  // 向 deq 中添加元素 1，deq 变为 {1, 2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>emplace_back(Args&amp;&amp;... args)</code>: 在 <code>std::deque</code> 的末尾就地构造一个元素，使用提供的参数直接构造该元素。</p>
+<pre><code class="language-c++">std::deque&lt;std::pair&lt;int, int&gt;&gt; deq;
+deq.emplace_back(1, 2);  // 在末尾构造一个 pair&lt;int, int&gt;，值为 {1, 2}
+</code></pre>
+</li>
+<li>
+<p><code>emplace_front(Args&amp;&amp;... args)</code>: 在 <code>std::deque</code> 的前端就地构造一个元素。</p>
+<pre><code class="language-c++">std::deque&lt;std::pair&lt;int, int&gt;&gt; deq;
+deq.emplace_front(1, 2);  // 在前端构造一个 pair&lt;int, int&gt;，值为 {1, 2}
+</code></pre>
+</li>
+<li>
+<p><code>insert(iterator pos, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入元素 <code>value</code>，插入操作会将 <code>pos</code> 后面的元素向后移动。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 4, 5};
+deq.insert(deq.begin() + 2, 3);  // 在位置2插入3，deq 变为 {1, 2, 3, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>insert(iterator pos, size_t count, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入 <code>count</code> 个元素，所有的元素值为 <code>value</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 4, 5};
+deq.insert(deq.begin() + 2, 2, 3);  // 在位置2插入两个3，deq 变为 {1, 2, 3, 3, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>insert(iterator pos, InputIterator first, InputIterator last)</code>: 将 <code>[first, last)</code> 区间的元素插入到指定位置 <code>pos</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq1 = {1, 2, 3};
+std::deque&lt;int&gt; deq2 = {4, 5};
+deq1.insert(deq1.begin() + 2, deq2.begin(), deq2.end());  // 在位置2插入 deq2 中的元素，deq1 变为 {1, 2, 4, 5, 3}
+</code></pre>
+</li>
+</ol>
+<h3 id="4-删除函数"><a class="header" href="#4-删除函数">(4) 删除函数</a></h3>
+<ol>
+<li>
+<p><code>pop_back()</code>: 删除 <code>std::deque</code> 中的最后一个元素。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4};
+deq.pop_back();  // 删除最后一个元素，deq 变为 {1, 2, 3}
+</code></pre>
+</li>
+<li>
+<p><code>pop_front()</code>: 删除 <code>std::deque</code> 中的第一个元素。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4};
+deq.pop_front();  // 删除第一个元素，deq 变为 {2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>erase(iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素，删除操作后，<code>pos</code> 后面的元素会向前移动。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4};
+deq.erase(deq.begin() + 2);  // 删除索引为2的元素，deq 变为 {1, 2, 4}
+</code></pre>
+</li>
+<li>
+<p><code>erase(iterator first, iterator last)</code>: 删除区间 <code>[first, last)</code> 内的所有元素。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4, 5};
+deq.erase(deq.begin() + 1, deq.begin() + 4);  // 删除从索引1到3的元素，deq 变为 {1, 5}
+</code></pre>
+</li>
+<li>
+<p><code>clear()</code>: 删除 <code>std::deque</code> 中的所有元素，使容器变为空。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3, 4};
+deq.clear();  // 删除所有元素，deq 变为空 {}
+</code></pre>
+</li>
+</ol>
+<h3 id="5-遍历函数"><a class="header" href="#5-遍历函数">(5) 遍历函数</a></h3>
+<ol>
+<li>
+<p><code>reference at(int pos)</code>: 同Vector, 返回 <code>pos</code> 位置元素的引用。与 <code>operator[]</code> 类似，但会检查边界，如果访问无效的位置会抛出 <code>std::out_of_range</code> 异常。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+int&amp; element = vec.at(2);  // 返回位置 2 处元素的引用，即值为 3
+element = 10;  // 修改元素为 10
+std::cout &lt;&lt; vec[2] &lt;&lt; std::endl;  // 输出: 10
+</code></pre>
+</li>
+<li>
+<p><code>iterator begin()</code>: 返回指向 <code>std::deque</code> 第一个元素的迭代器。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+std::deque&lt;int&gt;::iterator it = deq.begin();  // 返回指向第一个元素的迭代器
+std::cout &lt;&lt; *it &lt;&lt; std::endl;  // 输出: 1
+</code></pre>
+</li>
+<li>
+<p><code>iterator end()</code>: 返回指向 <code>std::deque</code> 最后一个元素之后位置的迭代器。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+std::deque&lt;int&gt;::iterator it = deq.end();  // 返回指向最后一个元素之后位置的迭代器
+--it;  // 移动到最后一个元素
+std::cout &lt;&lt; *it &lt;&lt; std::endl;  // 输出: 3
+</code></pre>
+</li>
+<li>
+<p><code>reverse_iterator rbegin()</code>: 返回指向 <code>std::deque</code> 最后一个元素的反向迭代器。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+std::deque&lt;int&gt;::reverse_iterator rit = deq.rbegin();  // 返回指向最后一个元素的反向迭代器
+std::cout &lt;&lt; *rit &lt;&lt; std::endl;  // 输出: 3
+</code></pre>
+</li>
+<li>
+<p><code>reverse_iterator rend()</code>: 返回指向 <code>std::deque</code> 第一个元素之前位置的反向迭代器。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+std::deque&lt;int&gt;::reverse_iterator rit = deq.rend();  // 返回指向第一个元素之前位置的反向迭代器
+++rit;  // 移动到第一个元素
+std::cout &lt;&lt; *rit &lt;&lt; std::endl;  // 输出: 1
+</code></pre>
+</li>
+<li>
+<p>使用基于范围的 <code>for</code> 循环（C++11 及以上）: 直接遍历 <code>std::deque</code> 中的每个元素。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+for (const int&amp; num : deq) {
+    std::cout &lt;&lt; num &lt;&lt; " ";  // 输出: 1 2 3
+}
+</code></pre>
+</li>
+<li>
+<p>使用传统的 <code>for</code> 循环（基于迭代器）: 使用迭代器来遍历 <code>std::deque</code>。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq = {1, 2, 3};
+for (auto it = deq.begin(); it != deq.end(); ++it) {
+    std::cout &lt;&lt; *it &lt;&lt; " ";  // 输出: 1 2 3
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="6-其他函数"><a class="header" href="#6-其他函数">(6) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>swap(deque&amp; other)</code>: 交换当前 <code>std::deque</code> 和另一个 <code>std::deque</code> 的内容。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq1 = {1, 2, 3};
+std::deque&lt;int&gt; deq2 = {4, 5, 6};
+deq1.swap(deq2);  // deq1 变为 {4, 5, 6}，deq2 变为 {1, 2, 3}
+</code></pre>
+</li>
+<li>
+<p><code>assign(size_t count, const T&amp; value)</code>: 将 <code>count</code> 个 <code>value</code> 元素赋值给当前 <code>std::deque</code>，替换原有内容。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq;
+deq.assign(5, 10);  // 将 deq 赋值为 {10, 10, 10, 10, 10}
+</code></pre>
+</li>
+<li>
+<p><code>assign(InputIterator first, InputIterator last)</code>: 使用区间 <code>[first, last)</code> 的元素来填充当前 <code>std::deque</code>，替换原有内容。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; deq1 = {1, 2, 3};
+std::deque&lt;int&gt; deq2;
+deq2.assign(deq1.begin(), deq1.end());  // deq2 变为 {1, 2, 3}
+</code></pre>
+</li>
+<li>
+<p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。分配器负责容器内存的管理，包括内存的分配、释放等操作。在默认情况下，C++ 标准库容器使用 std::allocator 作为默认的分配器。通过调用 get_allocator()，你可以获取容器使用的分配器，并利用该分配器进行自定义内存操作，或者检查容器如何管理内存。</p>
+</li>
+</ol>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; vec;
+
+    // 获取分配器
+    std::allocator&lt;int&gt; alloc = vec.get_allocator();
+
+    // 使用分配器进行内存分配
+    int* p = alloc.allocate(5);  // 分配5个int元素的内存
+
+    // 显示分配的内存地址
+    std::cout &lt;&lt; "Allocated memory at: " &lt;&lt; p &lt;&lt; std::endl;
+
+    // 记得释放分配的内存
+    alloc.deallocate(p, 5);  // 释放之前分配的5个int内存
+
+    return 0;
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../STL/Containers/List.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../note.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../STL/Containers/List.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../note.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

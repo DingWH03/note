@@ -199,6 +199,15 @@
 <tr><td></td><td><strong>std::unordered_multimap</strong></td><td>无序多重映射，哈希表实现，允许一个键映射到多个值。</td></tr>
 </tbody></table>
 </div>
+<h2 id="1-序列容器"><a class="header" href="#1-序列容器">1. 序列容器</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th>std::list</th><th>std::vector</th><th>std::deque</th></tr></thead><tbody>
+<tr><td><strong>内存结构</strong></td><td>非连续内存，双向链表</td><td>连续内存</td><td>分段连续内存</td></tr>
+<tr><td><strong>访问性能</strong></td><td>顺序访问较快，随机访问慢</td><td>随机访问快</td><td>末尾和头部访问都快</td></tr>
+<tr><td><strong>插入/删除性能</strong></td><td>任意位置插入、删除快</td><td>末尾插入快，中间位置慢</td><td>头尾插入、删除快</td></tr>
+<tr><td><strong>适用场景</strong></td><td>频繁在中间插入/删除</td><td>需要高效随机访问</td><td>需要在头尾快速插入/删除</td></tr>
+<tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
