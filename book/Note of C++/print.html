@@ -1283,47 +1283,599 @@ int main() {
 </li>
 <li>
 <p>比较运算符：支持 ==, !=, &lt;, &lt;=, &gt;, &gt;=，C++20 起支持 &lt;=&gt;，但移除了!=, &lt;, &lt;=, &gt;, &gt;=。</p>
+<blockquote>
+<p>例如 <code>&lt;</code> (小于比较)比较两个 std::set 的顺序，即按照元素的字典顺序（升序排列）来进行比较。如果第一个集合的元素在第一个不相等的地方小于第二个集合，则返回 true。</p>
+</blockquote>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultiset"><a class="header" href="#stdmultiset">std::multiset</a></h1>
-<p><code>std::multiset</code> 是一个排序的集合容器，允许存储重复的元素，并且自动根据元素的顺序进行排序。与 <code>std::set</code> 相似，<code>std::multiset</code> 也基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
+<p><code>std::multiset</code> 是与 <code>std::set</code> 类似的一个容器，但与 <code>std::set</code> 不同，<code>std::multiset</code> 允许存储重复的元素。在 <code>std::multiset</code> 中，元素会按顺序排列，并且可以包含多个相同的元素。<code>std::multiset</code> 也提供了高效的查找、插入和删除操作，底层通常使用红黑树结构实现，时间复杂度通常为 O(log n)。</p>
 <h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
 <h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
-<p><code>std::multiset</code> 是基于平衡二叉树（如红黑树）实现的容器，元素会按照一定的顺序（默认升序）进行排序，并且允许存储重复的元素。每个元素都会在树中作为一个独立的节点存储，树的结构保证了元素的排序。</p>
+<p><code>std::multiset</code> 是基于平衡二叉树（通常是红黑树）实现的容器。与 <code>std::set</code> 相似，<code>std::multiset</code> 也具有自动排序的特性，元素会按升序（默认情况下）进行排列。但是，不同于 <code>std::set</code>，<code>std::multiset</code> 允许存储重复的元素。</p>
+<p>在 <code>std::multiset</code> 中，元素存储在节点中，每个节点包含一个元素及其数量（即该元素出现的次数）。这种方式保证了所有元素的排序特性，同时允许插入多个相同的元素。</p>
 <ul>
-<li><strong>插入</strong>：与 <code>std::set</code> 不同，<code>std::multiset</code> 允许插入重复元素，因此可以有多个相同值的元素。</li>
-<li><strong>查找</strong>：在 <code>std::multiset</code> 中，查找操作的时间复杂度为 O(log n)，同样是基于平衡二叉树的结构。</li>
-<li><strong>删除</strong>：删除操作的时间复杂度也是 O(log n)。</li>
+<li><strong>插入</strong>：插入一个新元素的时间复杂度为 O(log n)，并且插入重复元素时，<code>std::multiset</code> 会将元素的数量增加，而不是替换现有的元素。</li>
+<li><strong>查找</strong>：在 <code>std::multiset</code> 中查找元素的时间复杂度为 O(log n)，因为它依赖于平衡二叉树的结构。</li>
+<li><strong>删除</strong>：删除操作也有 O(log n) 的时间复杂度，因为删除节点时需要保持树的平衡。</li>
 </ul>
-<p><code>std::multiset</code> 和 <code>std::set</code> 最大的区别是，<code>std::multiset</code> 允许元素重复，这使得它在存储多个相同元素时更为灵活。</p>
+<p>与 <code>std::set</code> 不同，<code>std::multiset</code> 允许插入重复元素，因此 <code>std::multiset</code> 可以包含多个相同的元素。std::multiset也不支持快速的随机访问。</p>
+<h2 id="3-方法-5"><a class="header" href="#3-方法-5">3. 方法</a></h2>
+<h3 id="1-构造方法-2"><a class="header" href="#1-构造方法-2">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>multiset()</code>: 创建一个空的 <code>std::multiset</code>，默认构造函数。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms;
+std::multiset&lt;int&gt; ms = {1, 2, 3, 4, 5};
+</code></pre>
+</li>
+<li>
+<p><code>multiset(const multiset&amp;)</code>: 复制构造函数，创建一个与另一个 <code>std::multiset</code> 完全相同的副本。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms1 = {1, 2, 3, 4, 5};
+std::multiset&lt;int&gt; ms2(ms1);  // ms2 是 ms1 的一个复制版本
+</code></pre>
+</li>
+<li>
+<p><code>multiset(begin, end)</code>: 使用另一个容器或迭代器区间中的元素初始化 <code>std::multiset</code>。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+std::multiset&lt;int&gt; ms(vec.begin(), vec.end());  // 复制 vector 的元素到 multiset
+</code></pre>
+</li>
+<li>
+<p><code>std::multiset&lt;T&amp;, std::greater&lt;T&amp;&gt;&gt;</code>: 按照降序创建 <code>multiset</code>。</p>
+</li>
+</ol>
+<h3 id="2-大小函数-2"><a class="header" href="#2-大小函数-2">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>size_t size() const</code>: 返回 <code>std::multiset</code> 中元素的个数。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3, 4};
+std::cout &lt;&lt; ms.size();  // 输出 4
+</code></pre>
+</li>
+<li>
+<p><code>bool empty() const</code>: 检查 <code>std::multiset</code> 是否为空，若为空返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms;
+if (ms.empty()) {
+    std::cout &lt;&lt; "Multiset is empty." &lt;&lt; std::endl;
+}
+</code></pre>
+</li>
+<li>
+<p><code>size_t max_size() const</code>: 返回最大可允许的 <code>multiset</code> 元素数量。</p>
+</li>
+</ol>
+<h3 id="3-增加函数-3"><a class="header" href="#3-增加函数-3">(3) 增加函数</a></h3>
+<ol>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; insert(const T&amp; value)</code>: 插入元素到 <code>multiset</code> 中，返回一个 <code>pair</code>，其 <code>first</code> 是指向插入元素所在位置的迭代器，<code>second</code> 是插入是否成功（是否为重复元素）。</p>
+<pre><code class="language-c++">ms.insert({1, 2, 3});                     // initializer_list
+ms.insert(ms.begin(), 42);               // 带 hint 的插入
+ms.insert(vec.begin(), vec.end());      // 区间插入
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; emplace(_Args&amp;&amp;... __args)</code>: 就地构建并插入元素。</p>
+</li>
+<li>
+<p><code>iterator emplace_hint(const_iterator __pos, _Args&amp;&amp;... __args)</code>: 就地构建并插入元素，且指定插入位置。</p>
+</li>
+</ol>
+<h3 id="4-删除元素"><a class="header" href="#4-删除元素">(4) 删除元素</a></h3>
+<ol>
+<li>
+<p><code>void clear()</code>: 删除 <code>std::multiset</code> 中的所有元素，使容器变为空。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3, 4};
+ms.clear();  // 删除所有元素，ms 变为空 {}
+</code></pre>
+</li>
+<li>
+<p><code>void erase(iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3, 4};
+ms.erase(std::next(ms.begin(), 2));  // 删除索引为2的元素，ms 变为 {1, 2, 4}
+</code></pre>
+</li>
+<li>
+<p><code>size_t erase(const key_type&amp; key)</code>: 删除指定键，返回删除个数。</p>
+</li>
+<li>
+<p><code>erase(first, last)</code>: 删除迭代器区间。</p>
+</li>
+</ol>
+<h3 id="5-查找函数"><a class="header" href="#5-查找函数">(5) 查找函数</a></h3>
+<ol>
+<li>
+<p><code>iterator find(const T&amp; value)</code>: 查找某元素在 <code>multiset</code> 中的位置，返回一个指向该元素的迭代器，如果找不到会返回 <code>end()</code>。</p>
+</li>
+<li>
+<p><code>std::pair&lt;const_iterator, const_iterator&gt; equal_range(const key_type&amp; __x) const</code>: 返回一对迭代器，表示所有具有等于 <code>k</code> 的键的元素的范围。由于 <code>multiset</code> 允许重复元素，因此该范围可能包含多个相同的元素。如果没有与键K匹配的元素，则根据容器的内部比较对象(key_comp)，返回的范围的长度为0，两个迭代器均指向大于k的第一个元素。如果键超过了multiset容器中的最大元素，它将返回一个指向multiset容器中最后一个元素的迭代器。</p>
+<pre><code class="language-c++">    std::multiset&lt;int&gt; ms = {1, 2, 3, 3, 4};
+    std::pair p = ms.equal_range(3);
+    std::cout &lt;&lt; *p.first &lt;&lt; std::endl; // 输出 3
+    std::cout &lt;&lt; *p.second &lt;&lt; std::endl;// 输出 4
+</code></pre>
+</li>
+<li>
+<p><code>size_t count(const T&amp; value)</code>: 返回元素出现的次数。</p>
+</li>
+<li>
+<p><code>iterator lower_bound(const T&amp; value)</code>: 返回第一个不小于 <code>value</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>iterator upper_bound(const T&amp; value)</code>: 返回第一个大于 <code>value</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>bool contains(const T&amp; value) const</code>（C++20）：检查是否包含元素。</p>
+</li>
+</ol>
+<h3 id="6-遍历函数"><a class="header" href="#6-遍历函数">(6) 遍历函数</a></h3>
+<ol>
+<li>
+<p><code>iterator begin()</code>: 返回指向 <code>std::multiset</code> 第一个元素的迭代器。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3};
+std::multiset&lt;int&gt;::iterator it = ms.begin();  // 返回指向第一个元素的迭代器
+std::cout &lt;&lt; *it &lt;&lt; std::endl;  // 输出: 1
+</code></pre>
+</li>
+<li>
+<p><code>iterator end()</code>: 返回指向 <code>std::multiset</code> 最后一个元素之后位置的迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rbegin()</code>: 返回指向 <code>std::multiset</code> 最后一个元素的反向迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rend()</code>: 返回指向 <code>std::multiset</code> 第一个元素之前位置的反向迭代器。</p>
+</li>
+<li>
+<p>使用基于范围的 <code>for</code> 循环（C++11 及以上）: 直接遍历 <code>std::multiset</code> 中的每个元素。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3};
+for (const int&amp; num : ms) {
+    std::cout &lt;&lt; num &lt;&lt; " ";  // 输出: 1 2 3
+}
+</code></pre>
+</li>
+<li>
+<p>使用传统的 <code>for</code> 循环（基于迭代器）: 使用迭代器来遍历 <code>std::multiset</code>。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms = {1, 2, 3};
+for (auto it = ms.begin(); it != ms.end(); ++it) {
+    std::cout &lt;&lt; *it &lt;&lt; " ";  // 输出: 1 2 3
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="7-其他函数"><a class="header" href="#7-其他函数">(7) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>swap(multiset&amp; other)</code>: 交换当前 <code>std::multiset</code> 和另一个 <code>std::multiset</code> 的内容。</p>
+</li>
+<li>
+<p><code>void merge(multiset&amp; other)</code>: 将另一个 <code>multiset</code> 中的元素合并到当前 <code>multiset</code>，如果元素重复，则保留所有元素。</p>
+<pre><code class="language-c++">std::multiset&lt;int&gt; ms1 = {1, 3, 5};
+std::multiset&lt;int&gt; ms2 = {2, 4, 6};
+ms1.merge(ms2);  // ms1 合并 ms2 后，变为 {1, 2, 3, 4, 5, 6}
+</code></pre>
+</li>
+<li>
+<p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。</p>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmap"><a class="header" href="#stdmap">std::map</a></h1>
-<p><code>std::map</code> 是一个排序的关联容器，用于存储键值对，其中每个键是唯一的，并根据键的顺序自动排序。<code>std::map</code> 基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
+<p><code>std::map</code> 是 C++ 标准库中的一个关联容器，它用于存储一组键值对（<code>key-value</code>），并根据键进行自动排序。每个键在 <code>std::map</code> 中是唯一的，因此不允许存储重复的键。<code>std::map</code> 底层通常使用红黑树结构实现，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
 <h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
-<pre><code class="language-C++">#include &lt;map&gt;
+<pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
-<p><code>std::map</code> 是基于平衡二叉树（如红黑树）实现的容器。每个元素由一对键值（key-value）组成，并且键值对根据键的顺序进行自动排序。每个键在 <code>std::map</code> 中是唯一的，不能有重复的键。</p>
+<p><code>std::map</code> 是基于平衡二叉树（通常是红黑树）实现的容器。与 <code>std::set</code> 类似，<code>std::map</code> 也具有自动排序的特性，元素会根据键（key）进行升序排序（默认情况下）。与 <code>std::set</code> 的区别是，<code>std::map</code> 存储的是键值对，每个键对应一个值，且键是唯一的。</p>
+<p>在 <code>std::map</code> 中，元素存储为节点，每个节点包含一个键值对和指向父节点、左子节点和右子节点的指针。通过这种方式，<code>std::map</code> 保证了所有键的排序特性，并支持高效的查找、插入和删除操作。</p>
 <ul>
-<li><strong>插入</strong>：插入一个新的键值对时，键会自动按照排序规则插入到树中，且每个键都是唯一的。</li>
-<li><strong>查找</strong>：查找操作的时间复杂度为 O(log n)，由于平衡二叉树的结构，查找过程非常高效。</li>
-<li><strong>删除</strong>：删除操作的时间复杂度为 O(log n)，删除时需要重新调整树的结构。</li>
+<li><strong>插入</strong>：插入一个新元素的时间复杂度为 O(log n)，并且如果插入的键已经存在，新的值会覆盖原来的值。</li>
+<li><strong>查找</strong>：在 <code>std::map</code> 中查找元素的时间复杂度为 O(log n)，这是因为它依赖于平衡二叉树的结构。</li>
+<li><strong>删除</strong>：删除操作也有 O(log n) 的时间复杂度，因为删除节点时需要保持树的平衡。</li>
 </ul>
 <p><code>std::map</code> 不允许重复的键，因此每个键只能对应一个值。如果尝试插入一个已存在的键，插入操作会被忽略。</p>
+<h2 id="3-方法-6"><a class="header" href="#3-方法-6">3. 方法</a></h2>
+<h3 id="1-构造方法-3"><a class="header" href="#1-构造方法-3">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>map()</code>: 创建一个空的 <code>std::map</code>，默认构造函数。</p>
+<pre><code class="language-cpp">// std::map&lt;key_type, value_type&gt; myMap;
+std::map&lt;int, std::string&gt; m;
+std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}, {3, "three"}};
+</code></pre>
+</li>
+<li>
+<p><code>map(const map&amp;)</code>: 复制构造函数，创建一个与另一个 <code>std::map</code> 完全相同的副本。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m1 = {{1, "one"}, {2, "two"}};
+std::map&lt;int, std::string&gt; m2(m1);  // m2 是 m1 的一个复制版本
+</code></pre>
+</li>
+<li>
+<p><code>map(begin, end)</code>: 使用另一个容器或迭代器区间中的元素初始化 <code>std::map</code>。</p>
+<pre><code class="language-cpp">std::vector&lt;std::pair&lt;int, std::string&gt;&gt; vec = {{1, "one"}, {2, "two"}};
+std::map&lt;int, std::string&gt; m(vec.begin(), vec.end());  // 复制 vector 的元素到 map
+</code></pre>
+</li>
+<li>
+<p><code>std::map&lt;Key, T, Compare&gt;</code>: 使用自定义的比较器来进行键的排序。</p>
+</li>
+</ol>
+<h3 id="2-大小函数-3"><a class="header" href="#2-大小函数-3">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>size_t size() const</code>: 返回 <code>std::map</code> 中元素的个数。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+std::cout &lt;&lt; m.size();  // 输出 2
+</code></pre>
+</li>
+<li>
+<p><code>bool empty() const</code>: 检查 <code>std::map</code> 是否为空，若为空返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m;
+if (m.empty()) {
+    std::cout &lt;&lt; "Map is empty." &lt;&lt; std::endl;
+}
+</code></pre>
+</li>
+<li>
+<p><code>size_t max_size() const</code>: 返回最大可允许的 <code>map</code> 元素数量。</p>
+</li>
+</ol>
+<h3 id="3-增加函数-4"><a class="header" href="#3-增加函数-4">(3) 增加函数</a></h3>
+<ol>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; insert(const value_type&amp; value)</code>: 插入一个元素到 <code>std::map</code> 中，返回一个 <code>pair</code>，其中 <code>first</code> 是指向插入元素所在位置的迭代器，<code>second</code> 表示插入是否成功（如果键已存在，则插入失败）。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m;
+m.insert({1, "one"});
+m.insert({2, "two"});
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; emplace(_Args&amp;&amp;... args)</code>: 就地构建并插入元素。</p>
+</li>
+<li>
+<p><code>iterator emplace_hint(const_iterator hint, _Args&amp;&amp;... args)</code>: 就地构建并插入元素，且指定插入位置。</p>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; try_emplace(const key_type&amp; key, Args&amp;&amp;... args)</code>: 是 C++17 引入的一种插入方式。它尝试插入一个元素，如果给定的键已经存在，则不会插入新元素，并且不会更改已有元素的值。它还允许通过参数传递构造函数的参数，避免不必要的拷贝或移动。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m;
+auto result = m.try_emplace(1, "one");
+if (result.second) {
+    std::cout &lt;&lt; "Element inserted: " &lt;&lt; result.first-&gt;second &lt;&lt; std::endl;
+} else {
+    std::cout &lt;&lt; "Element with key " &lt;&lt; result.first-&gt;first &lt;&lt; " already exists." &lt;&lt; std::endl;
+}
+
+auto result2 = m.try_emplace(1, "uno");  // 不会插入新元素，因为键1已存在
+std::cout &lt;&lt; "Element: " &lt;&lt; result2.first-&gt;second &lt;&lt; std::endl;  // 输出: "one"
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; insert_or_assign(const key_type&amp; key, const mapped_type&amp; obj)</code>和<code>std::pair&lt;iterator, bool&gt; insert_or_assign(const key_type&amp; key, mapped_type&amp;&amp; obj)</code>: 是 C++17 引入的另一种插入方式，它的作用是：如果键不存在，就插入该键值对；如果键已经存在，则更新其对应的值。</p>
+</li>
+<li>
+<p><code>operator[]</code> 插入方式(<code>mapped_type&amp; operator[](const key_type&amp; key)</code>或<code>mapped_type&amp; operator[](key_type&amp;&amp; key);</code>): 最常见的插入方式。它会检查 std::map 中是否存在给定的键。如果键存在，它返回该键对应的值；如果键不存在，它会插入该键并且初始化对应的值为 mapped_type 的默认值（对于非内置类型，是通过默认构造函数进行初始化）。同样的，这样的方式还可以用来获取键对应的值。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m;
+m[1] = "one";  // 插入新元素
+std::cout &lt;&lt; m[1] &lt;&lt; std::endl;  // 输出: one
+
+m[1] = "uno";  // 更新已有的元素
+std::cout &lt;&lt; m[1] &lt;&lt; std::endl;  // 输出: uno
+
+m[2];  // 键2不存在，会插入键2，并将对应的值初始化为默认值 "" (空字符串)
+std::cout &lt;&lt; m[2] &lt;&lt; std::endl;  // 输出: (空字符串)
+</code></pre>
+</li>
+</ol>
+<h3 id="4-删除元素-1"><a class="header" href="#4-删除元素-1">(4) 删除元素</a></h3>
+<ol>
+<li>
+<p><code>void clear()</code>: 删除 <code>std::map</code> 中的所有元素，使容器变为空。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+m.clear();  // 删除所有元素，m 变为空 {}
+</code></pre>
+</li>
+<li>
+<p><code>void erase(iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+m.erase(m.begin());  // 删除第一个元素
+</code></pre>
+</li>
+<li>
+<p><code>size_t erase(const key_type&amp; key)</code>: 删除指定键，返回删除个数。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+m.erase(1);  // 删除键为1的元素
+</code></pre>
+</li>
+<li>
+<p><code>erase(first, last)</code>: 删除迭代器区间。</p>
+</li>
+</ol>
+<h3 id="5-查找函数-1"><a class="header" href="#5-查找函数-1">(5) 查找函数</a></h3>
+<ol>
+<li>
+<p><code>iterator find(const key_type&amp; key)</code>: 查找某个键在 <code>map</code> 中的位置，返回一个指向该元素的迭代器，如果找不到会返回 <code>end()</code>。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+auto it = m.find(1);  // 返回指向键1的迭代器
+std::cout &lt;&lt; it-&gt;second;  // 输出 "one"
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;const_iterator, const_iterator&gt; equal_range(const key_type&amp; key) const</code>: 返回一对迭代器，表示所有具有等于键 <code>key</code> 的元素的范围。在 <code>std::map</code> 中，由于键是唯一的，因此这个范围包含一个元素。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+auto range = m.equal_range(1);
+std::cout &lt;&lt; range.first-&gt;second &lt;&lt; std::endl;  // 输出 "one"
+</code></pre>
+</li>
+<li>
+<p><code>size_t count(const key_type&amp; key)</code>: 返回容器中是否包含指定键，<code>map</code> 中每个键最多出现一次，因此返回值要么是 <code>0</code>，要么是 <code>1</code>。</p>
+</li>
+<li>
+<p><code>iterator lower_bound(const key_type&amp; key)</code>: 返回第一个不小于 <code>key</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>iterator upper_bound(const key_type&amp; key)</code>: 返回第一个大于 <code>key</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>bool contains(const key_type&amp; key) const</code>（C++20）：检查是否包含该键。</p>
+</li>
+</ol>
+<h3 id="6-遍历函数-1"><a class="header" href="#6-遍历函数-1">(6) 遍历函数</a></h3>
+<ol>
+<li>
+<p><code>iterator begin()</code>: 返回指向 <code>std::map</code> 第一个元素的迭代器。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+auto it = m.begin();  // 返回指向第一个元素的迭代器
+std::cout &lt;&lt; it-&gt;first &lt;&lt; ": " &lt;&lt; it-&gt;second &lt;&lt; std::endl;  // 输出 1: one
+</code></pre>
+</li>
+<li>
+<p><code>iterator end()</code>: 返回指向 <code>std::map</code> 最后一个元素之后位置的迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rbegin()</code>: 返回指向 <code>std::map</code> 最后一个元素的反向迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rend()</code>: 返回指向 <code>std::map</code> 第一个元素之前位置的反向迭代器。</p>
+</li>
+<li>
+<p>使用基于范围的 <code>for</code> 循环（C++11 及以上）: 直接遍历 <code>std::map</code> 中的每个元素。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+for (const auto&amp; pair : m) {
+    std::cout &lt;&lt; pair.first &lt;&lt; ": " &lt;&lt; pair.second &lt;&lt; " ";  // 输出: 1: one 2: two
+}
+</code></pre>
+</li>
+<li>
+<p>使用传统的 <code>for</code> 循环（基于迭代器）: 使用迭代器来遍历 <code>std::map</code>。</p>
+<pre><code class="language-cpp">std::map&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+for (auto it = m.begin(); it != m.end(); ++it) {
+    std::cout &lt;&lt; it-&gt;first &lt;&lt; ": " &lt;&lt; it-&gt;second &lt;&lt; " ";  // 输出: 1: one 2: two
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="7-其他函数-1"><a class="header" href="#7-其他函数-1">(7) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>swap(map&amp; other)</code>: 交换当前 <code>std::map</code> 和另一个 <code>std::map</code> 的内容。</p>
+</li>
+<li>
+<p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。</p>
+</li>
+<li>
+<p><code>std::map&lt;Key, T, Compare&gt; merge(map&amp; other)</code>: 将另一个<code>map</code>容器合并过来，保持有序性。</p>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultimap"><a class="header" href="#stdmultimap">std::multimap</a></h1>
-<p><code>std::multimap</code> 是一个排序的关联容器，用于存储键值对，其中每个键可以对应多个值。与 <code>std::map</code> 相比，<code>std::multimap</code> 允许键的重复，因此在存储具有相同键的多个元素时非常有用。</p>
+<p><code>std::multimap</code> 是一个与 <code>std::map</code> 类似的关联容器，但与 <code>std::map</code> 不同，<code>std::multimap</code> 允许存储重复的键。在 <code>std::multimap</code> 中，键是可以重复的，而每个键都可以关联多个不同的值。与 <code>std::map</code> 相同，<code>std::multimap</code> 也会自动按照键的顺序进行排序。<code>std::multimap</code> 的底层实现通常使用红黑树，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
 <h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
-<pre><code class="language-C++">#include &lt;map&gt;
+<pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
-<p><code>std::multimap</code> 也是基于平衡二叉树（如红黑树）实现的容器，元素以键值对的形式存储，并且根据键的顺序进行排序。与 <code>std::map</code> 不同，<code>std::multimap</code> 允许多个元素具有相同的键，因此它能够存储多个具有相同键的值。</p>
+<p><code>std::multimap</code> 与 <code>std::map</code> 类似，都是基于平衡二叉树（通常是红黑树）实现的容器。与 <code>std::map</code> 不同，<code>std::multimap</code> 允许同一个键对应多个值，因此在插入重复的键时，<code>std::multimap</code> 会将新的键值对插入到现有键的下方，而不是替换原有的键值对。</p>
+<p><code>std::multimap</code> 中的每个元素都是一个键值对（<code>key-value</code>），并且元素根据键自动排序。每个键在 <code>std::multimap</code> 中可以重复多次，不同的键值对可以共享同一个键。</p>
 <ul>
-<li><strong>插入</strong>：在 <code>std::multimap</code> 中，多个相同的键可以插入，而每个键对应的值是允许重复的。</li>
-<li><strong>查找</strong>：查找操作的时间复杂度为 O(log n)，这是因为 <code>std::multimap</code> 也是基于平衡二叉树实现的。</li>
-<li><strong>删除</strong>：删除操作的时间复杂度为 O(log n)，删除一个键值对时会重新平衡树。</li>
+<li><strong>插入</strong>：插入一个新元素的时间复杂度为 O(log n)，并且允许插入多个具有相同键的元素。</li>
+<li><strong>查找</strong>：在 <code>std::multimap</code> 中查找元素的时间复杂度为 O(log n)，因为它依赖于平衡二叉树的结构。</li>
+<li><strong>删除</strong>：删除操作也有 O(log n) 的时间复杂度，因为删除节点时需要保持树的平衡。</li>
 </ul>
-<p>与 <code>std::map</code> 的最大区别在于，<code>std::multimap</code> 允许存储具有重复键的元素，这使得它非常适用于需要存储多个相同键值对的场景。</p>
+<p><code>std::multimap</code> 适用于需要存储多个值并能够按键排序的场景。</p>
+<h2 id="3-方法-7"><a class="header" href="#3-方法-7">3. 方法</a></h2>
+<h3 id="1-构造方法-4"><a class="header" href="#1-构造方法-4">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>multimap()</code>: 创建一个空的 <code>std::multimap</code>，默认构造函数。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm;
+std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}, {3, "three"}};
+</code></pre>
+</li>
+<li>
+<p><code>multimap(const multimap&amp;)</code>: 复制构造函数，创建一个与另一个 <code>std::multimap</code> 完全相同的副本。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm1 = {{1, "one"}, {2, "two"}};
+std::multimap&lt;int, std::string&gt; mm2(mm1);  // mm2 是 mm1 的一个复制版本
+</code></pre>
+</li>
+<li>
+<p><code>multimap(begin, end)</code>: 使用另一个容器或迭代器区间中的元素初始化 <code>std::multimap</code>。</p>
+<pre><code class="language-cpp">std::vector&lt;std::pair&lt;int, std::string&gt;&gt; vec = {{1, "one"}, {2, "two"}};
+std::multimap&lt;int, std::string&gt; mm(vec.begin(), vec.end());  // 复制 vector 的元素到 multimap
+</code></pre>
+</li>
+<li>
+<p><code>std::multimap&lt;Key, T, Compare&gt;</code>: 使用自定义的比较器来进行键的排序。</p>
+</li>
+</ol>
+<h3 id="2-大小函数-4"><a class="header" href="#2-大小函数-4">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>size_t size() const</code>: 返回 <code>std::multimap</code> 中元素的个数。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+std::cout &lt;&lt; mm.size();  // 输出 2
+</code></pre>
+</li>
+<li>
+<p><code>bool empty() const</code>: 检查 <code>std::multimap</code> 是否为空，若为空返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm;
+if (mm.empty()) {
+    std::cout &lt;&lt; "Multimap is empty." &lt;&lt; std::endl;
+}
+</code></pre>
+</li>
+<li>
+<p><code>size_t max_size() const</code>: 返回最大可允许的 <code>multimap</code> 元素数量。</p>
+</li>
+</ol>
+<h3 id="3-增加函数-5"><a class="header" href="#3-增加函数-5">(3) 增加函数</a></h3>
+<ol>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; insert(const value_type&amp; value)</code>: 插入一个元素到 <code>std::multimap</code> 中，返回一个 <code>pair</code>，其中 <code>first</code> 是指向插入元素所在位置的迭代器，<code>second</code> 表示插入是否成功（即该键是否已经存在）。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm;
+mm.insert({1, "one"});
+mm.insert({2, "two"});
+mm.insert({1, "uno"});  // 允许插入重复键
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; emplace(_Args&amp;&amp;... args)</code>: 就地构建并插入元素。</p>
+</li>
+<li>
+<p><code>iterator emplace_hint(const_iterator hint, _Args&amp;&amp;... args)</code>: 就地构建并插入元素，且指定插入位置。</p>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; try_emplace(const key_type&amp; key, Args&amp;&amp;... args)</code>: 是 C++17 引入的一种插入方式。它尝试插入一个元素，如果给定的键已经存在，则不会插入新元素，并且不会更改已有元素的值。它还允许通过参数传递构造函数的参数，避免不必要的拷贝或移动。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; m;
+auto result = m.try_emplace(1, "one");
+if (result.second) {
+    std::cout &lt;&lt; "Element inserted: " &lt;&lt; result.first-&gt;second &lt;&lt; std::endl;
+} else {
+    std::cout &lt;&lt; "Element with key " &lt;&lt; result.first-&gt;first &lt;&lt; " already exists." &lt;&lt; std::endl;
+}
+
+auto result2 = m.try_emplace(1, "uno");  // 不会插入新元素，因为键1已存在
+std::cout &lt;&lt; "Element: " &lt;&lt; result2.first-&gt;second &lt;&lt; std::endl;  // 输出: "one"
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;iterator, bool&gt; insert_or_assign(const key_type&amp; key, const mapped_type&amp; obj)</code>和<code>std::pair&lt;iterator, bool&gt; insert_or_assign(const key_type&amp; key, mapped_type&amp;&amp; obj)</code>: 是 C++17 引入的另一种插入方式，它的作用是：如果键不存在，就插入该键值对；如果键已经存在，则更新其对应的值。</p>
+</li>
+<li>
+<p><code>operator[]</code> 插入方式(<code>mapped_type&amp; operator[](const key_type&amp; key)</code>或<code>mapped_type&amp; operator[](key_type&amp;&amp; key);</code>): 最常见的插入方式。它会检查 std::multimap 中是否存在给定的键。如果键存在，它返回该键对应的值；如果键不存在，它会插入该键并且初始化对应的值为 mapped_type 的默认值（对于非内置类型，是通过默认构造函数进行初始化）。同样的，这样的方式还可以用来获取键对应的值。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; m;
+m[1] = "one";  // 插入新元素
+std::cout &lt;&lt; m[1] &lt;&lt; std::endl;  // 输出: one
+
+m[1] = "uno";  // 更新已有的元素
+std::cout &lt;&lt; m[1] &lt;&lt; std::endl;  // 输出: uno
+
+m[2];  // 键2不存在，会插入键2，并将对应的值初始化为默认值 "" (空字符串)
+std::cout &lt;&lt; m[2] &lt;&lt; std::endl;  // 输出: (空字符串)
+</code></pre>
+</li>
+</ol>
+<h3 id="4-删除元素-2"><a class="header" href="#4-删除元素-2">(4) 删除元素</a></h3>
+<ol>
+<li>
+<p><code>void clear()</code>: 删除 <code>std::multimap</code> 中的所有元素，使容器变为空。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+mm.clear();  // 删除所有元素，mm 变为空 {}
+</code></pre>
+</li>
+<li>
+<p><code>void erase(iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+mm.erase(mm.begin());  // 删除第一个元素
+</code></pre>
+</li>
+<li>
+<p><code>size_t erase(const key_type&amp; key)</code>: 删除指定键，返回删除的元素个数。如果键有重复元素，则会删除所有具有该键的元素。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {1, "uno"}, {2, "two"}};
+mm.erase(1);  // 删除键为 1 的所有元素
+</code></pre>
+</li>
+<li>
+<p><code>erase(first, last)</code>: 删除迭代器区间。</p>
+</li>
+</ol>
+<h3 id="5-查找函数-2"><a class="header" href="#5-查找函数-2">(5) 查找函数</a></h3>
+<ol>
+<li>
+<p><code>iterator find(const key_type&amp; key)</code>: 查找某个键在 <code>multimap</code> 中的位置，返回一个指向该元素的迭代器，如果找不到会返回 <code>end()</code>。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+auto it = mm.find(1);  // 返回指向键1的迭代器
+std::cout &lt;&lt; it-&gt;second;  // 输出 "one"
+</code></pre>
+</li>
+<li>
+<p><code>std::pair&lt;const_iterator, const_iterator&gt; equal_range(const key_type&amp; key) const</code>: 返回一对迭代器，表示所有具有等于键 <code>key</code> 的元素的范围。在 <code>std::multimap</code> 中，由于键是可以重复的，因此这个范围可能包含多个相同的元素。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {1, "uno"}, {2, "two"}};
+auto range = mm.equal_range(1);
+std::cout &lt;&lt; range.first-&gt;second &lt;&lt; " " &lt;&lt; range.second-&gt;second &lt;&lt; std::endl;
+</code></pre>
+</li>
+<li>
+<p><code>size_t count(const key_type&amp; key)</code>: 返回容器中某个键的元素个数（在 <code>std::multimap</code> 中可以有多个相同键）。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {1, "uno"}, {2, "two"}};
+std::cout &lt;&lt; mm.count(1);  // 输出 2，因为键1出现了两次
+</code></pre>
+</li>
+<li>
+<p><code>iterator lower_bound(const key_type&amp; key)</code>: 返回第一个不小于 <code>key</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>iterator upper_bound(const key_type&amp; key)</code>: 返回第一个大于 <code>key</code> 的迭代器。</p>
+</li>
+<li>
+<p><code>bool contains(const key_type&amp; key) const</code>（C++20）：检查是否包含该键。</p>
+</li>
+</ol>
+<h3 id="6-遍历函数-2"><a class="header" href="#6-遍历函数-2">(6) 遍历函数</a></h3>
+<ol>
+<li>
+<p><code>iterator begin()</code>: 返回指向 <code>std::multimap</code> 第一个元素的迭代器。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+auto it = mm.begin();  // 返回指向第一个元素的迭代器
+std::cout &lt;&lt; it-&gt;first &lt;&lt; ": " &lt;&lt; it-&gt;second &lt;&lt; std::endl;  // 输出 1: one
+</code></pre>
+</li>
+<li>
+<p><code>iterator end()</code>: 返回指向 <code>std::multimap</code> 最后一个元素之后位置的迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rbegin()</code>: 返回指向 <code>std::multimap</code> 最后一个元素的反向迭代器。</p>
+</li>
+<li>
+<p><code>reverse_iterator rend()</code>: 返回指向 <code>std::multimap</code> 第一个元素之前位置的反向迭代器。</p>
+</li>
+<li>
+<p>使用基于范围的 <code>for</code> 循环（C++11 及以上）: 直接遍历 <code>std::multimap</code> 中的每个元素。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+for (const auto&amp; pair : mm) {
+    std::cout &lt;&lt; pair.first &lt;&lt; ": " &lt;&lt; pair.second &lt;&lt; " ";  // 输出: 1: one 2: two
+}
+</code></pre>
+</li>
+<li>
+<p>使用传统的 <code>for</code> 循环（基于迭代器）: 使用迭代器来遍历 <code>std::multimap</code>。</p>
+<pre><code class="language-cpp">std::multimap&lt;int, std::string&gt; mm = {{1, "one"}, {2, "two"}};
+for (auto it = mm.begin(); it != mm.end(); ++it) {
+    std::cout &lt;&lt; it-&gt;first &lt;&lt; ": " &lt;&lt; it-&gt;second &lt;&lt; " ";  // 输出: 1: one 2: two
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="7-其他函数-2"><a class="header" href="#7-其他函数-2">(7) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>swap(multimap&amp; other)</code>: 交换当前 <code>std::multimap</code> 和另一个 <code>std::multimap</code> 的内容。</p>
+</li>
+<li>
+<p><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器所使用的分配器（allocator）。</p>
+</li>
+<li>
+<p><code>std::multimap&lt;Key, T, Compare&gt; merge(multimap&amp; other)</code>: 将另一个<code>multimap</code>容器合并过来，保持有序性。</p>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_set"><a class="header" href="#stdunordered_set">std::unordered_set</a></h1>
 <p><code>std::unordered_set</code> 是一个基于哈希表实现的容器，存储唯一的元素。与 <code>std::set</code> 类似，它保证元素的唯一性，但是不保证元素的顺序。<code>std::unordered_set</code> 使用哈希函数来确定元素的存储位置，从而提供较快的查找、插入和删除操作。</p>
 <h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
