@@ -190,7 +190,67 @@
 <tr><td><strong>函数对象 (Function Objects)</strong></td><td>函数对象是可以像函数一样调用的对象，可以用于算法中的各种操作。STL 提供了多种函数对象，包括一元函数对象、二元函数对象、谓词等，可以满足不同的需求。</td></tr>
 <tr><td><strong>适配器 (Adapters)</strong></td><td>适配器用于将一种容器或迭代器适配成另一种容器或迭代器，以满足特定的需求。STL 提供了多种适配器，包括栈适配器（stack adapter）、队列适配器（queue adapter）和优先队列适配器（priority queue adapter）等。</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
+</div>
+<p>除了上述经典部分，STL 中另有一些 <strong>辅助工具</strong> 或 <strong>实用工具（Utility）</strong> 用于解决广泛的实际问题。这些工具虽然不归属于核心组件，但在日常开发中非常重要。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="utility"><a class="header" href="#utility">Utility</a></h1>
+<p>在 C++ 标准库(STL)中，有一些实用的工具类和函数，这些工具类和函数在编写高效、可读性强的代码时非常有用。</p>
+<div class="table-wrapper"><table><thead><tr><th>工具名称</th><th>说明</th><th>所属头文件</th><th>C++版本引入</th></tr></thead><tbody>
+<tr><td><strong><code>std::pair</code></strong></td><td>存储两个相关值的通用模板类。</td><td><code>&lt;utility&gt;</code></td><td>C++98</td></tr>
+<tr><td><strong><code>std::tuple</code></strong></td><td>存储多个值（不同类型）的固定大小集合。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::optional</code></strong></td><td>表示可能包含值或不包含值的类型。</td><td><code>&lt;optional&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong><code>std::variant</code></strong></td><td>表示有限数量的不同类型中的一种。</td><td><code>&lt;variant&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong><code>std::any</code></strong></td><td>存储任意类型的值，类型在运行时识别。</td><td><code>&lt;any&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong>智能指针</strong></td><td>自动管理动态资源，包括 <code>std::unique_ptr</code>, <code>std::shared_ptr</code> 等。</td><td><code>&lt;memory&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::function</code></strong></td><td>存储和调用可调用对象（如函数、lambda）。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::chrono</code></strong></td><td>时间和日期处理，包括时钟、时间点、时间段。</td><td><code>&lt;chrono&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::array</code></strong></td><td>表示固定大小的数组，提供标准容器接口。</td><td><code>&lt;array&gt;</code></td><td>C++11</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdpair"><a class="header" href="#stdpair">std::pair</a></h1>
+<p><code>std::pair</code> 是一个结构体模板，其可于一个单元内存储两个相异对象。是 std::tuple 的拥有两个元素的特殊情况。一般来说，pair 可以封装任意类型的对象，可以生成各种不同的 <code>std::pair&lt;T1, T2&gt;</code> 对象，可以是数组对象或者包含 <code>std::pair&lt;T1,T2&gt;</code> 的 vector 容器。pair 还可以封装两个序列容器或两个序列容器的指针。</p>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<p>被包括在<code>&lt;utility&gt;</code>头文件中。</p>
+<pre><code class="language-C++">#include &lt;utility&gt;
+</code></pre>
+<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<p><code>std::pair</code> 存储两个对象，分别通过 <code>first</code> 和 <code>second</code> 成员访问。<code>std::pair</code> 自动将初始化参数的值赋给 <code>first</code> 和 <code>second</code>。</p>
+<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
+<h3 id="1构造方法"><a class="header" href="#1构造方法">(1)构造方法</a></h3>
+<ol>
+<li>
+<p>默认构造函数：创建一个未初始化的 <code>std::pair</code> 对象。</p>
+<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair;
+</code></pre>
+</li>
+<li>
+<p>值构造函数：通过传入两个对象初始化 <code>std::pair</code>。</p>
+<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair(1, "example");
+</code></pre>
+</li>
+<li>
+<p>工厂函数 <code>make_pair</code>：生成 <code>std::pair</code> 对象。</p>
+<pre><code class="language-cpp">auto anotherPair = std::make_pair(2, "test");
+</code></pre>
+</li>
+</ol>
+<h3 id="2成员访问"><a class="header" href="#2成员访问">(2)成员访问</a></h3>
+<ol>
+<li>first：访问或修改 <code>std::pair</code> 的第一个元素。</li>
+<li>second：访问或修改 <code>std::pair</code> 的第二个元素。</li>
+</ol>
+<h3 id="3比较操作符"><a class="header" href="#3比较操作符">(3)比较操作符</a></h3>
+<ol>
+<li>相等 (<code>==</code>) 和不相等 (<code>!=</code>)：比较两个 <code>std::pair</code> 对象是否相等。</li>
+<li>小于 (<code>&lt;</code>) 和大于 (<code>&gt;</code>)和小于等于 (<code>&lt;=</code>) 和大于等于 (<code>&gt;=</code>)：根据 <code>first</code> 和 <code>second</code> 的字典顺序比较两个 <code>std::pair</code> 对象。</li>
+</ol>
+<h3 id="4交换"><a class="header" href="#4交换">(4)交换</a></h3>
+<ol>
+<li>
+<p>swap：交换两个 <code>std::pair</code> 对象的值。</p>
+<pre><code class="language-cpp">myPair.swap(anotherPair);
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
 <p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
 <div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
 <tr><td><strong>序列容器 (Sequence Containers)</strong></td><td><strong>std::vector</strong></td><td>动态数组，支持快速随机访问。</td></tr>
@@ -238,16 +298,16 @@
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
 <p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
-<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<h2 id="1-引入-1"><a class="header" href="#1-引入-1">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;vector&gt;
 </code></pre>
-<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<h2 id="2-存储方式-1"><a class="header" href="#2-存储方式-1">2. 存储方式</a></h2>
 <p>为了支持随机访问，vector将元素连续存储–每个元素紧挨着前一个元素存储。容器中元素是连续存储的，且容器的大小是可变的。</p>
 <p>在容器中增加元素时。vector根据存储元素的大小，在内存上申请一个空间，用于存储数据，空间的大小通常会大于所存储元素的实际大小，并且预留出一部分预留的空间，以便再次增加数据时，可以不用重新开辟空间。</p>
 <p>当容器再次增加新的元素后，首先判断预留的空间是否够用，如果够用直接在预留空间中存储。如果预留的空间不够，需要在内存中开辟一整块新的更大的空间，并将vector原来的存储的数据<strong>拷贝</strong>过来，存储到新的内存中，然后在新的内存中增加需要增加的元素，这样保证存储的空间是连续的。所开的空间会预留出一部分空间，以便后续增加数据。</p>
 <p>当 vector 增长时，容量通常会按一定比例（通常是1.5或2）增长。这有助于减少频繁的重新分配，提升性能。</p>
-<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
-<h3 id="1构造方法"><a class="header" href="#1构造方法">(1)构造方法</a></h3>
+<h2 id="3-方法-1"><a class="header" href="#3-方法-1">3. 方法</a></h2>
+<h3 id="1构造方法-1"><a class="header" href="#1构造方法-1">(1)构造方法</a></h3>
 <ol>
 <li>
 <p><code>vector()</code>: 创建一个空vector，创建时也可以使用迭代器进行初始化</p>
@@ -467,14 +527,14 @@ vec2.assign(vec1.begin(), vec1.end());  // vec2 变为 {1, 2, 3}
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdlist"><a class="header" href="#stdlist">std::list</a></h1>
 <p>List 是一个支持在容器的任意位置快速插入和删除元素的一个顺序容器，支持存储各种类型的对象，链表在存储时不需要重新分配内存或是初始化时预留大小，对象存储在内存中的不连续位置，因此随机访问能力较差。</p>
-<h2 id="1-引入-1"><a class="header" href="#1-引入-1">1. 引入</a></h2>
+<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;list&gt;
 </code></pre>
-<h2 id="2-存储方式-1"><a class="header" href="#2-存储方式-1">2. 存储方式</a></h2>
+<h2 id="2-存储方式-2"><a class="header" href="#2-存储方式-2">2. 存储方式</a></h2>
 <p>std::list 是基于双向链表实现的容器。与 std::vector 的连续内存不同，std::list 的元素存储在不连续的内存块中。每个元素由一个节点（节点中包含元素和指向前后元素的指针）组成，这些节点通过指针连接成一个链表。由于每个节点都是独立分配的，std::list 不需要连续的内存空间来存储元素。</p>
 <p>在 std::list 中插入或删除元素时，由于元素是通过指针连接的，因此插入和删除操作通常是非常高效的。插入、删除操作不会影响链表中其他元素的存储位置。</p>
 <p>然而，由于每个元素都需要额外的内存来存储指向前后元素的指针，所以相较于 std::vector，std::list 在存储上较为低效，且不支持快速随机访问。访问元素时，必须从链表的起始或终止节点开始，逐步沿着指针遍历到目标元素。</p>
-<h3 id="3-方法-1"><a class="header" href="#3-方法-1">3. 方法</a></h3>
+<h3 id="3-方法-2"><a class="header" href="#3-方法-2">3. 方法</a></h3>
 <h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
 <ol>
 <li>
@@ -757,14 +817,14 @@ lst.reverse();  // 反转链表，lst 变为 {5, 4, 3, 2, 1}
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stddeque"><a class="header" href="#stddeque">std::deque</a></h1>
 <p><code>std::deque</code>（双端队列）是一个支持在两端快速插入和删除元素的顺序容器。与 <code>std::vector</code> 不同，<code>std::deque</code> 在内存中采用分段连续的存储方式，即它的元素分布在多个不连续的内存块中，这些内存块通过指针数组进行管理。由于这一内存布局，<code>std::deque</code> 可以在头尾两端高效地进行插入和删除操作，并且支持随机访问(可以使用<code>operator[]</code>)。尽管如此，它的随机访问性能较 <code>std::vector</code> 差一些，因为每个内存块并不连续。</p>
 <p><code>std::deque</code> 不需要像 <code>std::vector</code> 一样每次扩展时重新分配整个内存空间，而是通过扩展指向内存块的指针数组来增加容量。这使得它在动态变化的场景中，尤其是在需要频繁在两端插入和删除元素时，表现得尤为高效。</p>
-<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
+<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;deque&gt;
 </code></pre>
-<h2 id="2-存储方式-2"><a class="header" href="#2-存储方式-2">2. 存储方式</a></h2>
+<h2 id="2-存储方式-3"><a class="header" href="#2-存储方式-3">2. 存储方式</a></h2>
 <p>std::deque 是双端队列，支持在两端进行高效的插入和删除。为了实现这一点，std::deque 使用的是一种分段连续的内存结构。它的内存布局由多个固定大小的内存块（即“段”）组成，每个块内的元素是连续存储的，但这些块在内存中并不连续。通过维护一个指向这些块的指针数组，std::deque 可以实现高效的两端插入和删除操作。</p>
 <p>当 std::deque 容量不足时，它会动态扩展新的内存块，并在原有的内存块之间插入新的块。这样，由于每个块都是独立分配的，std::deque 既能保证高效的插入和删除操作，又能提供支持随机访问的能力（虽然随机访问性能不如 std::vector）。</p>
 <p>与 std::vector 不同的是，std::deque 不需要一次性重新分配整个内存空间，它只是扩展指向内存块的指针数组。这样，std::deque 可以高效地在头尾进行扩展，并且仍然保持较好的访问性能。</p>
-<h3 id="3-方法-2"><a class="header" href="#3-方法-2">3. 方法</a></h3>
+<h3 id="3-方法-3"><a class="header" href="#3-方法-3">3. 方法</a></h3>
 <h3 id="1-构造方法-1"><a class="header" href="#1-构造方法-1">(1) 构造方法</a></h3>
 <ol>
 <li>
@@ -1009,10 +1069,10 @@ int main() {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdset"><a class="header" href="#stdset">std::set</a></h1>
 <p><code>std::set</code> 是一个排序的关联容器，它存储唯一的元素，并根据元素的顺序进行自动排序。与 <code>std::list</code> 不同，<code>std::set</code> 提供了对元素的高效查找、插入和删除操作，但不支持直接的索引访问。其底层通常是基于平衡二叉树实现（红黑树），因此在查找、插入和删除操作上的时间复杂度通常为 O(log n)。</p>
-<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
+<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
-<h2 id="2-存储方式-3"><a class="header" href="#2-存储方式-3">2. 存储方式</a></h2>
+<h2 id="2-存储方式-4"><a class="header" href="#2-存储方式-4">2. 存储方式</a></h2>
 <p><code>std::set</code> 是基于平衡二叉树（通常是红黑树）实现的容器。与 <code>std::list</code> 和 <code>std::vector</code> 不同，<code>std::set</code> 具有自动排序的特性，元素会按升序（默认情况下）进行排列。每个元素都是唯一的，无法存储重复的元素。</p>
 <p>在 <code>std::set</code> 中，元素会以节点的形式存储，每个节点包含一个元素以及指向父节点、左子节点和右子节点的指针。通过这种方式，<code>std::set</code> 保证了所有元素的排序特性，并支持高效的查找、插入和删除操作。</p>
 <ul>
@@ -1022,8 +1082,8 @@ int main() {
 </ul>
 <p>与 <code>std::vector</code> 和 <code>std::list</code> 不同，<code>std::set</code> 的元素是按照某种顺序排列的，因此它支持基于顺序的迭代。由于不允许重复元素，<code>std::set</code> 会自动忽略重复的插入请求。</p>
 <p>尽管 <code>std::set</code> 提供了很高效的插入、删除和查找操作，但它并不支持快速的随机访问。要访问集合中的某个元素，必须按顺序遍历元素，无法通过索引直接访问。</p>
-<h2 id="3-方法-3"><a class="header" href="#3-方法-3">3. 方法</a></h2>
-<h3 id="1构造方法-1"><a class="header" href="#1构造方法-1">(1)构造方法</a></h3>
+<h2 id="3-方法-4"><a class="header" href="#3-方法-4">3. 方法</a></h2>
+<h3 id="1构造方法-2"><a class="header" href="#1构造方法-2">(1)构造方法</a></h3>
 <ol>
 <li>
 <p><code>set()</code>: 创建一个空的 <code>std::set</code>，默认构造函数。</p>
@@ -1222,15 +1282,15 @@ int main() {
 </code></pre>
 </li>
 <li>
-<p>比较运算符：支持 ==, !=, &lt;, &lt;=, &gt;, &gt;=，C++20 起支持 &lt;=&gt;。</p>
+<p>比较运算符：支持 ==, !=, &lt;, &lt;=, &gt;, &gt;=，C++20 起支持 &lt;=&gt;，但移除了!=, &lt;, &lt;=, &gt;, &gt;=。</p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultiset"><a class="header" href="#stdmultiset">std::multiset</a></h1>
 <p><code>std::multiset</code> 是一个排序的集合容器，允许存储重复的元素，并且自动根据元素的顺序进行排序。与 <code>std::set</code> 相似，<code>std::multiset</code> 也基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
-<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
+<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
-<h2 id="2-存储方式-4"><a class="header" href="#2-存储方式-4">2. 存储方式</a></h2>
+<h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
 <p><code>std::multiset</code> 是基于平衡二叉树（如红黑树）实现的容器，元素会按照一定的顺序（默认升序）进行排序，并且允许存储重复的元素。每个元素都会在树中作为一个独立的节点存储，树的结构保证了元素的排序。</p>
 <ul>
 <li><strong>插入</strong>：与 <code>std::set</code> 不同，<code>std::multiset</code> 允许插入重复元素，因此可以有多个相同值的元素。</li>
@@ -1240,10 +1300,10 @@ int main() {
 <p><code>std::multiset</code> 和 <code>std::set</code> 最大的区别是，<code>std::multiset</code> 允许元素重复，这使得它在存储多个相同元素时更为灵活。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmap"><a class="header" href="#stdmap">std::map</a></h1>
 <p><code>std::map</code> 是一个排序的关联容器，用于存储键值对，其中每个键是唯一的，并根据键的顺序自动排序。<code>std::map</code> 基于平衡二叉树（通常是红黑树）实现，提供高效的查找、插入和删除操作。</p>
-<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
+<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;map&gt;
 </code></pre>
-<h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
+<h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
 <p><code>std::map</code> 是基于平衡二叉树（如红黑树）实现的容器。每个元素由一对键值（key-value）组成，并且键值对根据键的顺序进行自动排序。每个键在 <code>std::map</code> 中是唯一的，不能有重复的键。</p>
 <ul>
 <li><strong>插入</strong>：插入一个新的键值对时，键会自动按照排序规则插入到树中，且每个键都是唯一的。</li>
@@ -1253,10 +1313,10 @@ int main() {
 <p><code>std::map</code> 不允许重复的键，因此每个键只能对应一个值。如果尝试插入一个已存在的键，插入操作会被忽略。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultimap"><a class="header" href="#stdmultimap">std::multimap</a></h1>
 <p><code>std::multimap</code> 是一个排序的关联容器，用于存储键值对，其中每个键可以对应多个值。与 <code>std::map</code> 相比，<code>std::multimap</code> 允许键的重复，因此在存储具有相同键的多个元素时非常有用。</p>
-<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
+<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;map&gt;
 </code></pre>
-<h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
+<h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
 <p><code>std::multimap</code> 也是基于平衡二叉树（如红黑树）实现的容器，元素以键值对的形式存储，并且根据键的顺序进行排序。与 <code>std::map</code> 不同，<code>std::multimap</code> 允许多个元素具有相同的键，因此它能够存储多个具有相同键的值。</p>
 <ul>
 <li><strong>插入</strong>：在 <code>std::multimap</code> 中，多个相同的键可以插入，而每个键对应的值是允许重复的。</li>
@@ -1266,10 +1326,10 @@ int main() {
 <p>与 <code>std::map</code> 的最大区别在于，<code>std::multimap</code> 允许存储具有重复键的元素，这使得它非常适用于需要存储多个相同键值对的场景。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_set"><a class="header" href="#stdunordered_set">std::unordered_set</a></h1>
 <p><code>std::unordered_set</code> 是一个基于哈希表实现的容器，存储唯一的元素。与 <code>std::set</code> 类似，它保证元素的唯一性，但是不保证元素的顺序。<code>std::unordered_set</code> 使用哈希函数来确定元素的存储位置，从而提供较快的查找、插入和删除操作。</p>
-<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
+<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_set&gt;
 </code></pre>
-<h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
+<h2 id="2-存储方式-8"><a class="header" href="#2-存储方式-8">2. 存储方式</a></h2>
 <p><code>std::unordered_set</code> 使用哈希表（hash table）来存储元素。每个元素的存储位置由哈希函数计算出来，因此它不保证元素的顺序。哈希表允许非常高效的查找、插入和删除操作，通常时间复杂度为 O(1)，但在哈希冲突的情况下，最坏情况的时间复杂度可能退化为 O(n)。</p>
 <ul>
 <li><strong>插入</strong>：插入一个元素时，哈希函数会计算该元素的哈希值，并将元素存储在哈希表中。</li>
@@ -1279,10 +1339,10 @@ int main() {
 <p><code>std::unordered_set</code> 与 <code>std::set</code> 最大的区别是，它使用哈希表来存储元素，因此没有顺序性，无法进行按顺序的遍历。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_multiset"><a class="header" href="#stdunordered_multiset">std::unordered_multiset</a></h1>
 <p><code>std::unordered_multiset</code> 是一个基于哈希表实现的容器，用于存储多个相同的元素，并且不保证元素的顺序。与 <code>std::unordered_set</code> 类似，<code>std::unordered_multiset</code> 使用哈希表来存储元素，允许插入重复的元素。</p>
-<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
+<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_set&gt;
 </code></pre>
-<h2 id="2-存储方式-8"><a class="header" href="#2-存储方式-8">2. 存储方式</a></h2>
+<h2 id="2-存储方式-9"><a class="header" href="#2-存储方式-9">2. 存储方式</a></h2>
 <p><code>std::unordered_multiset</code> 使用哈希表来存储元素。每个元素的位置是通过哈希函数计算的，存储时不保证元素的顺序。与 <code>std::unordered_set</code> 不同，<code>std::unordered_multiset</code> 允许重复元素的插入，因此可以存储多个相同的元素。</p>
 <ul>
 <li><strong>插入</strong>：插入一个新元素时，哈希函数会计算元素的哈希值，并将其存储在哈希表中。如果插入的元素已经存在，<code>std::unordered_multiset</code> 会允许插入重复元素。</li>
@@ -1292,10 +1352,10 @@ int main() {
 <p><code>std::unordered_multiset</code> 与 <code>std::unordered_set</code> 最大的区别是，它允许存储重复元素，适用于需要存储多个相同元素的场景。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_map"><a class="header" href="#stdunordered_map">std::unordered_map</a></h1>
 <p><code>std::unordered_map</code> 是一个基于哈希表实现的容器，用于存储键值对。它提供快速的查找、插入和删除操作，但不保证元素的顺序。与 <code>std::map</code> 相比，<code>std::unordered_map</code> 使用哈希函数来决定元素的存储位置，因此其查找效率更高，通常为 O(1)，但无法保证元素的顺序。</p>
-<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
+<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_map&gt;
 </code></pre>
-<h2 id="2-存储方式-9"><a class="header" href="#2-存储方式-9">2. 存储方式</a></h2>
+<h2 id="2-存储方式-10"><a class="header" href="#2-存储方式-10">2. 存储方式</a></h2>
 <p><code>std::unordered_map</code> 使用哈希表（hash table）来存储键值对。每个元素由一对键值（key-value）组成，元素的位置是通过哈希函数计算出的，因此它不保证元素按顺序存储。哈希表的结构使得在最理想的情况下，插入、查找和删除操作的时间复杂度为 O(1)。</p>
 <ul>
 <li><strong>插入</strong>：插入一个键值对时，哈希函数会计算键的哈希值，并将元素存储在对应的桶（bucket）中。</li>
@@ -1305,10 +1365,10 @@ int main() {
 <p><code>std::unordered_map</code> 的元素没有顺序，它是根据哈希值来存储和访问的，因此不能进行按顺序的遍历。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdunordered_multimap"><a class="header" href="#stdunordered_multimap">std::unordered_multimap</a></h1>
 <p><code>std::unordered_multimap</code> 是一个基于哈希表实现的容器，用于存储键值对，并允许一个键对应多个值。它不保证元素的顺序，适用于需要存储多个相同键值对的场景。<code>std::unordered_multimap</code> 提供了高效的查找、插入和删除操作，通常为 O(1)，但无法保证元素的顺序。</p>
-<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
+<h2 id="1-引入-11"><a class="header" href="#1-引入-11">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_map&gt;
 </code></pre>
-<h2 id="2-存储方式-10"><a class="header" href="#2-存储方式-10">2. 存储方式</a></h2>
+<h2 id="2-存储方式-11"><a class="header" href="#2-存储方式-11">2. 存储方式</a></h2>
 <p><code>std::unordered_multimap</code> 使用哈希表来存储键值对。每个元素由一对键值（key-value）组成，存储位置通过哈希函数计算得出。与 <code>std::unordered_map</code> 不同，<code>std::unordered_multimap</code> 允许多个相同的键出现，因此可以存储多个具有相同键的值。</p>
 <ul>
 <li><strong>插入</strong>：插入一个新的键值对时，哈希函数会计算键的哈希值，并将元素存储在对应的桶中。如果键重复，<code>std::unordered_multimap</code> 会允许插入相同键的多个值。</li>
