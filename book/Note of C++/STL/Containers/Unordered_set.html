@@ -186,12 +186,13 @@
                         <h1 id="stdunordered_set"><a class="header" href="#stdunordered_set">std::unordered_set</a></h1>
 <p><code>std::unordered_set</code> 是一个无序的关联容器，它与 <code>std::set</code> 的主要区别在于元素的存储顺序。<code>std::set</code> 按照元素的升序排列，而 <code>std::unordered_set</code> 不保持任何顺序，它依赖于哈希表实现，因此元素的存储位置是由哈希函数决定的。<code>std::unordered_set</code> 提供了高效的查找、插入和删除操作，底层通常使用哈希表，查找、插入和删除操作的平均时间复杂度为 O(1)，但最坏情况下为 O(n)。</p>
 <p><code>unordered_map</code>是一个模板类，其定义如下：</p>
-<p><code>std::unordered_set&lt;Key, Hash = std::hash&lt;Key&gt;, Pred = std::equal_to&lt;Key&gt;, Alloc = std::allocator&lt;Key&gt;&gt;</code></p>
+<pre><code class="language-cpp">std::unordered_set&lt;Key, Hash = std::hash&lt;Key&gt;, Pred = std::equal_to&lt;Key&gt;, Alloc = std::allocator&lt;Key&gt;&gt;
+</code></pre>
 <ul>
-<li>Key 是存储在 unordered_set 中的元素类型。</li>
-<li>Hash 是一个函数或函数对象，用于生成元素的哈希值，默认为 std::hash&lt;Key&gt;。</li>
-<li>Pred 是一个二元谓词，用于比较两个元素是否相等，默认为 std::equal_to&lt;Key&gt;。</li>
-<li>Alloc 是分配器类型，用于管理内存分配，默认为 std::allocator&lt;Key&gt;。</li>
+<li>Key 是存储在 <code>unordered_set</code> 中的元素类型。</li>
+<li>Hash 是一个函数或函数对象，用于生成元素的哈希值，默认为 <code>std::hash&lt;Key&gt;</code>。</li>
+<li>Pred 是一个二元谓词，用于比较两个元素是否相等，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
+<li>Alloc 是分配器类型，用于管理内存分配，默认为 <code>std::allocator&lt;Key&gt;</code>。</li>
 </ul>
 <h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_set&gt;
@@ -262,7 +263,7 @@ us.insert(vec.begin(), vec.end());      // 区间插入
 <p><code>std::pair&lt;iterator, bool&gt; emplace(_Args&amp;&amp;... args)</code>: 就地构建并插入元素。</p>
 </li>
 <li>
-<p><code>iterator emplace_hint(const_iterator hint, _Args&amp;&amp;... args)</code>: 就地构建并插入元素，且指定插入位置，但是如果指定位置错误会发生重排序，最坏情况下可能会降低插入的效率。</p>
+<p><code>iterator emplace_hint(const_iterator hint, _Args&amp;&amp;... args)</code>: 就地构建并插入元素，且指定插入位置，但是如果指定位置错误会发生重排序，最坏情况下可能会降低插入的效率。在哈希索引的前提下是无序的，因此该插入操作等效于<code>insert</code>。</p>
 </li>
 </ol>
 <h4 id="4-删除元素"><a class="header" href="#4-删除元素">(4) 删除元素</a></h4>
