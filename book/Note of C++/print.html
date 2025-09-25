@@ -183,6 +183,276 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p>该文档记录部分(不太准确的)C++知识。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="基本数据类型"><a class="header" href="#基本数据类型">基本数据类型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="自动类型推导"><a class="header" href="#自动类型推导">自动类型推导</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
+<p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
+<p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
+<p>C++ 提供了一些工具来帮助开发者更高效地管理内存，避免内存泄漏、悬空指针和野指针等常见问题。在传统的内存管理方式中，开发者需要通过 new 和 delete 来手动管理动态内存的分配和释放。而为了提高开发效率和安全性，C++11 引入了<code>智能指针</code>，如 <code>std::unique_ptr</code>、<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code>，它们自动管理内存的生命周期，减少了人为错误的可能性。</p>
+<p>此外，C++ 还提供了内存池和内存对齐等更底层的内存管理技术，使得开发者可以根据需要进一步优化程序的内存使用。</p>
+<p>在本章中，将深入探讨 C++ 中的内存管理机制，重点介绍手动内存管理和智能指针的使用。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
+<p>内存管理是 C++ 编程中的一个关键问题，尤其是当涉及到动态分配的内存时，程序员需要确保及时释放资源以避免内存泄漏或其他潜在问题。为了解决这个问题，C++ 引入了智能指针，它们通过自动管理内存的生命周期来帮助开发者更安全地进行内存操作。智能指针不仅简化了内存管理的复杂性，还提高了程序的安全性，避免了许多常见的内存错误。</p>
+<p>智能指针是 C++ 标准库中的模板类，它们的作用是通过自动释放所持有的资源来管理动态分配的内存。智能指针的核心特点是，它们会在不再需要资源时自动释放内存，从而减少内存泄漏的风险。C++11 引入了三种主要类型的智能指针：std::unique_ptr、std::shared_ptr 和 std::weak_ptr，它们适用于不同的使用场景。除此之外，std::auto_ptr 是 C++98 中的一个智能指针，但由于设计缺陷，它在 C++11 中被弃用了。</p>
+<p>在本节中，我们将详细介绍这四种智能指针的特点、适用场景以及如何使用它们。</p>
+<div class="table-wrapper"><table><thead><tr><th>智能指针类型</th><th>所有权类型</th><th>主要特点</th><th>适用场景</th><th>创建方式</th></tr></thead><tbody>
+<tr><td><code>std::auto_ptr</code></td><td>独占所有权（已弃用）</td><td>自动管理内存，但存在隐式所有权转移的问题，已在 C++11 中弃用</td><td>不推荐使用（已被 <code>std::unique_ptr</code> 取代）</td><td><code>std::auto_ptr&lt;T&gt; ptr(new T);</code></td></tr>
+<tr><td><code>std::unique_ptr</code></td><td>独占所有权</td><td>不能拷贝，只能移动，自动销毁所管理的资源</td><td>单一所有者的资源管理，适用于工厂模式等</td><td><code>std::unique_ptr&lt;T&gt; ptr = std::make_unique&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::shared_ptr</code></td><td>共享所有权</td><td>引用计数，多个指针共享同一资源，最后一个销毁时释放资源</td><td>多个对象共享资源，如缓存、资源池</td><td><code>std::shared_ptr&lt;T&gt; ptr = std::make_shared&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::weak_ptr</code></td><td>不管理资源生命周期</td><td>防止 <code>shared_ptr</code> 引用计数循环引用，不能直接访问资源</td><td>避免 <code>shared_ptr</code> 的循环引用问题</td><td><code>std::weak_ptr&lt;T&gt; weak_ptr = shared_ptr;</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdauto_ptr"><a class="header" href="#stdauto_ptr">std::auto_ptr</a></h1>
+<p><code>std::auto_ptr</code> 是 C++98 中引入的智能指针类型，它提供了一种自动管理动态内存的方式。其主要功能是通过自动销毁对象来避免内存泄漏。然而，由于其所有权转移的语义问题（例如，拷贝操作时所有权隐式转移），<code>std::auto_ptr</code> 在 C++11 中被 <strong>弃用</strong>，并且在 C++17 中被 <strong>完全移除</strong>。因此，建议开发者使用 <code>std::unique_ptr</code> 来替代 <code>std::auto_ptr</code>。</p>
+<h2 id="1-定义"><a class="header" href="#1-定义">1. 定义</a></h2>
+<p><code>std::auto_ptr</code> 的模板定义如下：</p>
+<pre><code class="language-cpp">template&lt;class T&gt;
+class auto_ptr;
+</code></pre>
+<p>它是一个模板类，接受一个类型 <code>T</code>，并提供对该类型的自动内存管理。</p>
+<p><code>std::auto_ptr</code> 还有一个专用的模板版本：</p>
+<pre><code class="language-cpp">template&lt;&gt;
+class auto_ptr&lt;void&gt;;
+</code></pre>
+<p>这个版本用于不处理任何具体类型的 <code>void</code> 指针，但它通常不用于常规编程中，因为它并没有实际的意义。</p>
+<h2 id="2-基本功能"><a class="header" href="#2-基本功能">2. 基本功能</a></h2>
+<p><code>std::auto_ptr</code> 自动管理其指向的动态内存资源。其基本特点是：</p>
+<ul>
+<li>在 <code>auto_ptr</code> 被销毁时，自动释放其指向的对象。</li>
+<li>所有权转移：当 <code>auto_ptr</code> 被拷贝时，源 <code>auto_ptr</code> 的所有权被转移到目标 <code>auto_ptr</code>，这意味着源指针不再持有资源。这一行为可能会导致意外的内存管理问题。</li>
+</ul>
+<h2 id="3-重要特点"><a class="header" href="#3-重要特点">3. 重要特点</a></h2>
+<ul>
+<li>
+<p>所有权转移：</p>
+<ul>
+<li><code>std::auto_ptr</code> 的最具争议的特性就是它的 <strong>所有权转移</strong>。在拷贝构造函数或拷贝赋值运算符中，<code>auto_ptr</code> 会转移所有权（即源指针将失去对对象的所有权，而目标指针会成为新的所有者）。这种行为与 C++ 中其他类型的智能指针（如 <code>std::unique_ptr</code>）不同，容易导致不易察觉的 bug，尤其是在多次使用相同的对象时。</li>
+</ul>
+</li>
+<li>
+<p>析构时自动释放资源：</p>
+<ul>
+<li>在 <code>auto_ptr</code> 被销毁时，它会自动释放它持有的内存。其析构函数会调用所管理对象的析构函数来释放资源，因此，开发者不需要显式地调用 <code>delete</code>。</li>
+</ul>
+</li>
+<li>
+<p>不支持复制语义：</p>
+<ul>
+<li>由于所有权转移，<code>std::auto_ptr</code> 不支持复制操作（即不支持拷贝构造和拷贝赋值），它只支持移动语义。</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-使用示例"><a class="header" href="#4-使用示例">4. 使用示例</a></h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+class MyClass {
+public:
+    MyClass() { std::cout &lt;&lt; "MyClass constructor\n"; }
+    ~MyClass() { std::cout &lt;&lt; "MyClass destructor\n"; }
+};
+
+int main() {
+    // 创建一个 auto_ptr 指向 MyClass
+    std::auto_ptr&lt;MyClass&gt; ptr1(new MyClass());
+
+    // 通过拷贝构造将 ptr1 的所有权转移到 ptr2
+    std::auto_ptr&lt;MyClass&gt; ptr2 = ptr1; // ptr1 的所有权转移给 ptr2
+
+    // ptr1 现在为空，不能再使用它
+    if (!ptr1) {
+        std::cout &lt;&lt; "ptr1 is now null.\n";
+    }
+
+    // ptr2 仍然拥有 MyClass 的资源
+    // 在程序结束时，ptr2 将自动释放 MyClass 对象
+    return 0;
+}
+</code></pre>
+<h2 id="5-为什么-stdauto_ptr-被弃用"><a class="header" href="#5-为什么-stdauto_ptr-被弃用">5. 为什么 <code>std::auto_ptr</code> 被弃用</a></h2>
+<ul>
+<li>
+<p>所有权转移的问题：
+<code>std::auto_ptr</code> 的一个关键问题是它的拷贝构造函数和拷贝赋值运算符会隐式地转移所有权，这会导致意外的行为和 bug。开发者可能会错误地认为一个对象仍然拥有资源，而实际上的资源已经被转移给另一个对象，导致悬空指针或多次释放同一资源。</p>
+</li>
+<li>
+<p>现代 C++ 的替代方案：
+在 C++11 中，<code>std::unique_ptr</code> 被引入作为 <code>std::auto_ptr</code> 的替代品。与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 不允许拷贝操作，只允许移动操作，避免了隐式所有权转移的风险，从而更符合现代 C++ 的设计理念。</p>
+</li>
+<li>
+<p>移动语义：
+<code>std::unique_ptr</code> 支持移动语义，它允许资源的所有权在不同对象间转移，而不会引起混淆或潜在错误。</p>
+</li>
+</ul>
+<h3 id="6-替代品"><a class="header" href="#6-替代品">6. 替代品</a></h3>
+<ul>
+<li>
+<p><code>std::unique_ptr</code>：
+<code>std::unique_ptr</code> 是 <code>std::auto_ptr</code> 的现代替代品，它通过明确的所有权控制来避免潜在的错误。<code>std::unique_ptr</code> 不允许拷贝，只支持通过 <code>std::move</code> 转移所有权，因此避免了所有权转移时产生的问题。</p>
+</li>
+<li>
+<p><code>std::shared_ptr</code>：
+对于共享所有权的场景，<code>std::shared_ptr</code> 可以提供引用计数功能，使得多个指针可以共同拥有资源，而在最后一个指针被销毁时释放资源。</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdunique_ptr"><a class="header" href="#stdunique_ptr">std::unique_ptr</a></h1>
+<p><code>std::unique_ptr</code> 是 C++11 引入的智能指针类型，它为动态内存提供了更加安全和高效的管理方式。与 <code>std::auto_ptr</code> 相比，<code>std::unique_ptr</code> 引入了更严格的所有权管理机制，避免了隐式所有权转移的问题，并且仅支持通过移动语义来转移资源的所有权。这使得 <code>std::unique_ptr</code> 在现代 C++ 中成为管理动态内存的推荐方式。</p>
+<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
+<p><code>std::unique_ptr</code> 是一个模板类，用于管理指向动态分配内存的指针。它确保在其生命周期结束时自动释放资源，避免了开发者手动管理内存的复杂性。该类型的主要目标是明确地控制资源的所有权，确保资源只会被一个指针持有，避免内存泄漏和资源重复释放的风险。</p>
+<pre><code class="language-cpp">template&lt;
+    class T,
+    class Deleter = std::default_delete&lt;T&gt;
+&gt; class unique_ptr;
+</code></pre>
+<pre><code class="language-cpp">template &lt;
+    class T,
+    class Deleter
+&gt; class unique_ptr&lt;T[], Deleter&gt;;
+</code></pre>
+<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 不允许拷贝操作，它只支持移动操作。这样，<code>std::unique_ptr</code> 可以避免由于不明确的所有权转移所引发的错误和 bug。资源的所有权转移只能通过 <code>std::move</code> 完成，这使得程序员可以清晰地看到何时发生了所有权的转移，避免了拷贝构造和赋值操作带来的隐式问题。</p>
+<h2 id="资源管理的所有权控制"><a class="header" href="#资源管理的所有权控制">资源管理的所有权控制</a></h2>
+<p><code>std::unique_ptr</code> 的核心特性之一就是它持有资源的 <strong>唯一所有权</strong>。每个 <code>std::unique_ptr</code> 都确保它是唯一拥有所指向对象的所有者。当 <code>std::unique_ptr</code> 被销毁时，它会自动释放所管理的内存，无需开发者手动调用 <code>delete</code>，从而降低了内存泄漏的风险。由于不允许拷贝构造或拷贝赋值操作，<code>std::unique_ptr</code> 使得资源的所有权在多个指针之间的共享变得不可能，从而避免了多个指针指向同一资源时可能导致的多重释放或悬空指针问题。</p>
+<p>例如，考虑以下代码片段：</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
+std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 转移所有权
+</code></pre>
+<p>在这段代码中，<code>ptr1</code> 的所有权通过 <code>std::move</code> 转移给 <code>ptr2</code>，<code>ptr1</code> 变为一个空指针，无法再访问原始资源。资源的所有权不再在多个指针之间共享，因此 <code>ptr1</code> 不再需要释放资源。</p>
+<h2 id="移动语义"><a class="header" href="#移动语义">移动语义</a></h2>
+<p><code>std::unique_ptr</code> 支持 <strong>移动语义</strong>，意味着资源的所有权可以从一个 <code>unique_ptr</code> 移动到另一个 <code>unique_ptr</code>。通过移动构造函数或移动赋值操作，资源的所有权会被安全地转移，而不会引发不必要的复制操作。与拷贝构造不同，移动操作并不会增加资源的引用计数，也不会创建多个指针指向同一个对象。移动语义使得内存管理更加高效，并避免了性能上的冗余开销。</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
+std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 使用移动语义转移所有权
+</code></pre>
+<p>这里，<code>ptr1</code> 的所有权被移动到 <code>ptr2</code>，<code>ptr1</code> 被置为空。这样，<code>std::unique_ptr</code> 能够在不产生冗余复制的情况下实现资源所有权的转移。</p>
+<h2 id="自动销毁与内存管理"><a class="header" href="#自动销毁与内存管理">自动销毁与内存管理</a></h2>
+<p><code>std::unique_ptr</code> 在其生命周期结束时会自动释放它所持有的资源。它的析构函数会在 <code>unique_ptr</code> 被销毁时自动调用所管理对象的析构函数，这意味着开发者无需手动管理内存的释放操作。通过这种方式，<code>std::unique_ptr</code> 减少了内存泄漏的可能性，也避免了因为忘记释放内存而导致的错误。</p>
+<p>例如，在函数的作用域结束时，<code>std::unique_ptr</code> 会自动释放它管理的资源：</p>
+<pre><code class="language-cpp">void createObject() {
+    std::unique_ptr&lt;MyClass&gt; ptr(new MyClass());
+    // 自动释放 ptr 管理的内存
+}
+</code></pre>
+<p>当 <code>createObject</code> 函数结束时，<code>ptr</code> 会被销毁，它所管理的 <code>MyClass</code> 对象也会被自动释放。</p>
+<h2 id="不支持复制支持移动"><a class="header" href="#不支持复制支持移动">不支持复制，支持移动</a></h2>
+<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 设计上不支持拷贝构造和拷贝赋值操作，因此不会发生隐式所有权转移的问题。若需要转移所有权，开发者必须显式地使用 <code>std::move</code> 进行资源的转移，这使得代码中资源所有权的转移变得更加明确和安全。这种设计使得 <code>std::unique_ptr</code> 在资源管理上更加清晰，避免了由于误用或隐式操作而引发的错误。</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
+std::unique_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 编译错误，不能拷贝
+</code></pre>
+<p>这段代码会编译错误，因为 <code>std::unique_ptr</code> 不允许拷贝构造。唯一的方式是使用 <code>std::move</code> 来进行所有权的转移：</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
+std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 通过移动操作转移所有权
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdshared_ptr"><a class="header" href="#stdshared_ptr">std::shared_ptr</a></h1>
+<p><code>std::shared_ptr</code> 是 C++11 中引入的智能指针类型，用于管理动态分配的内存。它与 <code>std::unique_ptr</code> 和 <code>std::auto_ptr</code> 的主要区别在于，<code>std::shared_ptr</code> 支持 <strong>共享所有权</strong>，即多个 <code>shared_ptr</code> 可以共同拥有同一个资源。当最后一个持有该资源的 <code>shared_ptr</code> 被销毁时，资源会被自动释放。因此，<code>std::shared_ptr</code> 适用于需要多个指针共同管理同一资源的场景。</p>
+<h2 id="定义与基本功能-1"><a class="header" href="#定义与基本功能-1">定义与基本功能</a></h2>
+<p><code>std::shared_ptr</code> 是一个模板类，能够在多个 <code>shared_ptr</code> 之间共享资源的所有权, 其定义如下：</p>
+<pre><code class="language-cpp">template&lt; class T &gt; class shared_ptr;
+</code></pre>
+<p>它通过 <strong>引用计数</strong> 机制来管理资源，确保在多个指针指向同一个对象时，资源只有在最后一个指针被销毁时才会被释放。每当一个新的 <code>shared_ptr</code> 被创建或拷贝时，引用计数会增加；当一个 <code>shared_ptr</code> 被销毁或被重置时，引用计数会减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动释放资源。</p>
+<p>这种共享所有权的特性使得 <code>std::shared_ptr</code> 特别适用于需要多个对象共同管理资源的场景，而不必担心资源在多个指针之间的管理冲突。</p>
+<h2 id="引用计数机制"><a class="header" href="#引用计数机制">引用计数机制</a></h2>
+<p><code>std::shared_ptr</code> 的核心特点是它的 <strong>引用计数</strong> 机制。每个 <code>shared_ptr</code> 都维护着一个与资源关联的引用计数，记录当前有多少个 <code>shared_ptr</code> 正在共享同一资源。每当一个新的 <code>shared_ptr</code> 被拷贝或赋值时，引用计数增加；当一个 <code>shared_ptr</code> 被销毁时，引用计数减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动删除所指向的对象，从而避免了内存泄漏。</p>
+<p>例如，考虑以下代码：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
+</code></pre>
+<p>此时，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象，引用计数为 2。当 <code>ptr1</code> 或 <code>ptr2</code> 被销毁时，引用计数会减少。只有当最后一个 <code>shared_ptr</code> 被销毁时，所管理的对象才会被释放。</p>
+<h2 id="共享所有权"><a class="header" href="#共享所有权">共享所有权</a></h2>
+<p><code>std::shared_ptr</code> 允许 <strong>多个指针共享同一资源的所有权</strong>。这种共享所有权的特性使得它在一些需要多个对象共同访问资源的场景中非常有用。例如，在多线程环境中，多个线程可能需要访问共享资源，而 <code>std::shared_ptr</code> 可以确保该资源在没有明确的所有权控制的情况下得到正确管理。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 多个 shared_ptr 共享同一资源
+</code></pre>
+<p>在上面的例子中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个对象，它们共享对资源的所有权，引用计数增加为 2。即使某个 <code>shared_ptr</code> 被销毁，另一个 <code>shared_ptr</code> 仍然可以访问资源。</p>
+<h2 id="自动销毁与内存管理-1"><a class="header" href="#自动销毁与内存管理-1">自动销毁与内存管理</a></h2>
+<p>与 <code>std::unique_ptr</code> 相似，<code>std::shared_ptr</code> 会在其生命周期结束时自动释放它所管理的资源。资源的释放是通过引用计数机制来实现的，当最后一个指向资源的 <code>shared_ptr</code> 被销毁时，资源会自动释放，从而避免内存泄漏的风险。</p>
+<p>这一点非常适合需要共享资源的场景，因为 <code>shared_ptr</code> 会自动管理资源的生命周期，不需要开发者显式地调用 <code>delete</code>。</p>
+<pre><code class="language-cpp">void createObject() {
+    std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+    std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
+
+    // ptr1 和 ptr2 都会在函数结束时自动销毁
+    // 当最后一个 shared_ptr 被销毁时，MyClass 对象将被自动删除
+}
+</code></pre>
+<p>在上述示例中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象。当这两个 <code>shared_ptr</code> 都超出作用域并被销毁时，引用计数变为 0，<code>MyClass</code> 对象会被自动销毁。</p>
+<h2 id="线程安全"><a class="header" href="#线程安全">线程安全</a></h2>
+<p><code>std::shared_ptr</code> 的引用计数机制是线程安全的，即多个线程可以安全地同时操作同一个 <code>shared_ptr</code>，而不必担心引用计数的竞争条件。这使得 <code>std::shared_ptr</code> 非常适合多线程程序中的共享资源管理。</p>
+<p>然而，值得注意的是，虽然 <code>std::shared_ptr</code> 在引用计数方面是线程安全的，但并不是对资源本身的访问是线程安全的。如果多个线程需要同时访问资源的成员，则需要额外的同步机制（如互斥锁）来保护资源。</p>
+<h2 id="不支持循环引用"><a class="header" href="#不支持循环引用">不支持循环引用</a></h2>
+<p>一个需要注意的事项是，<code>std::shared_ptr</code> 可能会导致 <strong>循环引用</strong> 的问题。如果两个或多个 <code>shared_ptr</code> 互相持有对方的引用，且它们的引用计数永远不会降到 0，那么这些资源将无法释放，从而导致内存泄漏。</p>
+<p>例如，考虑以下代码：</p>
+<pre><code class="language-cpp">struct Node {
+    std::shared_ptr&lt;Node&gt; next;
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 形成循环引用
+}
+</code></pre>
+<p>在这个例子中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，这将导致它们的引用计数永远不为 0，因此资源无法自动释放，造成内存泄漏。为了避免这种情况，可以使用 <code>std::weak_ptr</code> 来解决循环引用问题。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
+<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
+<h2 id="定义与基本功能-2"><a class="header" href="#定义与基本功能-2">定义与基本功能</a></h2>
+<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
+<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
+<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
+<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
+<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::shared_ptr&lt;Node&gt; next;
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 形成循环引用
+}
+</code></pre>
+<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 现在不会形成循环引用
+}
+</code></pre>
+<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
+<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
+<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+} else {
+    // 对象已被销毁
+}
+</code></pre>
+<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
+<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
+<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
+std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+
+// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
+</code></pre>
+<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
+<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
+<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+}
+</code></pre>
+<p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stl"><a class="header" href="#stl">STL</a></h1>
 <p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。</p>
 <div class="table-wrapper"><table><thead><tr><th>组件</th><th>描述</th></tr></thead><tbody>
@@ -252,6 +522,93 @@
 </code></pre>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdmove"><a class="header" href="#stdmove">std::move</a></h1>
+<p>将一个对象的<strong>所有权</strong>从一个地方(特指引用或是指针)转移到另一个地方，相当于rust语言的所有权转让，对于<code>std::string</code>或是更复杂的数据结构使用<code>std::move</code>转移所有权可以比直接复制有着更高的效率。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">template&lt; class T &gt;
+typename std::remove_reference&lt;T&gt;::type&amp;&amp; move( T&amp;&amp; t ) noexcept; // (since C++11 and until C++14)
+</code></pre>
+<pre><code class="language-cpp">template&lt; class T &gt;
+constexpr std::remove_reference_t&lt;T&gt;&amp;&amp; move( T&amp;&amp; t ) noexcept; // (since C++14)
+</code></pre>
+<h2 id="1-引入-1"><a class="header" href="#1-引入-1">1. 引入</a></h2>
+<p>被包括在<code>&lt;utility&gt;</code>头文件中。</p>
+<pre><code class="language-C++">#include &lt;utility&gt;
+</code></pre>
+<h2 id="2-stdmove的工作原理"><a class="header" href="#2-stdmove的工作原理">2. <code>std::move</code>的工作原理</a></h2>
+<p><code>std::move</code>并不真正“移动”对象的数据，它的作用是将一个左值引用转化为右值引用，从而启用移动语义。在C++中，右值引用和左值引用的主要区别在于右值引用允许资源的所有权转移，而左值引用则保持资源的所有权。</p>
+<p>通过使用<code>std::move</code>，编译器能够区分何时使用<strong>拷贝构造</strong>（复制数据）和<strong>移动构造</strong>（转移所有权），从而优化程序性能，特别是在涉及大量数据拷贝的场景中。</p>
+<h3 id="1右值引用与左值引用"><a class="header" href="#1右值引用与左值引用">(1)右值引用与左值引用</a></h3>
+<ul>
+<li>左值：表示可以被引用且具有持久地址的对象（例如，变量）。</li>
+<li>右值：表示临时对象或可以被销毁的对象（例如，常量、字面值、函数返回值）。</li>
+</ul>
+<p><code>std::move</code>的作用是将左值转换为右值引用，允许资源的移动。</p>
+<h3 id="2为什么需要stdmove"><a class="header" href="#2为什么需要stdmove">(2)为什么需要<code>std::move</code>？</a></h3>
+<p>C++11引入了移动语义（Move Semantics），目标是提高性能。复制一个大对象时，可能涉及到大量的内存分配和数据拷贝，而如果能将资源的所有权直接转移给另一个对象，就可以避免这些开销。<code>std::move</code>通过将左值转换为右值引用，促使移动构造函数或移动赋值运算符被调用。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);  // 这里v2会接管v1的所有权，v1会处于一个"空"状态
+</code></pre>
+<p>在这个例子中，<code>std::move</code>将<code>v1</code>转换为右值引用，从而触发了移动构造函数。结果是，<code>v2</code>接管了<code>v1</code>的数据，而<code>v1</code>进入了一个有效但不确定的状态。</p>
+<h2 id="3-使用stdmove的场景"><a class="header" href="#3-使用stdmove的场景">3. 使用<code>std::move</code>的场景</a></h2>
+<h3 id="1移动构造与移动赋值"><a class="header" href="#1移动构造与移动赋值">(1)移动构造与移动赋值</a></h3>
+<p>在使用<code>std::move</code>时，通常会看到它与<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>一起使用。</p>
+<ul>
+<li>移动构造函数：当一个对象通过右值引用初始化另一个对象时，调用移动构造函数，通常用于资源的转移。</li>
+<li>移动赋值运算符：当一个对象被右值引用赋值给另一个已存在的对象时，调用移动赋值运算符。</li>
+</ul>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);  // 使用移动构造函数
+</code></pre>
+<p>对于赋值操作：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2;
+v2 = std::move(v1);  // 使用移动赋值运算符
+</code></pre>
+<p>不管是哪一种操作，<code>v1</code>都会被剥夺所有权。</p>
+<h3 id="2自定义类型与stdmove"><a class="header" href="#2自定义类型与stdmove">(2)自定义类型与<code>std::move</code></a></h3>
+<p>如果你有自定义类型，并希望通过移动语义来优化性能，那么你需要为这个类型定义<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>。这些函数通常需要显式地将资源的所有权从一个对象转移到另一个对象。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">class MyClass {
+public:
+    MyClass(MyClass&amp;&amp; other) noexcept {
+        // 移动构造函数
+        this-&gt;data = std::move(other.data);  // 移动数据
+    }
+
+    MyClass&amp; operator=(MyClass&amp;&amp; other) noexcept {
+        // 移动赋值运算符
+        if (this != &amp;other) {
+            this-&gt;data = std::move(other.data);  // 移动数据
+        }
+        return *this;
+    }
+
+private:
+    std::vector&lt;int&gt; data;
+};
+</code></pre>
+<h2 id="4-stdmove的常见误用"><a class="header" href="#4-stdmove的常见误用">4. <code>std::move</code>的常见误用</a></h2>
+<h3 id="1移动之后使用原对象"><a class="header" href="#1移动之后使用原对象">(1)移动之后使用原对象</a></h3>
+<p>在将对象通过<code>std::move</code>转移所有权之后，原对象的状态是未定义的。因此，<strong>不应再使用原对象</strong>，例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);
+
+// v1现在处于未定义状态，不能再安全使用
+std::cout &lt;&lt; v1.size();  // 错误
+</code></pre>
+<p>正确的做法是，只在转移所有权后“放弃”原对象的使用。</p>
+<h3 id="2不必要的使用stdmove"><a class="header" href="#2不必要的使用stdmove">(2)不必要的使用<code>std::move</code></a></h3>
+<p><code>std::move</code>的作用是告诉编译器“这不是一个左值，你可以安全地移动它”，但是如果你已经明确知道对象不会被复制（例如返回一个对象的右值引用），就不必使用<code>std::move</code>。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; createVector() {
+    std::vector&lt;int&gt; v = {1, 2, 3};
+    return v;  // 编译器会自动进行返回值优化（RVO），不需要手动使用std::move
+}
+</code></pre>
+<p>这里的返回值优化（RVO）允许编译器在返回<code>v</code>时进行移动，而不需要显式调用<code>std::move</code>。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
 <p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
 <div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
@@ -300,7 +657,7 @@
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
 <p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
-<h2 id="1-引入-1"><a class="header" href="#1-引入-1">1. 引入</a></h2>
+<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;vector&gt;
 </code></pre>
 <h2 id="2-存储方式-1"><a class="header" href="#2-存储方式-1">2. 存储方式</a></h2>
@@ -529,7 +886,7 @@ vec2.assign(vec1.begin(), vec1.end());  // vec2 变为 {1, 2, 3}
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdlist"><a class="header" href="#stdlist">std::list</a></h1>
 <p>List 是一个支持在容器的任意位置快速插入和删除元素的一个顺序容器，支持存储各种类型的对象，链表在存储时不需要重新分配内存或是初始化时预留大小，对象存储在内存中的不连续位置，因此随机访问能力较差。</p>
-<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
+<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;list&gt;
 </code></pre>
 <h2 id="2-存储方式-2"><a class="header" href="#2-存储方式-2">2. 存储方式</a></h2>
@@ -819,7 +1176,7 @@ lst.reverse();  // 反转链表，lst 变为 {5, 4, 3, 2, 1}
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stddeque"><a class="header" href="#stddeque">std::deque</a></h1>
 <p><code>std::deque</code>（双端队列）是一个支持在两端快速插入和删除元素的顺序容器。与 <code>std::vector</code> 不同，<code>std::deque</code> 在内存中采用分段连续的存储方式，即它的元素分布在多个不连续的内存块中，这些内存块通过指针数组进行管理。由于这一内存布局，<code>std::deque</code> 可以在头尾两端高效地进行插入和删除操作，并且支持随机访问(可以使用<code>operator[]</code>)。尽管如此，它的随机访问性能较 <code>std::vector</code> 差一些，因为每个内存块并不连续。</p>
 <p><code>std::deque</code> 不需要像 <code>std::vector</code> 一样每次扩展时重新分配整个内存空间，而是通过扩展指向内存块的指针数组来增加容量。这使得它在动态变化的场景中，尤其是在需要频繁在两端插入和删除元素时，表现得尤为高效。</p>
-<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
+<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;deque&gt;
 </code></pre>
 <h2 id="2-存储方式-3"><a class="header" href="#2-存储方式-3">2. 存储方式</a></h2>
@@ -1071,7 +1428,7 @@ int main() {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdset"><a class="header" href="#stdset">std::set</a></h1>
 <p><code>std::set</code> 是一个排序的关联容器，它存储唯一的元素，并根据元素的顺序进行自动排序。与 <code>std::list</code> 不同，<code>std::set</code> 提供了对元素的高效查找、插入和删除操作，但不支持直接的索引访问。其底层通常是基于平衡二叉树实现（红黑树），因此在查找、插入和删除操作上的时间复杂度通常为 O(log n)。</p>
-<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
+<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
 <h2 id="2-存储方式-4"><a class="header" href="#2-存储方式-4">2. 存储方式</a></h2>
@@ -1292,7 +1649,7 @@ int main() {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultiset"><a class="header" href="#stdmultiset">std::multiset</a></h1>
 <p><code>std::multiset</code> 是与 <code>std::set</code> 类似的一个容器，但与 <code>std::set</code> 不同，<code>std::multiset</code> 允许存储重复的元素。在 <code>std::multiset</code> 中，元素会按顺序排列，并且可以包含多个相同的元素。<code>std::multiset</code> 也提供了高效的查找、插入和删除操作，底层通常使用红黑树结构实现，时间复杂度通常为 O(log n)。</p>
-<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
+<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
 <h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
@@ -1465,7 +1822,7 @@ ms1.merge(ms2);  // ms1 合并 ms2 后，变为 {1, 2, 3, 4, 5, 6}
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmap"><a class="header" href="#stdmap">std::map</a></h1>
 <p><code>std::map</code> 是 C++ 标准库中的一个关联容器，它用于存储一组键值对（<code>key-value</code>），并根据键进行自动排序。每个键在 <code>std::map</code> 中是唯一的，因此不允许存储重复的键。<code>std::map</code> 底层通常使用红黑树结构实现，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
-<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
+<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
@@ -1671,7 +2028,7 @@ for (auto it = m.begin(); it != m.end(); ++it) {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultimap"><a class="header" href="#stdmultimap">std::multimap</a></h1>
 <p><code>std::multimap</code> 是一个与 <code>std::map</code> 类似的关联容器，但与 <code>std::map</code> 不同，<code>std::multimap</code> 允许存储重复的键。在 <code>std::multimap</code> 中，键是可以重复的，而每个键都可以关联多个不同的值。与 <code>std::map</code> 相同，<code>std::multimap</code> 也会自动按照键的顺序进行排序。<code>std::multimap</code> 的底层实现通常使用红黑树，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
-<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
+<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
@@ -1889,7 +2246,7 @@ for (auto it = mm.begin(); it != mm.end(); ++it) {
 <li>Pred 是一个二元谓词，用于比较两个元素是否相等，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc 是分配器类型，用于管理内存分配，默认为 <code>std::allocator&lt;Key&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
+<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_set&gt;
 </code></pre>
 <h2 id="2-存储方式-8"><a class="header" href="#2-存储方式-8">2. 存储方式</a></h2>
@@ -2117,7 +2474,7 @@ std::cout &lt;&lt; "Are p1 and p2 equal? " &lt;&lt; std::boolalpha &lt;&lt; eq(p
 <li>Pred：用于比较两个元素是否相等的二元谓词，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，用于内存分配，默认为 <code>std::allocator&lt;Key&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
+<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_set&gt;
 </code></pre>
 <h2 id="2-存储方式-9"><a class="header" href="#2-存储方式-9">2. 存储方式</a></h2>
@@ -2331,7 +2688,7 @@ for (auto it = us.begin(); it != us.end(); ++it) {
 <li>Pred：相等比较函数对象，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，默认为 <code>std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
+<h2 id="1-引入-11"><a class="header" href="#1-引入-11">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_map&gt;
 </code></pre>
 <h2 id="2-存储方式-10"><a class="header" href="#2-存储方式-10">2. 存储方式</a></h2>
@@ -2580,7 +2937,7 @@ std::cout &lt;&lt; "Are p1 and p2 equal? " &lt;&lt; std::boolalpha &lt;&lt; eq(p
 <li>Pred：相等比较函数对象，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，默认为 <code>std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-11"><a class="header" href="#1-引入-11">1. 引入</a></h2>
+<h2 id="1-引入-12"><a class="header" href="#1-引入-12">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_map&gt;
 </code></pre>
 <h2 id="2-存储方式-11"><a class="header" href="#2-存储方式-11">2. 存储方式</a></h2>

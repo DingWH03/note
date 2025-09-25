@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Containers - Note of C++</title>
+        <title>智能指针 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory/Smart_Pointer.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,62 +183,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
-<p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
-<div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
-<tr><td><strong>序列容器 (Sequence Containers)</strong></td><td><strong>std::vector</strong></td><td>动态数组，支持快速随机访问。</td></tr>
-<tr><td></td><td><strong>std::deque</strong></td><td>双端队列，支持快速插入和删除。</td></tr>
-<tr><td></td><td><strong>std::list</strong></td><td>链表，支持快速插入和删除，但不支持随机访问。</td></tr>
-<tr><td><strong>关联容器 (Associative Containers)</strong></td><td><strong>std::set</strong></td><td>集合，不允许重复元素。</td></tr>
-<tr><td></td><td><strong>std::multiset</strong></td><td>多重集合，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::map</strong></td><td>映射，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::multimap</strong></td><td>多重映射，存储键值对（pair），其中键是唯一的，但值可以重复，允许一个键映射到多个值。</td></tr>
-<tr><td><strong>无序容器 (Unordered Containers)</strong></td><td><strong>std::unordered_set</strong></td><td>无序集合，哈希表实现，支持快速查找、插入和删除。</td></tr>
-<tr><td></td><td><strong>std::unordered_multiset</strong></td><td>无序多重集合，哈希表实现，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::unordered_map</strong></td><td>无序映射，哈希表实现，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::unordered_multimap</strong></td><td>无序多重映射，哈希表实现，允许一个键映射到多个值。</td></tr>
-</tbody></table>
-</div>
-<h2 id="1-序列容器"><a class="header" href="#1-序列容器">1. 序列容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th>std::list</th><th>std::vector</th><th>std::deque</th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>非连续内存，双向链表</td><td>连续内存</td><td>分段连续内存</td></tr>
-<tr><td><strong>访问性能</strong></td><td>顺序访问较快，随机访问慢</td><td>随机访问快</td><td>末尾和头部访问都快</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>任意位置插入、删除快</td><td>末尾插入快，中间位置慢</td><td>头尾插入、删除快</td></tr>
-<tr><td><strong>适用场景</strong></td><td>频繁在中间插入/删除</td><td>需要高效随机访问</td><td>需要在头尾快速插入/删除</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
-</tbody></table>
-</div>
-<h2 id="2-关联容器"><a class="header" href="#2-关联容器">2. 关联容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::set</strong></th><th><strong>std::multiset</strong></th><th><strong>std::map</strong></th><th><strong>std::multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td></tr>
-<tr><td><strong>访问性能</strong></td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持键的有序</td><td>插入、删除时会自动保持键的有序</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要唯一元素且不重复的集合</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>不存在值，只有键（元素）</td><td>不存在值，只有键（元素）</td><td>存在键值对，键映射到一个值</td><td>存在键值对，键映射到多个值（允许重复）</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
-</tbody></table>
-</div>
-<h2 id="3-无序容器"><a class="header" href="#3-无序容器">3. 无序容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::unordered_set</strong></th><th><strong>std::unordered_multiset</strong></th><th><strong>std::unordered_map</strong></th><th><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td></tr>
-<tr><td><strong>访问性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要存储唯一元素且不关心顺序</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>存储键，无值</td><td>存储键，无值</td><td>存储键值对，键映射到一个值</td><td>存储键值对，键映射到多个值</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+                        <h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
+<p>内存管理是 C++ 编程中的一个关键问题，尤其是当涉及到动态分配的内存时，程序员需要确保及时释放资源以避免内存泄漏或其他潜在问题。为了解决这个问题，C++ 引入了智能指针，它们通过自动管理内存的生命周期来帮助开发者更安全地进行内存操作。智能指针不仅简化了内存管理的复杂性，还提高了程序的安全性，避免了许多常见的内存错误。</p>
+<p>智能指针是 C++ 标准库中的模板类，它们的作用是通过自动释放所持有的资源来管理动态分配的内存。智能指针的核心特点是，它们会在不再需要资源时自动释放内存，从而减少内存泄漏的风险。C++11 引入了三种主要类型的智能指针：std::unique_ptr、std::shared_ptr 和 std::weak_ptr，它们适用于不同的使用场景。除此之外，std::auto_ptr 是 C++98 中的一个智能指针，但由于设计缺陷，它在 C++11 中被弃用了。</p>
+<p>在本节中，我们将详细介绍这四种智能指针的特点、适用场景以及如何使用它们。</p>
+<div class="table-wrapper"><table><thead><tr><th>智能指针类型</th><th>所有权类型</th><th>主要特点</th><th>适用场景</th><th>创建方式</th></tr></thead><tbody>
+<tr><td><code>std::auto_ptr</code></td><td>独占所有权（已弃用）</td><td>自动管理内存，但存在隐式所有权转移的问题，已在 C++11 中弃用</td><td>不推荐使用（已被 <code>std::unique_ptr</code> 取代）</td><td><code>std::auto_ptr&lt;T&gt; ptr(new T);</code></td></tr>
+<tr><td><code>std::unique_ptr</code></td><td>独占所有权</td><td>不能拷贝，只能移动，自动销毁所管理的资源</td><td>单一所有者的资源管理，适用于工厂模式等</td><td><code>std::unique_ptr&lt;T&gt; ptr = std::make_unique&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::shared_ptr</code></td><td>共享所有权</td><td>引用计数，多个指针共享同一资源，最后一个销毁时释放资源</td><td>多个对象共享资源，如缓存、资源池</td><td><code>std::shared_ptr&lt;T&gt; ptr = std::make_shared&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::weak_ptr</code></td><td>不管理资源生命周期</td><td>防止 <code>shared_ptr</code> 引用计数循环引用，不能直接访问资源</td><td>避免 <code>shared_ptr</code> 的循环引用问题</td><td><code>std::weak_ptr&lt;T&gt; weak_ptr = shared_ptr;</code></td></tr>
 </tbody></table>
 </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../STL/Utility/Move.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Memory.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../STL/Containers/Vector.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Memory/Smart_Pointer/auto_ptr.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,11 +212,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../STL/Utility/Move.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Memory.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../STL/Containers/Vector.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Memory/Smart_Pointer/auto_ptr.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pair - Note of C++</title>
+        <title>weak_ptr - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Utility/Pair.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory/Smart_Pointer/weak_ptr.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,61 +183,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="stdpair"><a class="header" href="#stdpair">std::pair</a></h1>
-<p><code>std::pair</code> 是一个结构体模板，其可于一个单元内存储两个相异对象。是 std::tuple 的拥有两个元素的特殊情况。一般来说，pair 可以封装任意类型的对象，可以生成各种不同的 <code>std::pair&lt;T1, T2&gt;</code> 对象，可以是数组对象或者包含 <code>std::pair&lt;T1,T2&gt;</code> 的 vector 容器。pair 还可以封装两个序列容器或两个序列容器的指针。</p>
-<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
-<p>被包括在<code>&lt;utility&gt;</code>头文件中。</p>
-<pre><code class="language-C++">#include &lt;utility&gt;
+                        <h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
+<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
+<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
+<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
+<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
+<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
+<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
+<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::shared_ptr&lt;Node&gt; next;
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 形成循环引用
+}
 </code></pre>
-<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
-<p><code>std::pair</code> 存储两个对象，分别通过 <code>first</code> 和 <code>second</code> 成员访问。<code>std::pair</code> 自动将初始化参数的值赋给 <code>first</code> 和 <code>second</code>。</p>
-<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
-<h3 id="1构造方法"><a class="header" href="#1构造方法">(1)构造方法</a></h3>
-<ol>
-<li>
-<p>默认构造函数：创建一个未初始化的 <code>std::pair</code> 对象。</p>
-<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair;
+<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 现在不会形成循环引用
+}
 </code></pre>
-</li>
-<li>
-<p>值构造函数：通过传入两个对象初始化 <code>std::pair</code>。</p>
-<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair(1, "example");
+<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
+<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
+<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+} else {
+    // 对象已被销毁
+}
 </code></pre>
-</li>
-<li>
-<p>工厂函数 <code>make_pair</code>：生成 <code>std::pair</code> 对象。</p>
-<pre><code class="language-cpp">auto anotherPair = std::make_pair(2, "test");
+<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
+<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
+<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
+std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+
+// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
 </code></pre>
-</li>
-</ol>
-<h3 id="2成员访问"><a class="header" href="#2成员访问">(2)成员访问</a></h3>
-<ol>
-<li>first：访问或修改 <code>std::pair</code> 的第一个元素。</li>
-<li>second：访问或修改 <code>std::pair</code> 的第二个元素。</li>
-</ol>
-<h3 id="3比较操作符"><a class="header" href="#3比较操作符">(3)比较操作符</a></h3>
-<ol>
-<li>相等 (<code>==</code>) 和不相等 (<code>!=</code>)：比较两个 <code>std::pair</code> 对象是否相等。</li>
-<li>小于 (<code>&lt;</code>) 和大于 (<code>&gt;</code>)和小于等于 (<code>&lt;=</code>) 和大于等于 (<code>&gt;=</code>)：根据 <code>first</code> 和 <code>second</code> 的字典顺序比较两个 <code>std::pair</code> 对象。</li>
-</ol>
-<h3 id="4交换"><a class="header" href="#4交换">(4)交换</a></h3>
-<ol>
-<li>
-<p>swap：交换两个 <code>std::pair</code> 对象的值。</p>
-<pre><code class="language-cpp">myPair.swap(anotherPair);
+<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
+<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
+<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+}
 </code></pre>
-</li>
-</ol>
+<p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../STL/Utility.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Memory/Smart_Pointer/shared_ptr.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../STL/Utility/Move.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../STL.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -247,11 +262,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../STL/Utility.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Memory/Smart_Pointer/shared_ptr.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../STL/Utility/Move.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../STL.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

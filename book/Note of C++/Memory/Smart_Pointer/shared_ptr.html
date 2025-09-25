@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pair - Note of C++</title>
+        <title>shared_ptr - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Utility/Pair.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory/Smart_Pointer/shared_ptr.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,61 +183,68 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="stdpair"><a class="header" href="#stdpair">std::pair</a></h1>
-<p><code>std::pair</code> 是一个结构体模板，其可于一个单元内存储两个相异对象。是 std::tuple 的拥有两个元素的特殊情况。一般来说，pair 可以封装任意类型的对象，可以生成各种不同的 <code>std::pair&lt;T1, T2&gt;</code> 对象，可以是数组对象或者包含 <code>std::pair&lt;T1,T2&gt;</code> 的 vector 容器。pair 还可以封装两个序列容器或两个序列容器的指针。</p>
-<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
-<p>被包括在<code>&lt;utility&gt;</code>头文件中。</p>
-<pre><code class="language-C++">#include &lt;utility&gt;
+                        <h1 id="stdshared_ptr"><a class="header" href="#stdshared_ptr">std::shared_ptr</a></h1>
+<p><code>std::shared_ptr</code> 是 C++11 中引入的智能指针类型，用于管理动态分配的内存。它与 <code>std::unique_ptr</code> 和 <code>std::auto_ptr</code> 的主要区别在于，<code>std::shared_ptr</code> 支持 <strong>共享所有权</strong>，即多个 <code>shared_ptr</code> 可以共同拥有同一个资源。当最后一个持有该资源的 <code>shared_ptr</code> 被销毁时，资源会被自动释放。因此，<code>std::shared_ptr</code> 适用于需要多个指针共同管理同一资源的场景。</p>
+<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
+<p><code>std::shared_ptr</code> 是一个模板类，能够在多个 <code>shared_ptr</code> 之间共享资源的所有权, 其定义如下：</p>
+<pre><code class="language-cpp">template&lt; class T &gt; class shared_ptr;
 </code></pre>
-<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
-<p><code>std::pair</code> 存储两个对象，分别通过 <code>first</code> 和 <code>second</code> 成员访问。<code>std::pair</code> 自动将初始化参数的值赋给 <code>first</code> 和 <code>second</code>。</p>
-<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
-<h3 id="1构造方法"><a class="header" href="#1构造方法">(1)构造方法</a></h3>
-<ol>
-<li>
-<p>默认构造函数：创建一个未初始化的 <code>std::pair</code> 对象。</p>
-<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair;
+<p>它通过 <strong>引用计数</strong> 机制来管理资源，确保在多个指针指向同一个对象时，资源只有在最后一个指针被销毁时才会被释放。每当一个新的 <code>shared_ptr</code> 被创建或拷贝时，引用计数会增加；当一个 <code>shared_ptr</code> 被销毁或被重置时，引用计数会减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动释放资源。</p>
+<p>这种共享所有权的特性使得 <code>std::shared_ptr</code> 特别适用于需要多个对象共同管理资源的场景，而不必担心资源在多个指针之间的管理冲突。</p>
+<h2 id="引用计数机制"><a class="header" href="#引用计数机制">引用计数机制</a></h2>
+<p><code>std::shared_ptr</code> 的核心特点是它的 <strong>引用计数</strong> 机制。每个 <code>shared_ptr</code> 都维护着一个与资源关联的引用计数，记录当前有多少个 <code>shared_ptr</code> 正在共享同一资源。每当一个新的 <code>shared_ptr</code> 被拷贝或赋值时，引用计数增加；当一个 <code>shared_ptr</code> 被销毁时，引用计数减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动删除所指向的对象，从而避免了内存泄漏。</p>
+<p>例如，考虑以下代码：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
 </code></pre>
-</li>
-<li>
-<p>值构造函数：通过传入两个对象初始化 <code>std::pair</code>。</p>
-<pre><code class="language-cpp">std::pair&lt;int, std::string&gt; myPair(1, "example");
+<p>此时，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象，引用计数为 2。当 <code>ptr1</code> 或 <code>ptr2</code> 被销毁时，引用计数会减少。只有当最后一个 <code>shared_ptr</code> 被销毁时，所管理的对象才会被释放。</p>
+<h2 id="共享所有权"><a class="header" href="#共享所有权">共享所有权</a></h2>
+<p><code>std::shared_ptr</code> 允许 <strong>多个指针共享同一资源的所有权</strong>。这种共享所有权的特性使得它在一些需要多个对象共同访问资源的场景中非常有用。例如，在多线程环境中，多个线程可能需要访问共享资源，而 <code>std::shared_ptr</code> 可以确保该资源在没有明确的所有权控制的情况下得到正确管理。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 多个 shared_ptr 共享同一资源
 </code></pre>
-</li>
-<li>
-<p>工厂函数 <code>make_pair</code>：生成 <code>std::pair</code> 对象。</p>
-<pre><code class="language-cpp">auto anotherPair = std::make_pair(2, "test");
+<p>在上面的例子中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个对象，它们共享对资源的所有权，引用计数增加为 2。即使某个 <code>shared_ptr</code> 被销毁，另一个 <code>shared_ptr</code> 仍然可以访问资源。</p>
+<h2 id="自动销毁与内存管理"><a class="header" href="#自动销毁与内存管理">自动销毁与内存管理</a></h2>
+<p>与 <code>std::unique_ptr</code> 相似，<code>std::shared_ptr</code> 会在其生命周期结束时自动释放它所管理的资源。资源的释放是通过引用计数机制来实现的，当最后一个指向资源的 <code>shared_ptr</code> 被销毁时，资源会自动释放，从而避免内存泄漏的风险。</p>
+<p>这一点非常适合需要共享资源的场景，因为 <code>shared_ptr</code> 会自动管理资源的生命周期，不需要开发者显式地调用 <code>delete</code>。</p>
+<pre><code class="language-cpp">void createObject() {
+    std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
+    std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
+
+    // ptr1 和 ptr2 都会在函数结束时自动销毁
+    // 当最后一个 shared_ptr 被销毁时，MyClass 对象将被自动删除
+}
 </code></pre>
-</li>
-</ol>
-<h3 id="2成员访问"><a class="header" href="#2成员访问">(2)成员访问</a></h3>
-<ol>
-<li>first：访问或修改 <code>std::pair</code> 的第一个元素。</li>
-<li>second：访问或修改 <code>std::pair</code> 的第二个元素。</li>
-</ol>
-<h3 id="3比较操作符"><a class="header" href="#3比较操作符">(3)比较操作符</a></h3>
-<ol>
-<li>相等 (<code>==</code>) 和不相等 (<code>!=</code>)：比较两个 <code>std::pair</code> 对象是否相等。</li>
-<li>小于 (<code>&lt;</code>) 和大于 (<code>&gt;</code>)和小于等于 (<code>&lt;=</code>) 和大于等于 (<code>&gt;=</code>)：根据 <code>first</code> 和 <code>second</code> 的字典顺序比较两个 <code>std::pair</code> 对象。</li>
-</ol>
-<h3 id="4交换"><a class="header" href="#4交换">(4)交换</a></h3>
-<ol>
-<li>
-<p>swap：交换两个 <code>std::pair</code> 对象的值。</p>
-<pre><code class="language-cpp">myPair.swap(anotherPair);
+<p>在上述示例中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象。当这两个 <code>shared_ptr</code> 都超出作用域并被销毁时，引用计数变为 0，<code>MyClass</code> 对象会被自动销毁。</p>
+<h2 id="线程安全"><a class="header" href="#线程安全">线程安全</a></h2>
+<p><code>std::shared_ptr</code> 的引用计数机制是线程安全的，即多个线程可以安全地同时操作同一个 <code>shared_ptr</code>，而不必担心引用计数的竞争条件。这使得 <code>std::shared_ptr</code> 非常适合多线程程序中的共享资源管理。</p>
+<p>然而，值得注意的是，虽然 <code>std::shared_ptr</code> 在引用计数方面是线程安全的，但并不是对资源本身的访问是线程安全的。如果多个线程需要同时访问资源的成员，则需要额外的同步机制（如互斥锁）来保护资源。</p>
+<h2 id="不支持循环引用"><a class="header" href="#不支持循环引用">不支持循环引用</a></h2>
+<p>一个需要注意的事项是，<code>std::shared_ptr</code> 可能会导致 <strong>循环引用</strong> 的问题。如果两个或多个 <code>shared_ptr</code> 互相持有对方的引用，且它们的引用计数永远不会降到 0，那么这些资源将无法释放，从而导致内存泄漏。</p>
+<p>例如，考虑以下代码：</p>
+<pre><code class="language-cpp">struct Node {
+    std::shared_ptr&lt;Node&gt; next;
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 形成循环引用
+}
 </code></pre>
-</li>
-</ol>
+<p>在这个例子中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，这将导致它们的引用计数永远不为 0，因此资源无法自动释放，造成内存泄漏。为了避免这种情况，可以使用 <code>std::weak_ptr</code> 来解决循环引用问题。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../STL/Utility.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Memory/Smart_Pointer/unique_ptr.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../STL/Utility/Move.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Memory/Smart_Pointer/weak_ptr.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -247,11 +254,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../STL/Utility.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Memory/Smart_Pointer/unique_ptr.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../STL/Utility/Move.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Memory/Smart_Pointer/weak_ptr.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
