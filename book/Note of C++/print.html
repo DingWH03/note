@@ -185,6 +185,164 @@
 <p>该文档记录部分(不太准确的)C++知识。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="基本数据类型"><a class="header" href="#基本数据类型">基本数据类型</a></h1>
+<h2 id="c-基本数据类型"><a class="header" href="#c-基本数据类型">C++ 基本数据类型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>大小（字节）</th><th>范围/取值示例</th></tr></thead><tbody>
+<tr><td><code>bool</code></td><td>布尔类型，表示真或假</td><td>1</td><td><code>true</code> 或 <code>false</code></td></tr>
+<tr><td><code>char</code></td><td>字符类型，通常用于存储 ASCII 字符</td><td>1</td><td>-128 到 127 或 0 到 255（取决于有符号或无符号）</td></tr>
+<tr><td><code>signed char</code></td><td>有符号字符类型</td><td>1</td><td>-128 到 127</td></tr>
+<tr><td><code>unsigned char</code></td><td>无符号字符类型</td><td>1</td><td>0 到 255</td></tr>
+<tr><td><code>wchar_t</code></td><td>宽字符类型，用于存储 Unicode 字符</td><td>2 或 4</td><td>取决于平台，通常 2 或 4 字节</td></tr>
+<tr><td><code>char16_t</code></td><td>16 位 Unicode 字符类型（C++11）</td><td>2</td><td>0 到 65,535</td></tr>
+<tr><td><code>char32_t</code></td><td>32 位 Unicode 字符类型（C++11）</td><td>4</td><td>0 到 4,294,967,295</td></tr>
+<tr><td><code>short</code></td><td>短整型</td><td>2</td><td>-32,768 到 32,767</td></tr>
+<tr><td><code>unsigned short</code></td><td>无符号短整型</td><td>2</td><td>0 到 65,535</td></tr>
+<tr><td><code>int</code></td><td>整型</td><td>4</td><td>-2,147,483,648 到 2,147,483,647</td></tr>
+<tr><td><code>unsigned int</code></td><td>无符号整型</td><td>4</td><td>0 到 4,294,967,295</td></tr>
+<tr><td><code>long</code></td><td>长整型</td><td>4 或 8</td><td>取决于平台</td></tr>
+<tr><td><code>unsigned long</code></td><td>无符号长整型</td><td>4 或 8</td><td>取决于平台</td></tr>
+<tr><td><code>long long</code></td><td>长长整型（C++11）</td><td>8</td><td>-9,223,372,036,854,775,808 到 9,223,372,036,854,775,807</td></tr>
+<tr><td><code>unsigned long long</code></td><td>无符号长长整型（C++11）</td><td>8</td><td>0 到 18,446,744,073,709,551,615</td></tr>
+<tr><td><code>float</code></td><td>单精度浮点数</td><td>4</td><td>约 ±3.4e±38（6-7 位有效数字）</td></tr>
+<tr><td><code>double</code></td><td>双精度浮点数</td><td>8</td><td>约 ±1.7e±308（15 位有效数字）</td></tr>
+<tr><td><code>long double</code></td><td>扩展精度浮点数</td><td>8、12 或 16</td><td>取决于平台</td></tr>
+</tbody></table>
+</div>
+<h2 id="c-修饰符"><a class="header" href="#c-修饰符">C++ 修饰符</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>修饰符</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>signed</code></td><td>有符号类型（默认）</td><td><code>signed int x = -10;</code></td></tr>
+<tr><td><code>unsigned</code></td><td>无符号类型</td><td><code>unsigned int y = 10;</code></td></tr>
+<tr><td><code>short</code></td><td>短整型</td><td><code>short int z = 100;</code></td></tr>
+<tr><td><code>long</code></td><td>长整型</td><td><code>long int a = 100000;</code></td></tr>
+<tr><td><code>const</code></td><td>常量，值不可修改</td><td><code>const int b = 5;</code></td></tr>
+<tr><td><code>volatile</code></td><td>变量可能被意外修改，禁止编译器优化</td><td><code>volatile int c = 10;</code></td></tr>
+<tr><td><code>mutable</code></td><td>类成员可以在 <code>const</code> 对象中修改</td><td><code>mutable int counter;</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="c11-新增数据类型"><a class="header" href="#c11-新增数据类型">C++11 新增数据类型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>auto</code></td><td>自动类型推断</td><td><code>auto x = 10;</code></td></tr>
+<tr><td><code>decltype</code></td><td>获取表达式的类型</td><td><code>decltype(x) y = 20;</code></td></tr>
+<tr><td><code>nullptr</code></td><td>空指针常量</td><td><code>int* ptr = nullptr;</code></td></tr>
+<tr><td><code>std::initializer_list</code></td><td>初始化列表类型</td><td><code>std::initializer_list&lt;int&gt; list = {1, 2, 3};</code></td></tr>
+<tr><td><code>std::tuple</code></td><td>元组类型，可以存储多个不同类型的值</td><td><code>std::tuple&lt;int, float, char&gt; t(1, 2.0, 'a');</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="说明"><a class="header" href="#说明">说明</a></h2>
+<h3 id="宽字符类型-wchar_t"><a class="header" href="#宽字符类型-wchar_t"><strong>宽字符类型 (<code>wchar_t</code>)</strong></a></h3>
+<p><code>wchar_t</code> 是 C++ 中用于存储宽字符的类型，广泛应用于需要处理 Unicode 字符集的程序中。与普通的 <code>char</code> 类型（通常用于存储 ASCII 字符）不同，<code>wchar_t</code> 的设计目的是为了支持更大的字符集，特别是 Unicode。由于 <code>wchar_t</code> 需要存储更多的字符信息，因此其大小取决于平台，通常在 2 或 4 字节之间。在一些平台上，<code>wchar_t</code> 被定义为 2 字节（16 位），在其他平台上则可能是 4 字节（32 位）。使用 <code>wchar_t</code> 可以轻松处理如中文、日文等非拉丁字符。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    wchar_t wide_char = L'我';  // 使用 wchar_t 存储一个 Unicode 字符
+    std::wcout &lt;&lt; wide_char &lt;&lt; std::endl;  // 输出：我
+    return 0;
+}
+</code></pre>
+<h3 id="char16_t-和-char32_t"><a class="header" href="#char16_t-和-char32_t"><strong><code>char16_t</code> 和 <code>char32_t</code></strong></a></h3>
+<p><code>char16_t</code> 和 <code>char32_t</code> 是 C++11 引入的专门用于存储 Unicode 字符的类型，分别表示 16 位和 32 位字符类型。<code>char16_t</code> 是为了支持 UTF-16 编码而设计的，而 <code>char32_t</code> 是为了支持 UTF-32 编码。<code>char16_t</code> 用 2 字节来存储一个字符，而 <code>char32_t</code> 用 4 字节存储一个字符。这两种类型能够直接表示 Unicode 字符，而无需进行额外的编码转换。</p>
+<p><code>char16_t</code> 和 <code>char32_t</code> 提供了对更广泛字符集的支持，尤其适合那些需要处理全球化文本的应用程序。<code>char16_t</code> 和 <code>char32_t</code> 作为 Unicode 字符的表示方式，分别与 UTF-16 和 UTF-32 编码兼容，能够表示包括基本多语言平面（BMP）以及更高平面字符在内的所有 Unicode 字符。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    char16_t char16 = u'你';  // 使用 char16_t 存储一个 UTF-16 编码的字符
+    char32_t char32 = U'你';  // 使用 char32_t 存储一个 UTF-32 编码的字符
+
+    std::wcout &lt;&lt; "char16_t: " &lt;&lt; char16 &lt;&lt; std::endl;
+    std::wcout &lt;&lt; "char32_t: " &lt;&lt; char32 &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<h3 id="volatile"><a class="header" href="#volatile"><code>volatile</code></a></h3>
+<p><code>volatile</code> 关键字用于告诉编译器某个变量的值可能会被外部因素改变，例如硬件中断或其他线程的修改。因此，编译器不会对这种变量进行优化，每次访问该变量时都要从内存中读取最新的值。这在嵌入式编程和多线程编程中尤为重要。在嵌入式系统中，硬件寄存器的值可能会在不通知软件的情况下发生变化，这时就需要使用 <code>volatile</code> 来确保每次都从实际硬件中读取数据，而不是使用缓存值。</p>
+<p>例如，以下代码展示了如何使用 <code>volatile</code> 关键字来防止编译器对 <code>flag</code> 变量的优化：</p>
+<pre><code class="language-cpp">volatile int flag = 0;
+while (flag == 0) {
+    // 等待 flag 改变
+}
+</code></pre>
+<h3 id="mutable"><a class="header" href="#mutable"><code>mutable</code></a></h3>
+<p><code>mutable</code> 关键字是用来修饰类的成员变量的，意味着即使该对象是常量（<code>const</code>），这些成员变量也可以被修改。通常，<code>mutable</code> 用于那些希望在 <code>const</code> 方法中进行修改的成员变量，比如用于缓存的成员变量。通过 <code>mutable</code>，我们可以在 <code>const</code> 方法中修改这些成员，而不会破坏 <code>const</code> 对象的常量性。</p>
+<p>以下示例展示了在 <code>const</code> 方法中修改 <code>mutable</code> 成员变量的情况：</p>
+<pre><code class="language-cpp">class MyClass {
+public:
+    mutable int cache;  // 使用 mutable 修饰的成员变量
+
+    MyClass() : cache(0) {}
+
+    void updateCache() const {
+        // 即使 updateCache 是 const 方法，cache 依然可以被修改
+        cache++;
+    }
+};
+
+int main() {
+    const MyClass obj;
+    obj.updateCache();  // 可在 const 对象上调用
+    std::cout &lt;&lt; obj.cache &lt;&lt; std::endl;  // 输出：1
+    return 0;
+}
+</code></pre>
+<h3 id="decltype"><a class="header" href="#decltype"><code>decltype</code></a></h3>
+<p><code>decltype</code> 是 C++11 引入的一个关键字，用于获取表达式的类型，而不需要显式地声明变量的类型。它通常用于模板编程中，或者当我们不确定某个表达式的类型时。<code>decltype</code> 可以非常方便地获取复杂类型，尤其是当类型通过复杂的表达式推导出来时。</p>
+<p>例如，以下代码通过 <code>decltype</code> 获取了变量 <code>x</code> 的类型，并且通过 <code>auto</code> 使得代码更加简洁：</p>
+<pre><code class="language-cpp">int x = 5;
+decltype(x) y = 10;  // y 的类型是 int，因为 x 是 int
+
+auto z = x + y;  // z 的类型由编译器推断，类型为 int
+</code></pre>
+<h3 id="stdinitializer_list"><a class="header" href="#stdinitializer_list"><code>std::initializer_list</code></a></h3>
+<p><code>std::initializer_list</code> 是 C++11 引入的一个模板类，用于支持初始化列表。它允许在创建对象时通过花括号 <code>{}</code> 来传递多个值。<code>initializer_list</code> 主要用于支持类的构造函数接收不定数量的参数，或者将多个值传递给函数，特别适用于那些需要接收多个初始值的容器类型。</p>
+<pre><code class="language-cpp">#include &lt;initializer_list&gt;
+#include &lt;iostream&gt;
+
+void printList(std::initializer_list&lt;int&gt; list) {
+    for (auto i : list) {
+        std::cout &lt;&lt; i &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    printList({1, 2, 3, 4, 5});  // 使用 initializer_list
+    return 0;
+}
+</code></pre>
+<h3 id="stdtuple"><a class="header" href="#stdtuple"><code>std::tuple</code></a></h3>
+<p><code>std::tuple</code> 是 C++11 引入的一个模板类，允许存储多个不同类型的元素。与数组和 <code>std::vector</code> 不同，<code>tuple</code> 允许每个元素拥有不同的类型。<code>std::tuple</code> 是一个非常强大的工具，可以将多个不同类型的值打包在一起，并在需要时访问这些值。它常用于函数返回多个不同类型的值，或在需要将多种类型的参数组合起来时使用。</p>
+<pre><code class="language-cpp">#include &lt;tuple&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::tuple&lt;int, double, char&gt; t(1, 3.14, 'A');
+
+    std::cout &lt;&lt; std::get&lt;0&gt;(t) &lt;&lt; ", ";  // 1
+    std::cout &lt;&lt; std::get&lt;1&gt;(t) &lt;&lt; ", ";  // 3.14
+    std::cout &lt;&lt; std::get&lt;2&gt;(t) &lt;&lt; std::endl;  // A
+
+    // 修改 tuple 的元素
+    std::get&lt;0&gt;(t) = 42;
+    std::cout &lt;&lt; std::get&lt;0&gt;(t) &lt;&lt; std::endl;  // 42
+
+    return 0;
+}
+</code></pre>
+<h3 id="auto"><a class="header" href="#auto"><code>auto</code></a></h3>
+<p><code>auto</code> 是 C++11 引入的一个关键字，允许编译器自动推导出变量的类型。<code>auto</code> 使得代码更加简洁，并且减少了显式指定类型的需求，尤其在处理复杂类型时非常有用。<code>auto</code> 通常用于变量声明时，让编译器根据赋值的表达式自动推断类型，这在迭代器和模板编程中尤其常见。</p>
+<pre><code class="language-cpp">int main() {
+    auto x = 10;  // x 的类型是 int
+    auto y = 3.14;  // y 的类型是 double
+
+    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+    for (auto it = vec.begin(); it != vec.end(); ++it) {
+        std::cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="派生数据类型"><a class="header" href="#派生数据类型">派生数据类型</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="自动类型推导"><a class="header" href="#自动类型推导">自动类型推导</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
