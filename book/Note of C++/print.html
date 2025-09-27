@@ -343,7 +343,425 @@ int main() {
 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="派生数据类型"><a class="header" href="#派生数据类型">派生数据类型</a></h1>
+<h2 id="c派生数据类型"><a class="header" href="#c派生数据类型">C++派生数据类型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td>数组</td><td>相同类型元素的集合</td><td><code>int arr[5] = {1, 2, 3, 4, 5};</code></td></tr>
+<tr><td>指针</td><td>存储变量内存地址的类型</td><td><code>int* ptr = &amp;x;</code></td></tr>
+<tr><td>引用</td><td>变量的别名</td><td><code>int&amp; ref = x;</code></td></tr>
+<tr><td>函数</td><td>函数类型，表示函数的签名</td><td><code>int func(int a, int b);</code></td></tr>
+<tr><td>结构体</td><td>用户定义的数据类型，可以包含多个不同类型的成员</td><td><code>struct Point { int x; int y; };</code></td></tr>
+<tr><td>类</td><td>用户定义的数据类型，支持封装、继承和多态</td><td><code>class MyClass { ... };</code></td></tr>
+<tr><td>联合体</td><td>多个成员共享同一块内存</td><td><code>union Data { int i; float f; };</code></td></tr>
+<tr><td>枚举</td><td>用户定义的整数常量集合</td><td><code>enum Color { RED, GREEN, BLUE };</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="c类型别名"><a class="header" href="#c类型别名">C++类型别名</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>别名</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>typedef</code></td><td>为现有类型定义别名</td><td><code>typedef int MyInt;</code></td></tr>
+<tr><td><code>using</code></td><td>为现有类型定义别名（C++11 引入）</td><td><code>using MyInt = int;</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>
+<tr><td><code>std::vector</code></td><td>动态数组</td><td><code>std::vector&lt;int&gt; v = {1, 2, 3};</code></td></tr>
+<tr><td><code>std::array</code></td><td>固定大小数组（C++11 引入）</td><td><code>std::array&lt;int, 3&gt; a = {1, 2, 3};</code></td></tr>
+<tr><td><code>std::pair</code></td><td>存储两个值的容器</td><td><code>std::pair&lt;int, float&gt; p(1, 2.0);</code></td></tr>
+<tr><td><code>std::map</code></td><td>键值对容器</td><td><code>std::map&lt;int, std::string&gt; m;</code></td></tr>
+<tr><td><code>std::set</code></td><td>唯一值集合</td><td><code>std::set&lt;int&gt; s = {1, 2, 3};</code></td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>std::string类型的详细介绍见<a href="Types/">字符串类型</a>章节，其他标准库类型见<a href="Types/../STL.html">STL</a>章节。</p>
+</blockquote>
+<h2 id="typedef-声明"><a class="header" href="#typedef-声明"><code>typedef</code> 声明</a></h2>
+<p><code>typedef</code> 允许为一个已有的类型取一个新的名字。其语法为：</p>
+<pre><code class="language-cpp">typedef type newname;
+</code></pre>
+<p>例如，下面的语句会告诉编译器 <code>feet</code> 是 <code>int</code> 的另一个名称：</p>
+<pre><code class="language-cpp">typedef int feet;
+</code></pre>
+<p>这样，您可以声明一个整型变量 <code>distance</code>，如：</p>
+<pre><code class="language-cpp">feet distance;
+</code></pre>
+<h2 id="枚举类型"><a class="header" href="#枚举类型">枚举类型</a></h2>
+<p>枚举类型（<code>enum</code>）是 C++ 中的一种派生数据类型，它是由用户定义的若干枚举常量的集合。枚举通常用于一个变量只有几种可能的值的情况。所谓"枚举"是指将变量的值一一列举出来，变量的值只能在列举出来的值的范围内。</p>
+<p>创建枚举类型时，使用关键字 <code>enum</code>。其一般形式为：</p>
+<pre><code class="language-cpp">enum 枚举名 {
+     标识符[=整型常数],
+     标识符[=整型常数],
+     ...
+     标识符[=整型常数]
+} 枚举变量;
+</code></pre>
+<p>例如，下面的代码定义了一个颜色枚举，变量 <code>c</code> 的类型为 <code>color</code>。最后，<code>c</code> 被赋值为 <code>blue</code>：</p>
+<pre><code class="language-cpp">enum color { red, green, blue } c;
+c = blue;
+</code></pre>
+<p>默认情况下，第一个名称的值为 0，第二个名称的值为 1，第三个名称的值为 2，以此类推。然而，您也可以给名称赋予一个特殊的值，只需要添加一个初始值即可。例如，在下面的枚举中，<code>green</code> 的值为 5：</p>
+<pre><code class="language-cpp">enum color { red, green=5, blue };
+</code></pre>
+<p>在此示例中，<code>blue</code> 的值为 6，因为默认情况下，每个名称都会比它前面一个名称大 1，而 <code>red</code> 的值仍然为 0。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-字符串类型"><a class="header" href="#c-字符串类型">C++ 字符串类型</a></h1>
+<p>C++ 提供了两种主要的字符串表示方式：C 风格字符串和 C++ 引入的 <code>string</code> 类类型。尽管 C++ 中 <code>string</code> 类型在许多情况下更为常用，但 C 风格字符串仍然是 C++ 中的一个重要组成部分，特别是在需要与旧有的 C 库代码兼容时。</p>
+<h2 id="c-风格字符串"><a class="header" href="#c-风格字符串">C 风格字符串</a></h2>
+<p>C 风格的字符串源自 C 语言，并在 C++ 中继续得到支持。这种字符串表示方式实际上是一个以 null 字符 <code>\0</code> 结尾的字符数组。C 风格字符串的本质是一个一维字符数组，末尾的 null 字符标识了字符串的结束。</p>
+<h3 id="c-风格字符串的定义与初始化"><a class="header" href="#c-风格字符串的定义与初始化">C 风格字符串的定义与初始化</a></h3>
+<p>您可以通过以下方式定义并初始化一个 C 风格字符串：</p>
+<pre><code class="language-cpp">char site[6] = {'H', 'E', 'L', 'L', 'O', '\0'};
+</code></pre>
+<p>也可以使用更简便的方式进行初始化：</p>
+<pre><code class="language-cpp">char site[] = "HELLO";
+</code></pre>
+<p>在这种情况下，C++ 编译器会自动在字符串的末尾添加 null 字符 <code>\0</code>，无需显式地写出。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+using namespace std;
+
+int main() {
+   char s[] = "HELLO"; // 字符串自动以 '\0' 结束
+
+   cout &lt;&lt; s &lt;&lt; endl;
+
+   return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">HELLO
+</code></pre>
+<h3 id="c-风格字符串的常用操作函数"><a class="header" href="#c-风格字符串的常用操作函数">C 风格字符串的常用操作函数</a></h3>
+<p>C 风格字符串有许多函数可以进行常见的操作。以下是常用的几个字符串操作函数：</p>
+<div class="table-wrapper"><table><thead><tr><th>函数</th><th>目的</th></tr></thead><tbody>
+<tr><td><code>strcpy(s1, s2)</code></td><td>复制字符串 <code>s2</code> 到字符串 <code>s1</code>。</td></tr>
+<tr><td><code>strcat(s1, s2)</code></td><td>将字符串 <code>s2</code> 连接到字符串 <code>s1</code> 的末尾。</td></tr>
+<tr><td><code>strlen(s1)</code></td><td>返回字符串 <code>s1</code> 的长度（不包括 <code>\0</code>）。</td></tr>
+<tr><td><code>strcmp(s1, s2)</code></td><td>比较两个字符串 <code>s1</code> 和 <code>s2</code>，返回值为 0 时相同，负值表示 <code>s1 &lt; s2</code>，正值表示 <code>s1 &gt; s2</code>。</td></tr>
+<tr><td><code>strchr(s1, ch)</code></td><td>返回指针，指向字符串 <code>s1</code> 中字符 <code>ch</code> 的首次出现位置。</td></tr>
+<tr><td><code>strstr(s1, s2)</code></td><td>返回指针，指向字符串 <code>s1</code> 中子字符串 <code>s2</code> 的首次出现位置。</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+
+using namespace std;
+
+int main() {
+   char str1[13] = "hello";
+   char str2[13] = "world";
+   char str3[13];
+   int len;
+
+   // 复制 str1 到 str3
+   strcpy(str3, str1);
+   cout &lt;&lt; "strcpy(str3, str1): " &lt;&lt; str3 &lt;&lt; endl;
+
+   // 连接 str1 和 str2
+   strcat(str1, str2);
+   cout &lt;&lt; "strcat(str1, str2): " &lt;&lt; str1 &lt;&lt; endl;
+
+   // 计算连接后的长度
+   len = strlen(str1);
+   cout &lt;&lt; "strlen(str1): " &lt;&lt; len &lt;&lt; endl;
+
+   return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">strcpy(str3, str1): hello
+strcat(str1, str2): helloworld
+strlen(str1): 10
+</code></pre>
+<h2 id="c-中的-string-类"><a class="header" href="#c-中的-string-类">C++ 中的 <code>string</code> 类</a></h2>
+<p>C++ 标准库提供了 <code>string</code> 类，它是 C 风格字符串的现代替代品。<code>string</code> 类提供了丰富的成员函数，支持字符串的动态操作，简化了字符串处理过程，并且避免了 C 风格字符串的许多潜在问题。</p>
+<h3 id="string-类基本操作"><a class="header" href="#string-类基本操作"><code>string</code> 类基本操作</a></h3>
+<p>C++ 中的 <code>string</code> 类提供了方便的字符串处理方法，使得字符串操作变得更加高效和直观。以下是一些常见的操作。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+using namespace std;
+
+int main() {
+   string str1 = "hello";
+   string str2 = "world";
+   string str3;
+   int len;
+
+   // 复制 str1 到 str3
+   str3 = str1;
+   cout &lt;&lt; "str3: " &lt;&lt; str3 &lt;&lt; endl;
+
+   // 连接 str1 和 str2
+   str3 = str1 + str2;
+   cout &lt;&lt; "str1 + str2: " &lt;&lt; str3 &lt;&lt; endl;
+
+   // 计算连接后的总长度
+   len = str3.size();
+   cout &lt;&lt; "str3.size(): " &lt;&lt; len &lt;&lt; endl;
+
+   return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">str3: hello
+str1 + str2: helloworld
+str3.size(): 10
+</code></pre>
+<h3 id="string-类的常用成员函数"><a class="header" href="#string-类的常用成员函数"><code>string</code> 类的常用成员函数</a></h3>
+<p><code>string</code> 类提供了多种函数来执行常见的字符串操作，常见的成员函数包括：</p>
+<ul>
+<li><code>append(str)</code>：将 <code>str</code> 追加到当前字符串末尾。</li>
+<li><code>insert(pos, str)</code>：在位置 <code>pos</code> 处插入字符串 <code>str</code>。</li>
+<li><code>erase(pos, len)</code>：从位置 <code>pos</code> 开始，删除 <code>len</code> 个字符。</li>
+<li><code>substr(pos, len)</code>：返回从位置 <code>pos</code> 开始的长度为 <code>len</code> 的子字符串。</li>
+<li><code>find(str)</code>：返回子字符串 <code>str</code> 在当前字符串中首次出现的位置。</li>
+<li><code>replace(pos, len, str)</code>：将当前位置 <code>pos</code> 开始的 <code>len</code> 个字符替换为字符串 <code>str</code>。</li>
+</ul>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+using namespace std;
+
+int main() {
+    string str = "Hello, world!";
+
+    // 获取子字符串
+    string sub = str.substr(7, 5);  // 从位置 7 开始，获取 5 个字符
+    cout &lt;&lt; "Substring: " &lt;&lt; sub &lt;&lt; endl;
+
+    // 查找字符 'w' 在字符串中的位置
+    size_t pos = str.find('w');
+    cout &lt;&lt; "'w' found at: " &lt;&lt; pos &lt;&lt; endl;
+
+    // 替换子字符串
+    str.replace(7, 5, "C++");
+    cout &lt;&lt; "After replace: " &lt;&lt; str &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">Substring: world
+'w' found at: 7
+After replace: Hello, C++!
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="类型转换"><a class="header" href="#类型转换">类型转换</a></h1>
+<p>类型转换是将一个数据类型的值转换为另一种数据类型的值。在 C++ 中，类型转换主要有四种方式：静态转换、动态转换、常量转换和重新解释转换。每种转换方式有其特定的应用场景和注意事项。</p>
+<h2 id="静态转换static-cast"><a class="header" href="#静态转换static-cast">静态转换（Static Cast）</a></h2>
+<p>静态转换用于将一个数据类型的值强制转换为另一种类型，通常适用于类型之间存在一定的相似性。例如，可以将 <code>int</code> 类型转换为 <code>float</code> 类型。静态转换并不会进行运行时的类型检查，因此在某些情况下，它可能会导致运行时错误，尤其是在转换较为复杂的对象时。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">int i = 10;
+float f = static_cast&lt;float&gt;(i);  // 将 int 转换为 float
+</code></pre>
+<h2 id="动态转换dynamic-cast"><a class="header" href="#动态转换dynamic-cast">动态转换（Dynamic Cast）</a></h2>
+<p>动态转换是 C++ 中用于在继承体系中进行类型转换的方式。它通常用于将基类指针或引用转换为派生类指针或引用，特别是在涉及多态的场景中。与静态转换不同，动态转换会在运行时检查转换是否合法，确保程序的类型安全。如果转换失败，对于指针类型，它会返回 <code>nullptr</code>，而对于引用类型，则会抛出 <code>std::bad_cast</code> 异常。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+class Base {
+public:
+    virtual ~Base() = default;  // 基类必须有虚函数
+};
+
+class Derived : public Base {
+public:
+    void show() {
+        std::cout &lt;&lt; "Derived class method" &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    Base* ptr_base = new Derived;  // 基类指针指向派生类对象
+
+    // 将基类指针转换为派生类指针
+    Derived* ptr_derived = dynamic_cast&lt;Derived*&gt;(ptr_base);
+
+    if (ptr_derived) {
+        ptr_derived-&gt;show();  // 成功转换，调用派生类方法
+    } else {
+        std::cout &lt;&lt; "Dynamic cast failed!" &lt;&lt; std::endl;
+    }
+
+    delete ptr_base;
+    return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">Derived class method
+</code></pre>
+<p>在转换引用时，也可以使用 <code>dynamic_cast</code>，不过如果转换失败，它会抛出异常：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;typeinfo&gt;
+
+class Base {
+public:
+    virtual ~Base() = default;
+};
+
+class Derived : public Base {
+public:
+    void show() {
+        std::cout &lt;&lt; "Derived class method" &lt;&lt; std::endl;
+    }
+};
+
+int main() {
+    Derived derived_obj;
+    Base&amp; ref_base = derived_obj;  // 基类引用绑定到派生类对象
+
+    try {
+        Derived&amp; ref_derived = dynamic_cast&lt;Derived&amp;&gt;(ref_base);
+        ref_derived.show();  // 成功转换，调用派生类方法
+    } catch (const std::bad_cast&amp; e) {
+        std::cout &lt;&lt; "Dynamic cast failed: " &lt;&lt; e.what() &lt;&lt; std::endl;
+    }
+
+    return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">Derived class method
+</code></pre>
+<p>动态转换提供了更高的安全性，确保在程序运行时可以正确地进行类型检查。尽管如此，它相对于静态转换而言，性能开销较高，因为需要进行类型验证。</p>
+<h2 id="常量转换const-cast"><a class="header" href="#常量转换const-cast">常量转换（Const Cast）</a></h2>
+<p>常量转换（<code>const_cast</code>）用于去除对象的 <code>const</code> 限定符，从而使得一个 <code>const</code> 对象能够被修改。它并不会改变对象的实际类型，只是去掉了 <code>const</code> 属性。这种转换通常用于需要修改原本被声明为常量的对象时，尽管这种做法应谨慎使用。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">const int i = 10;
+int&amp; r = const_cast&lt;int&amp;&gt;(i);  // 去除 const 限定符
+</code></pre>
+<p>此代码将 <code>const int</code> 转换为普通的 <code>int</code>，使得对 <code>i</code> 的修改变得可能。但请注意，修改一个原本是常量的对象可能导致未定义的行为。</p>
+<h2 id="重新解释转换reinterpret-cast"><a class="header" href="#重新解释转换reinterpret-cast">重新解释转换（Reinterpret Cast）</a></h2>
+<p>重新解释转换（<code>reinterpret_cast</code>）允许将一个数据类型的值重新解释为另一种数据类型的值。它通常用于在指针类型之间进行转换，不会进行任何类型检查，因此可能会导致未定义的行为。这种转换应谨慎使用，特别是在不同类型之间进行转换时，必须确保数据在内存中的表示是兼容的。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">int i = 10;
+float f = reinterpret_cast&lt;float&amp;&gt;(i);  // 将 int 转换为 float
+</code></pre>
+<p>这段代码通过 <code>reinterpret_cast</code> 将 <code>int</code> 类型的数据重新解释为 <code>float</code> 类型。然而，重新解释转换的使用非常危险，因为它不会检查类型是否真正兼容。如果目标类型与原类型不兼容，可能会导致程序崩溃或者数据损坏。因此，<code>reinterpret_cast</code> 应该仅在非常确定数据类型兼容的情况下使用。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="自动类型推导"><a class="header" href="#自动类型推导">自动类型推导</a></h1>
+<p>在 C++ 中，自动类型推导（type inference）允许编译器根据初始化表达式推断变量的类型，从而减少显式指定类型的需求。C++11 引入了 <code>auto</code> 关键字，它使得变量声明更加简洁和灵活，同时也有助于避免类型错误。</p>
+<h2 id="auto-关键字的基本使用"><a class="header" href="#auto-关键字的基本使用"><code>auto</code> 关键字的基本使用</a></h2>
+<p><code>auto</code> 关键字让编译器根据初始化表达式推导出变量的类型。在声明变量时，使用 <code>auto</code> 代替类型名称，编译器将自动推断类型。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    auto x = 42;  // 自动推导类型为 int
+    auto y = 3.14;  // 自动推导类型为 double
+
+    std::cout &lt;&lt; "x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<p>在这个例子中，<code>auto</code> 自动推导出 <code>x</code> 的类型为 <code>int</code>，<code>y</code> 的类型为 <code>double</code>，根据其初始化值。无需显式地指定类型。</p>
+<p>输出：</p>
+<pre><code class="language-text">x: 42, y: 3.14
+</code></pre>
+<h2 id="auto-与容器"><a class="header" href="#auto-与容器"><code>auto</code> 与容器</a></h2>
+<p><code>auto</code> 在处理容器时非常有用，尤其是当容器类型复杂且冗长时，使用 <code>auto</code> 可以简化代码并提高可读性。C++11 引入了范围-based <code>for</code> 循环，配合 <code>auto</code> 使用可以轻松地遍历容器。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+
+    // 使用 auto 遍历容器
+    for (auto&amp; v : vec) {
+        std::cout &lt;&lt; v &lt;&lt; " ";
+    }
+
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<p>在此示例中，<code>auto</code> 用来自动推导容器元素的类型。由于我们希望修改容器中的元素，所以使用了 <code>auto&amp;</code> 来获取元素的引用。</p>
+<p>输出：</p>
+<pre><code class="language-text">1 2 3 4 5
+</code></pre>
+<h2 id="auto-和指针"><a class="header" href="#auto-和指针"><code>auto</code> 和指针</a></h2>
+<p>在使用指针时，<code>auto</code> 也可以自动推导出指针的类型。注意，<code>auto</code> 仅推导出变量本身的类型，而不推导出指针指向的类型。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    int num = 100;
+    int* ptr = &amp;num;
+
+    // 使用 auto 推导指针类型
+    auto p = ptr;  // p 将是 int* 类型
+
+    std::cout &lt;&lt; "p points to: " &lt;&lt; *p &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<p>在这个例子中，<code>auto</code> 推导出变量 <code>p</code> 的类型为 <code>int*</code>，与原始指针 <code>ptr</code> 类型相同。</p>
+<p>输出：</p>
+<pre><code class="language-text">p points to: 100
+</code></pre>
+<h2 id="auto-与函数返回类型"><a class="header" href="#auto-与函数返回类型"><code>auto</code> 与函数返回类型</a></h2>
+<p><code>auto</code> 不仅可以用于变量声明，还可以用于函数的返回类型。当返回类型较为复杂或需要根据返回的表达式推导时，<code>auto</code> 可以简化代码。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+auto get_sum(const std::vector&lt;int&gt;&amp; vec) {
+    int sum = 0;
+    for (auto v : vec) {
+        sum += v;
+    }
+    return sum;  // 返回类型由 auto 自动推导
+}
+
+int main() {
+    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
+    std::cout &lt;&lt; "Sum: " &lt;&lt; get_sum(vec) &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<p>在这个示例中，<code>auto</code> 用于函数 <code>get_sum</code> 的返回类型，编译器根据 <code>sum</code> 变量的类型推导出返回值的类型。</p>
+<p>输出：</p>
+<pre><code class="language-text">Sum: 15
+</code></pre>
+<h2 id="auto-与模板"><a class="header" href="#auto-与模板"><code>auto</code> 与模板</a></h2>
+<p><code>auto</code> 也可以与模板结合使用，尤其是在模板函数中，允许推导类型从而使得函数更加灵活。使用 <code>auto</code> 可以避免显式指定模板参数，从而简化模板代码。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+template &lt;typename T&gt;
+auto add(T a, T b) {
+    return a + b;  // 返回类型自动推导
+}
+
+int main() {
+    std::cout &lt;&lt; add(1, 2) &lt;&lt; std::endl;    // 输出 3
+    std::cout &lt;&lt; add(1.5, 2.5) &lt;&lt; std::endl; // 输出 4.0
+
+    return 0;
+}
+</code></pre>
+<p>在这个示例中，<code>auto</code> 自动推导 <code>add</code> 函数的返回类型，无论是整型还是浮点型，都能正确处理。</p>
+<p>输出：</p>
+<pre><code class="language-text">3
+4
+</code></pre>
+<h2 id="注意"><a class="header" href="#注意">注意</a></h2>
+<ol>
+<li>
+<p><code>auto</code> 不能用于函数参数类型
+<code>auto</code> 只能用于变量声明和返回类型，不能用于函数的参数类型。例如，以下代码是错误的：</p>
+<pre><code class="language-cpp">auto add(auto a, auto b) { // 错误，auto 不能用于函数参数类型
+    return a + b;
+}
+</code></pre>
+</li>
+<li>
+<p><code>auto</code> 与引用、常量结合
+当使用 <code>auto</code> 时，变量的类型是根据初始化表达式的类型来推导的。如果需要引用或常量，应该明确使用 <code>auto&amp;</code> 或 <code>const auto&amp;</code> 来推导引用类型或常量类型。</p>
+<pre><code class="language-cpp">const auto&amp; ref = some_variable; // 推导为 const 引用
+</code></pre>
+</li>
+<li>
+<p>类型推导的限制
+编译器根据初始化表达式推导类型，但不能从不完整的类型推导。因此，必须确保变量在声明时能够通过表达式推导出类型。</p>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
 <p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
