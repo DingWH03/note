@@ -253,13 +253,81 @@ int main() {
 }
 </code></pre>
 <h3 id="volatile"><a class="header" href="#volatile"><code>volatile</code></a></h3>
-<p><code>volatile</code> 关键字用于告诉编译器某个变量的值可能会被外部因素改变，例如硬件中断或其他线程的修改。因此，编译器不会对这种变量进行优化，每次访问该变量时都要从内存中读取最新的值。这在嵌入式编程和多线程编程中尤为重要。在嵌入式系统中，硬件寄存器的值可能会在不通知软件的情况下发生变化，这时就需要使用 <code>volatile</code> 来确保每次都从实际硬件中读取数据，而不是使用缓存值。</p>
-<p>例如，以下代码展示了如何使用 <code>volatile</code> 关键字来防止编译器对 <code>flag</code> 变量的优化：</p>
-<pre><code class="language-cpp">volatile int flag = 0;
+<p>在现代 CPU 中通常包含多个核心，每个核心都有独立的缓存。多个核心可能同时缓存了同一段主存的数据。一般情况下，缓存和主存的数据是一致的，但在多线程并发场景下，由于缓存写回策略的影响，数据的修改可能无法及时同步到主存，从而导致数据不一致的问题。</p>
+<p><code>volatile</code> 关键字用于告诉编译器：某个变量的值可能随时被外部因素（如其他线程、硬件设备或中断）修改，因此缓存中的值并不可靠。出于这个原因，编译器在访问该变量时不会进行过度优化，而是强制每次都从内存中读取最新的值。</p>
+<ol>
+<li>
+<p>可见性
+<code>volatile</code> 保证变量的值在不同线程或不同硬件环境下始终是“最新可见”的。即使某个核心或寄存器中有缓存数据，访问 <code>volatile</code> 变量时也必须直接从内存或硬件中获取，而不是使用缓存副本。</p>
+</li>
+<li>
+<p>不可优化
+在编译阶段，为了提高执行效率，编译器会进行多种优化。例如：</p>
+<pre><code class="language-cpp">int flag = 0;
 while (flag == 0) {
     // 等待 flag 改变
 }
 </code></pre>
+<p>若 <code>flag</code> 未被声明为 <code>volatile</code>，编译器可能认为 <code>flag</code> 始终等于 0，于是直接将循环优化为 <code>while(false)</code>，导致死循环。</p>
+<p>使用 <code>volatile</code> 可以禁止类似的优化，包括 <strong>消除优化</strong>、<strong>传播优化</strong> 和 <strong>合并优化</strong>，从而保证变量的读写行为不会被错误简化。</p>
+</li>
+<li>
+<p>顺序性
+<code>volatile</code> 还会在一定程度上影响指令的顺序。编译器在处理 <code>volatile</code> 变量时，会保证读写操作不会因乱序优化而颠倒，从而维持必要的执行顺序。</p>
+</li>
+</ol>
+<p><code>volatile</code> 在嵌入式编程和多线程编程中尤为重要：</p>
+<ul>
+<li><strong>多线程共享变量</strong>：确保不同线程读取到的值保持一致。</li>
+<li><strong>中断处理</strong>：中断可能随时修改某个变量，主程序通过 <code>volatile</code> 保证能正确检测到变化。</li>
+<li><strong>硬件寄存器访问</strong>：在嵌入式系统中，硬件寄存器的值可能在后台自动更新，必须通过 <code>volatile</code> 确保每次访问都直接读取硬件寄存器的当前值。</li>
+</ul>
+<p>尽管 <code>volatile</code> 在保证可见性、防止编译器优化、维持一定顺序性方面很有用，但它并不是并发编程的“万能钥匙”，主要局限性如下：</p>
+<ol>
+<li>
+<p><strong>不保证原子性</strong></p>
+<ul>
+<li>
+<p><code>volatile</code> 仅保证读写操作不会被优化和缓存，但不能保证复合操作的原子性。</p>
+</li>
+<li>
+<p>例如：</p>
+<pre><code class="language-cpp">volatile int counter = 0;
+counter++; // 实际分解为：读取 -&gt; 修改 -&gt; 写回
+</code></pre>
+<p>在多线程环境下可能发生竞态条件，导致结果错误。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>不等同于内存屏障（Memory Barrier）</strong></p>
+<ul>
+<li><code>volatile</code> 的“顺序性”只作用于编译器层面，防止指令在编译时被重排。</li>
+<li>但在 CPU 的指令执行层面，仍然可能发生硬件乱序执行。若需要在多线程同步中严格保证内存访问顺序，还需要使用更强的同步原语（如 C++ 中的 <code>std::atomic</code> 或内存屏障指令）。</li>
+</ul>
+</li>
+<li>
+<p><strong>性能开销</strong></p>
+<ul>
+<li>每次访问 <code>volatile</code> 变量都要从内存中读取最新值，无法使用寄存器缓存，可能造成一定性能损失。</li>
+</ul>
+</li>
+<li>
+<p><strong>局限于特定场景</strong></p>
+<ul>
+<li>
+<p><code>volatile</code> 更适合用于：</p>
+<ul>
+<li>标志位（如中断标志、任务完成标志）。</li>
+<li>硬件寄存器访问。</li>
+</ul>
+</li>
+<li>
+<p>但在复杂的多线程共享数据同步场景下，仅依赖 <code>volatile</code> 是不够的，往往需要互斥锁、原子操作或更高级的同步机制。</p>
+</li>
+</ul>
+</li>
+</ol>
 <h3 id="mutable"><a class="header" href="#mutable"><code>mutable</code></a></h3>
 <p><code>mutable</code> 关键字是用来修饰类的成员变量的，意味着即使该对象是常量（<code>const</code>），这些成员变量也可以被修改。通常，<code>mutable</code> 用于那些希望在 <code>const</code> 方法中进行修改的成员变量，比如用于缓存的成员变量。通过 <code>mutable</code>，我们可以在 <code>const</code> 方法中修改这些成员，而不会破坏 <code>const</code> 对象的常量性。</p>
 <p>以下示例展示了在 <code>const</code> 方法中修改 <code>mutable</code> 成员变量的情况：</p>
