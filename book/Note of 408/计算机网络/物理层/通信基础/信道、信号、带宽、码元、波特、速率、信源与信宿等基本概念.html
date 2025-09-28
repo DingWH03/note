@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念 - Note of 408</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of 408</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-408" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-408/edit/master/src/计算机网络/物理层/通信基础/信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="信道信号带宽码元波特速率信源与信宿等基本概念"><a class="header" href="#信道信号带宽码元波特速率信源与信宿等基本概念">信道、信号、带宽、码元、波特、速率、信源与信宿等基本概念</a></h1>
+<p>通信的目的是在信源和信宿之间传送<strong>消息(message)</strong>。消息可以是语音、文字、图像、视频等各种信息表现形式，而 <strong>数据(data)</strong> 是承载和传递消息的实体。数据是经过特定方式编码后的信息，通常表现为有意义的符号序列或二进制序列。</p>
+<h2 id="1-数据"><a class="header" href="#1-数据">1. 数据</a></h2>
+<p><strong>数据</strong>是用于表示消息的符号序列或比特序列。在计算机网络中，数据通常以二进制的形式表示，即由“0”和“1”组成的比特序列。数据可以表示文字、音频、视频、图像等各种信息。</p>
+<h2 id="2-信号"><a class="header" href="#2-信号">2. 信号</a></h2>
+<p><strong>信号(signal)</strong> 是数据的电气或电磁表现形式。信号用于在传输介质上传递数据，根据信号的不同形式，可以将其分为以下两类：</p>
+<ul>
+<li>
+<p><strong>模拟信号（或连续信号）</strong> ：信号的参数（如幅度、频率、相位等）的取值是连续的。在模拟信号中，代表信息的物理量在一个范围内可以取任意值。例如，声音在空气中的传播是一种模拟信号。</p>
+</li>
+<li>
+<p><strong>数字信号（或离散信号）</strong> ：信号的参数的取值是离散的。在数字信号中，信息用有限的、离散的电平表示，通常是二进制形式（如0和1）。数字信号在现代计算机网络中应用广泛。</p>
+</li>
+</ul>
+<p>此外，根据信号的频谱范围和传输方式，信号可以进一步分为基带信号和宽带信号：</p>
+<ul>
+<li>
+<p><strong>基带信号</strong> 是原始的未经过调制的信号，通常直接表示数据的形式，如计算机输出的二进制数据流直接用不同的电压来表示。基带信号的频率范围从零开始，并且其最高频率通常等于其数据速率。基带信号通常用于短距离的有线传输，例如以太网。</p>
+</li>
+<li>
+<p><strong>宽带信号</strong> 则是经过调制后的信号，频率范围较宽，适合在更高频率上传输数据。宽带信号常用于远距离的有线或无线传输，例如通过调制将基带信号转换为高频信号，以适应长距离传输需求。</p>
+</li>
+</ul>
+<blockquote>
+<p>基带信号使用不同的电压表示数字信号0和1，然后送到数字信道上运输，称为<strong>基带传输</strong>，宽带信号首先将基带信号进行调制，形成频分复用模拟信号，然后送到模拟信道上进行传输，称为<strong>宽带传输</strong>。</p>
+</blockquote>
+<h2 id="3-信道"><a class="header" href="#3-信道">3. 信道</a></h2>
+<p><strong>信道(channel)</strong> 是传输信号的介质或路径，一般用来表示向某个方向传送信息的媒体，因此一条通信电路一般包含一条发送信道和一条接收信道。信道按传输介质分类，可以是有线信道（如双绞线、电缆、光纤）或无线信道（如无线电波、微波）；按传输信号形式的不同，信道分为传输模拟信号的模拟信道和传输数字信号的数字信道。信道的主要功能是将信号从发送端传递到接收端。在信道上传输信号时，可能会受到噪声、干扰和衰减等影响，导致信号的失真或丢失。</p>
+<p>从通信的双方信息交互的方式来看，可以有以下三种基本方式:</p>
+<ol>
+<li>单向通信：又称为单工通信，即只能有一个方向的通信而没有反方向的交互。无线电广播或有线电广攝以及电视广攝就属于这种类型。</li>
+<li>双向交替通信：又称为半双工通信，即通信的双方都可以发送信息，但不能双方同时发送(当然也就不能同时接收)。这种通信方式是一方发送另一方接收，过一段时间后可以再反过来。</li>
+<li>双向同时通信：又称为全双工通信，即通信的双方可以同时发送和接收信息。单向通信只需要一条信道，而双向交替通信或双向同时通信则都需要两条信道(每个方向各一条)，显然，双向同时通信的传输效率最高。</li>
+</ol>
+<blockquote>
+<p>有时人们也常用“单工”这个名词表示“双向交替通信”，如常说的“单工电台”并不是只能进行单向通信。正因为如此，ITU-T才不采用“单工”“半双工”和“全双工”这些容易弄混的术语作为正式的名词。
+数据传输方式分为串行传输和并行传输。串行传输是指逐比特地按序依次传输，并行传输是指若干比特通过多个通信信道同时传输。<code>串行传输适用于长距离通信，如计算机网络。</code>并行传输适用于近距离通信，常用于计算机内部，如CPU 与主存之间。</p>
+</blockquote>
+<h2 id="4-带宽"><a class="header" href="#4-带宽">4. 带宽</a></h2>
+<p><strong>带宽(bandwidth)</strong> 通常有两个含义：</p>
+<ol>
+<li>在模拟信号系统中是指信道能够传输的信号频率范围，即最高频率与最低频率只差，通常以赫兹（Hz）为单位表示。</li>
+<li>在通信中，带宽也常用于表示单位时间内传输数据的最大速率，通常以比特每秒（bps或b/s）为单位。带宽越大，信道的传输能力越强，可以传输更高的数据速率。</li>
+</ol>
+<h2 id="5-码元"><a class="header" href="#5-码元">5. 码元</a></h2>
+<p><strong>码元(symbol)</strong> 是信号的基本单位，每一个码元代表了若干比特的数据。码元的取值决定了数字信号的具体形式。常见的码元形式包括电压、电流、频率等不同的电气信号。</p>
+<blockquote>
+<p>码元与比特的区别？</p>
+<ul>
+<li>
+<p>码元是用于表示信息的最小单元。在数字通信系统中，码元可以是一个电压水平、一段时间的光脉冲、或者任何能够在通信系统中传输和被接收的信号。</p>
+</li>
+<li>
+<p>比特是信息的最小单位，它只能表示两种状态之一，通常用0和1来表示。一个比特可以看作是一个简单的“开”或“关”状态、一个“是”或“否”的决定、或者是“0”和“1”中的一个。</p>
+</li>
+<li>
+<p>码元和比特是不同的概念，但它们之间有关系。一个码元可以包含一个或多个比特。比如，在一个通信系统中，假设一个码元有4种不同的状态（比如4种不同的电压），那么这些状态可以用2个比特（00、01、10、11）来表示。因此，一个码元可能包含多个比特信息。</p>
+</li>
+<li>
+<p>如果一个码元有n种状态，则其最多可以表示出\(log_2(n)\)位比特数。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="6-波特"><a class="header" href="#6-波特">6. 波特</a></h2>
+<p><strong>波特 (Baud)</strong> 是码元传输速率的单位，表示每秒钟传输的码元数。一个码元可以表示一个或多个比特，因此波特率与数据速率（比特率）密切相关，但两者并不完全相同。波特率仅指每秒钟传输的码元数，而数据速率则考虑了每个码元所表示的比特数。如果一个码元表示多个比特，则数据速率（比特率）会高于波特率。例如，在一个调制方式中，每个码元表示2个比特，那么如果波特率是1000波特，数据速率将是2000 bps。</p>
+<h2 id="7-速率"><a class="header" href="#7-速率">7. 速率</a></h2>
+<p><strong>速率 (Rate)</strong> 在通信中通常指<strong>数据速率 (Data Rate)</strong>，即单位时间内传输的数据量。速率通常以比特每秒（bps）为单位表示。数据速率包括两个重要的概念：</p>
+<ul>
+<li>
+<p><strong>码元传输速率 (Symbol Rate)</strong>：也称为波特率，表示每秒钟传输的码元数量，单位为波特（Baud）。码元传输速率决定了信号的基本传输速率，但不直接反映传输的实际信息量。</p>
+</li>
+<li>
+<p><strong>信息传输速率 (Information Rate)</strong>：也称为比特率，表示每秒钟传输的比特数，单位为bps（比特每秒）。信息传输速率考虑了每个码元中携带的比特数，因此比特率通常等于码元传输速率乘以每个码元携带的比特数。信息传输速率直接影响通信的效率和传输质量。</p>
+</li>
+</ul>
+<h2 id="8-信源与信宿"><a class="header" href="#8-信源与信宿">8. 信源与信宿</a></h2>
+<p><strong>信源(source)</strong> 是产生和发送消息的设备或系统，而 <strong>信宿(destination)</strong> 是接收和处理消息的设备或系统。在一个通信系统中，信源和信宿之间通过信道进行数据传输。信源生成数据并将其转换为信号，通过信道传输到信宿，信宿接收到信号并将其解码还原为原始数据。</p>
+<p><img src="images/%E9%80%9A%E4%BF%A1%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B.png" alt="通信系统模型" /></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../计算机网络/物理层/通信基础.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../计算机网络/物理层/通信基础/奈奎斯特定理与香农定理.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../计算机网络/物理层/通信基础.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../计算机网络/物理层/通信基础/奈奎斯特定理与香农定理.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
+
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
