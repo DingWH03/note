@@ -192,7 +192,25 @@
 <p>射频与硬件层面，性能很大程度取决于<strong>天线与布局</strong>而非芯片数据表。工程上需保证<strong>天线匹配/净空/接地回流</strong>与<strong>外壳耦合/手持去调谐</strong>下的稳定性；多制式共存（如近距离高吞吐与低功耗并存）需要<strong>时域复用/频域隔离/前端模块滤波</strong>，避免自干扰。对于高吞吐链路的多天线系统，还要在体积与成本约束下实现<strong>分集/MIMO</strong>与合格的<strong>包络相关系数</strong>。在合规方面，预认证模组能显著缩短周期，但整机仍需<strong>整机辐射/传导与区域法规</strong>验证。</p>
 <p>软件栈集成体现为<strong>事件驱动与状态机密集</strong>：扫描、关联、会话建立、密钥协商、信道切换、功耗状态迁移贯穿设备生命周期。上层抽象既有<strong>套接字/IP</strong>范式，也有<strong>属性/对象</strong>范式（特征/集群/模型），后者便于资源受限设备以结构化方式暴露能力。网关与边缘侧承担<strong>协议桥接、缓存/重发、节流与聚合</strong>，在时延与回传带宽之间平衡；可观测性依赖<strong>RSSI/SNR、丢包率、占空、延迟直方图、能耗画像</strong>等指标闭环优化。</p>
 <p>从工程取舍看，无线连接的价值在于以<strong>覆盖与灵活性</strong>换取<strong>有界但可接受的时延与不确定性</strong>。当需求增长时，常见演进路径是<strong>提高频谱效率与并发调度、增加链路冗余/多路径、引入边缘计算/本地决策、或采用更契合场景的物理层</strong>；但无论走向何处，设计都需在<strong>吞吐、距离、功耗、频谱成本、EMC/合规与互操作</strong>之间找到平衡，并把<strong>配网、密钥、OTA 与可观测性</strong>作为产品可运营、可演进的基础能力。</p>
-
+<h2 id="1-常见无线连接协议"><a class="header" href="#1-常见无线连接协议">1. 常见无线连接协议</a></h2>
+<p><strong>Wi-Fi</strong>（4/5/6/7）工作在 2.4/5/6 GHz 频段，速率从百兆到数 Gbps，典型覆盖范围为室内几十米。其拓扑支持星型与 Mesh，功耗中等，适合高清视频、局域高速数据传输与互联网接入。</p>
+<p><strong>Bluetooth LE 5.x</strong> 工作在 2.4 GHz，速率范围 125 kbps–2 Mbps，典型覆盖 10–30 米，支持星型或 BLE Mesh 拓扑。其功耗低，常用于外设、可穿戴设备和无线音频。</p>
+<p><strong>Zigbee/Thread</strong> 也工作在 2.4 GHz，速率约 250 kbps，覆盖室内环境，采用 Mesh 拓扑，功耗低。它常用于智能家居的传感器、照明与 Matter 生态。</p>
+<p><strong>LoRaWAN</strong> 使用 Sub-GHz 频段，速率 0.3–50 kbps，覆盖范围可达数公里，采用星型（网关集中）拓扑，功耗极低。其优势在于远距离低速传输，常见于智慧城市与农业物联网。</p>
+<p><strong>UWB</strong>（Ultra Wideband）工作在 6–8 GHz，速率较低但具备纳米秒级时间分辨率，覆盖 10–30 米，支持点到点或星型拓扑。它主要用于精准测距和室内定位。</p>
+<p><strong>NFC</strong>（Near Field Communication）工作在 13.56 MHz，速率 ≤424 kbps，覆盖仅几厘米，点到点通信，功耗低。典型应用是手机配对、门禁与支付。</p>
+<p><strong>NB-IoT/LTE-M</strong> 属于蜂窝物联网，速率从 kbps 到百 kbps，覆盖范围为运营商级广域，功耗低至中等。其优势是远距离低功耗通信，常用于智慧表计、物流与远程监控。</p>
+<h2 id="2-典型对照表"><a class="header" href="#2-典型对照表">2. 典型对照表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>技术</th><th>频段</th><th>速率级别</th><th>覆盖</th><th>拓扑</th><th>功耗</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>Wi‑Fi 4/5/6/7</td><td>2.4/5/6 GHz</td><td>10^2 Mbps–Gbps</td><td>室内几十米</td><td>星/mesh</td><td>中</td><td>视频/高速数据</td></tr>
+<tr><td>Bluetooth LE 5.x</td><td>2.4 GHz</td><td>125 kbps–2 Mbps</td><td>10–30 m</td><td>星/BLE Mesh</td><td>低</td><td>外设/穿戴/音频</td></tr>
+<tr><td>Zigbee/Thread</td><td>2.4 GHz</td><td>~250 kbps</td><td>室内</td><td>Mesh</td><td>低</td><td>传感/照明（Matter）</td></tr>
+<tr><td>LoRaWAN</td><td>Sub‑GHz</td><td>0.3–50 kbps</td><td>千米级</td><td>星(网关)</td><td>极低</td><td>远距低速</td></tr>
+<tr><td>UWB</td><td>6–8 GHz</td><td>低速</td><td>10–30 m</td><td>点到点/星</td><td>低</td><td>精准测距</td></tr>
+<tr><td>NFC</td><td>13.56 MHz</td><td>≤424 kbps</td><td>几厘米</td><td>点到点</td><td>低</td><td>近场配对/支付</td></tr>
+<tr><td>NB‑IoT/LTE‑M</td><td>运营商</td><td>kbps–百 kbps</td><td>广覆盖</td><td>蜂窝</td><td>低/中</td><td>远距低功耗</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

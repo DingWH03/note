@@ -191,12 +191,28 @@
 <p>在<strong>实时性与可靠性</strong>方面，显示/摄像头链路基本不接受“背压”，系统依赖<strong>DMA、环形缓冲与双/多缓冲</strong>削峰填谷；必要时以<strong>帧丢弃、动态分辨率/帧率调整</strong>维持稳定。时钟与同步通过<strong>帧/行同步信号、时间戳与对时触发</strong>协调，确保图像与其它传感数据的时域一致性。异常处理以<strong>超时、重同步、热插拔检测与链路状态监测</strong>为主，高要求场景还会叠加<strong>隔离、屏蔽与冗余路径</strong>提升容错。</p>
 <p>软件集成方面，显示路径由<strong>合成器/时序控制/页面翻转</strong>统一调度；摄像路径由<strong>媒体管线框架</strong>组织传感器、处理模块与内存之间的流动，以标准化的<strong>像素格式与颜色空间</strong>描述能力边界。低延迟实现依赖<strong>零拷贝/少拷贝缓冲、同步原语（VSync/围栏/时间戳）<strong>与带宽感知的调度策略；验证手段包括</strong>测试图样、颜色条、直方图/噪声统计</strong>以及高速电气的<strong>眼图/抖动/BERT</strong>测量。</p>
 <p>从工程取舍看，显示/摄像头接口的<strong>价值在于“流式、定时、可预期”</strong>：以受控的链路预算换来稳定的像素级通道。当分辨率、刷新率或距离进一步提高时，常见演进是<strong>增加并行通道数、引入高效压缩/编码</strong>，或切换到<strong>更适合远距与复杂线束的物理层</strong>，并借助桥接/重定时器在系统中平滑过渡；本质仍是在<strong>带宽、延迟、功耗、EMI与成本</strong>之间找到均衡点。</p>
-
+<h2 id="1-常见显示摄像头接口"><a class="header" href="#1-常见显示摄像头接口">1. 常见显示/摄像头接口</a></h2>
+<p><strong>MIPI DSI</strong> 是目前移动设备和嵌入式显示的主流接口，基于 MIPI D-PHY 或 C-PHY，支持每通道数 Gbps 速率，通过多通道并行满足高分辨率与高刷新需求。它是点到点的下行链路，直接驱动面板，协议还支持低功耗模式与控制命令。</p>
+<p><strong>MIPI CSI-2</strong> 则是图像传感器输入接口，同样基于 D-PHY 或 C-PHY，每通道速率可达数 Gbps。其设计强调低延迟和稳定带宽，常用于多路摄像头并行输入，通过帧/行同步信号确保图像时序一致。</p>
+<p><strong>LVDS/FPD-Link</strong> 是较早期的低电压差分信号接口，单对速率可达数百 Mbps，常见于汽车和工业显示/摄像系统。它支持点到点或菊花链拓扑，链路距离可扩展到米级，适合 EMI 要求较严苛的场合。</p>
+<p><strong>eDP/DP</strong>（嵌入式 DisplayPort / DisplayPort）基于差分物理层，单通道可达数 Gbps，适合高分辨率显示（如笔记本、PC 显示器）。相比 LVDS，eDP 在功耗、带宽和功能扩展性上更优，逐渐成为新一代嵌入式显示接口。</p>
+<p><strong>HDMI</strong> 使用 TMDS 差分编码，支持数 Gbps 速率和数米线缆传输，广泛应用于电视、机顶盒和多媒体系统。其特征是同时承载视频和音频，并支持热插拔与版权保护机制（HDCP）。</p>
+<p><strong>并行 RGB/DVP</strong> 是最传统的像素接口，使用多根单端信号线（数据总线+像素时钟+同步信号），距离短且速率受限。它实现简单，常见于低分辨率面板或摄像头模块，但在高分辨率下已逐步被差分高速接口取代。</p>
+<h2 id="2-典型对比表"><a class="header" href="#2-典型对比表">2. 典型对比表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">速率级别</th><th style="text-align: right">距离</th><th>拓扑</th><th>用途</th></tr></thead><tbody>
+<tr><td>MIPI DSI</td><td>D-PHY/C-PHY</td><td style="text-align: right">Gbps/通道</td><td style="text-align: right">&lt;20–30 cm</td><td>点到点</td><td>面板输出</td></tr>
+<tr><td>MIPI CSI-2</td><td>D-PHY/C-PHY</td><td style="text-align: right">Gbps/通道</td><td style="text-align: right">&lt;20–30 cm</td><td>点到点</td><td>摄像头输入</td></tr>
+<tr><td>LVDS/FPD-Link</td><td>差分</td><td style="text-align: right">数百 Mbps/对</td><td style="text-align: right">米级</td><td>点到点/菊花链</td><td>显示/摄像传输</td></tr>
+<tr><td>eDP/DP</td><td>差分</td><td style="text-align: right">Gbps级</td><td style="text-align: right">米级</td><td>点到点</td><td>高分显示</td></tr>
+<tr><td>HDMI</td><td>TMDS 差分</td><td style="text-align: right">Gbps级</td><td style="text-align: right">数米</td><td>点到点</td><td>显示+音频</td></tr>
+<tr><td>并行 RGB/DVP</td><td>多根单端</td><td style="text-align: right">由像素时钟决定</td><td style="text-align: right">&lt;10–20 cm</td><td>点到点</td><td>低分辨率显示/摄像</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Interface_Protocol/Peripheral_Buses.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Interface_Protocol/Peripheral_Buses/IIIC.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -210,7 +226,7 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Interface_Protocol/Peripheral_Buses.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Interface_Protocol/Peripheral_Buses/IIIC.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 

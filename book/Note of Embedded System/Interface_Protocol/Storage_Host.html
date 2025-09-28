@@ -192,7 +192,32 @@
 <p>数据完整性与寿命管理是存储方向的重心。系统依靠<strong>分层校验</strong>（链路 CRC/协议级校验/文件系统校验）、<strong>磨损均衡与坏块管理</strong>、<strong>写放大与垃圾回收优化</strong>来保证介质长期可靠；对内存一侧则采纳<strong>ECC/巡检</strong>降低软错误风险。在安全方面，启动链路需<strong>安全启动/镜像签名/密钥保护</strong>，运行链路则通过<strong>权限隔离、IOMMU 与加密通道</strong>抵御越权 DMA 与数据窃听。</p>
 <p>软件集成上，主机互联与块设备经由<strong>驱动—队列—调度器</strong>三层解耦：驱动负责适配控制器与队列，内核块层负责合并/重排与截止期调度，文件系统提供元数据一致性与崩溃恢复；高吞吐路径强调<strong>批量提交、合并中断、轮询加速</strong>与<strong>IO 路径零拷贝</strong>。内存接口通过<strong>训练/校准</strong>在启动期建立时序窗口，运行期结合<strong>缓存策略、预取与 NUMA</strong>保持带宽与延迟平衡。监控与排障依赖<strong>链路计数器、SMART/健康信息、热图与尾延分布</strong>，并以可重放的 I/O 工作负载进行回归。</p>
 <p>从工程取舍看，存储/主机接口的价值在于为系统提供“快且稳”的数据底座。当分辨率/模型规模/并发连接增长时，常见演进路径包括<strong>提升代际速率/增车道</strong>、<strong>引入压缩/卸载与协处理</strong>、或在板级通过<strong>重定时/均衡与更优连接器</strong>延展距离与链路裕量；本质仍是在<strong>带宽、尾延、功耗、成本、热设计与可维护性</strong>之间找到可复用、可演进的平衡点。</p>
-
+<h2 id="1-常见存储主机接口"><a class="header" href="#1-常见存储主机接口">1. 常见存储/主机接口</a></h2>
+<p><strong>QSPI/OSPI</strong> 是 SPI 的多线并行扩展（4bit 或 8bit 数据线），典型速率数十到数百 Mbps。它常用于外部 NOR Flash 以提供更高的读写带宽，并支持 XIP（execute-in-place）直接从 Flash 运行代码。由于接口简单、成本低，广泛应用于嵌入式启动与固件存储。</p>
+<p><strong>eMMC</strong> 是一种将 NAND Flash 与控制器封装在单芯片内的存储方案，速率最高可达 HS400（约 400 MB/s）。它提供标准化块设备接口，支持磨损均衡与坏块管理，具备较高可靠性，广泛用于中高端移动设备与嵌入式系统。</p>
+<p><strong>UFS</strong>（Universal Flash Storage）是新一代嵌入式存储接口，采用高速差分串行物理层，带宽可达 1 GB/s 以上。它支持多队列并发与低延迟事务，具备良好的功耗控制和安全特性，常用于旗舰手机、平板与 AI 终端。</p>
+<p><strong>SD/SDIO</strong> 是可拔插的存储卡/外设接口，SDR104 模式下速率约 104 MB/s。其优势是热插拔与生态普及，常用于数据扩展与相机存储；而 SDIO 模式可挂接 Wi-Fi、蓝牙等低功耗外设。</p>
+<p><strong>SATA</strong> 是成熟的块存储接口，典型速率为 SATA III（600 MB/s）。其传输基于分组帧，支持热插拔与大容量设备，主要用于工业 PC、旧款嵌入式平台与兼容性要求高的场景。</p>
+<p><strong>USB</strong> 是通用外设与供电接口，速率从 USB 2.0（480 Mbps）到 USB4（20+ Gbps）。它既可承载存储设备（U 盘、移动硬盘），也能挂接网卡、摄像头、调试口，依托 Type-C 生态支持供电与替代模式。</p>
+<p><strong>PCIe</strong> 是现代高性能主机互联总线，采用点对点差分链路，线速从 Gen1（2.5 GT/s）到 Gen5（32 GT/s）。它支持多 lane 并行、DMA 与中断机制，是 NVMe SSD、GPU、FPGA 与高速网卡的首选互联方式。</p>
+<p><strong>DDR/LPDDR</strong> 是主存 DRAM 的接口，数据速率数 Gbps/bit，要求严格的时序校准与信号完整性设计。DDR 常用于高性能嵌入式与 PC，LPDDR 则面向低功耗移动平台。它决定了系统运行时的大规模带宽与延迟性能。</p>
+<h2 id="2-典型对照表"><a class="header" href="#2-典型对照表">2. 典型对照表</a></h2>
+<h3 id="1非易失卡类"><a class="header" href="#1非易失卡类">(1)非易失/卡类</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>介质</th><th style="text-align: right">典型吞吐</th><th>关键特性</th></tr></thead><tbody>
+<tr><td>QSPI/OSPI</td><td>NOR Flash</td><td style="text-align: right">数十~数百 Mbps</td><td>启动/代码执行(XIP)、时序严谨</td></tr>
+<tr><td>eMMC (HS400)</td><td>eMMC 芯片</td><td style="text-align: right">~400 MB/s</td><td>成熟、易用、单芯片</td></tr>
+<tr><td>SD/SDIO (SDR104)</td><td>SD 卡/外设</td><td style="text-align: right">~104 MB/s</td><td>热插拔；SDIO 常接 Wi‑Fi/BT 模块</td></tr>
+<tr><td>UFS (3.x/4.x)</td><td>UFS 芯片</td><td style="text-align: right">1+ GB/s</td><td>并行队列、低延迟</td></tr>
+<tr><td>SATA (III)</td><td>SSD/HDD</td><td style="text-align: right">~600 MB/s</td><td>工业 PC/老平台兼容</td></tr>
+</tbody></table>
+</div>
+<h3 id="2高速互联"><a class="header" href="#2高速互联">(2)高速互联</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">线速</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>USB 2.0/3.x/USB4</td><td>差分</td><td style="text-align: right">480 Mbps / 5–20+ Gbps</td><td>外设、供电、Type‑C 生态</td></tr>
+<tr><td>PCIe (Gen1–5)</td><td>差分</td><td style="text-align: right">2.5–32 GT/s/lane</td><td>NVMe/加速卡/FPGA 互联</td></tr>
+<tr><td>DDR/LPDDR</td><td>混合</td><td style="text-align: right">数 Gbps/bit</td><td>DRAM 内存接口</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

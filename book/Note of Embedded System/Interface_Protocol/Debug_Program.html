@@ -191,7 +191,19 @@
 <p>从流程看，调试与编程承担“<strong>带起—验证—量产—运维</strong>”的主线闭环：带起阶段以<strong>电源/时钟/复位</strong>为基准逐步点亮外设，配合脚本化的寄存器序列与自检例程；验证阶段以<strong>自动化测试与覆盖率</strong>保证功能与时序边界；量产阶段依赖<strong>产测固件</strong>和<strong>工装脚本</strong>完成烧录、校准与标定数据写入；运维阶段通过<strong>现场或空中升级（OTA）</strong>、<strong>健康信息与日志回收</strong>闭环质量。为了把人力成本降到最低，整套链路应<strong>可脚本化、可回放、可追踪</strong>，失败场景可<strong>幂等重试</strong>。</p>
 <p>在系统影响上，调试口既要<strong>强力</strong>又要<strong>克制</strong>：强力在于能在系统异常时“拉住刹车”，接管时钟与总线并抢救数据；克制在于不让其常驻成本过高，也不让调试探测与追踪<strong>干扰实时性</strong>或引入<strong>时序观测效应</strong>。工程上通常通过<strong>小缓冲+批量输出</strong>、<strong>触发条件采集</strong>与<strong>限速采样</strong>降低扰动；在复杂SoC/多核场景下，以<strong>跨触发矩阵</strong>协调核与外设的时间关系，保证问题可复现、证据可还原。</p>
 <p>最终价值在于：调试与编程接口为产品提供了一条<strong>从硅到云的可信通路</strong>。它把开发效率、量产良率与现场可维护性串成一个闭环，让团队在<strong>最小物料与最小侵入</strong>的前提下，既能高效迭代，又能在异常时快速定位与恢复。合理的物理设计、可靠的安全边界与可自动化的工具链，是这条通路可长期复用与演进的基础。</p>
-
+<h2 id="1-常见调试与编程协议"><a class="header" href="#1-常见调试与编程协议">1. 常见调试与编程协议</a></h2>
+<p><strong>JTAG</strong>（IEEE 1149.1）是标准的边界扫描与调试接口，常用于芯片测试、硬件验证与在线编程。它支持多设备串链，几乎是所有 FPGA 与高端 MCU 的基础调试方式。</p>
+<p><strong>SWD</strong>（Serial Wire Debug）是 ARM 定义的两线调试接口，相比 JTAG 引脚更少，功能覆盖 ARM 内核调试与程序烧录，是 Cortex-M 系列 MCU 的常见选择。</p>
+<p><strong>cJTAG</strong>（IEEE 1149.7）是 JTAG 的精简版本，支持低引脚数链路和多设备拓扑，适用于引脚受限的 SoC 与低功耗设备。</p>
+<p><strong>UART/USB DFU</strong> 是典型的 Boot 与固件升级接口，常用于量产烧录与现场维护。UART 方案简单通用，而 USB DFU 提供更快的下载速率与跨平台兼容性。</p>
+<h2 id="2-典型对照表"><a class="header" href="#2-典型对照表">2. 典型对照表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>接口</th><th>层级</th><th>用途</th></tr></thead><tbody>
+<tr><td>JTAG (1149.1)</td><td>边界扫描/调试</td><td>芯片测试、在线编程</td></tr>
+<tr><td>SWD (ARM)</td><td>调试</td><td>ARM 内核调试/烧录（2 线）</td></tr>
+<tr><td>cJTAG (1149.7)</td><td>调试</td><td>低引脚数链路</td></tr>
+<tr><td>UART/USB DFU</td><td>Boot/升级</td><td>量产烧录/现场升级</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

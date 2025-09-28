@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>供电与数据复用 - Note of Embedded System</title>
+        <title>UART - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "../../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="../../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Power_over_Data.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Peripheral_Buses/UART.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,34 +183,61 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="供电与数据复用power-over-data"><a class="header" href="#供电与数据复用power-over-data">供电与数据复用（Power over Data）</a></h1>
-<p>供电与数据复用接口的核心目的，是通过单一的物理链路同时传输<strong>电力与数据</strong>，有效地简化系统中的布线与接口数量，特别适用于<strong>低功耗终端设备</strong>，如摄像头、传感器、无线接入点、IP摄像头等。通过这一方式，可以在减少电源适配器的使用与复杂布线的同时，确保设备的可靠性与性能，特别是在空间和成本有限的嵌入式应用中，供电与数据复用成为优化系统设计和降低维护成本的重要手段。</p>
-<p>这种接口通常依赖于<strong>差分信号</strong>和<strong>屏蔽技术</strong>来同时传输数据与电力。典型的应用包括<strong>以太网供电（PoE）<strong>和</strong>USB供电</strong>，其中 PoE（Power over Ethernet）特别适用于需要同时提供数据传输和电力供应的网络设备，而 USB 供电则在消费类电子设备中应用广泛，例如智能手机、可穿戴设备和音频设备等。它们都通过单根线缆传输数据与电力，减少了多个接口的冗余，同时也减轻了设备间的连接复杂度。</p>
-<p>从电气角度来看，供电与数据复用协议依赖于<strong>电力管理与信号完整性</strong>的结合。对于PoE而言，电力通过<strong>以太网线缆</strong>传输，通常有多个标准（如802.3af、802.3at、802.3bt），分别对应不同的功率输出要求。其主要优势是通过现有的以太网基础设施，提供从<strong>13W 到 100W</strong>不等的电力供应，支持从简单的设备到高功率设备的供电需求。在 USB 方面，<strong>USB Power Delivery (USB-PD)</strong> 协议则提供了更高功率的输出（最高可达 100W），同时支持设备间的<strong>电力协商</strong>，确保电力需求与供电能力匹配。</p>
-<p>这类接口在信号传输上强调<strong>电源隔离与噪声抑制</strong>，尤其在同时传输高带宽数据的情况下，信号完整性与电磁兼容性（EMC）要求极高。为了避免电源与数据线路的互相干扰，系统需要特别注意<strong>地线分离与屏蔽</strong>，并设计有效的<strong>去耦</strong>和<strong>电源滤波</strong>电路，尤其在对EMI要求严格的工业与车载应用中，屏蔽措施至关重要。</p>
-<p>除了基本的电源和数据传输，<strong>安全性与可靠性</strong>也是供电与数据复用系统的关键。由于电力通过同一线路供应，任何电力失效或电流不稳定都可能影响到数据传输的可靠性。为此，系统通常会包括<strong>过电流保护、过电压保护、过载保护</strong>等设计，确保电力传输过程中不会对系统造成损害。此外，链路的<strong>容错与冗余设计</strong>也是高可靠应用场景中的重要考量，特别是在一些需要长时间持续运行的设备中，冗余电源和带自动恢复功能的设计尤为重要。</p>
-<p>软件集成方面，供电与数据复用协议的支持通常需要通过<strong>固件层的电力管理</strong>与<strong>数据流控制</strong>来完成。例如，USB-PD的电力协商机制要求固件能够识别并调节不同设备的电力需求，同时配合设备状态的切换（如充电、休眠、数据传输等）确保系统的高效运行。</p>
-<p>从工程实践来看，供电与数据复用接口的<strong>价值在于提升设备间的整合性与简化布线</strong>，特别是在资源受限的环境下，通过合理规划电力与数据的传输链路，可以减少设备接口数量，降低布线复杂性和成本，简化产品的开发与维护。而在实际应用中，常见的挑战包括如何保证在多设备共享同一线缆的情况下，电力与数据的稳定传输，特别是在高功率和高速数据传输同时进行时，需要精确的设计与测试，以确保系统的长期可靠运行。</p>
-<h2 id="1-常见的供电与数据复用"><a class="header" href="#1-常见的供电与数据复用">1. 常见的供电与数据复用</a></h2>
-<p><strong>USB-PD</strong>（Type-C） 是基于 Type-C 接口的电力传输标准，支持电压电流协商，最高可达 240 W（EPR 模式）。它广泛应用于手机、笔记本和外设的供电与快充，实现数据与电力的统一接口。</p>
-<p><strong>PoE</strong>（Power over Ethernet） 通过网线同时传输数据与电力，标准分为 802.3af/at/bt，对应供电能力 13 W、25 W、51–90 W。它常用于摄像头、无线 AP、终端设备等场景，简化布线并提升部署灵活性。</p>
-<p><strong>PMBus/SMBus</strong> 是面向电源系统的数字管理总线，可实现电压电流监控、告警与配置。它常用于服务器、通信与高可靠设备的电源模块管理。</p>
-<h2 id="2-典型对照表"><a class="header" href="#2-典型对照表">2. 典型对照表</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>技术</th><th>功能</th><th style="text-align: right">指标</th><th>用途</th></tr></thead><tbody>
-<tr><td>USB‑PD (Type‑C)</td><td>供电协商</td><td style="text-align: right">≤240 W(EPR)</td><td>设备供电/快充</td></tr>
-<tr><td>PoE (802.3af/at/bt)</td><td>网线供电</td><td style="text-align: right">13/25/51–90 W</td><td>摄像头/AP/终端</td></tr>
-<tr><td>PMBus/SMBus</td><td>数字电源管理</td><td style="text-align: right">—</td><td>电源监控/告警</td></tr>
+                        <h1 id="uart"><a class="header" href="#uart">UART</a></h1>
+<p>UART（Universal Asynchronous Receiver/Transmitter，即通用异步收发器）是一种常见的异步串行通信接口，通常简称为串口。它广泛应用于单片机、计算机以及各种通信模块之间，适合短距离、低速率的点对点数据传输。在调试和终端通信中，UART 是最简单直接的选择。它既可以实现全双工，也能配置为半双工，不需要额外的时钟信号来同步，只要通信双方事先约定好一致的波特率即可正常工作。</p>
+<h2 id="1-物理结构"><a class="header" href="#1-物理结构">1. 物理结构</a></h2>
+<p>UART 的基本硬件连接非常简洁，通常只需三根线：发送端的 TX 连接到接收端的 RX，再加上公共地线 GND，就能完成数据的双向传输。在 TTL 电平下，逻辑 0 表示为低电平，逻辑 1 表示为高电平。由于是点对点方式，所以电路简单，但通信距离有限，一般在几十厘米到几米范围内较为稳定。</p>
+<pre><code class="language-text">┌─────┐      TX → RX      ┌─────┐
+│ MCU │ ----------------&gt; │ 模块 │
+│     │ &lt;---------------- │     │
+└─────┘      RX ← TX      └─────┘
+             GND ———— GND
+</code></pre>
+<h2 id="2-帧格式"><a class="header" href="#2-帧格式">2. 帧格式</a></h2>
+<p>UART 通信以“帧”为单位传输数据。一帧由起始位、数据位、校验位和停止位组成。</p>
+<pre><code class="language-text">空闲线(高电平) ──────┐
+                      ↓ 起始位
+        ┌──┬──┬──┬──┬──┬──┬──┬──┬──┐──┐──┐
+        │St│D0│D1│D2│D3│D4│D5│D6│D7│Pa│Sp│
+        └──┴──┴──┴──┴──┴──┴──┴──┴──┘──┘──┘
+           1  数据位(8位)    校验位   停止位
+</code></pre>
+<ul>
+<li><strong>St</strong>：起始位（低电平，1 位）</li>
+<li><strong>D0~D7</strong>：数据位，最低位先传输</li>
+<li><strong>Pa</strong>：校验位，可选</li>
+<li><strong>Sp</strong>：停止位（高电平，1 或 2 位）</li>
+</ul>
+<h2 id="3-原理"><a class="header" href="#3-原理">3. 原理</a></h2>
+<p>UART 的核心原理在于“异步”。与 SPI、I²C 不同，UART 没有时钟线，接收端必须依靠波特率在时间上对信号进行抽样。发送方将数据逐位送出，接收方通过检测起始位获得同步点，然后按预设速率逐位采样，最终重组数据帧。只要通信双方的波特率误差足够小（通常要求小于 ±3%），数据就能被正确接收。这样就避免了额外时钟同步的开销，降低了硬件复杂度。</p>
+<h2 id="4-硬件协议"><a class="header" href="#4-硬件协议">4. 硬件协议</a></h2>
+<p>UART 在物理层的实现不仅有 TTL 电平，还衍生出一系列标准：</p>
+<ul>
+<li><strong>TTL UART</strong>：常见于单片机，电平通常为 3.3V 或 5V。</li>
+<li><strong>RS-232</strong>：计算机串口常用，逻辑取反，电平范围为 ±3V 到 ±15V，传输距离比 TTL 更远。</li>
+<li><strong>RS-485</strong>：采用差分信号，抗干扰强，传输距离可达 1200 米，支持多机总线通信。</li>
+<li><strong>RS-422</strong>：与 RS-485 类似，但多用于点对点全双工通信。</li>
+</ul>
+<h2 id="5-参数"><a class="header" href="#5-参数">5. 参数</a></h2>
+<p>UART 的主要参数由波特率、数据位、校验位和停止位组成，不同场景下可灵活组合。</p>
+<div class="table-wrapper"><table><thead><tr><th>参数</th><th>含义</th><th>常见取值</th></tr></thead><tbody>
+<tr><td>波特率</td><td>每秒传输的比特数，决定通信速率</td><td>9600、115200</td></tr>
+<tr><td>数据位</td><td>有效数据长度，一般从 5~9 位</td><td>8 位最常见</td></tr>
+<tr><td>校验位</td><td>检错方式，可提高可靠性</td><td>无、奇校验、偶校验</td></tr>
+<tr><td>停止位</td><td>帧结束标识，也提供缓冲时间</td><td>1 位、1.5 位、2 位</td></tr>
 </tbody></table>
 </div>
+<p>例如常见的 <strong>8N1</strong> 表示：8 个数据位（N 表示无校验），1 个停止位。</p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Interface_Protocol/Debug_Program.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Interface_Protocol/Peripheral_Buses.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../note.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Interface_Protocol/Peripheral_Buses/IIC.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -220,11 +247,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Interface_Protocol/Debug_Program.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Interface_Protocol/Peripheral_Buses.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../note.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Interface_Protocol/Peripheral_Buses/IIC.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -239,13 +266,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
 

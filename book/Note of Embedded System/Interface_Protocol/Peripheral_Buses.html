@@ -191,7 +191,31 @@
 <p>在<strong>实时性与可靠性</strong>方面，板级外设总线通常依赖<strong>主机调度、FIFO/环形缓冲与DMA</strong>来平滑突发流量，靠<strong>超时、重试与简单的应答机制</strong>处理错误；较高层的CRC与故障恢复策略常由上层协议或应用承担。与面向网络的协议不同，它们更强调<strong>本地可控性</strong>与<strong>时序可预见性</strong>，而非跨节点的大规模鲁棒传输。</p>
 <p>软件集成上，这些总线在操作系统与BSP中一般以<strong>统一的总线驱动模型</strong>呈现：控制器驱动负责时序与事务，外设驱动聚焦寄存器表与功能逻辑。为兼顾实时性和可维护性，驱动常提供阻塞/非阻塞接口与中断/DMA两条路径；设备树或板级配置用于声明外设的寻址、片选、极性、时序参数与供电依赖。良好的可测试性同样关键——预留调试点、使用协议分析仪与逻辑分析仪，是定位边界条件与量产问题的常用手段。</p>
 <p>从工程实践看，板级串行外设总线的<strong>价值在于“足够好 + 足够简单”</strong>：以很小的硬件代价，完成大量常规的控制与采集任务。当系统对带宽、距离或确定性提出更高要求时，常见的演进路径是<strong>扩宽同类物理层的并行度/通道数</strong>，或<strong>引入针对性更强的高速/差分互联</strong>，并通过桥接器、扩展器与交换结构平滑过渡。</p>
-
+<h2 id="1-常见板级串行外设"><a class="header" href="#1-常见板级串行外设">1. 常见板级串行外设</a></h2>
+<p><strong>I²C</strong> 是一种开漏加上拉的双线总线（SDA/SCL），电平常见 3.3V/5V，典型速率 100 kHz 到 3.4 MHz，适用于板内或 1 米以内的短线缆连接。它支持多主多从，采用同步时钟与应答机制（ACK/NACK），协议轻量，常用于 EEPROM、低速传感器、RTC 等配置与采集任务。</p>
+<p><strong>I³C</strong> 作为 I²C 的升级版本，仍保持两线物理接口，但混合了推挽与开漏驱动，速率可达 12.5 MHz，延迟更低并具备节能特性。它支持动态寻址和多主模式，还可选 CRC 保障完整性，主要应用于高密度传感器网络、PMIC 控制等场合。</p>
+<p><strong>SPI</strong> 使用单端多线接口（通常四线：SCK/MOSI/MISO/CS），速率常见 10–50 MHz 甚至更高，拓扑为主从+片选，完全由主机驱动时钟。协议简单，没有内建校验，常用于 ADC/DAC、LCD、以太网芯片等高速外设通信。</p>
+<p><strong>QSPI/OSPI</strong> 是 SPI 的并行扩展（4bit 或 8bit 数据线），可将带宽提升到数百 Mbps，常用于外部 NOR Flash 或 XIP（execute-in-place）执行，解决代码/数据存储带宽瓶颈。</p>
+<p><strong>UART (TTL)</strong> 是最经典的异步串行点对点链路，使用单端电平（常见 3.3V/5V），速率从 9.6 kbps 到数 Mbps，采用起止位和可选奇偶校验。它结构简单、实现成本极低，广泛用于调试、日志、串口下载等人机交互。</p>
+<p><strong>RS-485</strong> 则是 UART 的差分物理层延伸，抗干扰能力更强，速率可达 10 Mbps（短距离）或在低速下传输超过千米。它支持多点拓扑，常用于工业控制和 Modbus RTU 等现场总线应用。</p>
+<p><strong>1-Wire</strong> 通过单线（加地线）承载供电与数据，速率约 16 kbps，适合短距离总线拓扑。其协议通过严格的时序定义实现主从交互，通常带 CRC 校验，常见于 Dallas/Maxim 系列的温度传感器、ID 芯片等。</p>
+<p><strong>I²S/TDM</strong> 面向音频数据流，采用单端多线（时钟、帧同步、数据）同步传输，带宽为几 Mbps 到十几 Mbps，拓扑为点到点主从。它没有内建校验，通常由上层协议处理，广泛用于编解码器、音频接口与多声道传输。</p>
+<p><strong>PDM</strong> （Pulse Density Modulation）主要用于数字麦克风，通过一条数据信号线加时钟，输出一位流（1bit oversampling），典型速率 1–3 Mbps/声道。其优点是接口简单，直接送入解码滤波器即可恢复音频。</p>
+<p><strong>SPMI</strong>（System Power Management Interface）是 MIPI 定义的 PMIC 控制总线，采用多主多从拓扑，速率可达 26 Mbps，具备 CRC 校验保障可靠性。它常见于移动 SoC 与电源管理芯片之间，用于寄存器控制与功耗调度。</p>
+<h2 id="2-典型对比表"><a class="header" href="#2-典型对比表">2. 典型对比表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理/电平</th><th style="text-align: right">典型速率</th><th style="text-align: right">距离(板内/线缆)</th><th>拓扑</th><th>同步</th><th>校验/纠错</th><th>常见用途</th></tr></thead><tbody>
+<tr><td>I²C</td><td>开漏 + 上拉（3.3/5V）</td><td style="text-align: right">100k ~ 3.4M</td><td style="text-align: right">&lt;0.5–1 m</td><td>多主多从总线</td><td>同步</td><td>ACK/NACK</td><td>低速传感器/EEPROM</td></tr>
+<tr><td>I³C</td><td>推挽/开漏混合</td><td style="text-align: right">≤12.5M</td><td style="text-align: right">&lt;0.5 m</td><td>多主</td><td>同步</td><td>CRC（可选）</td><td>传感网络/PMIC</td></tr>
+<tr><td>SPI</td><td>单端</td><td style="text-align: right">10–50M+</td><td style="text-align: right">板内</td><td>主从、片选扇出</td><td>同步</td><td>无内建</td><td>高速外设/ADC/DAC</td></tr>
+<tr><td>QSPI/OSPI</td><td>SPI x4/x8</td><td style="text-align: right">数十–数百 Mbps</td><td style="text-align: right">板内</td><td>主从</td><td>同步</td><td>无内建</td><td>NOR Flash/XIP</td></tr>
+<tr><td>UART (TTL)</td><td>单端</td><td style="text-align: right">9.6k–1M+</td><td style="text-align: right">&lt;3–5 m</td><td>点到点</td><td>异步</td><td>奇偶（可选）</td><td>调试/日志</td></tr>
+<tr><td>RS-485</td><td>差分</td><td style="text-align: right">≤10M</td><td style="text-align: right">≤1200 m（低速）</td><td>多点总线</td><td>异步</td><td>上层CRC</td><td>工业现场/Modbus RTU</td></tr>
+<tr><td>1-Wire</td><td>单线</td><td style="text-align: right">~16 kbps</td><td style="text-align: right">&lt;2–5 m</td><td>总线</td><td>时序</td><td>CRC</td><td>ID/简单传感</td></tr>
+<tr><td>I²S/TDM</td><td>单端</td><td style="text-align: right">几M–十几Mbps</td><td style="text-align: right">板内</td><td>主从</td><td>同步</td><td>无内建</td><td>音频流</td></tr>
+<tr><td>PDM</td><td>单端</td><td style="text-align: right">~1–3 Mbps/声道</td><td style="text-align: right">板内</td><td>点到点</td><td>同步</td><td>无内建</td><td>数字麦克风</td></tr>
+<tr><td>SPMI</td><td>MIPI 电源管理</td><td style="text-align: right">≤26 Mbps</td><td style="text-align: right">板内</td><td>多主多从</td><td>同步</td><td>CRC</td><td>PMIC 控制</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -200,7 +224,7 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Interface_Protocol/Display_Camera.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Peripheral_Buses/UART.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -214,7 +238,7 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Interface_Protocol/Display_Camera.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Peripheral_Buses/UART.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

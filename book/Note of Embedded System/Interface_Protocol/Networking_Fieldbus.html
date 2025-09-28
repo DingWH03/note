@@ -191,7 +191,32 @@
 <p>可靠性与安全性方面，网络通常提供<strong>冗余路径与快速收敛</strong>（环网保护、双归属、故障切换）以抵御单点失效；在设备层引入<strong>健康监测与自检</strong>（链路质量、迟到/重传统计、温度/电源告警）以便预测性维护。面向功能安全的场合，会在通用通信之上叠加<strong>安全层</strong>（黑通道思路、序列/超时/端到端校验），以满足系统级安全完整性等级目标。对信息安全，则通过<strong>设备身份、访问控制、分区与加密</strong>保护控制域不被越权访问。</p>
 <p>软件集成强调<strong>可预期与可运维</strong>：实时系统/PLC/域控制器对周期任务进行<strong>固定节拍调度</strong>，I/O 映射与过程数据通过<strong>共享内存/零拷贝</strong>进出应用；非周期流量走<strong>低优先级通道</strong>避免打断关键循环。工程部署依赖<strong>设备描述/对象模型</strong>实现即插即用与跨厂商互操作；调试与运维使用<strong>抓包/时延与抖动测量、拓扑发现、链路健康仪表板</strong>定位瓶颈与隐患，并以<strong>版本/参数基线</strong>管理变更。</p>
 <p>从演进路径看，现场总线正向<strong>以太网化与融合化</strong>发展：一方面把确定性机制引入通用网络，实现<strong>控制流与数据流并存</strong>；另一方面通过<strong>网关/边缘节点</strong>把历史遗留总线整合到统一的管理与数据平台。取舍的本质，仍是在<strong>确定性、带宽、距离、供电、EMC、成本与可维护性</strong>之间达成平衡：既要让关键控制链路“<strong>准时</strong>且<strong>不中断</strong>”，也要让整网在扩展、升级与运维上保持“<strong>可管</strong>且<strong>可演进</strong>”。</p>
-
+<h2 id="1-常见网络与现场总线"><a class="header" href="#1-常见网络与现场总线">1. 常见网络与现场总线</a></h2>
+<p><strong>Ethernet</strong> 是最常见的通用通信接口，速率范围覆盖 10 Mbps–10 Gbps，典型应用于星型/交换拓扑。其优点是生态成熟、带宽高，但实时性不足，在车载与工业控制中需结合 TSN 扩展以满足确定性需求。</p>
+<p><strong>SPE</strong>（Single Pair Ethernet）采用单对线传输，速率 10 Mbps，可支持 25 m 多点或 1 km 点到点连接，同时具备供电能力。结合 TSN 时可实现确定性通信，常用于汽车与工业短距互联。</p>
+<p><strong>车载以太网</strong>（100/1000BASE-T1）是专为车辆设计的点到点链路，速率可达 1 Gbps，支持轻量化布线和高带宽通信，配合 TSN 用作车内骨干网络。</p>
+<p><strong>TSN</strong>（Time-Sensitive Networking）是 IEEE 802.1 标准族，包含时间同步（802.1AS）、时隙调度（802.1Qbv）等机制，能够保障低延迟与确定性传输，适合工业自动化、智能电网和车载实时通信。</p>
+<p><strong>CAN</strong> 总线是汽车与工业的基础通信方式，速率可达 1 Mbps（CAN FD 可达数 Mbps），支持多节点总线拓扑，具备软实时能力，常用于车身与控制器通信。</p>
+<p><strong>LIN</strong> 总线速率约 20 kbps，采用单主多从架构，成本低但实时性有限，常见于车窗、座椅等低速外设控制。</p>
+<p><strong>FlexRay</strong> 提供 10 Mbps 的高速差分通信，支持星型或总线拓扑，具备冗余与硬实时能力，常用于线控底盘和动力总成系统。</p>
+<p><strong>工业以太网</strong>（如 EtherCAT、PROFINET）基于以太网物理层改造，支持子毫秒级实时通信和确定性调度，适合运动控制、PLC 与高精度工业自动化。</p>
+<h2 id="2-典型对照表"><a class="header" href="#2-典型对照表">2. 典型对照表</a></h2>
+<h3 id="1以太网与-tsn"><a class="header" href="#1以太网与-tsn">(1)以太网与 TSN</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>技术</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>备注</th></tr></thead><tbody>
+<tr><td>Ethernet (10M/100M/1G/2.5G/10G)</td><td style="text-align: right">10M–10G</td><td style="text-align: right">100 m(铜)</td><td>星/交换</td><td>非确定</td><td>FCS 校验、交换机转发</td></tr>
+<tr><td>SPE 10BASE‑T1S/T1L</td><td style="text-align: right">10 Mbps</td><td style="text-align: right">25 m / 1 km</td><td>多点/点到点</td><td>可确定(配 TSN)</td><td>单对线、可叠加供电</td></tr>
+<tr><td>100/1000BASE‑T1</td><td style="text-align: right">100M/1G</td><td style="text-align: right">15–40 m</td><td>点到点</td><td>配 TSN</td><td>车载骨干</td></tr>
+<tr><td>TSN (802.1AS/Qbv/等)</td><td style="text-align: right">—</td><td style="text-align: right">—</td><td>—</td><td><strong>确定性</strong></td><td>时间同步/时隙调度</td></tr>
+</tbody></table>
+</div>
+<h3 id="1汽车工业总线"><a class="header" href="#1汽车工业总线">(1)汽车/工业总线</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>用途</th></tr></thead><tbody>
+<tr><td>CAN 2.0 / FD</td><td>差分</td><td style="text-align: right">1M / 数M</td><td style="text-align: right">数十~数百 m</td><td>总线</td><td>软实时</td><td>车身/工业控制</td></tr>
+<tr><td>LIN</td><td>单端</td><td style="text-align: right">20 kbps</td><td style="text-align: right">~40 m</td><td>一主多从</td><td>松实时</td><td>低成本节点</td></tr>
+<tr><td>FlexRay</td><td>差分</td><td style="text-align: right">10 Mbps</td><td style="text-align: right">~24 m</td><td>星/总线</td><td><strong>硬实时</strong></td><td>线控底盘</td></tr>
+<tr><td>工业以太网（EtherCAT/PROFINET 等）</td><td>以太网</td><td style="text-align: right">子 ms 级</td><td style="text-align: right">网段级</td><td>星/线形</td><td>硬/确定</td><td>运动控制/PLC</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

@@ -209,7 +209,7 @@
 </tbody></table>
 </div>
 <h2 id="3-存储与主机接口storagehost"><a class="header" href="#3-存储与主机接口storagehost">3. 存储与主机接口（Storage/Host）</a></h2>
-<h3 id="31-非易失卡类"><a class="header" href="#31-非易失卡类">3.1 非易失/卡类</a></h3>
+<h3 id="1非易失卡类"><a class="header" href="#1非易失卡类">(1)非易失/卡类</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>协议</th><th>介质</th><th style="text-align: right">典型吞吐</th><th>关键特性</th></tr></thead><tbody>
 <tr><td>QSPI/OSPI</td><td>NOR Flash</td><td style="text-align: right">数十~数百 Mbps</td><td>启动/代码执行(XIP)、时序严谨</td></tr>
 <tr><td>eMMC (HS400)</td><td>eMMC 芯片</td><td style="text-align: right">~400 MB/s</td><td>成熟、易用、单芯片</td></tr>
@@ -218,7 +218,7 @@
 <tr><td>SATA (III)</td><td>SSD/HDD</td><td style="text-align: right">~600 MB/s</td><td>工业 PC/老平台兼容</td></tr>
 </tbody></table>
 </div>
-<h3 id="32-高速互联"><a class="header" href="#32-高速互联">3.2 高速互联</a></h3>
+<h3 id="2高速互联"><a class="header" href="#2高速互联">(2)高速互联</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">线速</th><th>典型用途</th></tr></thead><tbody>
 <tr><td>USB 2.0/3.x/USB4</td><td>差分</td><td style="text-align: right">480 Mbps / 5–20+ Gbps</td><td>外设、供电、Type‑C 生态</td></tr>
 <tr><td>PCIe (Gen1–5)</td><td>差分</td><td style="text-align: right">2.5–32 GT/s/lane</td><td>NVMe/加速卡/FPGA 互联</td></tr>
@@ -226,7 +226,7 @@
 </tbody></table>
 </div>
 <h2 id="4-网络与现场总线networkingfieldbus"><a class="header" href="#4-网络与现场总线networkingfieldbus">4. 网络与现场总线（Networking/Fieldbus）</a></h2>
-<h3 id="41-以太网与-tsn"><a class="header" href="#41-以太网与-tsn">4.1 以太网与 TSN</a></h3>
+<h3 id="1以太网与-tsn"><a class="header" href="#1以太网与-tsn">(1)以太网与 TSN</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>技术</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>备注</th></tr></thead><tbody>
 <tr><td>Ethernet (10M/100M/1G/2.5G/10G)</td><td style="text-align: right">10M–10G</td><td style="text-align: right">100 m(铜)</td><td>星/交换</td><td>非确定</td><td>FCS 校验、交换机转发</td></tr>
 <tr><td>SPE 10BASE‑T1S/T1L</td><td style="text-align: right">10 Mbps</td><td style="text-align: right">25 m / 1 km</td><td>多点/点到点</td><td>可确定(配 TSN)</td><td>单对线、可叠加供电</td></tr>
@@ -234,7 +234,7 @@
 <tr><td>TSN (802.1AS/Qbv/等)</td><td style="text-align: right">—</td><td style="text-align: right">—</td><td>—</td><td><strong>确定性</strong></td><td>时间同步/时隙调度</td></tr>
 </tbody></table>
 </div>
-<h3 id="42-汽车工业总线"><a class="header" href="#42-汽车工业总线">4.2 汽车/工业总线</a></h3>
+<h3 id="2汽车工业总线"><a class="header" href="#2汽车工业总线">(2)汽车/工业总线</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>用途</th></tr></thead><tbody>
 <tr><td>CAN 2.0 / FD</td><td>差分</td><td style="text-align: right">1M / 数M</td><td style="text-align: right">数十~数百 m</td><td>总线</td><td>软实时</td><td>车身/工业控制</td></tr>
 <tr><td>LIN</td><td>单端</td><td style="text-align: right">20 kbps</td><td style="text-align: right">~40 m</td><td>一主多从</td><td>松实时</td><td>低成本节点</td></tr>
