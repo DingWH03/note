@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Note of Embedded System</title>
+        <title>调试与编程 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Introduction.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Debug_Program.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,15 +183,24 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>本文档记录一些不全面的嵌入式系统知识。</p>
+                        <h1 id="调试与编程debugprogram"><a class="header" href="#调试与编程debugprogram">调试与编程（Debug/Program）</a></h1>
+<p>调试与编程接口的核心目的，是在器件<strong>上电、带起与量产的全生命周期</strong>中，提供一条<strong>可观测、可控制、可恢复</strong>的通道：开发阶段用于断点、单步、内存/寄存器访问与性能剖析；制造与运维阶段用于<strong>编程、校准、产测与现场升级</strong>；失效时还要能在最小依赖下<strong>抢救系统</strong>并复位到可信状态。与数据通道不同，它更强调<strong>可控性与可见性</strong>，是把“黑盒”变“透明盒”的工程抓手。</p>
+<p>这类接口默认在<strong>近距离、受控环境</strong>下工作，电气上追求<strong>简单、稳妥、对目标系统侵入最小</strong>：信号数尽量少、时序明确、时钟由主机主导，典型特征是<strong>带一个参考电压脚</strong>以适配目标电平，必要时支持<strong>隔离与电平转换</strong>以避免地环路与ESD冲击。为了降低上板成本，常把<strong>调试与编程复用</strong>到同一物理口，既可通过外部探针连接，也可通过<strong>测试点/弹片/床针</strong>在产线快速对接。</p>
+<p>在功能层面，调试通道围绕两类能力展开：其一是<strong>运行控制与可见性</strong>——硬件断点/观察点、单步/继续、寄存器与内存读写、指令/数据跟踪、时间戳与事件计数；其二是<strong>非易失存储访问</strong>——安全擦写、页/扇区编程、校验与版本管理。高阶平台会提供<strong>跨核/跨域的联动触发</strong>与<strong>无侵入追踪</strong>，在不打断实时任务的前提下采集时序与带宽热点；资源受限平台则以<strong>半主机/单线输出/环形日志</strong>等轻量机制换取可观测性。</p>
+<p>可升级性与安全性是量产设备的生命线。可靠的编程/升级路径通常采用<strong>分区与回滚</strong>（A/B Bank 或黄金映像）、<strong>完整性校验与签名</strong>（从Boot开始逐级验证）、<strong>断电保护</strong>（写屏障与掉电恢复）以及<strong>版本门限/反回滚</strong>来阻断降级攻击。为防止量产后被越权访问，设备应在生命周期流转中<strong>熔断/锁定调试口</strong>，或仅在<strong>挑战–响应/证书授权</strong>下短时开放；同时引入<strong>调试访问审计</strong>与速率限制，避免“调试口即后门”。</p>
+<p>从流程看，调试与编程承担“<strong>带起—验证—量产—运维</strong>”的主线闭环：带起阶段以<strong>电源/时钟/复位</strong>为基准逐步点亮外设，配合脚本化的寄存器序列与自检例程；验证阶段以<strong>自动化测试与覆盖率</strong>保证功能与时序边界；量产阶段依赖<strong>产测固件</strong>和<strong>工装脚本</strong>完成烧录、校准与标定数据写入；运维阶段通过<strong>现场或空中升级（OTA）</strong>、<strong>健康信息与日志回收</strong>闭环质量。为了把人力成本降到最低，整套链路应<strong>可脚本化、可回放、可追踪</strong>，失败场景可<strong>幂等重试</strong>。</p>
+<p>在系统影响上，调试口既要<strong>强力</strong>又要<strong>克制</strong>：强力在于能在系统异常时“拉住刹车”，接管时钟与总线并抢救数据；克制在于不让其常驻成本过高，也不让调试探测与追踪<strong>干扰实时性</strong>或引入<strong>时序观测效应</strong>。工程上通常通过<strong>小缓冲+批量输出</strong>、<strong>触发条件采集</strong>与<strong>限速采样</strong>降低扰动；在复杂SoC/多核场景下，以<strong>跨触发矩阵</strong>协调核与外设的时间关系，保证问题可复现、证据可还原。</p>
+<p>最终价值在于：调试与编程接口为产品提供了一条<strong>从硅到云的可信通路</strong>。它把开发效率、量产良率与现场可维护性串成一个闭环，让团队在<strong>最小物料与最小侵入</strong>的前提下，既能高效迭代，又能在异常时快速定位与恢复。合理的物理设计、可靠的安全边界与可自动化的工具链，是这条通路可长期复用与演进的基础。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Interface_Protocol/Wireless.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="Interface_Protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Power_over_Data.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -201,8 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Interface_Protocol/Wireless.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="Interface_Protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Power_over_Data.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +229,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

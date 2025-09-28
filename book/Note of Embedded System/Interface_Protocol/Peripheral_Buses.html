@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Note of Embedded System</title>
+        <title>板级串行外设 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Introduction.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Peripheral_Buses.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,15 +183,24 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>本文档记录一些不全面的嵌入式系统知识。</p>
+                        <h1 id="板级串行外设peripheral-buses"><a class="header" href="#板级串行外设peripheral-buses">板级串行外设（Peripheral Buses）</a></h1>
+<p>板级串行外设总线的核心目的，是在同一块电路板或短线缆内，把主控器件与各类外围器件以<strong>最低的引脚成本和实现复杂度</strong>连接起来，同时满足对<strong>配置、状态读取与中低速数据交换</strong>的常见需求。它们主要承担“控制面”（register/config）的职责，必要时也承载小规模的“数据面”（如音频流或传感器数据），在系统层面与高速互联（USB/PCIe/以太网）与并行存储接口形成互补。</p>
+<p>这类总线有一些共同特征。首先是<strong>短距与近端</strong>：典型工作范围是板内或几十厘米级别，电气设计以器件间的直连或短FPC为主。其次是<strong>轻协议、薄栈</strong>：链路层简单、帧格式紧凑，软件侧多以读写寄存器的事务抽象暴露给驱动和应用。再次是<strong>低～中等吞吐、可预测时延</strong>：虽然不追求极致带宽，但强调主控对外设的快速轮询、命令响应和较低的接口延迟，以支持控制回路与实时采样。</p>
+<p>从系统结构看，它们普遍采用<strong>控制器/目标（controller/target）<strong>的角色划分，通过“寻址”或“片选”来确定对话对象。拓扑多为</strong>点到点或小规模多点</strong>，并以<strong>命令–响应</strong>与<strong>流式传输</strong>两种通信样式为主。同步方式既有<strong>时钟随载的同步</strong>，也有<strong>无需时钟的异步</strong>；部分总线允许总线仲裁或时钟延展来缓解负载差异，但整体仍以主控主动发起、外设被动应答为基本模式。</p>
+<p>电气层面，它们大多采用<strong>单端低电压信号</strong>以降低成本与功耗，极少数场景会选用<strong>差分对</strong>来提升抗干扰与距离。常见设计关注点包括总线电容与上升沿、参考地与回流路径、端接与匹配、跨电压域的电平转换、以及ESD/EMI抑制。由于“近场+轻载”的假设，这些总线通常不设计热插拔与远距离传输；一旦走线变长、线束复杂或电磁环境恶劣，就需要收紧速率、增加隔离/屏蔽或改用更合适的物理层。</p>
+<p>在<strong>实时性与可靠性</strong>方面，板级外设总线通常依赖<strong>主机调度、FIFO/环形缓冲与DMA</strong>来平滑突发流量，靠<strong>超时、重试与简单的应答机制</strong>处理错误；较高层的CRC与故障恢复策略常由上层协议或应用承担。与面向网络的协议不同，它们更强调<strong>本地可控性</strong>与<strong>时序可预见性</strong>，而非跨节点的大规模鲁棒传输。</p>
+<p>软件集成上，这些总线在操作系统与BSP中一般以<strong>统一的总线驱动模型</strong>呈现：控制器驱动负责时序与事务，外设驱动聚焦寄存器表与功能逻辑。为兼顾实时性和可维护性，驱动常提供阻塞/非阻塞接口与中断/DMA两条路径；设备树或板级配置用于声明外设的寻址、片选、极性、时序参数与供电依赖。良好的可测试性同样关键——预留调试点、使用协议分析仪与逻辑分析仪，是定位边界条件与量产问题的常用手段。</p>
+<p>从工程实践看，板级串行外设总线的<strong>价值在于“足够好 + 足够简单”</strong>：以很小的硬件代价，完成大量常规的控制与采集任务。当系统对带宽、距离或确定性提出更高要求时，常见的演进路径是<strong>扩宽同类物理层的并行度/通道数</strong>，或<strong>引入针对性更强的高速/差分互联</strong>，并通过桥接器、扩展器与交换结构平滑过渡。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Interface_Protocol.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="Interface_Protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Display_Camera.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -201,8 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Interface_Protocol.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="Interface_Protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Display_Camera.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +229,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

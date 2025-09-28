@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Chapter 1 - Note of Embedded System</title>
+        <title>显示/摄像头 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/chapter_1.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Display_Camera.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,17 +183,24 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
+                        <h1 id="显示摄像头displaycamera"><a class="header" href="#显示摄像头displaycamera">显示/摄像头（Display/Camera）</a></h1>
+<p>显示与摄像头接口的核心目的，是在主控与面板/成像器件之间建立一条<strong>高带宽、低时延且持续稳定的像素流通道</strong>：向外要把渲染后的图像<strong>按行按帧、准点送达</strong>屏幕，向内要把传感器产出的原始/处理后图像<strong>连续、无丢帧地采回</strong>内存。与此并行，链路通常还携带一条<strong>低速控制面</strong>，用于亮度、背光、曝光、镜头驱动等设置，从而形成“<strong>数据面 + 控制面</strong>”的组合。</p>
+<p>这类接口的工作假设是<strong>近距离、高速、固定带宽</strong>：连接多为板内或短FPC/短线缆，强调像素节奏的确定性而非远距离鲁棒性。链路方向上，显示是<strong>主控→面板</strong>的下行视频流，摄像是<strong>传感器→主控</strong>的上行数据流；两者都把<strong>时序优先</strong>放在第一位，以保证显示无撕裂、采集无漏帧和卡顿。系统层面，它们把大量连续吞吐从通用总线上卸载出来，让CPU/GPU/加速器专注于合成、渲染与视觉算法。</p>
+<p>拓扑形态通常是<strong>点到点的多通道串行</strong>，通过“多车道并行”换取总吞吐；显示侧可能出现<strong>扇出/菊花链</strong>以驱动多块面板或大屏拼接，摄像侧常见<strong>多路聚合</strong>把多颗传感器汇入同一处理器。通信风格以<strong>持续流式传输</strong>为主，帧/行边界由显式时序或嵌入式标记界定；链路设计围绕有效负载、消隐区与抖动预算展开，<strong>像素时钟/线速</strong>直接约束分辨率与刷新率上限。</p>
+<p>电气上，这类接口多采用<strong>低摆幅差分对</strong>以实现多Gbps级传输并抑制EMI。工程关注点集中在<strong>阻抗控制、差分等长、偏斜管理与回流路径</strong>，连接器/FPC的插损与回损直接影响<strong>眼图与误码率</strong>；背光与高压驱动需与高速差分对<strong>分区隔离</strong>。当线束变长或环境恶劣时，通常引入<strong>均衡、预加重、扰码/纠错、链路训练与重同步</strong>等机制以恢复链路裕量。</p>
+<p>在<strong>实时性与可靠性</strong>方面，显示/摄像头链路基本不接受“背压”，系统依赖<strong>DMA、环形缓冲与双/多缓冲</strong>削峰填谷；必要时以<strong>帧丢弃、动态分辨率/帧率调整</strong>维持稳定。时钟与同步通过<strong>帧/行同步信号、时间戳与对时触发</strong>协调，确保图像与其它传感数据的时域一致性。异常处理以<strong>超时、重同步、热插拔检测与链路状态监测</strong>为主，高要求场景还会叠加<strong>隔离、屏蔽与冗余路径</strong>提升容错。</p>
+<p>软件集成方面，显示路径由<strong>合成器/时序控制/页面翻转</strong>统一调度；摄像路径由<strong>媒体管线框架</strong>组织传感器、处理模块与内存之间的流动，以标准化的<strong>像素格式与颜色空间</strong>描述能力边界。低延迟实现依赖<strong>零拷贝/少拷贝缓冲、同步原语（VSync/围栏/时间戳）<strong>与带宽感知的调度策略；验证手段包括</strong>测试图样、颜色条、直方图/噪声统计</strong>以及高速电气的<strong>眼图/抖动/BERT</strong>测量。</p>
+<p>从工程取舍看，显示/摄像头接口的<strong>价值在于“流式、定时、可预期”</strong>：以受控的链路预算换来稳定的像素级通道。当分辨率、刷新率或距离进一步提高时，常见演进是<strong>增加并行通道数、引入高效压缩/编码</strong>，或切换到<strong>更适合远距与复杂线束的物理层</strong>，并借助桥接/重定时器在系统中平滑过渡；本质仍是在<strong>带宽、延迟、功耗、EMI与成本</strong>之间找到均衡点。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="Introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Interface_Protocol/Peripheral_Buses.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="note.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Storage_Host.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -203,11 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="Introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Interface_Protocol/Peripheral_Buses.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="note.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Storage_Host.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -222,13 +229,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

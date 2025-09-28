@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>接口协议 - Note of Embedded System</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of Embedded System</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="接口协议"><a class="header" href="#接口协议">接口协议</a></h1>
+<h2 id="1-板级串行外设peripheral-buses"><a class="header" href="#1-板级串行外设peripheral-buses">1. 板级串行外设（Peripheral Buses）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理/电平</th><th style="text-align: right">典型速率</th><th style="text-align: right">距离(板内/线缆)</th><th>拓扑</th><th>同步</th><th>校验/纠错</th><th>常见用途</th></tr></thead><tbody>
+<tr><td>I²C</td><td>开漏 + 上拉（3.3/5V）</td><td style="text-align: right">100k ~ 3.4M</td><td style="text-align: right">&lt;0.5–1 m</td><td>多主多从总线</td><td>同步</td><td>ACK/NACK</td><td>低速传感器/EEPROM</td></tr>
+<tr><td>I³C</td><td>推挽/开漏混合</td><td style="text-align: right">≤12.5M</td><td style="text-align: right">&lt;0.5 m</td><td>多主</td><td>同步</td><td>CRC（可选）</td><td>传感网络/PMIC</td></tr>
+<tr><td>SPI</td><td>单端</td><td style="text-align: right">10–50M+</td><td style="text-align: right">板内</td><td>主从、片选扇出</td><td>同步</td><td>无内建</td><td>高速外设/ADC/DAC</td></tr>
+<tr><td>QSPI/OSPI</td><td>SPI x4/x8</td><td style="text-align: right">数十–数百 Mbps</td><td style="text-align: right">板内</td><td>主从</td><td>同步</td><td>无内建</td><td>NOR Flash/XIP</td></tr>
+<tr><td>UART (TTL)</td><td>单端</td><td style="text-align: right">9.6k–1M+</td><td style="text-align: right">&lt;3–5 m</td><td>点到点</td><td>异步</td><td>奇偶（可选）</td><td>调试/日志</td></tr>
+<tr><td>RS‑485</td><td>差分</td><td style="text-align: right">≤10M</td><td style="text-align: right">≤1200 m（低速）</td><td>多点总线</td><td>异步</td><td>上层CRC</td><td>工业现场/Modbus RTU</td></tr>
+<tr><td>1‑Wire</td><td>单线</td><td style="text-align: right">~16 kbps</td><td style="text-align: right">&lt;2–5 m</td><td>总线</td><td>时序</td><td>CRC</td><td>ID/简单传感</td></tr>
+<tr><td>I²S/TDM</td><td>单端</td><td style="text-align: right">几M–十几Mbps</td><td style="text-align: right">板内</td><td>主从</td><td>同步</td><td>无内建</td><td>音频流</td></tr>
+<tr><td>PDM</td><td>单端</td><td style="text-align: right">~1–3 Mbps/声道</td><td style="text-align: right">板内</td><td>点到点</td><td>同步</td><td>无内建</td><td>数字麦克风</td></tr>
+<tr><td>SPMI</td><td>MIPI 电源管理</td><td style="text-align: right">≤26 Mbps</td><td style="text-align: right">板内</td><td>多主多从</td><td>同步</td><td>CRC</td><td>PMIC 控制</td></tr>
+</tbody></table>
+</div>
+<h2 id="2-显示与图像接口displaycamera"><a class="header" href="#2-显示与图像接口displaycamera">2. 显示与图像接口（Display/Camera）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">速率级别</th><th style="text-align: right">距离</th><th>拓扑</th><th>用途</th></tr></thead><tbody>
+<tr><td>MIPI DSI</td><td>D‑PHY/C‑PHY</td><td style="text-align: right">Gbps/通道</td><td style="text-align: right">&lt;20–30 cm</td><td>点到点</td><td>面板输出</td></tr>
+<tr><td>MIPI CSI‑2</td><td>D‑PHY/C‑PHY</td><td style="text-align: right">Gbps/通道</td><td style="text-align: right">&lt;20–30 cm</td><td>点到点</td><td>摄像头输入</td></tr>
+<tr><td>LVDS/FPD‑Link</td><td>差分</td><td style="text-align: right">数百 Mbps/对</td><td style="text-align: right">米级</td><td>点到点/菊花链</td><td>显示/摄像传输</td></tr>
+<tr><td>eDP/DP</td><td>差分</td><td style="text-align: right">Gbps级</td><td style="text-align: right">米级</td><td>点到点</td><td>高分显示</td></tr>
+<tr><td>HDMI</td><td>TMDS 差分</td><td style="text-align: right">Gbps级</td><td style="text-align: right">数米</td><td>点到点</td><td>显示+音频</td></tr>
+<tr><td>并行 RGB/DVP</td><td>多根单端</td><td style="text-align: right">由像素时钟决定</td><td style="text-align: right">&lt;10–20 cm</td><td>点到点</td><td>低分辨率显示/摄像</td></tr>
+</tbody></table>
+</div>
+<h2 id="3-存储与主机接口storagehost"><a class="header" href="#3-存储与主机接口storagehost">3. 存储与主机接口（Storage/Host）</a></h2>
+<h3 id="31-非易失卡类"><a class="header" href="#31-非易失卡类">3.1 非易失/卡类</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>介质</th><th style="text-align: right">典型吞吐</th><th>关键特性</th></tr></thead><tbody>
+<tr><td>QSPI/OSPI</td><td>NOR Flash</td><td style="text-align: right">数十~数百 Mbps</td><td>启动/代码执行(XIP)、时序严谨</td></tr>
+<tr><td>eMMC (HS400)</td><td>eMMC 芯片</td><td style="text-align: right">~400 MB/s</td><td>成熟、易用、单芯片</td></tr>
+<tr><td>SD/SDIO (SDR104)</td><td>SD 卡/外设</td><td style="text-align: right">~104 MB/s</td><td>热插拔；SDIO 常接 Wi‑Fi/BT 模块</td></tr>
+<tr><td>UFS (3.x/4.x)</td><td>UFS 芯片</td><td style="text-align: right">1+ GB/s</td><td>并行队列、低延迟</td></tr>
+<tr><td>SATA (III)</td><td>SSD/HDD</td><td style="text-align: right">~600 MB/s</td><td>工业 PC/老平台兼容</td></tr>
+</tbody></table>
+</div>
+<h3 id="32-高速互联"><a class="header" href="#32-高速互联">3.2 高速互联</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">线速</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>USB 2.0/3.x/USB4</td><td>差分</td><td style="text-align: right">480 Mbps / 5–20+ Gbps</td><td>外设、供电、Type‑C 生态</td></tr>
+<tr><td>PCIe (Gen1–5)</td><td>差分</td><td style="text-align: right">2.5–32 GT/s/lane</td><td>NVMe/加速卡/FPGA 互联</td></tr>
+<tr><td>DDR/LPDDR</td><td>混合</td><td style="text-align: right">数 Gbps/bit</td><td>DRAM 内存接口</td></tr>
+</tbody></table>
+</div>
+<h2 id="4-网络与现场总线networkingfieldbus"><a class="header" href="#4-网络与现场总线networkingfieldbus">4. 网络与现场总线（Networking/Fieldbus）</a></h2>
+<h3 id="41-以太网与-tsn"><a class="header" href="#41-以太网与-tsn">4.1 以太网与 TSN</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>技术</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>备注</th></tr></thead><tbody>
+<tr><td>Ethernet (10M/100M/1G/2.5G/10G)</td><td style="text-align: right">10M–10G</td><td style="text-align: right">100 m(铜)</td><td>星/交换</td><td>非确定</td><td>FCS 校验、交换机转发</td></tr>
+<tr><td>SPE 10BASE‑T1S/T1L</td><td style="text-align: right">10 Mbps</td><td style="text-align: right">25 m / 1 km</td><td>多点/点到点</td><td>可确定(配 TSN)</td><td>单对线、可叠加供电</td></tr>
+<tr><td>100/1000BASE‑T1</td><td style="text-align: right">100M/1G</td><td style="text-align: right">15–40 m</td><td>点到点</td><td>配 TSN</td><td>车载骨干</td></tr>
+<tr><td>TSN (802.1AS/Qbv/等)</td><td style="text-align: right">—</td><td style="text-align: right">—</td><td>—</td><td><strong>确定性</strong></td><td>时间同步/时隙调度</td></tr>
+</tbody></table>
+</div>
+<h3 id="42-汽车工业总线"><a class="header" href="#42-汽车工业总线">4.2 汽车/工业总线</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>协议</th><th>物理</th><th style="text-align: right">速率</th><th style="text-align: right">距离</th><th>拓扑</th><th>实时性</th><th>用途</th></tr></thead><tbody>
+<tr><td>CAN 2.0 / FD</td><td>差分</td><td style="text-align: right">1M / 数M</td><td style="text-align: right">数十~数百 m</td><td>总线</td><td>软实时</td><td>车身/工业控制</td></tr>
+<tr><td>LIN</td><td>单端</td><td style="text-align: right">20 kbps</td><td style="text-align: right">~40 m</td><td>一主多从</td><td>松实时</td><td>低成本节点</td></tr>
+<tr><td>FlexRay</td><td>差分</td><td style="text-align: right">10 Mbps</td><td style="text-align: right">~24 m</td><td>星/总线</td><td><strong>硬实时</strong></td><td>线控底盘</td></tr>
+<tr><td>工业以太网（EtherCAT/PROFINET 等）</td><td>以太网</td><td style="text-align: right">子 ms 级</td><td style="text-align: right">网段级</td><td>星/线形</td><td>硬/确定</td><td>运动控制/PLC</td></tr>
+</tbody></table>
+</div>
+<h2 id="5-无线连接wireless"><a class="header" href="#5-无线连接wireless">5. 无线连接（Wireless）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>技术</th><th>频段</th><th>速率级别</th><th>覆盖</th><th>拓扑</th><th>功耗</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>Wi‑Fi 4/5/6/7</td><td>2.4/5/6 GHz</td><td>10^2 Mbps–Gbps</td><td>室内几十米</td><td>星/mesh</td><td>中</td><td>视频/高速数据</td></tr>
+<tr><td>Bluetooth LE 5.x</td><td>2.4 GHz</td><td>125 kbps–2 Mbps</td><td>10–30 m</td><td>星/BLE Mesh</td><td>低</td><td>外设/穿戴/音频</td></tr>
+<tr><td>Zigbee/Thread</td><td>2.4 GHz</td><td>~250 kbps</td><td>室内</td><td>Mesh</td><td>低</td><td>传感/照明（Matter）</td></tr>
+<tr><td>LoRaWAN</td><td>Sub‑GHz</td><td>0.3–50 kbps</td><td>千米级</td><td>星(网关)</td><td>极低</td><td>远距低速</td></tr>
+<tr><td>UWB</td><td>6–8 GHz</td><td>低速</td><td>10–30 m</td><td>点到点/星</td><td>低</td><td>精准测距</td></tr>
+<tr><td>NFC</td><td>13.56 MHz</td><td>≤424 kbps</td><td>几厘米</td><td>点到点</td><td>低</td><td>近场配对/支付</td></tr>
+<tr><td>NB‑IoT/LTE‑M</td><td>运营商</td><td>kbps–百 kbps</td><td>广覆盖</td><td>蜂窝</td><td>低/中</td><td>远距低功耗</td></tr>
+</tbody></table>
+</div>
+<h2 id="6-调试与编程debugprogram"><a class="header" href="#6-调试与编程debugprogram">6. 调试与编程（Debug/Program）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>接口</th><th>层级</th><th>用途</th></tr></thead><tbody>
+<tr><td>JTAG (1149.1)</td><td>边界扫描/调试</td><td>芯片测试、在线编程</td></tr>
+<tr><td>SWD (ARM)</td><td>调试</td><td>ARM 内核调试/烧录（2 线）</td></tr>
+<tr><td>cJTAG (1149.7)</td><td>调试</td><td>低引脚数链路</td></tr>
+<tr><td>UART/USB DFU</td><td>Boot/升级</td><td>量产烧录/现场升级</td></tr>
+</tbody></table>
+</div>
+<h2 id="7-供电与数据复用power-over-data"><a class="header" href="#7-供电与数据复用power-over-data">7. 供电与数据复用（Power over Data）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>技术</th><th>功能</th><th style="text-align: right">指标</th><th>用途</th></tr></thead><tbody>
+<tr><td>USB‑PD (Type‑C)</td><td>供电协商</td><td style="text-align: right">≤240 W(EPR)</td><td>设备供电/快充</td></tr>
+<tr><td>PoE (802.3af/at/bt)</td><td>网线供电</td><td style="text-align: right">13/25/51–90 W</td><td>摄像头/AP/终端</td></tr>
+<tr><td>PMBus/SMBus</td><td>数字电源管理</td><td style="text-align: right">—</td><td>电源监控/告警</td></tr>
+</tbody></table>
+</div>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="Interface_Protocol/Peripheral_Buses.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="Interface_Protocol/Peripheral_Buses.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

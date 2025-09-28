@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Note of Embedded System</title>
+        <title>存储/主机 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Introduction.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Storage_Host.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,15 +183,25 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>本文档记录一些不全面的嵌入式系统知识。</p>
+                        <h1 id="存储主机storagehost"><a class="header" href="#存储主机storagehost">存储/主机（Storage/Host）</a></h1>
+<p>存储/主机接口的核心目的，是为系统提供<strong>大容量、可持续的高速数据通道</strong>与<strong>可启动、可持久的代码与数据承载</strong>：一方面把固件、日志、模型与媒体数据可靠地<strong>落盘与取回</strong>，另一方面把主控与外设/加速器/网卡等<strong>高带宽端口</strong>对接起来，并将热插拔设备与板载器件统一到可管理、可调度的 I/O 体系中。与板级外设“控制面”为主不同，这里更偏向<strong>数据面</strong>，强调吞吐、并发与完整性保障。</p>
+<p>这类接口覆盖四类典型角色：其一是<strong>非易失存储通道</strong>（用于程序启动、数据持久化），可为板载器件或可拔插介质；其二是<strong>主机互联通道</strong>（连接高速外设与扩展槽），承担外设发现、带宽协商与中断/消息传递；其三是<strong>内存接口</strong>（易失存储），用于运行态的大规模读写与高速缓存；其四是<strong>管理/引导路径</strong>，负责从只读介质加载首段代码并在安全策略下建立信任根。无论哪一类，系统范式通常是<strong>发起者/目标</strong>或<strong>主机/设备</strong>模型，配合命令队列、DMA 与中断实现低开销传输。</p>
+<p>共同特征可以概括为：<strong>带宽优先、延迟受控、并发排队</strong>。链路侧强调<strong>多车道/多通道并行</strong>与速率协商；控制面使用<strong>命令—完成</strong>与<strong>深队列</strong>提升 IOPS 与利用率；内存/缓存配合<strong>零拷贝、散聚（scatter–gather）与环形缓冲</strong>减少 CPU 参与度；在热插拔场景下，还需枚举、地址分配、资源映射与<strong>电源状态机</strong>来保证即插即用与低功耗。对实时性要求较高的应用，则通过<strong>QoS/优先级、批处理窗口与中断抑制</strong>在吞吐与尾延之间取舍。</p>
+<p>通信与拓扑多为<strong>点到点的高速差分串行</strong>或<strong>受严格时序约束的并行总线</strong>。前者依赖链路训练、时钟恢复与均衡/预加重，按<strong>帧/包</strong>承载块数据，具备重传与流控能力；后者以<strong>选通信号与数据选通信号</strong>（如数据选通/写掩码/时钟对齐）约束时序，通过校准与训练达到位级对齐。语义上既有<strong>块设备语义</strong>（扇区/页为单位，提交/完成队列驱动）也有<strong>内存映射语义</strong>（按地址空间读写，支持一致性域与缓存策略），两者在操作系统中分别接入<strong>块层/文件系统</strong>与<strong>内存子系统/驱动框架</strong>。</p>
+<p>电气与 SI/PI 角度，这些接口通常工作在<strong>多 Gbps 级差分链路</strong>或<strong>高频并行线束</strong>：设计要点包括<strong>阻抗控制、长度与偏斜匹配、插/回损与通道预算</strong>，以及连接器/FPC 的带宽与耐受；并行总线需关注<strong>时钟抖动、走线拓扑（点对点/飞线/级联）、端接方式</strong>与供电去耦。为降低 EMI 与误码率，链路常引入<strong>扰码、FEC/CRC、重传</strong>与<strong>链路健康监测</strong>；为避免插拔冲击与掉电损坏，电源侧采用<strong>浪涌控制、掉电保护与写入屏障</strong>等策略。</p>
+<p>数据完整性与寿命管理是存储方向的重心。系统依靠<strong>分层校验</strong>（链路 CRC/协议级校验/文件系统校验）、<strong>磨损均衡与坏块管理</strong>、<strong>写放大与垃圾回收优化</strong>来保证介质长期可靠；对内存一侧则采纳<strong>ECC/巡检</strong>降低软错误风险。在安全方面，启动链路需<strong>安全启动/镜像签名/密钥保护</strong>，运行链路则通过<strong>权限隔离、IOMMU 与加密通道</strong>抵御越权 DMA 与数据窃听。</p>
+<p>软件集成上，主机互联与块设备经由<strong>驱动—队列—调度器</strong>三层解耦：驱动负责适配控制器与队列，内核块层负责合并/重排与截止期调度，文件系统提供元数据一致性与崩溃恢复；高吞吐路径强调<strong>批量提交、合并中断、轮询加速</strong>与<strong>IO 路径零拷贝</strong>。内存接口通过<strong>训练/校准</strong>在启动期建立时序窗口，运行期结合<strong>缓存策略、预取与 NUMA</strong>保持带宽与延迟平衡。监控与排障依赖<strong>链路计数器、SMART/健康信息、热图与尾延分布</strong>，并以可重放的 I/O 工作负载进行回归。</p>
+<p>从工程取舍看，存储/主机接口的价值在于为系统提供“快且稳”的数据底座。当分辨率/模型规模/并发连接增长时，常见演进路径包括<strong>提升代际速率/增车道</strong>、<strong>引入压缩/卸载与协处理</strong>、或在板级通过<strong>重定时/均衡与更优连接器</strong>延展距离与链路裕量；本质仍是在<strong>带宽、尾延、功耗、成本、热设计与可维护性</strong>之间找到可复用、可演进的平衡点。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Interface_Protocol/Display_Camera.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="Interface_Protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Networking_Fieldbus.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -201,8 +211,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Interface_Protocol/Display_Camera.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="Interface_Protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Networking_Fieldbus.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +230,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

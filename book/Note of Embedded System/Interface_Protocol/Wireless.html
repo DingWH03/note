@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Note of Embedded System</title>
+        <title>无线连接 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Introduction.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Wireless.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,15 +183,25 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>本文档记录一些不全面的嵌入式系统知识。</p>
+                        <h1 id="无线连接wireless"><a class="header" href="#无线连接wireless">无线连接（Wireless）</a></h1>
+<p>无线连接的核心目的，是在不便布线或需要移动性的场景下，为主控与终端、传感器、边缘网关之间建立一条<strong>无介质、可覆盖与可扩展</strong>的通信通道。它以<strong>空气链路</strong>取代铜线/光纤，承担近距离的人机与设备互联、低功耗传感上报、远距离遥测回传，乃至室内外定位/测距等任务；在系统分工上既可承载控制面的小报文，也能承载数据面的连续流量，并与有线互联、存储/主机接口共同构成完整的数据通道体系。</p>
+<p>这类链路默认在<strong>共享且时变的频谱</strong>上工作，必须与同频/邻频用户“礼让”共存。接入控制依赖<strong>侦听/退避/占空约束</strong>等机制，传输能力取决于<strong>链路预算</strong>（发射功率、接收灵敏度、路径损耗、编码增益）与<strong>频段物理特性</strong>（2.4/5/6 GHz 适合高吞吐近距，Sub-GHz 穿透与覆盖更优）。网络拓扑多为<strong>星型</strong>（终端—网关/接入点）或<strong>网状</strong>（终端兼中继以扩展覆盖），常通过<strong>边缘网关</strong>把本地无线域桥接到以太网/蜂窝/光纤等广域回传。</p>
+<p>与有线不同，无线链路难以提供强确定性，更多采用<strong>统计意义上的可靠与时延控制</strong>。为对抗衰落与干扰，协议层广泛使用<strong>自动重传（ARQ）、前向纠错（FEC）、交织、信道跳变与天线分集/波束成形</strong>等手段；在高密度/高吞吐场景还引入<strong>多用户复用与调度</strong>提升频谱效率。时延与抖动因此呈分布型而非固定上界：从亚毫秒级到数百毫秒乃至秒级，取决于频段规则、占空限制、调度策略与当前干扰水平。</p>
+<p><strong>功耗与寿命</strong>是终端侧的一等公民。低功耗设备依赖<strong>深度睡眠、周期唤醒、同步信标/周期广播、非对称链路</strong>来把“每比特能量”压到最低；为了以纽扣电池/能量采集支撑数年寿命，系统会牺牲吞吐与实时性，换取极低占空与稀疏上报。长距离低速网络常采用<strong>类 ALOHA 的上行主导</strong>与下行窗口，天然存在拥塞与时延尾部拉长；而移动终端与可穿戴则在<strong>扫描/漫游/切换</strong>与续航之间折中。</p>
+<p>安全上，无线把<strong>空口暴露</strong>提升为首要风险，必须以<strong>设备身份、密钥派生与轮换、端到端加密与重放保护</strong>建立最小信任面。实际工程将<strong>配网/配对/入网</strong>视为独立流程，配合<strong>带外凭据/二维码/近场触碰</strong>降低人为差错；上线后依赖<strong>凭据更新、会话密钥滚动与白名单/隔离域</strong>维持长期安全。为应对漏洞与合规要求，<strong>空中升级（OTA）<strong>与</strong>受信启动/度量</strong>成为量产设备的标配能力。</p>
+<p>射频与硬件层面，性能很大程度取决于<strong>天线与布局</strong>而非芯片数据表。工程上需保证<strong>天线匹配/净空/接地回流</strong>与<strong>外壳耦合/手持去调谐</strong>下的稳定性；多制式共存（如近距离高吞吐与低功耗并存）需要<strong>时域复用/频域隔离/前端模块滤波</strong>，避免自干扰。对于高吞吐链路的多天线系统，还要在体积与成本约束下实现<strong>分集/MIMO</strong>与合格的<strong>包络相关系数</strong>。在合规方面，预认证模组能显著缩短周期，但整机仍需<strong>整机辐射/传导与区域法规</strong>验证。</p>
+<p>软件栈集成体现为<strong>事件驱动与状态机密集</strong>：扫描、关联、会话建立、密钥协商、信道切换、功耗状态迁移贯穿设备生命周期。上层抽象既有<strong>套接字/IP</strong>范式，也有<strong>属性/对象</strong>范式（特征/集群/模型），后者便于资源受限设备以结构化方式暴露能力。网关与边缘侧承担<strong>协议桥接、缓存/重发、节流与聚合</strong>，在时延与回传带宽之间平衡；可观测性依赖<strong>RSSI/SNR、丢包率、占空、延迟直方图、能耗画像</strong>等指标闭环优化。</p>
+<p>从工程取舍看，无线连接的价值在于以<strong>覆盖与灵活性</strong>换取<strong>有界但可接受的时延与不确定性</strong>。当需求增长时，常见演进路径是<strong>提高频谱效率与并发调度、增加链路冗余/多路径、引入边缘计算/本地决策、或采用更契合场景的物理层</strong>；但无论走向何处，设计都需在<strong>吞吐、距离、功耗、频谱成本、EMC/合规与互操作</strong>之间找到平衡，并把<strong>配网、密钥、OTA 与可观测性</strong>作为产品可运营、可演进的基础能力。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Interface_Protocol/Networking_Fieldbus.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="Interface_Protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Debug_Program.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -201,8 +211,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Interface_Protocol/Networking_Fieldbus.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="Interface_Protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Debug_Program.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +230,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

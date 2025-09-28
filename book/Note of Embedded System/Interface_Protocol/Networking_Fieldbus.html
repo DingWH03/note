@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Note of Embedded System</title>
+        <title>网络与现场总线 - Note of Embedded System</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of Embedded System</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-embedded" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Introduction.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-embedded/edit/master/src/Interface_Protocol/Networking_Fieldbus.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,15 +183,24 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>本文档记录一些不全面的嵌入式系统知识。</p>
+                        <h1 id="网络与现场总线networkingfieldbus"><a class="header" href="#网络与现场总线networkingfieldbus">网络与现场总线（Networking/Fieldbus）</a></h1>
+<p>网络与现场总线的核心目的，是把控制器、远端 I/O、传感器与执行器在<strong>米级到千米级</strong>范围内可靠联结起来，为<strong>周期性控制与事件驱动通信</strong>提供可预见的带宽、延迟与抖动，同时抵御工业与车载环境中的噪声、震动、温漂与电磁干扰。相较于板级外设与存储/主机接口，这一类更强调<strong>多节点协同、确定性与可维护性</strong>，承担系统的“<strong>控制域数据平面</strong>”与“<strong>设备管理面</strong>”。</p>
+<p>这类网络通常运行在<strong>受控拓扑</strong>上：星形、线形/总线、环形或树形级联；节点数从少量设备到整条产线/整车域都可扩展。通信模型既支持<strong>周期性循环 I/O</strong>（把输入采样与输出刷新锁定在固定节拍内），也支持<strong>非周期参数/诊断</strong>（配置、告警、日志）。为了在规模化下仍然可预期，系统会引入<strong>地址与命名、时间同步、调度与整形、优先级与流控</strong>等机制，把关键流量与背景流量隔离开来。</p>
+<p><strong>确定性</strong>是关键词。典型做法是通过<strong>网络对时</strong>（硬件时间戳、基准时钟分发）与<strong>调度/整形</strong>（时间窗、信用/令牌、守门器）来收紧端到端抖动；对闭环控制，还会限定<strong>最坏情况传输时延</strong>与<strong>迟到/丢帧处置策略</strong>，以确保控制周期不被拖长。与此相配合，交换/转发设备提供<strong>排队与整形队列</strong>、入/出端口<strong>速率限制</strong>与<strong>拥塞标记</strong>，在高负载下维持可用性与公平性。</p>
+<p>电气层面更注重<strong>差分传输、屏蔽与隔离</strong>。从单对双绞线到多对铜缆、到光纤与无线回传，链路选择取决于距离、带宽与工况；常见的<strong>磁隔离/数字隔离</strong>与<strong>接地/屏蔽端接</strong>策略可抑制共模干扰与地环路；在某些应用中，<strong>数据线上叠加供电</strong>降低布线复杂度。对长距离与线束复杂场景，链路会采用<strong>自适应均衡、预加重、纠错与重传</strong>以维持误码率。</p>
+<p>可靠性与安全性方面，网络通常提供<strong>冗余路径与快速收敛</strong>（环网保护、双归属、故障切换）以抵御单点失效；在设备层引入<strong>健康监测与自检</strong>（链路质量、迟到/重传统计、温度/电源告警）以便预测性维护。面向功能安全的场合，会在通用通信之上叠加<strong>安全层</strong>（黑通道思路、序列/超时/端到端校验），以满足系统级安全完整性等级目标。对信息安全，则通过<strong>设备身份、访问控制、分区与加密</strong>保护控制域不被越权访问。</p>
+<p>软件集成强调<strong>可预期与可运维</strong>：实时系统/PLC/域控制器对周期任务进行<strong>固定节拍调度</strong>，I/O 映射与过程数据通过<strong>共享内存/零拷贝</strong>进出应用；非周期流量走<strong>低优先级通道</strong>避免打断关键循环。工程部署依赖<strong>设备描述/对象模型</strong>实现即插即用与跨厂商互操作；调试与运维使用<strong>抓包/时延与抖动测量、拓扑发现、链路健康仪表板</strong>定位瓶颈与隐患，并以<strong>版本/参数基线</strong>管理变更。</p>
+<p>从演进路径看，现场总线正向<strong>以太网化与融合化</strong>发展：一方面把确定性机制引入通用网络，实现<strong>控制流与数据流并存</strong>；另一方面通过<strong>网关/边缘节点</strong>把历史遗留总线整合到统一的管理与数据平台。取舍的本质，仍是在<strong>确定性、带宽、距离、供电、EMC、成本与可维护性</strong>之间达成平衡：既要让关键控制链路“<strong>准时</strong>且<strong>不中断</strong>”，也要让整网在扩展、升级与运维上保持“<strong>可管</strong>且<strong>可演进</strong>”。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Interface_Protocol/Storage_Host.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="Interface_Protocol.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Interface_Protocol/Wireless.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -201,8 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Interface_Protocol/Storage_Host.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="Interface_Protocol.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Interface_Protocol/Wireless.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -217,13 +229,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 
