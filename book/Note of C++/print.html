@@ -1991,52 +1991,91 @@ std::visit(handle, v);
 <tr><td><strong>适配器 (Adapters)</strong></td><td>适配器用于将一种容器或迭代器适配成另一种容器或迭代器，以满足特定的需求。STL 提供了多种适配器，包括栈适配器（stack adapter）、队列适配器（queue adapter）和优先队列适配器（priority queue adapter）等。</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
-<p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
-<div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
-<tr><td><strong>序列容器 (Sequence Containers)</strong></td><td><strong>std::vector</strong></td><td>动态数组，支持快速随机访问。</td></tr>
-<tr><td></td><td><strong>std::deque</strong></td><td>双端队列，支持快速插入和删除。</td></tr>
-<tr><td></td><td><strong>std::list</strong></td><td>链表，支持快速插入和删除，但不支持随机访问。</td></tr>
-<tr><td><strong>关联容器 (Associative Containers)</strong></td><td><strong>std::set</strong></td><td>集合，不允许重复元素。</td></tr>
-<tr><td></td><td><strong>std::multiset</strong></td><td>多重集合，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::map</strong></td><td>映射，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::multimap</strong></td><td>多重映射，存储键值对（pair），其中键是唯一的，但值可以重复，允许一个键映射到多个值。</td></tr>
-<tr><td><strong>无序容器 (Unordered Containers)</strong></td><td><strong>std::unordered_set</strong></td><td>无序集合，哈希表实现，支持快速查找、插入和删除。</td></tr>
-<tr><td></td><td><strong>std::unordered_multiset</strong></td><td>无序多重集合，哈希表实现，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::unordered_map</strong></td><td>无序映射，哈希表实现，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::unordered_multimap</strong></td><td>无序多重映射，哈希表实现，允许一个键映射到多个值。</td></tr>
+<h2 id="摘要"><a class="header" href="#摘要">摘要</a></h2>
+<p><strong>C++ 标准模板库（STL）容器</strong>是用于存储数据的<strong>对象集合</strong>，它们提供了不同的存储方式、内存管理机制和访问模式。理解不同容器的<strong>底层结构</strong>、<strong>时间复杂度</strong>和<strong>内存特性</strong>，是高效进行C++编程的关键。</p>
+<p>STL 容器主要分为三大类：<strong>序列容器</strong>、<strong>关联容器</strong>和<strong>无序容器</strong>。此外，<strong>容器适配器</strong>提供受限接口以模拟特定的数据结构（如栈和队列）。C++23 新增的<strong>扁平容器</strong>则代表了对内存局部性和性能优化的新探索。</p>
+<h2 id="容器总览表"><a class="header" href="#容器总览表">容器总览表</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">容器类别</th><th style="text-align: left">容器名称</th><th style="text-align: left">描述</th><th style="text-align: left">存储特性</th><th style="text-align: left">核心操作复杂度</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>序列容器 (Sequence)</strong></td><td style="text-align: left"><strong>std::array</strong> (C++11)</td><td style="text-align: left">固定大小的静态数组。</td><td style="text-align: left">栈上，连续内存</td><td style="text-align: left">随机访问 \(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::vector</strong></td><td style="text-align: left">动态数组。</td><td style="text-align: left">堆上，连续内存</td><td style="text-align: left">随机访问 \(O(1)\)，末尾增删平均 \(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::deque</strong></td><td style="text-align: left">双端队列。</td><td style="text-align: left">分段连续内存</td><td style="text-align: left">随机访问 \(O(1)\)，头尾增删 \(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::list</strong></td><td style="text-align: left">双向链表。</td><td style="text-align: left">堆上，非连续内存</td><td style="text-align: left">任意位置增删 \(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::forward_list</strong> (C++11)</td><td style="text-align: left">单向链表。</td><td style="text-align: left">堆上，非连续内存</td><td style="text-align: left">头部增删 \(O(1)\)</td></tr>
+<tr><td style="text-align: left"><strong>关联容器 (Associative)</strong></td><td style="text-align: left"><strong>std::set/multiset</strong></td><td style="text-align: left">存储<strong>键</strong>，基于红黑树。</td><td style="text-align: left">红黑树结构，有序</td><td style="text-align: left">查找/增删 \(O(\log n)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::map/multimap</strong></td><td style="text-align: left">存储<strong>键值对</strong>，基于红黑树。</td><td style="text-align: left">红黑树结构，有序</td><td style="text-align: left">查找/增删 \(O(\log n)\)</td></tr>
+<tr><td style="text-align: left"><strong>无序容器 (Unordered)</strong></td><td style="text-align: left"><strong>std::unordered_set/multiset</strong></td><td style="text-align: left">存储<strong>键</strong>，基于哈希表。</td><td style="text-align: left">哈希表结构，无序</td><td style="text-align: left">查找/增删 <strong>平均 \(O(1)\)</strong></td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::unordered_map/multimap</strong></td><td style="text-align: left">存储<strong>键值对</strong>，基于哈希表。</td><td style="text-align: left">哈希表结构，无序</td><td style="text-align: left">查找/增删 <strong>平均 \(O(1)\)</strong></td></tr>
+<tr><td style="text-align: left"><strong>容器适配器 (Adaptors)</strong></td><td style="text-align: left"><strong>std::stack</strong></td><td style="text-align: left">LIFO（后进先出）。</td><td style="text-align: left">默认底层 \(\text{std::deque}\)</td><td style="text-align: left">\(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::queue</strong></td><td style="text-align: left">FIFO（先进先出）。</td><td style="text-align: left">默认底层 \(\text{std::deque}\)</td><td style="text-align: left">\(O(1)\)</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"><strong>std::priority_queue</strong></td><td style="text-align: left">优先级队列（最大堆）。</td><td style="text-align: left">默认底层 \(\text{std::vector}\)</td><td style="text-align: left">插入/删除 \(O(\log n)\)</td></tr>
 </tbody></table>
 </div>
-<h2 id="1-序列容器"><a class="header" href="#1-序列容器">1. 序列容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th>std::list</th><th>std::vector</th><th>std::deque</th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>非连续内存，双向链表</td><td>连续内存</td><td>分段连续内存</td></tr>
-<tr><td><strong>访问性能</strong></td><td>顺序访问较快，随机访问慢</td><td>随机访问快</td><td>末尾和头部访问都快</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>任意位置插入、删除快</td><td>末尾插入快，中间位置慢</td><td>头尾插入、删除快</td></tr>
-<tr><td><strong>适用场景</strong></td><td>频繁在中间插入/删除</td><td>需要高效随机访问</td><td>需要在头尾快速插入/删除</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
+<h2 id="1-序列容器-sequence-containers"><a class="header" href="#1-序列容器-sequence-containers">1. 序列容器 (Sequence Containers)</a></h2>
+<p>序列容器以线性方式排列元素，元素的位置由程序员控制，通常用于构建列表、数组等基础数据结构。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">特性</th><th style="text-align: left"><strong>std::array</strong></th><th style="text-align: left"><strong>std::vector</strong></th><th style="text-align: left"><strong>std::deque</strong></th><th style="text-align: left"><strong>std::forward_list</strong></th><th style="text-align: left"><strong>std::list</strong></th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>内存结构</strong></td><td style="text-align: left"><strong>连续内存</strong> (栈/全局)</td><td style="text-align: left"><strong>连续内存</strong> (堆)</td><td style="text-align: left"><strong>分段连续内存</strong></td><td style="text-align: left">非连续 (单向链表)</td><td style="text-align: left">非连续 (双向链表)</td></tr>
+<tr><td style="text-align: left"><strong>随机访问</strong></td><td style="text-align: left">\(O(1)\) (最快)</td><td style="text-align: left">\(O(1)\) (快)</td><td style="text-align: left">\(O(1)\) (快)</td><td style="text-align: left"><strong>不支持</strong></td><td style="text-align: left"><strong>不支持</strong></td></tr>
+<tr><td style="text-align: left"><strong>头部增删</strong></td><td style="text-align: left"><strong>不支持</strong></td><td style="text-align: left">\(O(n)\)</td><td style="text-align: left">\(O(1)\) (快)</td><td style="text-align: left">\(O(1)\) (最快)</td><td style="text-align: left">\(O(1)\) (快)</td></tr>
+<tr><td style="text-align: left"><strong>尾部增删</strong></td><td style="text-align: left"><strong>不支持</strong></td><td style="text-align: left"><strong>平均 \(O(1)\)</strong> (最快)</td><td style="text-align: left">\(O(1)\) (快)</td><td style="text-align: left">\(O(n)\)</td><td style="text-align: left">\(O(1)\) (快)</td></tr>
+<tr><td style="text-align: left"><strong>迭代器稳定性</strong></td><td style="text-align: left">稳定</td><td style="text-align: left">插入可能失效，删除指向被删元素的失效。</td><td style="text-align: left">插入/删除头尾稳定，中间失效。</td><td style="text-align: left">增删<strong>不会</strong>使其他迭代器失效。</td><td style="text-align: left">增删<strong>不会</strong>使其他迭代器失效。</td></tr>
+<tr><td style="text-align: left"><strong>优势场景</strong></td><td style="text-align: left">编译期确定大小，极高性能。</td><td style="text-align: left"><strong>默认首选</strong>，需随机访问，主要在末尾操作。</td><td style="text-align: left">需头尾快速操作和随机访问的场景。</td><td style="text-align: left"><strong>极度频繁</strong>的插入/删除，内存占用要求低。</td><td style="text-align: left">频繁在<strong>任意位置</strong>插入/删除，需双向遍历。</td></tr>
 </tbody></table>
 </div>
-<h2 id="2-关联容器"><a class="header" href="#2-关联容器">2. 关联容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::set</strong></th><th><strong>std::multiset</strong></th><th><strong>std::map</strong></th><th><strong>std::multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td></tr>
-<tr><td><strong>访问性能</strong></td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持键的有序</td><td>插入、删除时会自动保持键的有序</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要唯一元素且不重复的集合</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>不存在值，只有键（元素）</td><td>不存在值，只有键（元素）</td><td>存在键值对，键映射到一个值</td><td>存在键值对，键映射到多个值（允许重复）</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+<h2 id="2-有序关联容器-ordered-associative-containers"><a class="header" href="#2-有序关联容器-ordered-associative-containers">2. 有序关联容器 (Ordered Associative Containers)</a></h2>
+<p>关联容器基于键 (Key) 进行<strong>有序</strong>存储，通常使用<strong>红黑树</strong>实现。它们自动保持元素/键的排序，适用于需要排序和快速查找的场景。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">特性</th><th style="text-align: left"><strong>std::set</strong></th><th style="text-align: left"><strong>std::multiset</strong></th><th style="text-align: left"><strong>std::map</strong></th><th style="text-align: left"><strong>std::multimap</strong></th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>底层结构</strong></td><td style="text-align: left"><strong>红黑树</strong></td><td style="text-align: left"><strong>红黑树</strong></td><td style="text-align: left"><strong>红黑树</strong></td><td style="text-align: left"><strong>红黑树</strong></td></tr>
+<tr><td style="text-align: left"><strong>操作复杂度</strong></td><td style="text-align: left">查找、插入、删除均为 <strong>\(O(\log n)\)</strong></td><td style="text-align: left">查找、插入、删除均为 <strong>\(O(\log n)\)</strong></td><td style="text-align: left">查找、插入、删除均为 <strong>\(O(\log n)\)</strong></td><td style="text-align: left">查找、插入、删除均为 <strong>\(O(\log n)\)</strong></td></tr>
+<tr><td style="text-align: left"><strong>存储内容</strong></td><td style="text-align: left">仅存储<strong>唯一键</strong></td><td style="text-align: left">存储<strong>可重复键</strong></td><td style="text-align: left">存储<strong>唯一键值对</strong></td><td style="text-align: left">存储<strong>可重复键值对</strong></td></tr>
+<tr><td style="text-align: left"><strong>元素顺序</strong></td><td style="text-align: left"><strong>始终保持排序</strong> (按键)</td><td style="text-align: left"><strong>始终保持排序</strong> (按键)</td><td style="text-align: left"><strong>始终保持排序</strong> (按键)</td><td style="text-align: left"><strong>始终保持排序</strong> (按键)</td></tr>
+<tr><td style="text-align: left"><strong>迭代器稳定性</strong></td><td style="text-align: left">插入或删除<strong>不会</strong>使指向其他元素的迭代器失效。</td><td style="text-align: left">插入或删除<strong>不会</strong>使指向其他元素的迭代器失效。</td><td style="text-align: left">插入或删除<strong>不会</strong>使指向其他元素的迭代器失效。</td><td style="text-align: left">插入或删除<strong>不会</strong>使指向其他元素的迭代器失效。</td></tr>
 </tbody></table>
 </div>
-<h2 id="3-无序容器"><a class="header" href="#3-无序容器">3. 无序容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::unordered_set</strong></th><th><strong>std::unordered_multiset</strong></th><th><strong>std::unordered_map</strong></th><th><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td></tr>
-<tr><td><strong>访问性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要存储唯一元素且不关心顺序</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>存储键，无值</td><td>存储键，无值</td><td>存储键值对，键映射到一个值</td><td>存储键值对，键映射到多个值</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
+<h2 id="3-无序容器-unordered-containers"><a class="header" href="#3-无序容器-unordered-containers">3. 无序容器 (Unordered Containers)</a></h2>
+<p>无序容器 (C++11) 基于 <strong>哈希表</strong> 实现。它们不保证元素顺序，但能提供<strong>极快</strong>的平均性能，适用于不关心元素顺序、追求极致查找速度的场景。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">特性</th><th style="text-align: left"><strong>std::unordered_set</strong></th><th style="text-align: left"><strong>std::unordered_multiset</strong></th><th style="text-align: left"><strong>std::unordered_map</strong></th><th style="text-align: left"><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>底层结构</strong></td><td style="text-align: left"><strong>哈希表</strong> (桶和链表/树)</td><td style="text-align: left"><strong>哈希表</strong></td><td style="text-align: left"><strong>哈希表</strong></td><td style="text-align: left"><strong>哈希表</strong></td></tr>
+<tr><td style="text-align: left"><strong>操作复杂度</strong></td><td style="text-align: left">平均 <strong>\(O(1)\)</strong>，最坏 \(O(n)\)</td><td style="text-align: left">平均 <strong>\(O(1)\)</strong>，最坏 \(O(n)\)</td><td style="text-align: left">平均 <strong>\(O(1)\)</strong>，最坏 \(O(n)\)</td><td style="text-align: left">平均 <strong>\(O(1)\)</strong>，最坏 \(O(n)\)</td></tr>
+<tr><td style="text-align: left"><strong>存储内容</strong></td><td style="text-align: left">仅存储<strong>唯一键</strong></td><td style="text-align: left">存储<strong>可重复键</strong></td><td style="text-align: left">存储<strong>唯一键值对</strong></td><td style="text-align: left">存储<strong>可重复键值对</strong></td></tr>
+<tr><td style="text-align: left"><strong>元素顺序</strong></td><td style="text-align: left"><strong>无序</strong> (取决于哈希值)</td><td style="text-align: left"><strong>无序</strong></td><td style="text-align: left"><strong>无序</strong></td><td style="text-align: left"><strong>无序</strong></td></tr>
+<tr><td style="text-align: left"><strong>迭代器稳定性</strong></td><td style="text-align: left"><strong>不稳定</strong>。 \(\text{rehash}\) (重新散列) 时所有迭代器和引用都会失效。</td><td style="text-align: left"><strong>不稳定</strong>。 \(\text{rehash}\) 时所有迭代器和引用都会失效。</td><td style="text-align: left"><strong>不稳定</strong>。 \(\text{rehash}\) 时所有迭代器和引用都会失效。</td><td style="text-align: left"><strong>不稳定</strong>。 \(\text{rehash}\) 时所有迭代器和引用都会失效。</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
+</div>
+<h2 id="4-c23-扁平容器-flat-containers"><a class="header" href="#4-c23-扁平容器-flat-containers">4. C++23 扁平容器 (Flat Containers)</a></h2>
+<p>C++23 引入的扁平容器旨在优化内存局部性。它们使用<strong>有序的 \(\text{std::vector}\)</strong> 作为底层存储，将键或键值对连续存储，从而利用现代CPU的缓存机制。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">容器名称</th><th style="text-align: left">对应关联容器</th><th style="text-align: left">底层结构</th><th style="text-align: left">查找性能</th><th style="text-align: left">插入/删除性能</th><th style="text-align: left">优势/劣势</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>std::flat_set / multiset</strong></td><td style="text-align: left">\(\text{std::set/multiset}\)</td><td style="text-align: left">有序 \(\text{std::vector}\)</td><td style="text-align: left">\(O(\log n)\) (二分查找，比红黑树更快)</td><td style="text-align: left"><strong>\(O(n)\)</strong> (需要移动元素)</td><td style="text-align: left"><strong>优势</strong>：极低的内存占用和极佳的遍历性能。<strong>劣势</strong>：高昂的插入/删除成本。</td></tr>
+<tr><td style="text-align: left"><strong>std::flat_map / multimap</strong></td><td style="text-align: left">\(\text{std::map/multimap}\)</td><td style="text-align: left">一个或两个有序 \(\text{std::vector}\)</td><td style="text-align: left">\(O(\log n)\) (二分查找，比红黑树更快)</td><td style="text-align: left"><strong>\(O(n)\)</strong> (需要移动元素)</td><td style="text-align: left">适用于元素数量<strong>相对稳定</strong>、需要高查找速度和高效遍历的场景。</td></tr>
+</tbody></table>
+</div>
+<h2 id="5-容器适配器-container-adaptors"><a class="header" href="#5-容器适配器-container-adaptors">5. 容器适配器 (Container Adaptors)</a></h2>
+<p>容器适配器不是独立的容器，而是提供<strong>受限接口</strong>的类模板。它们使用底层容器来模拟特定的数据结构行为。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">容器名称</th><th style="text-align: left">接口模型</th><th style="text-align: left">核心操作</th><th style="text-align: left">默认底层容器</th><th style="text-align: left">可选底层容器</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>std::stack</strong></td><td style="text-align: left"><strong>LIFO</strong> (Last-In, First-Out)</td><td style="text-align: left">\(\text{push()}\), \(\text{pop()}\), \(\text{top()}\)</td><td style="text-align: left">\(\text{std::deque}\)</td><td style="text-align: left">\(\text{std::vector}\), \(\text{std::list}\)</td></tr>
+<tr><td style="text-align: left"><strong>std::queue</strong></td><td style="text-align: left"><strong>FIFO</strong> (First-In, First-Out)</td><td style="text-align: left">\(\text{push()}\), \(\text{pop()}\), \(\text{front()}\)/\(\text{back()}\)</td><td style="text-align: left">\(\text{std::deque}\)</td><td style="text-align: left">\(\text{std::list}\)</td></tr>
+<tr><td style="text-align: left"><strong>std::priority_queue</strong></td><td style="text-align: left">优先级排序 (最大堆)</td><td style="text-align: left">\(\text{push()}\), \(\text{pop()}\), \(\text{top()}\)</td><td style="text-align: left">\(\text{std::vector}\)</td><td style="text-align: left">\(\text{std::deque}\)</td></tr>
+</tbody></table>
+</div>
+<h2 id="6-容器关键概念"><a class="header" href="#6-容器关键概念">6. 容器关键概念</a></h2>
+<h3 id="迭代器-iterators"><a class="header" href="#迭代器-iterators">迭代器 (Iterators)</a></h3>
+<p>迭代器是 STL 的核心，它提供了一种<strong>统一</strong>访问容器元素的方式，类似于指针。</p>
+<ul>
+<li><strong>随机访问迭代器</strong>：支持 \(O(1)\) 时间内的任意跳转（如 \(\text{std::vector}\), \(\text{std::deque}\), \(\text{std::array}\)）。</li>
+<li><strong>双向迭代器</strong>：支持向前和向后移动（如 \(\text{std::list}\), \(\text{std::set}\), \(\text{std::map}\)）。</li>
+<li><strong>前向迭代器</strong>：仅支持向前移动（如 \(\text{std::forward_list}\)）。</li>
+</ul>
+<h3 id="内存分配"><a class="header" href="#内存分配">内存分配</a></h3>
+<ul>
+<li><strong>连续内存</strong>：如 \(\text{std::vector}\) 和 \(\text{std::array}\)。优点是<strong>内存局部性好</strong>，CPU缓存利用率高；缺点是<strong>插入/删除中间元素成本高</strong>（需要移动后续元素）。</li>
+<li><strong>非连续内存</strong>：如 \(\text{std::list}\) 和红黑树/哈希表容器。优点是<strong>插入/删除效率高</strong>；缺点是<strong>内存碎片化</strong>，CPU缓存效率低。</li>
+</ul>
+<h3 id="异常安全-exception-safety"><a class="header" href="#异常安全-exception-safety">异常安全 (Exception Safety)</a></h3>
+<ul>
+<li><strong>强保证</strong>：如果操作失败（抛出异常），容器保持不变。</li>
+<li><strong>基本保证</strong>：如果操作失败，容器处于可用状态，但可能不是原来的状态。</li>
+<li>\(\text{std::vector}\) 的 \(\text{push_back}\) 在需要重新分配内存时，如果复制构造函数抛出异常，可能导致<strong>强保证失效</strong>。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
 <p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
 <h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;vector&gt;
