@@ -4496,7 +4496,336 @@ std::cout &lt;&lt; it-&gt;first &lt;&lt; " -&gt; " &lt;&lt; it-&gt;second &lt;&l
 <li><code>hasher hash_function() const</code>: 返回当前使用的哈希函数</li>
 <li><code>key_equal_type key_eq() const</code>: 返回用于判断键是否相等的谓词</li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
+<div style="break-before: page; page-break-before: always;"></div><h1 id="algorithms"><a class="header" href="#algorithms">Algorithms</a></h1>
+<p>C++ 标准库中的算法 (Algorithms) 是一组强大的函数模板，用于对容器或其他范围（<code>[first, last)</code>）内的元素进行搜索、排序、计数、修改等操作。自 C++20 以来，<strong>Ranges (约束算法)</strong> 的引入极大地简化了算法的使用，并增强了其通用性。C++17 则引入了<strong>执行策略</strong>，允许算法进行并行或乱序执行以提升性能。</p>
+<h2 id="c20-约束算法-constrained-algorithms--ranges"><a class="header" href="#c20-约束算法-constrained-algorithms--ranges">C++20 约束算法 (Constrained Algorithms / Ranges)</a></h2>
+<p><strong>Ranges</strong> 是 C++20 引入的一项革命性特性，它极大地简化了 STL 算法的使用，并增强了它们的组合性。</p>
+<h3 id="核心概念与优势"><a class="header" href="#核心概念与优势">核心概念与优势</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">特性</th><th style="text-align: left">优势和示例</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>单一 Range 参数</strong></td><td style="text-align: left">您不再需要手动传递 <code>begin()</code> 和 <code>end()</code> 迭代器。只需将整个容器（或 Range 视图）作为<strong>一个参数</strong>传递给算法即可。</td></tr>
+<tr><td style="text-align: left"><strong>Projections (投影)</strong></td><td style="text-align: left"><strong>简化复杂对象操作。</strong> 算法可以直接操作容器内元素的某个成员变量或计算结果，而无需使用复杂的 Lambda 表达式。例如，对一个 <code>vector&lt;Person&gt;</code> 按照 <code>Person::age</code> 成员进行排序。</td></tr>
+<tr><td style="text-align: left"><strong>返回类型增强</strong></td><td style="text-align: left"><strong>提供所有有用的信息。</strong> 大多数 <code>std::ranges::</code> 算法不再只返回一个迭代器，而是返回一个包含所有相关结果的<strong>结构体</strong>（如 <code>std::ranges::sort_result</code>）。例如，<code>ranges::copy</code> 会返回输入范围和输出范围的结束迭代器，方便后续操作。</td></tr>
+<tr><td style="text-align: left"><strong>更强的约束</strong></td><td style="text-align: left">它们是“约束算法”，这意味着它们使用 C++20 的 <strong>Concepts</strong> 确保传入的迭代器和 Range 满足算法所需的最低要求，从而提供<strong>更清晰的编译错误</strong>。</td></tr>
+</tbody></table>
+</div>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v{7, 1, 4, 0, -1};
+
+// 经典算法：需要显式传入begin()和end()
+std::sort(v.begin(), v.end());
+
+// C++20 Ranges 算法：更简洁
+std::ranges::sort(v);
+</code></pre>
+<hr />
+<h2 id="c17c20-执行策略-execution-policies"><a class="header" href="#c17c20-执行策略-execution-policies">C++17/C++20 执行策略 (Execution Policies)</a></h2>
+<p><strong>执行策略</strong> 是 C++17 引入的功能，它允许程序员通过向算法传递一个策略对象，来指示算法如何执行——是串行、并行还是乱序执行，从而在多核 CPU 上实现<strong>性能优化</strong>。</p>
+<h3 id="核心策略类型"><a class="header" href="#核心策略类型">核心策略类型</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">策略类型</th><th style="text-align: left">全局对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong><code>sequenced_policy</code></strong></td><td style="text-align: left"><code>seq</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>序列化执行</strong>：算法按顺序执行，不会使用并行或乱序操作。这是所有算法的默认行为。</td></tr>
+<tr><td style="text-align: left"><strong><code>parallel_policy</code></strong></td><td style="text-align: left"><code>par</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>并行执行</strong>：算法可以在不同的线程中并发执行。它保证了并发性，但不保证指令的顺序。</td></tr>
+<tr><td style="text-align: left"><strong><code>parallel_unsequenced_policy</code></strong></td><td style="text-align: left"><code>par_unseq</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>并行且乱序执行</strong>：结合了并行和乱序执行，允许并发执行，同时允许编译器进行<strong>矢量化 (vectorization)</strong> 优化。</td></tr>
+<tr><td style="text-align: left"><strong><code>unsequenced_policy</code></strong></td><td style="text-align: left"><code>unseq</code></td><td style="text-align: left">C++20</td><td style="text-align: left"><strong>乱序执行</strong>：<strong>不保证并行</strong>，但允许编译器对单个线程中的操作进行乱序处理（矢量化），以提高性能。</td></tr>
+</tbody></table>
+</div>
+<p><strong>头文件：</strong> 所有执行策略都定义在 <code>&lt;execution&gt;</code> 头文件中，并位于 <code>std::execution</code> 命名空间下（尽管全局对象如 <code>std::par</code> 在 <code>std</code> 命名空间）。</p>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">#include &lt;algorithm&gt;
+#include &lt;execution&gt;
+#include &lt;vector&gt;
+
+std::vector&lt;int&gt; data = ...;
+
+// 使用并行策略对数据进行排序，以利用多核CPU
+std::sort(std::execution::par, data.begin(), data.end());
+
+// C++20 Ranges 版本也支持策略（如果算法有重载）
+std::ranges::sort(std::execution::par, data);
+</code></pre>
+<h3 id="并行算法的技术限制"><a class="header" href="#并行算法的技术限制">并行算法的技术限制</a></h3>
+<p>在使用执行策略时，有一个关键的<strong>安全限制</strong>需要注意：</p>
+<p>对于大多数并行算法（除了 <code>std::for_each</code> 和 <code>std::for_each_n</code>）：</p>
+<ul>
+<li>如果 Range 中的元素类型 \( T \) 满足 <strong>Trivial Copy Construction</strong> (<code>std::is_trivially_copy_constructible_v&lt;T&gt; == true</code>) 和 <strong>Trivial Destruction</strong> (<code>std::is_trivially_destructible_v&lt;T&gt; == true</code>)，<strong>库可以对元素进行任意复制</strong>，以便在不同的并行线程之间分发数据。</li>
+</ul>
+<p><strong>这意味着：</strong> 如果你的自定义对象具有非平凡（复杂）的构造函数、析构函数或资源管理，使用并行策略时需要额外小心，以确保你的操作是线程安全的。对于基本类型（如 <code>int</code>, <code>float</code>）和简单的 C 结构体，这通常不是问题。</p>
+<h2 id="一非修改序列操作-non-modifying-sequence-operations"><a class="header" href="#一非修改序列操作-non-modifying-sequence-operations">一、非修改序列操作 (Non-modifying sequence operations)</a></h2>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;algorithm&gt;</code></strong>：包含绝大多数经典的非修改序列操作。</li>
+<li><strong><code>&lt;ranges&gt;</code></strong>：包含所有 <code>ranges::</code> 版本的算法。</li>
+</ul>
+<h3 id="批处理操作-batch-operations"><a class="header" href="#批处理操作-batch-operations">批处理操作 (Batch operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">批处理操作 (Batch operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>for_each</strong> / <strong>ranges::for_each</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对范围内的元素应用一个一元函数对象</td></tr>
+<tr><td style="text-align: left"><strong>for_each_n</strong> / <strong>ranges::for_each_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对序列的前 \( N \) 个元素应用一个函数对象</td></tr>
+</tbody></table>
+</div>
+<h3 id="搜索操作-search-operations"><a class="header" href="#搜索操作-search-operations">搜索操作 (Search operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">搜索操作 (Search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>all_of</strong> / <strong>ranges::all_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>所有</strong>元素是否为真</td></tr>
+<tr><td style="text-align: left"><strong>any_of</strong> / <strong>ranges::any_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>任一</strong>元素是否为真</td></tr>
+<tr><td style="text-align: left"><strong>none_of</strong> / <strong>ranges::none_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>所有</strong>元素是否为假</td></tr>
+<tr><td style="text-align: left"><strong>ranges::contains</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查范围是否包含给定元素</td></tr>
+<tr><td style="text-align: left"><strong>ranges::contains_subrange</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查范围是否包含给定子范围</td></tr>
+<tr><td style="text-align: left"><strong>find</strong> / <strong>ranges::find</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找满足特定条件的<strong>第一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>find_if</strong> / <strong>ranges::find_if</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找满足<strong>谓词</strong>的<strong>第一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>find_if_not</strong> / <strong>ranges::find_if_not</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找<strong>不满足谓词</strong>的<strong>第一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>ranges::find_last</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">查找满足特定条件的<strong>最后一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>ranges::find_last_if</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">查找满足<strong>谓词</strong>的<strong>最后一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>ranges::find_last_if_not</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">查找<strong>不满足谓词</strong>的<strong>最后一个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>find_end</strong> / <strong>ranges::find_end</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找某一范围内的<strong>最后一个</strong>序列</td></tr>
+<tr><td style="text-align: left"><strong>find_first_of</strong> / <strong>ranges::find_first_of</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">搜索一组元素中的<strong>任意一个</strong></td></tr>
+<tr><td style="text-align: left"><strong>adjacent_find</strong> / <strong>ranges::adjacent_find</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找<strong>第一个</strong>两个相邻且相等的项（或满足给定谓词）</td></tr>
+<tr><td style="text-align: left"><strong>count</strong> / <strong>ranges::count</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回满足特定条件的元素的<strong>数量</strong></td></tr>
+<tr><td style="text-align: left"><strong>count_if</strong> / <strong>ranges::count_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回满足<strong>谓词</strong>的元素的<strong>数量</strong></td></tr>
+<tr><td style="text-align: left"><strong>mismatch</strong> / <strong>ranges::mismatch</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找两个范围<strong>第一次不同</strong>的位置</td></tr>
+<tr><td style="text-align: left"><strong>equal</strong> / <strong>ranges::equal</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定两组元素是否<strong>相同</strong></td></tr>
+<tr><td style="text-align: left"><strong>search</strong> / <strong>ranges::search</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">搜索一个元素范围的<strong>第一次出现</strong></td></tr>
+<tr><td style="text-align: left"><strong>search_n</strong> / <strong>ranges::search_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">搜索一个元素在范围中<strong>连续出现 \( N \) 次</strong>的第一次出现</td></tr>
+<tr><td style="text-align: left"><strong>ranges::starts_with</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否<strong>以另一个范围开始</strong></td></tr>
+<tr><td style="text-align: left"><strong>ranges::ends_with</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否<strong>以另一个范围结束</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="折叠操作-fold-operations"><a class="header" href="#折叠操作-fold-operations">折叠操作 (Fold operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">折叠操作 (Fold operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>ranges::fold_left</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>左折叠</strong></td></tr>
+<tr><td style="text-align: left"><strong>ranges::fold_left_first</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>第一个元素</strong>作为初始值对一系列元素进行<strong>左折叠</strong></td></tr>
+<tr><td style="text-align: left"><strong>ranges::fold_right</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>右折叠</strong></td></tr>
+<tr><td style="text-align: left"><strong>ranges::fold_right_last</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>最后一个元素</strong>作为初始值对一系列元素进行<strong>右折叠</strong></td></tr>
+<tr><td style="text-align: left"><strong>ranges::fold_left_with_iter</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>左折叠</strong>，并返回 (迭代器, 值) 对</td></tr>
+<tr><td style="text-align: left"><strong>ranges::fold_left_first_with_iter</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>第一个元素</strong>作为初始值对一系列元素进行<strong>左折叠</strong>，并返回 (迭代器, 可选值) 对</td></tr>
+</tbody></table>
+</div>
+<h2 id="二修改序列操作-modifying-sequence-operations"><a class="header" href="#二修改序列操作-modifying-sequence-operations">二、修改序列操作 (Modifying sequence operations)</a></h2>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;algorithm&gt;</code></strong>：包含绝大多数经典的修改序列操作。</li>
+<li><strong><code>&lt;ranges&gt;</code></strong>：包含所有 <code>ranges::</code> 版本的算法。</li>
+<li><strong><code>&lt;utility&gt;</code></strong>：包含 <code>std::swap</code> 和 <code>std::iter_swap</code>。</li>
+</ul>
+<h3 id="复制操作-copy-operations"><a class="header" href="#复制操作-copy-operations">复制操作 (Copy operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">复制操作 (Copy operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>copy</strong> / <strong>ranges::copy</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>复制</strong>到一个新位置</td></tr>
+<tr><td style="text-align: left"><strong>copy_if</strong> / <strong>ranges::copy_if</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>有条件地复制</strong>一个元素范围到新位置</td></tr>
+<tr><td style="text-align: left"><strong>copy_n</strong> / <strong>ranges::copy_n</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将<strong>指定数量</strong>的元素复制到一个新位置</td></tr>
+<tr><td style="text-align: left"><strong>copy_backward</strong> / <strong>ranges::copy_backward</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">以<strong>向后顺序复制</strong>一个元素范围</td></tr>
+<tr><td style="text-align: left"><strong>move</strong> / <strong>ranges::move</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>移动</strong>到一个新位置</td></tr>
+<tr><td style="text-align: left"><strong>move_backward</strong> / <strong>ranges::move_backward</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">以<strong>向后顺序移动</strong>一个元素范围</td></tr>
+</tbody></table>
+</div>
+<h3 id="交换操作-swap-operations"><a class="header" href="#交换操作-swap-operations">交换操作 (Swap operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">交换操作 (Swap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>swap</strong></td><td style="text-align: left">(C++11)</td><td style="text-align: left"><code>&lt;utility&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个对象的值</td></tr>
+<tr><td style="text-align: left"><strong>swap_ranges</strong> / <strong>ranges::swap_ranges</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个元素范围</td></tr>
+<tr><td style="text-align: left"><strong>iter_swap</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;utility&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个迭代器所指向的元素</td></tr>
+</tbody></table>
+</div>
+<h3 id="变换操作-transformation-operations"><a class="header" href="#变换操作-transformation-operations">变换操作 (Transformation operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">变换操作 (Transformation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>transform</strong> / <strong>ranges::transform</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对一个元素范围<strong>应用一个函数</strong>，并将结果存储在目标范围中</td></tr>
+<tr><td style="text-align: left"><strong>replace</strong> / <strong>ranges::replace</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将所有满足特定条件的值<strong>替换</strong>为另一个值</td></tr>
+<tr><td style="text-align: left"><strong>replace_if</strong> / <strong>ranges::replace_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将所有满足<strong>谓词</strong>的值<strong>替换</strong>为另一个值</td></tr>
+<tr><td style="text-align: left"><strong>replace_copy</strong> / <strong>ranges::replace_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，并将满足特定条件的元素<strong>替换</strong>为另一个值</td></tr>
+<tr><td style="text-align: left"><strong>replace_copy_if</strong> / <strong>ranges::replace_copy_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，并将满足<strong>谓词</strong>的元素<strong>替换</strong>为另一个值</td></tr>
+</tbody></table>
+</div>
+<h3 id="生成操作-generation-operations"><a class="header" href="#生成操作-generation-operations">生成操作 (Generation operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">生成操作 (Generation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>fill</strong> / <strong>ranges::fill</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将给定值<strong>赋值</strong>给范围内的每个元素</td></tr>
+<tr><td style="text-align: left"><strong>fill_n</strong> / <strong>ranges::fill_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将给定值<strong>赋值</strong>给范围内的 \( N \) 个元素</td></tr>
+<tr><td style="text-align: left"><strong>generate</strong> / <strong>ranges::generate</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将连续函数调用的结果<strong>赋值</strong>给范围内的每个元素</td></tr>
+<tr><td style="text-align: left"><strong>generate_n</strong> / <strong>ranges::generate_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将连续 \( N \) 次函数调用的结果<strong>赋值</strong>给范围内的 \( N \) 个元素</td></tr>
+</tbody></table>
+</div>
+<h3 id="移除操作-removing-operations"><a class="header" href="#移除操作-removing-operations">移除操作 (Removing operations)</a></h3>
+<p>这里的“移除”通常是<strong>逻辑移除</strong>，通过将未被移除的元素移动到范围的前部来实现，并返回新的逻辑尾部。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">移除操作 (Removing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>remove</strong> / <strong>ranges::remove</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>满足特定条件的元素（逻辑移除）</td></tr>
+<tr><td style="text-align: left"><strong>remove_if</strong> / <strong>ranges::remove_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>满足<strong>谓词</strong>的元素（逻辑移除）</td></tr>
+<tr><td style="text-align: left"><strong>remove_copy</strong> / <strong>ranges::remove_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，<strong>省略</strong>满足特定条件的元素</td></tr>
+<tr><td style="text-align: left"><strong>remove_copy_if</strong> / <strong>ranges::remove_copy_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，<strong>省略</strong>满足<strong>谓词</strong>的元素</td></tr>
+<tr><td style="text-align: left"><strong>unique</strong> / <strong>ranges::unique</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>范围内的<strong>连续重复</strong>元素（逻辑移除）</td></tr>
+<tr><td style="text-align: left"><strong>unique_copy</strong> / <strong>ranges::unique_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>创建</strong>一个不含<strong>连续重复</strong>元素的范围<strong>副本</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="顺序改变操作-order-changing-operations"><a class="header" href="#顺序改变操作-order-changing-operations">顺序改变操作 (Order-changing operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">顺序改变操作 (Order-changing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>reverse</strong> / <strong>ranges::reverse</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>反转</strong>范围内的元素顺序</td></tr>
+<tr><td style="text-align: left"><strong>reverse_copy</strong> / <strong>ranges::reverse_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>创建</strong>一个<strong>反转</strong>后的范围<strong>副本</strong></td></tr>
+<tr><td style="text-align: left"><strong>rotate</strong> / <strong>ranges::rotate</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>旋转</strong>范围内的元素顺序</td></tr>
+<tr><td style="text-align: left"><strong>rotate_copy</strong> / <strong>ranges::rotate_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>并<strong>旋转</strong>一个元素范围</td></tr>
+<tr><td style="text-align: left"><strong>shift_left</strong> / <strong>ranges::shift_left</strong></td><td style="text-align: left">(C++20) / (C++23)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>左移</strong>范围内的元素</td></tr>
+<tr><td style="text-align: left"><strong>shift_right</strong> / <strong>ranges::shift_right</strong></td><td style="text-align: left">(C++20) / (C++23)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>右移</strong>范围内的元素</td></tr>
+<tr><td style="text-align: left"><strong>shuffle</strong> / <strong>ranges::shuffle</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>随机重新排序</strong>范围内的元素</td></tr>
+</tbody></table>
+</div>
+<h3 id="采样操作-sampling-operations"><a class="header" href="#采样操作-sampling-operations">采样操作 (Sampling operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">采样操作 (Sampling operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>sample</strong> / <strong>ranges::sample</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">从序列中<strong>选择 \( N \) 个随机元素</strong></td></tr>
+</tbody></table>
+</div>
+<h2 id="三排序及相关操作-sorting-and-related-operations"><a class="header" href="#三排序及相关操作-sorting-and-related-operations">三、排序及相关操作 (Sorting and related operations)</a></h2>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;algorithm&gt;</code></strong>：包含绝大多数经典的排序及相关操作。</li>
+<li><strong><code>&lt;ranges&gt;</code></strong>：包含所有 <code>ranges::</code> 版本的算法。</li>
+</ul>
+<h3 id="分区操作-partitioning-operations"><a class="header" href="#分区操作-partitioning-operations">分区操作 (Partitioning operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">分区操作 (Partitioning operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>is_partitioned</strong> / <strong>ranges::is_partitioned</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定范围是否被给定谓词<strong>分区</strong></td></tr>
+<tr><td style="text-align: left"><strong>partition</strong> / <strong>ranges::partition</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>划分</strong>为两组</td></tr>
+<tr><td style="text-align: left"><strong>partition_copy</strong> / <strong>ranges::partition_copy</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，将元素<strong>划分</strong>为两组</td></tr>
+<tr><td style="text-align: left"><strong>stable_partition</strong> / <strong>ranges::stable_partition</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将元素<strong>划分</strong>为两组，同时<strong>保持</strong>它们的<strong>相对顺序</strong></td></tr>
+<tr><td style="text-align: left"><strong>partition_point</strong> / <strong>ranges::partition_point</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>定位</strong>一个已分区范围的<strong>分区点</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="排序操作-sorting-operations"><a class="header" href="#排序操作-sorting-operations">排序操作 (Sorting operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">排序操作 (Sorting operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>sort</strong> / <strong>ranges::sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个范围<strong>排序</strong>为升序</td></tr>
+<tr><td style="text-align: left"><strong>stable_sort</strong> / <strong>ranges::stable_sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个元素范围，同时<strong>保持</strong>相等元素间的<strong>相对顺序</strong></td></tr>
+<tr><td style="text-align: left"><strong>partial_sort</strong> / <strong>ranges::partial_sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个范围的<strong>前 \( N \) 个</strong>元素</td></tr>
+<tr><td style="text-align: left"><strong>partial_sort_copy</strong> / <strong>ranges::partial_sort_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>并<strong>部分排序</strong>一个元素范围</td></tr>
+<tr><td style="text-align: left"><strong>is_sorted</strong> / <strong>ranges::is_sorted</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否已<strong>排序</strong>为升序</td></tr>
+<tr><td style="text-align: left"><strong>is_sorted_until</strong> / <strong>ranges::is_sorted_until</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找<strong>最大</strong>的<strong>已排序子范围</strong></td></tr>
+<tr><td style="text-align: left"><strong>nth_element</strong> / <strong>ranges::nth_element</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>部分排序</strong>给定范围，确保它被给定元素<strong>分区</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="二分搜索操作-binary-search-operations"><a class="header" href="#二分搜索操作-binary-search-operations">二分搜索操作 (Binary search operations)</a></h3>
+<p>这些操作要求输入范围<strong>必须是已排序</strong>的。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">二分搜索操作 (Binary search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>lower_bound</strong> / <strong>ranges::lower_bound</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>第一个不小于</strong>给定值的元素的迭代器</td></tr>
+<tr><td style="text-align: left"><strong>upper_bound</strong> / <strong>ranges::upper_bound</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>第一个大于</strong>给定值的元素的迭代器</td></tr>
+<tr><td style="text-align: left"><strong>equal_range</strong> / <strong>ranges::equal_range</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>匹配</strong>特定键的元素的<strong>范围</strong></td></tr>
+<tr><td style="text-align: left"><strong>binary_search</strong> / <strong>ranges::binary_search</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定一个元素是否存在于一个<strong>部分有序</strong>的范围中</td></tr>
+</tbody></table>
+</div>
+<h3 id="集合操作-set-operations"><a class="header" href="#集合操作-set-operations">集合操作 (Set operations)</a></h3>
+<p>这些操作要求输入范围<strong>必须是已排序</strong>的。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">集合操作 (Set operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>includes</strong> / <strong>ranges::includes</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">如果一个序列是另一个序列的<strong>子序列</strong>则返回 true</td></tr>
+<tr><td style="text-align: left"><strong>set_union</strong> / <strong>ranges::set_union</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>并集</strong></td></tr>
+<tr><td style="text-align: left"><strong>set_intersection</strong> / <strong>ranges::set_intersection</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>交集</strong></td></tr>
+<tr><td style="text-align: left"><strong>set_difference</strong> / <strong>ranges::set_difference</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>差集</strong></td></tr>
+<tr><td style="text-align: left"><strong>set_symmetric_difference</strong> / <strong>ranges::set_symmetric_difference</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>对称差集</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="合并操作-merge-operations"><a class="header" href="#合并操作-merge-operations">合并操作 (Merge operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">合并操作 (Merge operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>merge</strong> / <strong>ranges::merge</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>合并</strong>两个已排序的范围</td></tr>
+<tr><td style="text-align: left"><strong>inplace_merge</strong> / <strong>ranges::inplace_merge</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">在<strong>原地</strong>合并两个有序范围</td></tr>
+</tbody></table>
+</div>
+<h3 id="堆操作-heap-operations"><a class="header" href="#堆操作-heap-operations">堆操作 (Heap operations)</a></h3>
+<p>这些操作用于维护最大堆 (max heap) 的属性。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">堆操作 (Heap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>push_heap</strong> / <strong>ranges::push_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">向<strong>最大堆</strong>中添加一个元素</td></tr>
+<tr><td style="text-align: left"><strong>pop_heap</strong> / <strong>ranges::pop_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">从<strong>最大堆</strong>中移除最大的元素</td></tr>
+<tr><td style="text-align: left"><strong>make_heap</strong> / <strong>ranges::make_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>创建</strong>为<strong>最大堆</strong></td></tr>
+<tr><td style="text-align: left"><strong>sort_heap</strong> / <strong>ranges::sort_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个<strong>最大堆</strong>转换为一个<strong>升序排序</strong>的元素范围</td></tr>
+<tr><td style="text-align: left"><strong>is_heap</strong> / <strong>ranges::is_heap</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查给定范围是否为<strong>最大堆</strong></td></tr>
+<tr><td style="text-align: left"><strong>is_heap_until</strong> / <strong>ranges::is_heap_until</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找作为<strong>最大堆</strong>的<strong>最大子范围</strong></td></tr>
+</tbody></table>
+</div>
+<h3 id="最小最大操作-minimummaximum-operations"><a class="header" href="#最小最大操作-minimummaximum-operations">最小/最大操作 (Minimum/maximum operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">最小/最大操作 (Minimum/maximum operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>max</strong> / <strong>ranges::max</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回给定值中的<strong>较大者</strong></td></tr>
+<tr><td style="text-align: left"><strong>max_element</strong> / <strong>ranges::max_element</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回范围中的<strong>最大元素</strong></td></tr>
+<tr><td style="text-align: left"><strong>min</strong> / <strong>ranges::min</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回给定值中的<strong>较小者</strong></td></tr>
+<tr><td style="text-align: left"><strong>min_element</strong> / <strong>ranges::min_element</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回范围中的<strong>最小元素</strong></td></tr>
+<tr><td style="text-align: left"><strong>minmax</strong> / <strong>ranges::minmax</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回两个元素中的<strong>较小者</strong>和<strong>较大者</strong></td></tr>
+<tr><td style="text-align: left"><strong>minmax_element</strong> / <strong>ranges::minmax_element</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回范围中的<strong>最小</strong>和<strong>最大元素</strong></td></tr>
+<tr><td style="text-align: left"><strong>clamp</strong> / <strong>ranges::clamp</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个值<strong>钳制</strong>在一对边界值之间</td></tr>
+</tbody></table>
+</div>
+<h3 id="字典序比较操作-lexicographical-comparison-operations"><a class="header" href="#字典序比较操作-lexicographical-comparison-operations">字典序比较操作 (Lexicographical comparison operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">字典序比较操作 (Lexicographical comparison operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>lexicographical_compare</strong> / <strong>ranges::lexicographical_compare</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">如果一个范围<strong>字典序上小于</strong>另一个，则返回 true</td></tr>
+<tr><td style="text-align: left"><strong>lexicographical_compare_three_way</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code></td><td style="text-align: left">使用<strong>三路比较</strong>比较两个范围</td></tr>
+</tbody></table>
+</div>
+<h3 id="排列操作-permutation-operations"><a class="header" href="#排列操作-permutation-operations">排列操作 (Permutation operations)</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">排列操作 (Permutation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>next_permutation</strong> / <strong>ranges::next_permutation</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">生成范围元素的<strong>下一个更大</strong>的字典序排列</td></tr>
+<tr><td style="text-align: left"><strong>prev_permutation</strong> / <strong>ranges::prev_permutation</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">生成范围元素的<strong>下一个更小</strong>的字典序排列</td></tr>
+<tr><td style="text-align: left"><strong>is_permutation</strong> / <strong>ranges::is_permutation</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定一个序列是否是另一个序列的<strong>排列</strong></td></tr>
+</tbody></table>
+</div>
+<h2 id="四数值操作-numeric-operations"><a class="header" href="#四数值操作-numeric-operations">四、数值操作 (Numeric operations)</a></h2>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;numeric&gt;</code></strong>：包含所有传统的数值算法和 C++17 的并行数值算法。</li>
+<li><strong><code>&lt;ranges&gt;</code></strong>：包含 <code>ranges::iota</code>。</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">数值操作 (Numeric operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>iota</strong> / <strong>ranges::iota</strong></td><td style="text-align: left">(C++11) / (C++23)</td><td style="text-align: left"><code>&lt;numeric&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">用<strong>递增</strong>的起始值填充一个范围</td></tr>
+<tr><td style="text-align: left"><strong>accumulate</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">对一个元素范围<strong>求和</strong>或<strong>折叠</strong></td></tr>
+<tr><td style="text-align: left"><strong>inner_product</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">计算两个元素范围的<strong>内积</strong></td></tr>
+<tr><td style="text-align: left"><strong>adjacent_difference</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">计算一个范围中<strong>相邻元素</strong>之间的<strong>差值</strong></td></tr>
+<tr><td style="text-align: left"><strong>partial_sum</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">计算一个元素范围的<strong>部分和</strong></td></tr>
+<tr><td style="text-align: left"><strong>reduce</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">类似于 <code>std::accumulate</code>，但<strong>无序</strong></td></tr>
+<tr><td style="text-align: left"><strong>exclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">类似于 <code>std::partial_sum</code>，但<strong>不包括</strong>第 \( N \) 个输入元素在第 \( N \) 个和中</td></tr>
+<tr><td style="text-align: left"><strong>inclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">类似于 <code>std::partial_sum</code>，<strong>包括</strong>第 \( N \) 个输入元素在第 \( N \) 个和中</td></tr>
+<tr><td style="text-align: left"><strong>transform_reduce</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后<strong>无序归约</strong></td></tr>
+<tr><td style="text-align: left"><strong>transform_exclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后计算<strong>独占扫描</strong></td></tr>
+<tr><td style="text-align: left"><strong>transform_inclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后计算<strong>包含扫描</strong></td></tr>
+</tbody></table>
+</div>
+<h2 id="五未初始化内存操作-operations-on-uninitialized-memory"><a class="header" href="#五未初始化内存操作-operations-on-uninitialized-memory">五、未初始化内存操作 (Operations on uninitialized memory)</a></h2>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;memory&gt;</code></strong>：包含所有未初始化内存操作。</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">未初始化内存操作 (Operations on uninitialized memory)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>uninitialized_copy</strong> / <strong>ranges::uninitialized_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一系列对象<strong>复制</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_copy_n</strong> / <strong>ranges::uninitialized_copy_n</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将<strong>指定数量</strong>的对象<strong>复制</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_fill</strong> / <strong>ranges::uninitialized_fill</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一个对象<strong>复制赋值</strong>给一块<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_fill_n</strong> / <strong>ranges::uninitialized_fill_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一个对象<strong>复制赋值</strong>给<strong>指定数量</strong>的<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_move</strong> / <strong>ranges::uninitialized_move</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一系列对象<strong>移动</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_move_n</strong> / <strong>ranges::uninitialized_move_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将<strong>指定数量</strong>的对象<strong>移动</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_default_construct</strong> / <strong>ranges::uninitialized_default_construct</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在一块<strong>未初始化内存</strong>区域中<strong>默认构造</strong>对象</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_default_construct_n</strong> / <strong>ranges::uninitialized_default_construct_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在一块<strong>未初始化内存</strong>区域中<strong>默认构造</strong> \( N \) 个对象</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_value_construct</strong> / <strong>ranges::uninitialized_value_construct</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在一块<strong>未初始化内存</strong>区域中<strong>值构造</strong>对象</td></tr>
+<tr><td style="text-align: left"><strong>uninitialized_value_construct_n</strong> / <strong>ranges::uninitialized_value_construct_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在一块<strong>未初始化内存</strong>区域中<strong>值构造</strong> \( N \) 个对象</td></tr>
+<tr><td style="text-align: left"><strong>destroy</strong> / <strong>ranges::destroy</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left"><strong>销毁</strong>一系列对象</td></tr>
+<tr><td style="text-align: left"><strong>destroy_n</strong> / <strong>ranges::destroy_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left"><strong>销毁</strong>范围内的 \( N \) 个对象</td></tr>
+<tr><td style="text-align: left"><strong>destroy_at</strong> / <strong>ranges::destroy_at</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left"><strong>销毁</strong>给定地址处的对象</td></tr>
+<tr><td style="text-align: left"><strong>construct_at</strong> / <strong>ranges::construct_at</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在给定地址处<strong>创建</strong>一个对象</td></tr>
+</tbody></table>
+</div>
+<h2 id="六其他算法和工具"><a class="header" href="#六其他算法和工具">六、其他算法和工具</a></h2>
+<h3 id="随机数生成-random-number-generation"><a class="header" href="#随机数生成-random-number-generation">随机数生成 (Random number generation)</a></h3>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;ranges&gt;</code></strong></li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">随机数生成 (Random number generation)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>ranges::generate_random</strong></td><td style="text-align: left">(C++26)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">用<strong>均匀随机位生成器</strong>填充一个随机数范围</td></tr>
+</tbody></table>
+</div>
+<h3 id="c-库函数-c-library-functions"><a class="header" href="#c-库函数-c-library-functions">C 库函数 (C library functions)</a></h3>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;cstdlib&gt;</code></strong> (或 <code>&lt;stdlib.h&gt;</code>)</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">C 库函数 (C library functions)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>qsort</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;cstdlib&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个<strong>类型未指定</strong>的元素范围</td></tr>
+<tr><td style="text-align: left"><strong>bsearch</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;cstdlib&gt;</code></td><td style="text-align: left"><strong>搜索</strong>一个<strong>类型未指定</strong>的数组中的元素</td></tr>
+</tbody></table>
+</div>
+<h3 id="附注执行策略-execution-policies"><a class="header" href="#附注执行策略-execution-policies">附注：执行策略 (Execution policies)</a></h3>
+<p><strong>主要头文件：</strong></p>
+<ul>
+<li><strong><code>&lt;execution&gt;</code></strong></li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">执行策略类型 (Execution policy types)</th><th style="text-align: left">宏/类/对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>sequenced_policy</strong> (<code>seq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>序列化</strong>执行（无并行）</td></tr>
+<tr><td style="text-align: left"><strong>parallel_policy</strong> (<code>par</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>并行</strong>执行</td></tr>
+<tr><td style="text-align: left"><strong>parallel_unsequenced_policy</strong> (<code>par\_unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>并行</strong>且<strong>乱序</strong>执行</td></tr>
+<tr><td style="text-align: left"><strong>unsequenced_policy</strong> (<code>unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>乱序</strong>执行（允许编译器向量化）</td></tr>
+<tr><td style="text-align: left"><strong>is_execution_policy</strong></td><td style="text-align: left">类模板</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left">测试一个类是否表示一个执行策略</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
     // 获取当前页面的 URL
     var currentUrl = window.location.href;
 
