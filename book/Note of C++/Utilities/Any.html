@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Utility - Note of C++</title>
+        <title>Any - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Utility.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Utilities/Any.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,29 +183,145 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="utility"><a class="header" href="#utility">Utility</a></h1>
-<p>在 C++ 标准库(STL)中，有一些实用的工具类和函数，这些工具类和函数在编写高效、可读性强的代码时非常有用。</p>
-<div class="table-wrapper"><table><thead><tr><th>工具名称</th><th>说明</th><th>所属头文件</th><th>C++版本引入</th></tr></thead><tbody>
-<tr><td><strong><code>std::pair</code></strong></td><td>存储两个相关值的通用模板类。</td><td><code>&lt;utility&gt;</code></td><td>C++98</td></tr>
-<tr><td><strong><code>std::tuple</code></strong></td><td>存储多个值（不同类型）的固定大小集合。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::optional</code></strong></td><td>表示可能包含值或不包含值的类型。</td><td><code>&lt;optional&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong><code>std::variant</code></strong></td><td>表示有限数量的不同类型中的一种。</td><td><code>&lt;variant&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong><code>std::any</code></strong></td><td>存储任意类型的值，类型在运行时识别。</td><td><code>&lt;any&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong>智能指针</strong></td><td>自动管理动态资源，包括 <code>std::unique_ptr</code>, <code>std::shared_ptr</code> 等。</td><td><code>&lt;memory&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::function</code></strong></td><td>存储和调用可调用对象（如函数、lambda）。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::chrono</code></strong></td><td>时间和日期处理，包括时钟、时间点、时间段。</td><td><code>&lt;chrono&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::array</code></strong></td><td>表示固定大小的数组，提供标准容器接口。</td><td><code>&lt;array&gt;</code></td><td>C++11</td></tr>
-</tbody></table>
-</div>
+                        <h1 id="stdany"><a class="header" href="#stdany">std::any</a></h1>
+<p><code>std::any</code> 是 C++17 引入的一个工具类，用来表示 <strong>类型安全的任意类型容器</strong>。它可以存储任何 <strong>可拷贝构造</strong> 的类型，并且在运行时动态管理其类型和生命周期。<code>std::any</code> 常用于需要存储不同类型对象，但在编译时无法确定类型的场景。</p>
+<ul>
+<li><strong>有值 (engaged)</strong>：存储一个特定类型的对象。</li>
+<li><strong>无值 (disengaged)</strong>：表示空状态，没有存储任何对象。</li>
+</ul>
+<p>相比于 <code>void*</code> 或不安全的类型转换，<code>std::any</code> 提供了类型安全的访问和异常检测机制。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">class any;
+</code></pre>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<p>被包括在 <code>&lt;any&gt;</code> 头文件中。</p>
+<pre><code class="language-cpp">#include &lt;any&gt;
+</code></pre>
+<p>存储的类型必须满足 <strong>CopyConstructible</strong>（可拷贝构造）。</p>
+<h2 id="2-stdany-的工作原理"><a class="header" href="#2-stdany-的工作原理">2. <code>std::any</code> 的工作原理</a></h2>
+<ul>
+<li>内部通过 <strong>指针 + 类型信息（typeid）</strong> 或小对象优化实现：
+<ul>
+<li>当对象有值时，存储实际类型对象。</li>
+<li>当对象为空时，存储状态标记为空。</li>
+</ul>
+</li>
+<li>通过 <code>any_cast</code> 提供类型安全访问，如果类型不匹配会抛出 <code>std::bad_any_cast</code> 异常。</li>
+</ul>
+<h3 id="1-为什么需要-stdany"><a class="header" href="#1-为什么需要-stdany">(1) 为什么需要 <code>std::any</code>？</a></h3>
+<ul>
+<li>当需要存储 <strong>不同类型的对象</strong>，但类型在编译时未知时。</li>
+<li>用于实现 <strong>动态类型容器</strong>、事件系统或通用缓存。</li>
+<li>避免使用不安全的 <code>void*</code> 或 <code>union</code>。</li>
+</ul>
+<h3 id="2-基本使用"><a class="header" href="#2-基本使用">(2) 基本使用</a></h3>
+<pre><code class="language-cpp">std::any a = 1;             // 存储 int
+a = 3.14;                   // 改为存储 double
+a = std::string("hello");   // 改为存储 std::string
+
+if (a.has_value()) {
+    std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
+}
+</code></pre>
+<h2 id="3-使用-stdany-的场景"><a class="header" href="#3-使用-stdany-的场景">3. 使用 <code>std::any</code> 的场景</a></h2>
+<h3 id="1-动态类型存储"><a class="header" href="#1-动态类型存储">(1) 动态类型存储</a></h3>
+<pre><code class="language-cpp">std::vector&lt;std::any&gt; values;
+values.push_back(10);
+values.push_back(3.14);
+values.push_back(std::string("text"));
+
+for (auto&amp; v : values) {
+    if (v.type() == typeid(int))
+        std::cout &lt;&lt; std::any_cast&lt;int&gt;(v) &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="2-类型安全访问"><a class="header" href="#2-类型安全访问">(2) 类型安全访问</a></h3>
+<p>通过 <code>any_cast</code> 访问内部对象，类型不匹配会抛异常：</p>
+<pre><code class="language-cpp">std::any a = 42;
+try {
+    double d = std::any_cast&lt;double&gt;(a);  // 类型错误，会抛出 std::bad_any_cast
+} catch (const std::bad_any_cast&amp; e) {
+    std::cout &lt;&lt; e.what() &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="3-指针访问"><a class="header" href="#3-指针访问">(3) 指针访问</a></h3>
+<p><code>any_cast</code> 也可返回指针，类型错误时返回 nullptr：</p>
+<pre><code class="language-cpp">std::any a = 3;
+if (int* p = std::any_cast&lt;int&gt;(&amp;a)) {
+    std::cout &lt;&lt; *p &lt;&lt; "\n";  // 输出 3
+}
+</code></pre>
+<h2 id="4-常用操作"><a class="header" href="#4-常用操作">4. 常用操作</a></h2>
+<h3 id="0-构造与析构"><a class="header" href="#0-构造与析构">(0) 构造与析构</a></h3>
+<pre><code class="language-cpp">std::any a;                 // 默认构造：无值
+std::any b = 42;            // 从值构造
+std::any c = std::string("hi"); // 从其他类型构造
+
+// 拷贝构造 / 拷贝赋值
+std::any d = b;
+d = c;
+
+// 移动构造 / 移动赋值
+std::any e = std::move(c);
+e = std::move(b);
+
+// 析构：生命周期结束时自动析构存储的对象
+{
+    std::any f = std::string("RAII");
+} // f 的析构自动调用 std::string 析构函数
+</code></pre>
+<h3 id="1-has_value-与-type"><a class="header" href="#1-has_value-与-type">(1) <code>has_value()</code> 与 <code>type()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+if (a.has_value()) {
+    std::cout &lt;&lt; "类型: " &lt;&lt; a.type().name() &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="2-emplace-与-reset"><a class="header" href="#2-emplace-与-reset">(2) <code>emplace()</code> 与 <code>reset()</code></a></h3>
+<pre><code class="language-cpp">std::any a;
+a.emplace&lt;std::string&gt;("Hello");  // 原地构造新值
+std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
+a.reset();                         // 清空
+</code></pre>
+<h3 id="3-赋值操作-operator"><a class="header" href="#3-赋值操作-operator">(3) 赋值操作 <code>operator=</code></a></h3>
+<pre><code class="language-cpp">std::any a, b;
+a = 10;                // 赋值 int
+b = std::string("hi"); // 赋值 string
+a = b;                 // 拷贝 b 的值到 a
+</code></pre>
+<h3 id="4-swap"><a class="header" href="#4-swap">(4) <code>swap()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 1, b = 2;
+a.swap(b);
+std::cout &lt;&lt; std::any_cast&lt;int&gt;(a) &lt;&lt; " " &lt;&lt; std::any_cast&lt;int&gt;(b) &lt;&lt; "\n"; // 输出 2 1
+</code></pre>
+<h3 id="5-工厂函数-stdmake_any"><a class="header" href="#5-工厂函数-stdmake_any">(5) 工厂函数 <code>std::make_any</code></a></h3>
+<pre><code class="language-cpp">auto a = std::make_any&lt;int&gt;(42);           // 创建 any 并存储 int
+auto b = std::make_any&lt;std::string&gt;("hi"); // 创建 any 并存储 string
+</code></pre>
+<h3 id="6-非成员函数-any_cast"><a class="header" href="#6-非成员函数-any_cast">(6) 非成员函数 <code>any_cast</code></a></h3>
+<pre><code class="language-cpp">std::any a = 123;
+int* p = std::any_cast&lt;int&gt;(&amp;a);           // 指针访问
+int v = std::any_cast&lt;int&gt;(a);             // 值访问，类型错误抛异常
+</code></pre>
+<h2 id="5-stdany-的常见误用"><a class="header" href="#5-stdany-的常见误用">5. <code>std::any</code> 的常见误用</a></h2>
+<h3 id="1-滥用"><a class="header" href="#1-滥用">(1) 滥用</a></h3>
+<ul>
+<li>不应将 <code>std::any</code> 用作所有类型的通用容器，它不能替代容器或指针管理。</li>
+<li>仅在 <strong>存储单个动态类型对象</strong> 且类型不确定时使用。</li>
+</ul>
+<h3 id="2-忘记类型检查"><a class="header" href="#2-忘记类型检查">(2) 忘记类型检查</a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+std::cout &lt;&lt; std::any_cast&lt;double&gt;(a); // 未检查类型，抛异常
+</code></pre>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../STL.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Utilities/Optional.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../STL/Utility/Pair.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Utilities/Variant.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -215,11 +331,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../STL.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Utilities/Optional.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../STL/Utility/Pair.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Utilities/Variant.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

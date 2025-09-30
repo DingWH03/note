@@ -1221,29 +1221,25 @@ if (ptr) {
 }
 </code></pre>
 <p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="stl"><a class="header" href="#stl">STL</a></h1>
-<p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。</p>
-<div class="table-wrapper"><table><thead><tr><th>组件</th><th>描述</th></tr></thead><tbody>
-<tr><td><strong>容器 (Containers)</strong></td><td>容器是 STL 中最基本的组件之一，提供了各种数据结构，包括向量（vector）、链表（list）、队列（queue）、栈（stack）、集合（set）、映射（map）等。这些容器具有不同的特性和用途，可以根据实际需求选择合适的容器。</td></tr>
-<tr><td><strong>算法 (Algorithms)</strong></td><td>STL 提供了大量的算法，用于对容器中的元素进行各种操作，包括排序、搜索、复制、移动、变换等。这些算法在使用时不需要关心容器的具体类型，只需要指定要操作的范围即可。</td></tr>
-<tr><td><strong>迭代器 (Iterators)</strong></td><td>迭代器用于遍历容器中的元素，允许以统一的方式访问容器中的元素，而不用关心容器的内部实现细节。STL 提供了多种类型的迭代器，包括随机访问迭代器、双向迭代器、前向迭代器和输入输出迭代器等。</td></tr>
-<tr><td><strong>函数对象 (Function Objects)</strong></td><td>函数对象是可以像函数一样调用的对象，可以用于算法中的各种操作。STL 提供了多种函数对象，包括一元函数对象、二元函数对象、谓词等，可以满足不同的需求。</td></tr>
-<tr><td><strong>适配器 (Adapters)</strong></td><td>适配器用于将一种容器或迭代器适配成另一种容器或迭代器，以满足特定的需求。STL 提供了多种适配器，包括栈适配器（stack adapter）、队列适配器（queue adapter）和优先队列适配器（priority queue adapter）等。</td></tr>
-</tbody></table>
-</div>
-<p>除了上述经典部分，STL 中另有一些 <strong>辅助工具</strong> 或 <strong>实用工具（Utility）</strong> 用于解决广泛的实际问题。这些工具虽然不归属于核心组件，但在日常开发中非常重要。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="utility"><a class="header" href="#utility">Utility</a></h1>
-<p>在 C++ 标准库(STL)中，有一些实用的工具类和函数，这些工具类和函数在编写高效、可读性强的代码时非常有用。</p>
+<p>在 C++ 中，有一些实用的工具类和函数，这些工具类和函数在编写高效、可读性强的代码时非常有用且大多是C++新特性</p>
 <div class="table-wrapper"><table><thead><tr><th>工具名称</th><th>说明</th><th>所属头文件</th><th>C++版本引入</th></tr></thead><tbody>
 <tr><td><strong><code>std::pair</code></strong></td><td>存储两个相关值的通用模板类。</td><td><code>&lt;utility&gt;</code></td><td>C++98</td></tr>
-<tr><td><strong><code>std::tuple</code></strong></td><td>存储多个值（不同类型）的固定大小集合。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::optional</code></strong></td><td>表示可能包含值或不包含值的类型。</td><td><code>&lt;optional&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong><code>std::variant</code></strong></td><td>表示有限数量的不同类型中的一种。</td><td><code>&lt;variant&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong><code>std::any</code></strong></td><td>存储任意类型的值，类型在运行时识别。</td><td><code>&lt;any&gt;</code></td><td>C++17</td></tr>
-<tr><td><strong>智能指针</strong></td><td>自动管理动态资源，包括 <code>std::unique_ptr</code>, <code>std::shared_ptr</code> 等。</td><td><code>&lt;memory&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::function</code></strong></td><td>存储和调用可调用对象（如函数、lambda）。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::chrono</code></strong></td><td>时间和日期处理，包括时钟、时间点、时间段。</td><td><code>&lt;chrono&gt;</code></td><td>C++11</td></tr>
-<tr><td><strong><code>std::array</code></strong></td><td>表示固定大小的数组，提供标准容器接口。</td><td><code>&lt;array&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::make_pair</code></strong></td><td>辅助函数，用于创建 <code>std::pair</code>。</td><td><code>&lt;utility&gt;</code></td><td>C++98</td></tr>
+<tr><td><strong><code>std::move</code></strong></td><td>将对象显式转换为右值引用，用于触发移动语义。</td><td><code>&lt;utility&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::forward</code></strong></td><td>完美转发函数，用于保持值类别（左值/右值）。</td><td><code>&lt;utility&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::swap</code></strong></td><td>通用交换函数，支持用户自定义类型的交换。</td><td><code>&lt;utility&gt;</code></td><td>C++98</td></tr>
+<tr><td><strong><code>std::tuple</code></strong></td><td>可变长异质容器，存储多个不同类型的值。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::make_tuple</code></strong></td><td>辅助函数，用于创建 <code>std::tuple</code>。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::tie</code></strong></td><td>将多个左值绑定为 tuple，用于结构化绑定或比较。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::ignore</code></strong></td><td>与 <code>std::tie</code> 搭配，用于忽略某个绑定的值。</td><td><code>&lt;tuple&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::optional</code></strong></td><td>表示一个可选值，可能含值也可能为空。</td><td><code>&lt;optional&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong><code>std::variant</code></strong></td><td>类型安全的联合体，可以在多个候选类型中存储其中之一。</td><td><code>&lt;variant&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong><code>std::any</code></strong></td><td>类型擦除的容器，可以存放任意类型的值，并在运行时安全提取。</td><td><code>&lt;any&gt;</code></td><td>C++17</td></tr>
+<tr><td><strong><code>std::function</code></strong></td><td>通用函数包装器，可存储可调用对象（函数指针、lambda、仿函数等）。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::bind</code></strong></td><td>绑定函数参数，生成新的可调用对象。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::ref</code></strong></td><td>将对象包装为引用，以便在需要值语义时保持引用语义。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
+<tr><td><strong><code>std::cref</code></strong></td><td>常量引用版本的 <code>std::ref</code>。</td><td><code>&lt;functional&gt;</code></td><td>C++11</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdpair"><a class="header" href="#stdpair">std::pair</a></h1>
 <p><code>std::pair</code> 是一个结构体模板，其可于一个单元内存储两个相异对象。是 std::tuple 的拥有两个元素的特殊情况。一般来说，pair 可以封装任意类型的对象，可以生成各种不同的 <code>std::pair&lt;T1, T2&gt;</code> 对象，可以是数组对象或者包含 <code>std::pair&lt;T1,T2&gt;</code> 的 vector 容器。pair 还可以封装两个序列容器或两个序列容器的指针。</p>
@@ -1377,7 +1373,624 @@ std::cout &lt;&lt; v1.size();  // 错误
 }
 </code></pre>
 <p>这里的返回值优化（RVO）允许编译器在返回<code>v</code>时进行移动，而不需要显式调用<code>std::move</code>。</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdoptional"><a class="header" href="#stdoptional">std::optional</a></h1>
+<p><code>std::optional</code> 是 C++17 引入的一个工具类，用来表示一个 <strong>可选值</strong>。它可以包含某个类型的值，也可以为空（即没有值）。这在函数返回值和状态表达上尤其有用，可以避免使用特殊标志值（如 <code>-1</code> 或 <code>nullptr</code>）来表示“无效”或“不存在”的情况。它本质上是对 <strong>“可空值”</strong> 概念的抽象：</p>
+<ul>
+<li><strong>有值 (engaged)</strong>：存储一个 <code>T</code> 类型对象，保证其生命周期绑定到 <code>optional</code> 对象上。</li>
+<li><strong>无值 (disengaged)</strong>：表示空状态，此时不存储任何对象。</li>
+</ul>
+<p>相比于传统的返回 <code>nullptr</code> 或 <code>std::pair&lt;T,bool&gt;</code> 表示失败，<code>std::optional</code> 更加语义化、类型安全，尤其适合构造成本较高的对象。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">template&lt; class T &gt;
+class optional;
+</code></pre>
+<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
+<p>被包括在 <code>&lt;optional&gt;</code> 头文件中。</p>
+<pre><code class="language-cpp">#include &lt;optional&gt;
+</code></pre>
+<p><code>T</code> 必须满足 <strong>Destructible</strong>（可析构）。</p>
+<p>不允许是引用类型、数组类型、函数类型或 <code>void</code>。</p>
+<p>从 C++26 起，<code>optional&lt;T&gt;</code> 还支持作为 <strong>range view</strong>。</p>
+<h2 id="2-stdoptional-的工作原理"><a class="header" href="#2-stdoptional-的工作原理">2. <code>std::optional</code> 的工作原理</a></h2>
+<ul>
+<li><code>optional&lt;T&gt;</code> 内部通过一个 <strong>布尔标志</strong> + <strong>可能存在的值存储区</strong> 来实现：
+<ul>
+<li>当 engaged 时，<code>optional</code> 内部构造并管理一个 <code>T</code> 对象。</li>
+<li>当 disengaged 时，标志为 false，存储区未构造对象。</li>
+</ul>
+</li>
+</ul>
+<p>这使得 <code>optional</code> 更接近于 “可能为空的对象”，而不是指针。
+即使提供了 <code>operator*</code> 和 <code>operator-&gt;</code>，它依旧是值语义而非指针语义。</p>
+<h3 id="1-为什么需要-stdoptional"><a class="header" href="#1-为什么需要-stdoptional">(1) 为什么需要 <code>std::optional</code>？</a></h3>
+<p>传统做法：</p>
+<ul>
+<li>C 风格函数通常用返回值来表示错误，用输出参数来返回数据。</li>
+<li>某些场景需要用 <code>nullptr</code> 或 <code>-1</code> 表示“无效”，但这并不类型安全。</li>
+</ul>
+<p><code>std::optional</code> 提供了一个清晰、安全的方式：返回“要么有值，要么没有值”。</p>
+<h3 id="2-基本使用"><a class="header" href="#2-基本使用">(2) 基本使用</a></h3>
+<pre><code class="language-cpp">std::optional&lt;int&gt; maybeInt;           // 默认构造：无值
+std::optional&lt;int&gt; hasInt = 42;        // 构造：有值
+std::optional&lt;int&gt; emptyInt = std::nullopt; // 显式无值
+
+if (hasInt) {
+    std::cout &lt;&lt; "Value: " &lt;&lt; *hasInt &lt;&lt; "\n";  // 解引用访问
+}
+</code></pre>
+<h2 id="3-使用-stdoptional-的场景"><a class="header" href="#3-使用-stdoptional-的场景">3. 使用 <code>std::optional</code> 的场景</a></h2>
+<h3 id="1-函数返回值"><a class="header" href="#1-函数返回值">(1) 函数返回值</a></h3>
+<p>最常见的场景是函数可能“有值”或“无值”。</p>
+<pre><code class="language-cpp">std::optional&lt;int&gt; findValue(const std::vector&lt;int&gt;&amp; vec, int target) {
+    for (auto v : vec) {
+        if (v == target) return v;
+    }
+    return std::nullopt;
+}
+
+auto result = findValue({1, 2, 3}, 2);
+if (result) {
+    std::cout &lt;&lt; "Found: " &lt;&lt; *result &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="2-延迟初始化"><a class="header" href="#2-延迟初始化">(2) 延迟初始化</a></h3>
+<p><code>std::optional</code> 可以用来延迟对象构造，仅在需要时才赋值。</p>
+<pre><code class="language-cpp">std::optional&lt;std::string&gt; cache;
+if (!cache) {
+    cache = "Hello";  // 仅在需要时才构造
+}
+</code></pre>
+<h3 id="3-配合结构化绑定"><a class="header" href="#3-配合结构化绑定">(3) 配合结构化绑定</a></h3>
+<pre><code class="language-cpp">std::optional&lt;std::pair&lt;int, int&gt;&gt; divide(int a, int b) {
+    if (b == 0) return std::nullopt;
+    return std::make_pair(a / b, a % b);
+}
+
+if (auto res = divide(10, 3)) {
+    auto [q, r] = *res;
+    std::cout &lt;&lt; "Quotient: " &lt;&lt; q &lt;&lt; " Remainder: " &lt;&lt; r &lt;&lt; "\n";
+}
+</code></pre>
+<h2 id="4-常用操作"><a class="header" href="#4-常用操作">4. 常用操作</a></h2>
+<h3 id="0-构造与析构"><a class="header" href="#0-构造与析构">(0) 构造与析构</a></h3>
+<pre><code class="language-cpp">// 默认构造：无值
+std::optional&lt;int&gt; a;
+
+// 从值构造
+std::optional&lt;int&gt; b = 42;
+std::optional&lt;std::string&gt; c{"hello"};
+
+// 拷贝构造 / 赋值
+std::optional&lt;int&gt; d = b;
+
+// 移动构造 / 赋值
+std::optional&lt;std::string&gt; e = std::move(c);
+
+// 使用 nullopt 构造空对象
+std::optional&lt;int&gt; f = std::nullopt;
+
+// 析构：生命周期结束时自动析构其中的值（如果有值）
+{
+    std::optional&lt;std::string&gt; g{"RAII"};
+} // g 的析构会自动调用 std::string 的析构函数
+</code></pre>
+<h3 id="1-value-与-value_or"><a class="header" href="#1-value-与-value_or">(1) <code>value()</code> 与 <code>value_or()</code></a></h3>
+<pre><code class="language-cpp">std::optional&lt;int&gt; x = 10;
+std::cout &lt;&lt; x.value() &lt;&lt; "\n";         // 获取值，若为空抛出 std::bad_optional_access
+std::cout &lt;&lt; x.value_or(0) &lt;&lt; "\n";     // 若为空返回默认值
+</code></pre>
+<h3 id="2-emplace-与-reset"><a class="header" href="#2-emplace-与-reset">(2) <code>emplace()</code> 与 <code>reset()</code></a></h3>
+<pre><code class="language-cpp">std::optional&lt;std::string&gt; name;
+name.emplace("Alice");   // 原地构造值
+std::cout &lt;&lt; *name &lt;&lt; "\n";
+name.reset();            // 清空，变为无值
+</code></pre>
+<h3 id="3-布尔上下文与-has_value"><a class="header" href="#3-布尔上下文与-has_value">(3) 布尔上下文与 <code>has_value()</code></a></h3>
+<pre><code class="language-cpp">std::optional&lt;int&gt; maybe;
+if (maybe) {             // 等价于 maybe.has_value()
+    std::cout &lt;&lt; "有值\n";
+} else {
+    std::cout &lt;&lt; "无值\n";
+}
+</code></pre>
+<h3 id="4-访问操作符-operator-与-operator-"><a class="header" href="#4-访问操作符-operator-与-operator-">(4) 访问操作符 <code>operator*</code> 与 <code>operator-&gt;</code></a></h3>
+<pre><code class="language-cpp">std::optional&lt;std::string&gt; msg = "Hello";
+std::cout &lt;&lt; (*msg).size() &lt;&lt; "\n";     // 解引用访问
+std::cout &lt;&lt; msg-&gt;size() &lt;&lt; "\n";       // 箭头访问
+</code></pre>
+<h3 id="5-swap"><a class="header" href="#5-swap">(5) <code>swap()</code></a></h3>
+<pre><code class="language-cpp">std::optional&lt;int&gt; a = 1, b = 2;
+a.swap(b);                             // 交换内容
+std::cout &lt;&lt; *a &lt;&lt; " " &lt;&lt; *b &lt;&lt; "\n";  // 输出 2 1
+</code></pre>
+<h3 id="6-工厂函数-stdmake_optional-与-stdnullopt"><a class="header" href="#6-工厂函数-stdmake_optional-与-stdnullopt">(6) 工厂函数 <code>std::make_optional</code> 与 <code>std::nullopt</code></a></h3>
+<pre><code class="language-cpp">auto a = std::make_optional&lt;int&gt;(42);   // 创建有值 optional
+std::optional&lt;int&gt; b = std::nullopt;    // 创建空 optional
+</code></pre>
+<h3 id="7-常见-value_or-模式"><a class="header" href="#7-常见-value_or-模式">(7) 常见 <code>value_or</code> 模式</a></h3>
+<pre><code class="language-cpp">std::optional&lt;std::string&gt; maybe_name;
+std::string name = maybe_name.value_or("Default");  // 若无值，使用默认值
+</code></pre>
+<h3 id="8-c23-单子操作monadic-operations"><a class="header" href="#8-c23-单子操作monadic-operations">(8) C++23 单子操作（Monadic operations）</a></h3>
+<pre><code class="language-cpp">std::optional&lt;int&gt; num = 5;
+
+// and_then: 仅在有值时继续计算
+auto squared = num.and_then([](int x) { return std::optional&lt;int&gt;(x * x); });
+
+// transform: 值存在时映射为新值
+auto str = num.transform([](int x) { return std::to_string(x); });
+
+// or_else: 若无值则提供替代
+auto val = num.or_else([] { return std::optional&lt;int&gt;(100); });
+</code></pre>
+<h2 id="5-stdoptional-的常见误用"><a class="header" href="#5-stdoptional-的常见误用">5. <code>std::optional</code> 的常见误用</a></h2>
+<h3 id="1-滥用在必然有值的场景"><a class="header" href="#1-滥用在必然有值的场景">(1) 滥用在“必然有值”的场景</a></h3>
+<p>如果某个值在逻辑上 <strong>必然存在</strong>，使用 <code>optional</code> 反而多此一举，降低可读性。</p>
+<h3 id="2-忘记检查是否有值"><a class="header" href="#2-忘记检查是否有值">(2) 忘记检查是否有值</a></h3>
+<p>错误示例：</p>
+<pre><code class="language-cpp">std::optional&lt;int&gt; x;
+std::cout &lt;&lt; *x;  // 未检查直接解引用，未定义行为
+</code></pre>
+<p>正确示例：</p>
+<pre><code class="language-cpp">if (x) std::cout &lt;&lt; *x;
+</code></pre>
+<h3 id="3-不当替代指针或容器"><a class="header" href="#3-不当替代指针或容器">(3) 不当替代指针或容器</a></h3>
+<p><code>std::optional</code> 适合表示“零或一”的情况，但如果可能有多个值，应该用 <code>std::vector</code> 或其他容器，而不是 <code>optional&lt;std::vector&lt;T&gt;&gt;</code> 滥用。</p>
+<h2 id="6-与-rust-的类比"><a class="header" href="#6-与-rust-的类比">6. 与 Rust 的类比</a></h2>
+<ul>
+<li>Rust 的 <code>Option&lt;T&gt;</code> 与 C++ 的 <code>std::optional&lt;T&gt;</code> 类似，都是“要么有值（Some），要么无值（None）”。</li>
+<li>不同点：Rust 强制模式匹配，保证空值情况不会被遗漏，而 C++ 中 <code>optional</code> 需要程序员手动检查。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdany"><a class="header" href="#stdany">std::any</a></h1>
+<p><code>std::any</code> 是 C++17 引入的一个工具类，用来表示 <strong>类型安全的任意类型容器</strong>。它可以存储任何 <strong>可拷贝构造</strong> 的类型，并且在运行时动态管理其类型和生命周期。<code>std::any</code> 常用于需要存储不同类型对象，但在编译时无法确定类型的场景。</p>
+<ul>
+<li><strong>有值 (engaged)</strong>：存储一个特定类型的对象。</li>
+<li><strong>无值 (disengaged)</strong>：表示空状态，没有存储任何对象。</li>
+</ul>
+<p>相比于 <code>void*</code> 或不安全的类型转换，<code>std::any</code> 提供了类型安全的访问和异常检测机制。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">class any;
+</code></pre>
+<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
+<p>被包括在 <code>&lt;any&gt;</code> 头文件中。</p>
+<pre><code class="language-cpp">#include &lt;any&gt;
+</code></pre>
+<p>存储的类型必须满足 <strong>CopyConstructible</strong>（可拷贝构造）。</p>
+<h2 id="2-stdany-的工作原理"><a class="header" href="#2-stdany-的工作原理">2. <code>std::any</code> 的工作原理</a></h2>
+<ul>
+<li>内部通过 <strong>指针 + 类型信息（typeid）</strong> 或小对象优化实现：
+<ul>
+<li>当对象有值时，存储实际类型对象。</li>
+<li>当对象为空时，存储状态标记为空。</li>
+</ul>
+</li>
+<li>通过 <code>any_cast</code> 提供类型安全访问，如果类型不匹配会抛出 <code>std::bad_any_cast</code> 异常。</li>
+</ul>
+<h3 id="1-为什么需要-stdany"><a class="header" href="#1-为什么需要-stdany">(1) 为什么需要 <code>std::any</code>？</a></h3>
+<ul>
+<li>当需要存储 <strong>不同类型的对象</strong>，但类型在编译时未知时。</li>
+<li>用于实现 <strong>动态类型容器</strong>、事件系统或通用缓存。</li>
+<li>避免使用不安全的 <code>void*</code> 或 <code>union</code>。</li>
+</ul>
+<h3 id="2-基本使用-1"><a class="header" href="#2-基本使用-1">(2) 基本使用</a></h3>
+<pre><code class="language-cpp">std::any a = 1;             // 存储 int
+a = 3.14;                   // 改为存储 double
+a = std::string("hello");   // 改为存储 std::string
+
+if (a.has_value()) {
+    std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
+}
+</code></pre>
+<h2 id="3-使用-stdany-的场景"><a class="header" href="#3-使用-stdany-的场景">3. 使用 <code>std::any</code> 的场景</a></h2>
+<h3 id="1-动态类型存储"><a class="header" href="#1-动态类型存储">(1) 动态类型存储</a></h3>
+<pre><code class="language-cpp">std::vector&lt;std::any&gt; values;
+values.push_back(10);
+values.push_back(3.14);
+values.push_back(std::string("text"));
+
+for (auto&amp; v : values) {
+    if (v.type() == typeid(int))
+        std::cout &lt;&lt; std::any_cast&lt;int&gt;(v) &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="2-类型安全访问"><a class="header" href="#2-类型安全访问">(2) 类型安全访问</a></h3>
+<p>通过 <code>any_cast</code> 访问内部对象，类型不匹配会抛异常：</p>
+<pre><code class="language-cpp">std::any a = 42;
+try {
+    double d = std::any_cast&lt;double&gt;(a);  // 类型错误，会抛出 std::bad_any_cast
+} catch (const std::bad_any_cast&amp; e) {
+    std::cout &lt;&lt; e.what() &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="3-指针访问"><a class="header" href="#3-指针访问">(3) 指针访问</a></h3>
+<p><code>any_cast</code> 也可返回指针，类型错误时返回 nullptr：</p>
+<pre><code class="language-cpp">std::any a = 3;
+if (int* p = std::any_cast&lt;int&gt;(&amp;a)) {
+    std::cout &lt;&lt; *p &lt;&lt; "\n";  // 输出 3
+}
+</code></pre>
+<h2 id="4-常用操作-1"><a class="header" href="#4-常用操作-1">4. 常用操作</a></h2>
+<h3 id="0-构造与析构-1"><a class="header" href="#0-构造与析构-1">(0) 构造与析构</a></h3>
+<pre><code class="language-cpp">std::any a;                 // 默认构造：无值
+std::any b = 42;            // 从值构造
+std::any c = std::string("hi"); // 从其他类型构造
+
+// 拷贝构造 / 拷贝赋值
+std::any d = b;
+d = c;
+
+// 移动构造 / 移动赋值
+std::any e = std::move(c);
+e = std::move(b);
+
+// 析构：生命周期结束时自动析构存储的对象
+{
+    std::any f = std::string("RAII");
+} // f 的析构自动调用 std::string 析构函数
+</code></pre>
+<h3 id="1-has_value-与-type"><a class="header" href="#1-has_value-与-type">(1) <code>has_value()</code> 与 <code>type()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+if (a.has_value()) {
+    std::cout &lt;&lt; "类型: " &lt;&lt; a.type().name() &lt;&lt; "\n";
+}
+</code></pre>
+<h3 id="2-emplace-与-reset-1"><a class="header" href="#2-emplace-与-reset-1">(2) <code>emplace()</code> 与 <code>reset()</code></a></h3>
+<pre><code class="language-cpp">std::any a;
+a.emplace&lt;std::string&gt;("Hello");  // 原地构造新值
+std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
+a.reset();                         // 清空
+</code></pre>
+<h3 id="3-赋值操作-operator"><a class="header" href="#3-赋值操作-operator">(3) 赋值操作 <code>operator=</code></a></h3>
+<pre><code class="language-cpp">std::any a, b;
+a = 10;                // 赋值 int
+b = std::string("hi"); // 赋值 string
+a = b;                 // 拷贝 b 的值到 a
+</code></pre>
+<h3 id="4-swap"><a class="header" href="#4-swap">(4) <code>swap()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 1, b = 2;
+a.swap(b);
+std::cout &lt;&lt; std::any_cast&lt;int&gt;(a) &lt;&lt; " " &lt;&lt; std::any_cast&lt;int&gt;(b) &lt;&lt; "\n"; // 输出 2 1
+</code></pre>
+<h3 id="5-工厂函数-stdmake_any"><a class="header" href="#5-工厂函数-stdmake_any">(5) 工厂函数 <code>std::make_any</code></a></h3>
+<pre><code class="language-cpp">auto a = std::make_any&lt;int&gt;(42);           // 创建 any 并存储 int
+auto b = std::make_any&lt;std::string&gt;("hi"); // 创建 any 并存储 string
+</code></pre>
+<h3 id="6-非成员函数-any_cast"><a class="header" href="#6-非成员函数-any_cast">(6) 非成员函数 <code>any_cast</code></a></h3>
+<pre><code class="language-cpp">std::any a = 123;
+int* p = std::any_cast&lt;int&gt;(&amp;a);           // 指针访问
+int v = std::any_cast&lt;int&gt;(a);             // 值访问，类型错误抛异常
+</code></pre>
+<h2 id="5-stdany-的常见误用"><a class="header" href="#5-stdany-的常见误用">5. <code>std::any</code> 的常见误用</a></h2>
+<h3 id="1-滥用"><a class="header" href="#1-滥用">(1) 滥用</a></h3>
+<ul>
+<li>不应将 <code>std::any</code> 用作所有类型的通用容器，它不能替代容器或指针管理。</li>
+<li>仅在 <strong>存储单个动态类型对象</strong> 且类型不确定时使用。</li>
+</ul>
+<h3 id="2-忘记类型检查"><a class="header" href="#2-忘记类型检查">(2) 忘记类型检查</a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+std::cout &lt;&lt; std::any_cast&lt;double&gt;(a); // 未检查类型，抛异常
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stdvariant"><a class="header" href="#stdvariant"><code>std::variant</code></a></h1>
+<p><code>std::variant</code> 是 C++17 引入的 <strong>类型安全联合（type-safe union）</strong>。在任一时刻，<code>variant&lt;...&gt;</code> 要么保存其候选类型列表中的某一类型的对象（active alternative），要么在异常情况等导致的特殊情形下处于<strong>无值</strong>状态（<code>valueless_by_exception()</code>）。</p>
+<p>头文件：</p>
+<pre><code class="language-cpp">#include &lt;variant&gt;
+</code></pre>
+<h2 id="1-模板定义"><a class="header" href="#1-模板定义">1. 模板定义</a></h2>
+<pre><code class="language-cpp">template&lt; class... Types &gt;
+class variant;
+</code></pre>
+<ul>
+<li>模板参数为 <code>Types...</code>：每个 <code>T</code> 必须满足 <strong>Destructible</strong>（能被析构）。</li>
+<li><strong>不允许</strong>持有引用类型、数组类型或 <code>void</code>。</li>
+<li>可以重复出现相同类型（例如 <code>variant&lt;int,int&gt;</code> 合法），也可以出现不同 cv 限定的同一基础类型（如 <code>int</code> 与 <code>const int</code>）。</li>
+<li><strong>注意</strong>：如果你用同一个具体类型多次，基于类型的访问（<code>std::get&lt;T&gt;</code> / <code>get_if&lt;T&gt;</code>）会变得<strong>歧义 / 编译失败</strong>（只能用索引或明确 <code>in_place_type</code>/<code>in_place_index</code>）。</li>
+<li>默认构造：<strong>默认构造会构造第一个候选类型的默认值</strong>，如果第一个候选类型不可默认构造，则 <code>variant</code> 本身也不可默认构造。可以把 <code>std::monostate</code> 放在首位以保证可默认构造。</li>
+</ul>
+<h2 id="2-存储与对象布局"><a class="header" href="#2-存储与对象布局">2. 存储与对象布局</a></h2>
+<ul>
+<li><code>variant</code> 内部<strong>存储了 discriminator（索引）与一个能容纳最大候选类型的缓冲区</strong>；当 <code>variant</code> 持有某个类型 <code>T</code> 时，一个 <code>T</code> 对象会嵌套（placement-new）在该缓冲区内。</li>
+<li>因此 <code>variant</code> 的大小≈（max sizeof(alternatives)）+ 对齐 + discriminator 大小。</li>
+<li>在异常情况下（构造/赋值期间）有可能变为 <strong>valueless_by_exception</strong>（见下文）。</li>
+</ul>
+<h2 id="3-主要成员函数--重载"><a class="header" href="#3-主要成员函数--重载">3. 主要成员函数 / 重载</a></h2>
+<blockquote>
+<p>下面列出常用操作、签名（伪签名风格）与行为说明与例子。</p>
+</blockquote>
+<h3 id="构造与析构"><a class="header" href="#构造与析构">构造与析构</a></h3>
+<ul>
+<li>
+<p><code>variant()</code></p>
+<ul>
+<li>默认构造：构造第一个候选类型的默认值（若可行）。</li>
+<li>否则 <code>variant</code> 不可默认构造。</li>
+</ul>
+</li>
+<li>
+<p><code>variant(const variant&amp;)</code> / <code>variant(variant&amp;&amp;)</code></p>
+<ul>
+<li>拷贝 / 移动构造。条件：候选类型支持相应操作；若某些候选类型不可拷贝/移动，相应操作会被删除。</li>
+<li>如果在移动过程中抛出异常，可能导致 <code>valueless_by_exception</code>（取决于具体实现与异常传播）。</li>
+</ul>
+</li>
+<li>
+<p>converting constructors（从某个值构造）</p>
+<ul>
+<li>如果传入 <code>U</code> 可明确/唯一地构造某个候选类型，<code>variant</code> 会构造该候选。若存在二义性（能构造多个候选），编译失败。</li>
+</ul>
+</li>
+<li>
+<p>in-place 构造（直接在 variant 内就地构造）</p>
+<pre><code class="language-cpp">variant(in_place_type&lt;T&gt;, Args&amp;&amp;...);
+variant(in_place_index&lt;I&gt;, Args&amp;&amp;...);
+</code></pre>
+<ul>
+<li><code>in_place_type_t</code> / <code>in_place_index_t</code> 用于在 variant 内直接构造目标 alternative，避免先创建临时再赋值。</li>
+</ul>
+</li>
+<li>
+<p><code>~variant()</code></p>
+<ul>
+<li>默认析构：会调用当前活动 alternative 的析构函数（如果有值）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="赋值operator"><a class="header" href="#赋值operator">赋值（operator=）</a></h3>
+<ul>
+<li>
+<p><code>variant&amp; operator=(const variant&amp;);</code></p>
+</li>
+<li>
+<p><code>variant&amp; operator=(variant&amp;&amp;);</code></p>
+<ul>
+<li>这两个做拷贝/移动赋值。赋值行为在不同情况下（同类型 index / 不同 index）会调用相应 alternative 的赋值/析构+构造。</li>
+<li>赋值过程中若抛异常，可能使 <code>variant</code> 进入 <code>valueless_by_exception</code>。</li>
+</ul>
+</li>
+<li>
+<p><code>template&lt;class T&gt; variant&amp; operator=(T&amp;&amp;);</code></p>
+<ul>
+<li>converting assignment：当 <code>T</code> 可以唯一构造某个候选类型时，执行相应赋值/替换。</li>
+</ul>
+</li>
+<li>
+<p><code>variant&amp; operator=(std::monostate)</code> 等（视候选类型而定）。</p>
+</li>
+</ul>
+<h3 id="观察器observers"><a class="header" href="#观察器observers">观察器（Observers）</a></h3>
+<ul>
+<li>
+<p><code>std::size_t index() const noexcept;</code></p>
+<ul>
+<li>返回当前活动的候选类型的零基索引（0..N-1）。</li>
+<li>如果处于 <code>valueless_by_exception</code>，返回 <code>variant_npos</code>（常为 <code>std::size_t(-1)</code>）。</li>
+</ul>
+</li>
+<li>
+<p><code>bool valueless_by_exception() const noexcept;</code></p>
+<ul>
+<li>如果 <code>variant</code> 处于无值状态（例如在变更 active alternative 时异常导致）返回 <code>true</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="修改modifiers"><a class="header" href="#修改modifiers">修改（Modifiers）</a></h3>
+<ul>
+<li>
+<p><code>template&lt;class T, class... Args&gt; T&amp; emplace(Args&amp;&amp;...);</code></p>
+<ul>
+<li><code>emplace&lt;T&gt;(args...)</code>：在 <code>variant</code> 中就地构造类型 <code>T</code>（T 必须是某个 alternative）；会销毁旧的 active 值（若有），然后就地构造新值。</li>
+<li>异常安全：如果构造抛出，<code>variant</code> 可能进入 <code>valueless_by_exception</code>（取决于实现与被替换对象的销毁时机）。</li>
+</ul>
+</li>
+<li>
+<p><code>template&lt;size_t I, class... Args&gt; variant&amp; emplace(in_place_index_t&lt;I&gt;, Args&amp;&amp;...);</code></p>
+<ul>
+<li>使用索引 I 就地构造。</li>
+</ul>
+</li>
+<li>
+<p><code>void swap(variant&amp; other) noexcept( /* depends */ );</code></p>
+<ul>
+<li>交换两个 variant 的状态与内容。noexcept 与具体候选类型的 swap/移动操作相关。</li>
+</ul>
+</li>
+</ul>
+<h3 id="访问get--get_if"><a class="header" href="#访问get--get_if">访问（get / get_if）</a></h3>
+<ul>
+<li>
+<p><code>std::get&lt;T&gt;(variant&amp;)</code> / <code>std::get&lt;I&gt;(variant&amp;)</code></p>
+<ul>
+<li><code>get&lt;T&gt;</code>（按类型访问）要求 <code>T</code> 在候选类型中<strong>唯一</strong>，否则编译错误。</li>
+<li><code>get&lt;I&gt;</code>（按索引访问）直接访问索引为 <code>I</code> 的候选类型。</li>
+<li>若 <code>variant</code> 当前不保存请求的 alternative，<code>std::get</code> 会 <strong>抛出 <code>std::bad_variant_access</code>（运行时异常）</strong>。</li>
+</ul>
+</li>
+<li>
+<p><code>std::get_if&lt;T&gt;(&amp;variant)</code> / <code>std::get_if&lt;I&gt;(&amp;variant)</code></p>
+<ul>
+<li><code>get_if</code> 返回指向当前值的指针（非 <code>nullptr</code> 表示匹配），失败时返回 <code>nullptr</code>。不会抛异常，通常是更安全的访问方式。</li>
+<li>有 <code>const</code> / 非 <code>const</code> 重载：<code>const T* get_if&lt;const T&gt;(&amp;const variant)</code> 等。</li>
+</ul>
+</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-cpp">std::variant&lt;int,std::string&gt; v = "hi";
+if (auto p = std::get_if&lt;std::string&gt;(&amp;v)) {
+    std::cout &lt;&lt; *p &lt;&lt; "\n";
+}
+try {
+    std::cout &lt;&lt; std::get&lt;int&gt;(v); // 抛出 std::bad_variant_access
+} catch (const std::bad_variant_access&amp; e) { ... }
+</code></pre>
+<h3 id="访问辅助stdholds_alternativetv"><a class="header" href="#访问辅助stdholds_alternativetv">访问辅助：<code>std::holds_alternative&lt;T&gt;(v)</code></a></h3>
+<ul>
+<li>返回 <code>true</code> 当且仅当 <code>v</code> 当前持有类型 <code>T</code>（同 <code>get_if&lt;T&gt;</code> 非空）。<code>T</code> 必须唯一出现在 alternatives 中。</li>
+</ul>
+<h3 id="访问索引常量"><a class="header" href="#访问索引常量">访问索引常量</a></h3>
+<ul>
+<li>
+<p><code>constexpr std::size_t variant_npos = /* often size_t(-1) */;</code></p>
+<ul>
+<li>表示无效索引（用于 <code>index()</code> 返回值在 <code>valueless_by_exception()</code> 时）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-访问与遍历stdvisitvisitor-模式"><a class="header" href="#4-访问与遍历stdvisitvisitor-模式">4. 访问与遍历：<code>std::visit</code>（Visitor 模式）</a></h2>
+<h3 id="非成员-stdvisit自-c17-起"><a class="header" href="#非成员-stdvisit自-c17-起">非成员 <code>std::visit</code>（自 C++17 起）</a></h3>
+<p>签名（概念）：</p>
+<pre><code class="language-cpp">template &lt;class Visitor, class... Variants&gt;
+decltype(auto) visit(Visitor&amp;&amp; vis, Variants&amp;&amp;... vars);
+</code></pre>
+<ul>
+<li><code>std::visit</code> 会将 visitor（可调用对象）以当前 variant（或多个 variants）的活动值作为参数调用。</li>
+<li>当传入多个 <code>variant</code> 时，visitor 会被调用，参数顺序与 <code>variant</code> 顺序对应。</li>
+<li>如果任一 <code>variant</code> 为 <code>valueless_by_exception()</code>，<code>std::visit</code> 通常会抛出 <code>std::bad_variant_access</code>。</li>
+<li>返回值类型由 visitor 决定（可以返回 <code>void</code> 或其他类型）。</li>
+<li>常用技巧：用 <code>overloaded</code> （多个 lambda 继承合并）来实现多分支处理：</li>
+</ul>
+<pre><code class="language-cpp">// helper
+template&lt;class... Fs&gt; struct overloaded : Fs... { using Fs::operator()...; };
+template&lt;class... Fs&gt; overloaded(Fs...) -&gt; overloaded&lt;Fs...&gt;;
+
+// 使用
+std::variant&lt;int,std::string&gt; v = 42;
+std::visit(overloaded {
+    [](int i){ std::cout&lt;&lt;"int "&lt;&lt;i&lt;&lt;"\n"; },
+    [](const std::string&amp; s){ std::cout&lt;&lt;"str "&lt;&lt;s&lt;&lt;"\n"; }
+}, v);
+</code></pre>
+<h3 id="成员-visitc26-提案member-visit"><a class="header" href="#成员-visitc26-提案member-visit">成员 <code>visit</code>（C++26 提案：member visit）</a></h3>
+<ul>
+<li>C++26 引入（或将引入）<code>v.visit(visitor)</code> 的成员形式作为便捷写法（请注意你使用的编译器/标准支持情况）。非成员 <code>std::visit</code> 在 C++17 就有。</li>
+</ul>
+<h2 id="5-比较运算与哈希"><a class="header" href="#5-比较运算与哈希">5. 比较运算与哈希</a></h2>
+<ul>
+<li>
+<p><code>operator==</code> 等（C++17 起）与 <code>operator&lt;=&gt;</code>（C++20）有定义：通常两个 <code>variant</code> 先比较是否都 <code>valueless_by_exception()</code>，再比较 <code>index()</code>，在 index 相同时比较包含的值（按对应类型的比较运算）。</p>
+<ul>
+<li><code>==</code>：若两者 <code>index()</code> 相同且 contained values 相等 =&gt; true；若两个都 valueless =&gt; true；否则 false。</li>
+<li><code>&lt;</code> / <code>&gt;</code>：若 <code>index()</code> 不同，通常以 <code>index()</code> 的大小决定排序；若相同，则调用 contained type 的 <code>&lt;</code>。</li>
+<li>详细边界（valueless 等）以标准详细定义为准，但通常结果符合“按 index 首先排序，然后按值比较”的直觉。</li>
+</ul>
+</li>
+<li>
+<p><code>std::hash&lt;std::variant&lt;...&gt;&gt;</code> 在标准库有特化（要求所有候选类型可哈希）。</p>
+</li>
+</ul>
+<h2 id="6-辅助类型与特性type-traits--helper-classes"><a class="header" href="#6-辅助类型与特性type-traits--helper-classes">6. 辅助类型与特性（type traits / helper classes）</a></h2>
+<ul>
+<li>
+<p><code>std::monostate</code>（C++17）</p>
+<ul>
+<li>一个空占位类型，常用于将 <code>variant</code> 设置为默认可构造：<code>std::variant&lt;std::monostate, T1, T2&gt;</code>。</li>
+</ul>
+</li>
+<li>
+<p><code>std::bad_variant_access</code>（C++17）</p>
+<ul>
+<li>当用 <code>std::get&lt;T&gt;</code> / <code>std::get&lt;I&gt;</code> 访问但 <code>variant</code> 未持有该 alternative 时抛出。</li>
+</ul>
+</li>
+<li>
+<p><code>std::variant_size&lt;Variant&gt;</code> / <code>std::variant_size_v&lt;Variant&gt;</code>（C++17）</p>
+<ul>
+<li>编译期获取候选类型数量（常量表达式）。</li>
+<li>例： <code>std::variant_size_v&lt;std::variant&lt;int,double&gt;&gt; == 2</code>。</li>
+</ul>
+</li>
+<li>
+<p><code>std::variant_alternative&lt;I, Variant&gt;::type</code> / <code>std::variant_alternative_t&lt;I, Variant&gt;</code>（C++17）</p>
+<ul>
+<li>编译期获取索引 <code>I</code> 对应的类型（类型别名）。</li>
+<li>例： <code>std::variant_alternative_t&lt;0,std::variant&lt;int,double&gt;&gt;</code> 等于 <code>int</code>。</li>
+</ul>
+</li>
+<li>
+<p><code>variant_npos</code>：表示无值索引（如 <code>index()</code> 在 valueless 时返回此值）。</p>
+</li>
+</ul>
+<h2 id="7-异常安全与-valueless_by_exception"><a class="header" href="#7-异常安全与-valueless_by_exception">7. 异常安全与 <code>valueless_by_exception</code></a></h2>
+<ul>
+<li>
+<p>在某些变更 active alternative 的操作中（例如赋值、就地构造时），如果构造/移动/复制新的 alternative 的构造函数抛出异常，而旧对象已被销毁，<code>variant</code> 可能无法恢复到原先状态，从而进入 <code>valueless_by_exception()</code>。</p>
+</li>
+<li>
+<p>一旦处于 <code>valueless_by_exception()</code>：</p>
+<ul>
+<li><code>index()</code> 返回 <code>variant_npos</code>；</li>
+<li><code>std::get</code> 抛出 <code>std::bad_variant_access</code>；</li>
+<li><code>std::get_if</code> 返回 <code>nullptr</code>；</li>
+<li>一些操作（比如 <code>std::visit</code>）会抛出 <code>bad_variant_access</code>（取决于实现）。</li>
+</ul>
+</li>
+<li>
+<p>预防策略：当替换可能抛异常的类型时，优先使用 <code>emplace</code> 并在必要时进行异常处理；确保候选类型的构造/移动操作尽可能 <code>noexcept</code>，可以降低进入无值状态的风险。</p>
+</li>
+</ul>
+<h2 id="8-常用例子"><a class="header" href="#8-常用例子">8. 常用例子</a></h2>
+<p>基本使用与 get/get_if/holds_alternative</p>
+<pre><code class="language-cpp">std::variant&lt;int,std::string&gt; v = "hello";
+if (std::holds_alternative&lt;std::string&gt;(v)) {
+    std::cout &lt;&lt; std::get&lt;std::string&gt;(v) &lt;&lt; "\n";
+}
+if (auto p = std::get_if&lt;int&gt;(&amp;v)) {
+    std::cout &lt;&lt; "int: " &lt;&lt; *p &lt;&lt; "\n";
+} else {
+    std::cout &lt;&lt; "not int\n";
+}
+</code></pre>
+<p>emplace / in_place</p>
+<pre><code class="language-cpp">std::variant&lt;std::monostate, std::string, std::vector&lt;int&gt;&gt; v;
+v.emplace&lt;std::string&gt;("abc");              // 就地构造 std::string
+v.emplace&lt;std::vector&lt;int&gt;&gt;(3, 42);         // 就地构造 vector(3,42)
+v.emplace&lt;in_place_index_t&lt;1&gt;&gt;("xyz");      // 使用索引就地构造（index=1 =&gt; std::string）
+</code></pre>
+<p>visit 与 overloaded 工具</p>
+<pre><code class="language-cpp">auto handle = overloaded {
+    [](int i){ std::cout&lt;&lt;"int "&lt;&lt;i&lt;&lt;"\n"; },
+    [](const std::string&amp; s){ std::cout&lt;&lt;"str "&lt;&lt;s&lt;&lt;"\n"; }
+};
+std::variant&lt;int,std::string&gt; v = 10;
+std::visit(handle, v);
+</code></pre>
+<p>使用 monostate 使可默认构造</p>
+<pre><code class="language-cpp">std::variant&lt;std::monostate, std::string&gt; v; // 默认构造后 v 持有 monostate
+</code></pre>
+<h2 id="9-实用建议--常见误用"><a class="header" href="#9-实用建议--常见误用">9. 实用建议 / 常见误用</a></h2>
+<ul>
+<li><strong>不要把 <code>variant</code> 作为替代所有情况</strong>：类型过多会导致代码复杂和 visitor 分支膨胀。若候选类型集合非常大或松散，考虑设计别的抽象（多态/策略等）。</li>
+<li><strong>当候选类型有重复的具体类型时，避免 <code>get&lt;T&gt;</code></strong>：因为会编译错误；使用 <code>get&lt;index&gt;</code> 或 <code>in_place_type</code> 显式选择。</li>
+<li><strong>注意异常安全</strong>：替换 active alternative（赋值、emplace）如果构造抛异常，可能进入 <code>valueless_by_exception</code>；为关键路径确保候选类型的移动/复制构造尽可能 <code>noexcept</code>。</li>
+<li><strong>避免把对 <code>variant</code> 的访问当作频繁反射</strong>：大量类型判断/切换会影响可读性和性能（虽然 <code>variant</code> 本质上是常数时间的判定与访问，但分支与 visitor 的实现复杂度需考虑）。</li>
+<li>std::variant 类似于 Rust 的 enum，都能表示“一种类型中的多种可能”。
+不同点在于Rust 的 enum 语法更简洁，且模式匹配是强制的；C++ 的 std::variant 需要 std::visit 或 get 来显式处理。</li>
+</ul>
+<h2 id="10-标准特性备注"><a class="header" href="#10-标准特性备注">10. 标准/特性备注</a></h2>
+<ul>
+<li><code>std::variant</code> 自 C++17 引入（特性宏：<code>__cpp_lib_variant</code> 等）。</li>
+<li>标准后续对 <code>variant</code> 做过修订（例如 <code>std::visit</code> 扩展、constexpr 能力增强等）。例如有成员形式 <code>visit</code>（C++26 提议/扩展），以及使 <code>variant</code> 更多操作支持 <code>constexpr</code>（不同标准版本的支持程度由编译器/标准库实现决定）。</li>
+<li>使用时注意你的编译器和标准库版本对 <code>variant</code> 的各项特性的支持情况（尤其是 <code>constexpr</code>、成员 <code>visit</code> 等较新特性）。</li>
+</ul>
+<h2 id="11-快速-api-参考"><a class="header" href="#11-快速-api-参考">11. 快速 API 参考</a></h2>
+<ul>
+<li>头文件：<code>&lt;variant&gt;</code></li>
+<li>构造：<code>variant()</code>, <code>variant(in_place_type_t&lt;T&gt;, ...)</code>, <code>variant(in_place_index_t&lt;I&gt;, ...)</code>, converting constructors</li>
+<li>赋值：<code>operator=(variant)</code>, <code>operator=(T&amp;&amp;)</code>（converting）</li>
+<li>访问：<code>std::get&lt;T&gt;(v)</code>, <code>std::get&lt;I&gt;(v)</code>, <code>std::get_if&lt;T&gt;(&amp;v)</code>, <code>std::get_if&lt;I&gt;(&amp;v)</code></li>
+<li>情况检测：<code>v.index()</code>, <code>v.valueless_by_exception()</code>, <code>std::holds_alternative&lt;T&gt;(v)</code></li>
+<li>就地构造：<code>v.emplace&lt;T&gt;(args...)</code>, <code>v.emplace&lt;in_place_index_t&lt;I&gt;&gt;(args...)</code></li>
+<li>访问模式：<code>std::visit(visitor, v1, v2, ...)</code>，C++26 可能支持成员 <code>v.visit(visitor)</code></li>
+<li>辅助类型：<code>std::monostate</code>, <code>std::bad_variant_access</code>, <code>std::variant_size</code>, <code>std::variant_alternative_t</code>, <code>std::hash&lt;std::variant&lt;...&gt;&gt;</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="stl"><a class="header" href="#stl">STL</a></h1>
+<p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。</p>
+<div class="table-wrapper"><table><thead><tr><th>组件</th><th>描述</th></tr></thead><tbody>
+<tr><td><strong>容器 (Containers)</strong></td><td>容器是 STL 中最基本的组件之一，提供了各种数据结构，包括向量（vector）、链表（list）、队列（queue）、栈（stack）、集合（set）、映射（map）等。这些容器具有不同的特性和用途，可以根据实际需求选择合适的容器。</td></tr>
+<tr><td><strong>算法 (Algorithms)</strong></td><td>STL 提供了大量的算法，用于对容器中的元素进行各种操作，包括排序、搜索、复制、移动、变换等。这些算法在使用时不需要关心容器的具体类型，只需要指定要操作的范围即可。</td></tr>
+<tr><td><strong>迭代器 (Iterators)</strong></td><td>迭代器用于遍历容器中的元素，允许以统一的方式访问容器中的元素，而不用关心容器的内部实现细节。STL 提供了多种类型的迭代器，包括随机访问迭代器、双向迭代器、前向迭代器和输入输出迭代器等。</td></tr>
+<tr><td><strong>函数对象 (Function Objects)</strong></td><td>函数对象是可以像函数一样调用的对象，可以用于算法中的各种操作。STL 提供了多种函数对象，包括一元函数对象、二元函数对象、谓词等，可以满足不同的需求。</td></tr>
+<tr><td><strong>适配器 (Adapters)</strong></td><td>适配器用于将一种容器或迭代器适配成另一种容器或迭代器，以满足特定的需求。STL 提供了多种适配器，包括栈适配器（stack adapter）、队列适配器（queue adapter）和优先队列适配器（priority queue adapter）等。</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
 <p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
 <div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
 <tr><td><strong>序列容器 (Sequence Containers)</strong></td><td><strong>std::vector</strong></td><td>动态数组，支持快速随机访问。</td></tr>
@@ -1425,7 +2038,7 @@ std::cout &lt;&lt; v1.size();  // 错误
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
 <p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
-<h2 id="1-引入-2"><a class="header" href="#1-引入-2">1. 引入</a></h2>
+<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;vector&gt;
 </code></pre>
 <h2 id="2-存储方式-1"><a class="header" href="#2-存储方式-1">2. 存储方式</a></h2>
@@ -1654,7 +2267,7 @@ vec2.assign(vec1.begin(), vec1.end());  // vec2 变为 {1, 2, 3}
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdlist"><a class="header" href="#stdlist">std::list</a></h1>
 <p>List 是一个支持在容器的任意位置快速插入和删除元素的一个顺序容器，支持存储各种类型的对象，链表在存储时不需要重新分配内存或是初始化时预留大小，对象存储在内存中的不连续位置，因此随机访问能力较差。</p>
-<h2 id="1-引入-3"><a class="header" href="#1-引入-3">1. 引入</a></h2>
+<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;list&gt;
 </code></pre>
 <h2 id="2-存储方式-2"><a class="header" href="#2-存储方式-2">2. 存储方式</a></h2>
@@ -1944,7 +2557,7 @@ lst.reverse();  // 反转链表，lst 变为 {5, 4, 3, 2, 1}
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stddeque"><a class="header" href="#stddeque">std::deque</a></h1>
 <p><code>std::deque</code>（双端队列）是一个支持在两端快速插入和删除元素的顺序容器。与 <code>std::vector</code> 不同，<code>std::deque</code> 在内存中采用分段连续的存储方式，即它的元素分布在多个不连续的内存块中，这些内存块通过指针数组进行管理。由于这一内存布局，<code>std::deque</code> 可以在头尾两端高效地进行插入和删除操作，并且支持随机访问(可以使用<code>operator[]</code>)。尽管如此，它的随机访问性能较 <code>std::vector</code> 差一些，因为每个内存块并不连续。</p>
 <p><code>std::deque</code> 不需要像 <code>std::vector</code> 一样每次扩展时重新分配整个内存空间，而是通过扩展指向内存块的指针数组来增加容量。这使得它在动态变化的场景中，尤其是在需要频繁在两端插入和删除元素时，表现得尤为高效。</p>
-<h2 id="1-引入-4"><a class="header" href="#1-引入-4">1. 引入</a></h2>
+<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;deque&gt;
 </code></pre>
 <h2 id="2-存储方式-3"><a class="header" href="#2-存储方式-3">2. 存储方式</a></h2>
@@ -2196,7 +2809,7 @@ int main() {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdset"><a class="header" href="#stdset">std::set</a></h1>
 <p><code>std::set</code> 是一个排序的关联容器，它存储唯一的元素，并根据元素的顺序进行自动排序。与 <code>std::list</code> 不同，<code>std::set</code> 提供了对元素的高效查找、插入和删除操作，但不支持直接的索引访问。其底层通常是基于平衡二叉树实现（红黑树），因此在查找、插入和删除操作上的时间复杂度通常为 O(log n)。</p>
-<h2 id="1-引入-5"><a class="header" href="#1-引入-5">1. 引入</a></h2>
+<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
 <h2 id="2-存储方式-4"><a class="header" href="#2-存储方式-4">2. 存储方式</a></h2>
@@ -2417,7 +3030,7 @@ int main() {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultiset"><a class="header" href="#stdmultiset">std::multiset</a></h1>
 <p><code>std::multiset</code> 是与 <code>std::set</code> 类似的一个容器，但与 <code>std::set</code> 不同，<code>std::multiset</code> 允许存储重复的元素。在 <code>std::multiset</code> 中，元素会按顺序排列，并且可以包含多个相同的元素。<code>std::multiset</code> 也提供了高效的查找、插入和删除操作，底层通常使用红黑树结构实现，时间复杂度通常为 O(log n)。</p>
-<h2 id="1-引入-6"><a class="header" href="#1-引入-6">1. 引入</a></h2>
+<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;set&gt;
 </code></pre>
 <h2 id="2-存储方式-5"><a class="header" href="#2-存储方式-5">2. 存储方式</a></h2>
@@ -2590,7 +3203,7 @@ ms1.merge(ms2);  // ms1 合并 ms2 后，变为 {1, 2, 3, 4, 5, 6}
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmap"><a class="header" href="#stdmap">std::map</a></h1>
 <p><code>std::map</code> 是 C++ 标准库中的一个关联容器，它用于存储一组键值对（<code>key-value</code>），并根据键进行自动排序。每个键在 <code>std::map</code> 中是唯一的，因此不允许存储重复的键。<code>std::map</code> 底层通常使用红黑树结构实现，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
-<h2 id="1-引入-7"><a class="header" href="#1-引入-7">1. 引入</a></h2>
+<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-6"><a class="header" href="#2-存储方式-6">2. 存储方式</a></h2>
@@ -2796,7 +3409,7 @@ for (auto it = m.begin(); it != m.end(); ++it) {
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stdmultimap"><a class="header" href="#stdmultimap">std::multimap</a></h1>
 <p><code>std::multimap</code> 是一个与 <code>std::map</code> 类似的关联容器，但与 <code>std::map</code> 不同，<code>std::multimap</code> 允许存储重复的键。在 <code>std::multimap</code> 中，键是可以重复的，而每个键都可以关联多个不同的值。与 <code>std::map</code> 相同，<code>std::multimap</code> 也会自动按照键的顺序进行排序。<code>std::multimap</code> 的底层实现通常使用红黑树，时间复杂度通常为 O(log n) 用于插入、查找和删除操作。</p>
-<h2 id="1-引入-8"><a class="header" href="#1-引入-8">1. 引入</a></h2>
+<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;map&gt;
 </code></pre>
 <h2 id="2-存储方式-7"><a class="header" href="#2-存储方式-7">2. 存储方式</a></h2>
@@ -3014,7 +3627,7 @@ for (auto it = mm.begin(); it != mm.end(); ++it) {
 <li>Pred 是一个二元谓词，用于比较两个元素是否相等，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc 是分配器类型，用于管理内存分配，默认为 <code>std::allocator&lt;Key&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-9"><a class="header" href="#1-引入-9">1. 引入</a></h2>
+<h2 id="1-引入-11"><a class="header" href="#1-引入-11">1. 引入</a></h2>
 <pre><code class="language-C++">#include &lt;unordered_set&gt;
 </code></pre>
 <h2 id="2-存储方式-8"><a class="header" href="#2-存储方式-8">2. 存储方式</a></h2>
@@ -3242,7 +3855,7 @@ std::cout &lt;&lt; "Are p1 and p2 equal? " &lt;&lt; std::boolalpha &lt;&lt; eq(p
 <li>Pred：用于比较两个元素是否相等的二元谓词，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，用于内存分配，默认为 <code>std::allocator&lt;Key&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-10"><a class="header" href="#1-引入-10">1. 引入</a></h2>
+<h2 id="1-引入-12"><a class="header" href="#1-引入-12">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_set&gt;
 </code></pre>
 <h2 id="2-存储方式-9"><a class="header" href="#2-存储方式-9">2. 存储方式</a></h2>
@@ -3456,7 +4069,7 @@ for (auto it = us.begin(); it != us.end(); ++it) {
 <li>Pred：相等比较函数对象，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，默认为 <code>std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-11"><a class="header" href="#1-引入-11">1. 引入</a></h2>
+<h2 id="1-引入-13"><a class="header" href="#1-引入-13">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_map&gt;
 </code></pre>
 <h2 id="2-存储方式-10"><a class="header" href="#2-存储方式-10">2. 存储方式</a></h2>
@@ -3705,7 +4318,7 @@ std::cout &lt;&lt; "Are p1 and p2 equal? " &lt;&lt; std::boolalpha &lt;&lt; eq(p
 <li>Pred：相等比较函数对象，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
 <li>Alloc：分配器类型，默认为 <code>std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;</code>。</li>
 </ul>
-<h2 id="1-引入-12"><a class="header" href="#1-引入-12">1. 引入</a></h2>
+<h2 id="1-引入-14"><a class="header" href="#1-引入-14">1. 引入</a></h2>
 <pre><code class="language-cpp">#include &lt;unordered_map&gt;
 </code></pre>
 <h2 id="2-存储方式-11"><a class="header" href="#2-存储方式-11">2. 存储方式</a></h2>

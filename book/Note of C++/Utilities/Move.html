@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Containers - Note of C++</title>
+        <title>Move - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Utilities/Move.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,62 +183,103 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="containers"><a class="header" href="#containers">Containers</a></h1>
-<p>容器是用来存储数据的序列，它们提供了不同的存储方式和访问模式。</p>
-<div class="table-wrapper"><table><thead><tr><th>容器类别</th><th>容器名称</th><th>描述</th></tr></thead><tbody>
-<tr><td><strong>序列容器 (Sequence Containers)</strong></td><td><strong>std::vector</strong></td><td>动态数组，支持快速随机访问。</td></tr>
-<tr><td></td><td><strong>std::deque</strong></td><td>双端队列，支持快速插入和删除。</td></tr>
-<tr><td></td><td><strong>std::list</strong></td><td>链表，支持快速插入和删除，但不支持随机访问。</td></tr>
-<tr><td><strong>关联容器 (Associative Containers)</strong></td><td><strong>std::set</strong></td><td>集合，不允许重复元素。</td></tr>
-<tr><td></td><td><strong>std::multiset</strong></td><td>多重集合，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::map</strong></td><td>映射，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::multimap</strong></td><td>多重映射，存储键值对（pair），其中键是唯一的，但值可以重复，允许一个键映射到多个值。</td></tr>
-<tr><td><strong>无序容器 (Unordered Containers)</strong></td><td><strong>std::unordered_set</strong></td><td>无序集合，哈希表实现，支持快速查找、插入和删除。</td></tr>
-<tr><td></td><td><strong>std::unordered_multiset</strong></td><td>无序多重集合，哈希表实现，允许多个元素具有相同的键。</td></tr>
-<tr><td></td><td><strong>std::unordered_map</strong></td><td>无序映射，哈希表实现，每个键映射到一个值。</td></tr>
-<tr><td></td><td><strong>std::unordered_multimap</strong></td><td>无序多重映射，哈希表实现，允许一个键映射到多个值。</td></tr>
-</tbody></table>
-</div>
-<h2 id="1-序列容器"><a class="header" href="#1-序列容器">1. 序列容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th>std::list</th><th>std::vector</th><th>std::deque</th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>非连续内存，双向链表</td><td>连续内存</td><td>分段连续内存</td></tr>
-<tr><td><strong>访问性能</strong></td><td>顺序访问较快，随机访问慢</td><td>随机访问快</td><td>末尾和头部访问都快</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>任意位置插入、删除快</td><td>末尾插入快，中间位置慢</td><td>头尾插入、删除快</td></tr>
-<tr><td><strong>适用场景</strong></td><td>频繁在中间插入/删除</td><td>需要高效随机访问</td><td>需要在头尾快速插入/删除</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>稳定，元素插入或删除不会失效</td><td>插入、删除可能导致迭代器失效</td><td>插入、删除可能导致迭代器失效</td></tr>
-</tbody></table>
-</div>
-<h2 id="2-关联容器"><a class="header" href="#2-关联容器">2. 关联容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::set</strong></th><th><strong>std::multiset</strong></th><th><strong>std::map</strong></th><th><strong>std::multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td><td>红黑树（平衡二叉搜索树）</td></tr>
-<tr><td><strong>访问性能</strong></td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td><td>查找、插入、删除均为 O(log n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持元素有序</td><td>插入、删除时会自动保持键的有序</td><td>插入、删除时会自动保持键的有序</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要唯一元素且不重复的集合</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>不存在值，只有键（元素）</td><td>不存在值，只有键（元素）</td><td>存在键值对，键映射到一个值</td><td>存在键值对，键映射到多个值（允许重复）</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除元素不会使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
-</tbody></table>
-</div>
-<h2 id="3-无序容器"><a class="header" href="#3-无序容器">3. 无序容器</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>特性</th><th><strong>std::unordered_set</strong></th><th><strong>std::unordered_multiset</strong></th><th><strong>std::unordered_map</strong></th><th><strong>std::unordered_multimap</strong></th></tr></thead><tbody>
-<tr><td><strong>内存结构</strong></td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td><td>哈希表实现</td></tr>
-<tr><td><strong>访问性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>插入/删除性能</strong></td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td><td>平均 O(1)，最坏 O(n)</td></tr>
-<tr><td><strong>允许重复元素</strong></td><td>不允许元素重复</td><td>允许多个相同的元素</td><td>不允许键重复，但值可以重复</td><td>允许多个相同的键值对</td></tr>
-<tr><td><strong>适用场景</strong></td><td>需要存储唯一元素且不关心顺序</td><td>需要存储多个相同元素的集合</td><td>需要键值映射，每个键对应一个值</td><td>需要存储多个值对相同键的映射</td></tr>
-<tr><td><strong>键值对</strong></td><td>存储键，无值</td><td>存储键，无值</td><td>存储键值对，键映射到一个值</td><td>存储键值对，键映射到多个值</td></tr>
-<tr><td><strong>迭代器稳定性</strong></td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td><td>插入或删除可能使迭代器失效</td></tr>
-</tbody></table>
-</div>
+                        <h1 id="stdmove"><a class="header" href="#stdmove">std::move</a></h1>
+<p>将一个对象的<strong>所有权</strong>从一个地方(特指引用或是指针)转移到另一个地方，相当于rust语言的所有权转让，对于<code>std::string</code>或是更复杂的数据结构使用<code>std::move</code>转移所有权可以比直接复制有着更高的效率。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">template&lt; class T &gt;
+typename std::remove_reference&lt;T&gt;::type&amp;&amp; move( T&amp;&amp; t ) noexcept; // (since C++11 and until C++14)
+</code></pre>
+<pre><code class="language-cpp">template&lt; class T &gt;
+constexpr std::remove_reference_t&lt;T&gt;&amp;&amp; move( T&amp;&amp; t ) noexcept; // (since C++14)
+</code></pre>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<p>被包括在<code>&lt;utility&gt;</code>头文件中。</p>
+<pre><code class="language-C++">#include &lt;utility&gt;
+</code></pre>
+<h2 id="2-stdmove的工作原理"><a class="header" href="#2-stdmove的工作原理">2. <code>std::move</code>的工作原理</a></h2>
+<p><code>std::move</code>并不真正“移动”对象的数据，它的作用是将一个左值引用转化为右值引用，从而启用移动语义。在C++中，右值引用和左值引用的主要区别在于右值引用允许资源的所有权转移，而左值引用则保持资源的所有权。</p>
+<p>通过使用<code>std::move</code>，编译器能够区分何时使用<strong>拷贝构造</strong>（复制数据）和<strong>移动构造</strong>（转移所有权），从而优化程序性能，特别是在涉及大量数据拷贝的场景中。</p>
+<h3 id="1右值引用与左值引用"><a class="header" href="#1右值引用与左值引用">(1)右值引用与左值引用</a></h3>
+<ul>
+<li>左值：表示可以被引用且具有持久地址的对象（例如，变量）。</li>
+<li>右值：表示临时对象或可以被销毁的对象（例如，常量、字面值、函数返回值）。</li>
+</ul>
+<p><code>std::move</code>的作用是将左值转换为右值引用，允许资源的移动。</p>
+<h3 id="2为什么需要stdmove"><a class="header" href="#2为什么需要stdmove">(2)为什么需要<code>std::move</code>？</a></h3>
+<p>C++11引入了移动语义（Move Semantics），目标是提高性能。复制一个大对象时，可能涉及到大量的内存分配和数据拷贝，而如果能将资源的所有权直接转移给另一个对象，就可以避免这些开销。<code>std::move</code>通过将左值转换为右值引用，促使移动构造函数或移动赋值运算符被调用。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);  // 这里v2会接管v1的所有权，v1会处于一个"空"状态
+</code></pre>
+<p>在这个例子中，<code>std::move</code>将<code>v1</code>转换为右值引用，从而触发了移动构造函数。结果是，<code>v2</code>接管了<code>v1</code>的数据，而<code>v1</code>进入了一个有效但不确定的状态。</p>
+<h2 id="3-使用stdmove的场景"><a class="header" href="#3-使用stdmove的场景">3. 使用<code>std::move</code>的场景</a></h2>
+<h3 id="1移动构造与移动赋值"><a class="header" href="#1移动构造与移动赋值">(1)移动构造与移动赋值</a></h3>
+<p>在使用<code>std::move</code>时，通常会看到它与<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>一起使用。</p>
+<ul>
+<li>移动构造函数：当一个对象通过右值引用初始化另一个对象时，调用移动构造函数，通常用于资源的转移。</li>
+<li>移动赋值运算符：当一个对象被右值引用赋值给另一个已存在的对象时，调用移动赋值运算符。</li>
+</ul>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);  // 使用移动构造函数
+</code></pre>
+<p>对于赋值操作：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2;
+v2 = std::move(v1);  // 使用移动赋值运算符
+</code></pre>
+<p>不管是哪一种操作，<code>v1</code>都会被剥夺所有权。</p>
+<h3 id="2自定义类型与stdmove"><a class="header" href="#2自定义类型与stdmove">(2)自定义类型与<code>std::move</code></a></h3>
+<p>如果你有自定义类型，并希望通过移动语义来优化性能，那么你需要为这个类型定义<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>。这些函数通常需要显式地将资源的所有权从一个对象转移到另一个对象。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">class MyClass {
+public:
+    MyClass(MyClass&amp;&amp; other) noexcept {
+        // 移动构造函数
+        this-&gt;data = std::move(other.data);  // 移动数据
+    }
+
+    MyClass&amp; operator=(MyClass&amp;&amp; other) noexcept {
+        // 移动赋值运算符
+        if (this != &amp;other) {
+            this-&gt;data = std::move(other.data);  // 移动数据
+        }
+        return *this;
+    }
+
+private:
+    std::vector&lt;int&gt; data;
+};
+</code></pre>
+<h2 id="4-stdmove的常见误用"><a class="header" href="#4-stdmove的常见误用">4. <code>std::move</code>的常见误用</a></h2>
+<h3 id="1移动之后使用原对象"><a class="header" href="#1移动之后使用原对象">(1)移动之后使用原对象</a></h3>
+<p>在将对象通过<code>std::move</code>转移所有权之后，原对象的状态是未定义的。因此，<strong>不应再使用原对象</strong>，例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v1 = {1, 2, 3};
+std::vector&lt;int&gt; v2 = std::move(v1);
+
+// v1现在处于未定义状态，不能再安全使用
+std::cout &lt;&lt; v1.size();  // 错误
+</code></pre>
+<p>正确的做法是，只在转移所有权后“放弃”原对象的使用。</p>
+<h3 id="2不必要的使用stdmove"><a class="header" href="#2不必要的使用stdmove">(2)不必要的使用<code>std::move</code></a></h3>
+<p><code>std::move</code>的作用是告诉编译器“这不是一个左值，你可以安全地移动它”，但是如果你已经明确知道对象不会被复制（例如返回一个对象的右值引用），就不必使用<code>std::move</code>。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; createVector() {
+    std::vector&lt;int&gt; v = {1, 2, 3};
+    return v;  // 编译器会自动进行返回值优化（RVO），不需要手动使用std::move
+}
+</code></pre>
+<p>这里的返回值优化（RVO）允许编译器在返回<code>v</code>时进行移动，而不需要显式调用<code>std::move</code>。</p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../STL.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Utilities/Pair.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../STL/Containers/Vector.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Utilities/Optional.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,11 +289,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../STL.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Utilities/Pair.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../STL/Containers/Vector.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Utilities/Optional.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
