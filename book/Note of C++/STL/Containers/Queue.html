@@ -1,0 +1,373 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Queue - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Queue.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="stdqueue"><a class="header" href="#stdqueue">std::queue</a></h1>
+<p><code>std::queue</code> (队列) 和 <code>std::stack</code> 类似，也是 C++ 标准库中的一个<strong>容器适配器 (Container Adapter)</strong>。它将底层容器的功能限制在一个特定的访问模式上，以实现 <strong>FIFO (First-In, First-Out，先进先出)</strong> 的数据结构。</p>
+<p>想象一下排队等候的队伍：第一个进入队伍的人也是第一个离开队伍的人。在 <code>std::queue</code> 中，元素从尾部（Back）进入，从头部（Front）离开。</p>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<pre><code class="language-cpp">#include &lt;queue&gt;
+</code></pre>
+<h2 id="2-存储方式与底层容器"><a class="header" href="#2-存储方式与底层容器">2. 存储方式与底层容器</a></h2>
+<p><code>std::queue</code> 通过封装一个<strong>底层容器 (Underlying Container)</strong> 来存储数据。它只暴露了符合队列（FIFO）操作的方法：</p>
+<ul>
+<li><strong>入队 (Push)：</strong> 插入元素到队列的<strong>尾部</strong>（对应底层容器的 <code>push_back()</code>）。</li>
+<li><strong>出队 (Pop)：</strong> 移除队列的<strong>头部</strong>元素（对应底层容器的 <code>pop_front()</code>）。</li>
+<li><strong>查看 (Front/Back)：</strong> 访问头部/尾部元素。</li>
+</ul>
+<p><strong>默认底层容器</strong>：如果创建 <code>std::queue</code> 时不指定，它默认使用 <strong><code>std::deque&lt;T&gt;</code></strong>。</p>
+<p><strong>可选底层容器</strong>：底层容器必须同时支持在头部（前端）移除元素（<code>pop_front()</code>）和在尾部（后端）添加元素（<code>push_back()</code>）。</p>
+<p>满足这些要求的标准容器有：</p>
+<ol>
+<li><strong><code>std::deque&lt;T&gt;</code> (默认)</strong>：通常是最佳选择，因为它在两端操作（<code>push_back</code> 和 <code>pop_front</code>）都非常高效且 \(O(1)\)$。</li>
+<li><strong><code>std::list&lt;T&gt;</code></strong>：如果元素类型不可复制，或者需要频繁地插入/删除，这也是一个合适的选择，操作复杂度也是 \(O(1)\)$。</li>
+</ol>
+<p>注意：<strong><code>std::vector&lt;T&gt;</code> 不能作为 <code>std::queue</code> 的底层容器</strong>，因为它不支持高效地从头部移除元素（<code>pop_front</code>），<code>std::vector</code> 的 <code>erase(begin())</code> 操作是 \(O(N)\) 的。</p>
+<p><strong>声明带指定底层容器的队列：</strong></p>
+<pre><code class="language-cpp">// 使用 list 作为底层容器
+std::queue&lt;int, std::list&lt;int&gt;&gt; queue_list;
+
+// 使用默认的 deque 作为底层容器
+std::queue&lt;int&gt; queue_deque;
+</code></pre>
+<h2 id="3-常用方法-操作"><a class="header" href="#3-常用方法-操作">3. 常用方法 (操作)</a></h2>
+<p><code>std::queue</code> 同样<strong>不提供迭代器</strong>，因此不能像 <code>std::vector</code> 或 <code>std::list</code> 那样遍历所有元素。</p>
+<h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>queue()</code>: 创建一个空的 <code>std::queue</code>。</p>
+<pre><code class="language-cpp">std::queue&lt;int&gt; q;
+</code></pre>
+</li>
+<li>
+<p><code>queue(const Container&amp; cont)</code>: 使用一个已存在的底层容器副本进行初始化。</p>
+<pre><code class="language-cpp">std::deque&lt;int&gt; d = {10, 20, 30}; // 10 是 front, 30 是 back
+std::queue&lt;int&gt; q(d);             // q 变为 {10, 20, 30}
+</code></pre>
+</li>
+</ol>
+<h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
+<ol>
+<li><code>size_t size() const</code>: 返回 <code>std::queue</code> 中元素的个数。</li>
+<li><code>bool empty() const</code>: 检查 <code>std::queue</code> 是否为空。若为空返回 <code>true</code>。</li>
+</ol>
+<h3 id="3-元素访问函数"><a class="header" href="#3-元素访问函数">(3) 元素访问函数</a></h3>
+<p><code>std::queue</code> 允许访问队列的头部和尾部元素。</p>
+<ol>
+<li>
+<p><code>reference front()</code>: 返回队列<strong>头部</strong>元素（即<strong>最先</strong>进入队列的元素）的引用。调用前<strong>必须</strong>确保队列不为空。</p>
+</li>
+<li>
+<p><code>reference back()</code>: 返回队列<strong>尾部</strong>元素（即<strong>最近</strong>进入队列的元素）的引用。调用前<strong>必须</strong>确保队列不为空。</p>
+<pre><code class="language-cpp">std::queue&lt;int&gt; q;
+q.push(10); // q: {10}
+q.push(20); // q: {10, 20}
+std::cout &lt;&lt; q.front(); // 输出 10
+std::cout &lt;&lt; q.back();  // 输出 20
+</code></pre>
+</li>
+</ol>
+<h3 id="4-增加函数-入队"><a class="header" href="#4-增加函数-入队">(4) 增加函数 (入队)</a></h3>
+<ol>
+<li>
+<p><code>void push(const T&amp; value)</code>: 将元素 <code>value</code> 复制或移动到队列的<strong>尾部</strong>。</p>
+</li>
+<li>
+<p><code>template&lt;class... Args&gt; void emplace(Args&amp;&amp;... args)</code>: 在队列的<strong>尾部</strong>就地构造一个元素。这是<strong>首选</strong>的入队方式。</p>
+<pre><code class="language-cpp">std::queue&lt;std::string&gt; q;
+q.push("Apple"); // 尾部插入
+q.emplace("Banana"); // 尾部就地构造
+</code></pre>
+</li>
+<li>
+<p><code>template&lt;container-compatible-range R&gt; void push_range(R&amp;&amp; rg)</code> (C++23): 将一个范围（range）内的所有元素插入到队列的<strong>尾部</strong>。</p>
+</li>
+</ol>
+<h3 id="5-删除函数-出队"><a class="header" href="#5-删除函数-出队">(5) 删除函数 (出队)</a></h3>
+<ol>
+<li>
+<p><code>void pop()</code>: 移除队列<strong>头部</strong>的元素。此函数<strong>不返回</strong>被移除的元素。调用前<strong>必须</strong>确保队列不为空。</p>
+<pre><code class="language-cpp">std::queue&lt;int&gt; q;
+q.push(10);
+q.push(20); // q: {10, 20}
+
+// 要取出元素 10，需要两步操作：
+int oldest = q.front(); // 访问头部 (10)
+q.pop();                // 移除头部 (10)，q 变为 {20}
+</code></pre>
+</li>
+</ol>
+<h3 id="6-交换"><a class="header" href="#6-交换">(6) 交换</a></h3>
+<ol>
+<li><code>void swap(queue&amp; other)</code>: 交换两个 <code>std::queue</code> 的内容。</li>
+</ol>
+<h2 id="4-示例-fifo-原则"><a class="header" href="#4-示例-fifo-原则">4. 示例 (FIFO 原则)</a></h2>
+<p>通过一个简单的例子来演示 <strong>FIFO</strong> 的工作原理：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;queue&gt;
+
+int main() {
+    std::queue&lt;int&gt; my_queue;
+
+    // 入队 (Enroll)
+    my_queue.push(100); // 100 先进
+    my_queue.push(200);
+    my_queue.push(300); // 300 后进
+
+    std::cout &lt;&lt; "队列头部 (Front/First-in): " &lt;&lt; my_queue.front() &lt;&lt; std::endl; // 输出 100
+    std::cout &lt;&lt; "队列尾部 (Back/Last-in): " &lt;&lt; my_queue.back() &lt;&lt; std::endl;   // 输出 300
+
+    std::cout &lt;&lt; "--------------------" &lt;&lt; std::endl;
+
+    // 出队 (Serve)
+    while (!my_queue.empty()) {
+        std::cout &lt;&lt; "服务并移除: " &lt;&lt; my_queue.front() &lt;&lt; std::endl;
+        my_queue.pop();
+    }
+
+    // 元素的移除顺序为 100, 200, 300，严格遵循先进先出。
+    return 0;
+}
+</code></pre>
+<p><strong>输出:</strong></p>
+<pre><code class="language-text">队列头部 (Front/First-in): 100
+队列尾部 (Back/Last-in): 300
+--------------------
+服务并移除: 100
+服务并移除: 200
+服务并移除: 300
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../STL/Containers/Stack.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../STL/Containers/Priority_queue.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../STL/Containers/Stack.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../STL/Containers/Priority_queue.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

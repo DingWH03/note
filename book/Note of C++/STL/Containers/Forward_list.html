@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Forward_list - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Forward_list.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="stdforward_list"><a class="header" href="#stdforward_list">std::forward_list</a></h1>
+<p><code>std::forward_list</code> 是一个支持在容器的任意位置快速插入和删除元素的顺序容器。它是一个<strong>单向链表</strong>（singly-linked list）实现，因此它<strong>只支持向前遍历</strong>。相比于 <code>std::list</code>，它不存储指向前一个节点的指针，从而提供更节省空间的存储方式，但代价是失去了双向迭代的能力以及快速获取 <code>size()</code> 的能力。</p>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;forward_list&gt;
+</code></pre>
+<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<p><code>std::forward_list</code> 是基于<strong>单向链表</strong>实现的容器。它的元素存储在内存中的不连续位置，每个元素由一个节点（包含元素和指向<strong>下一个</strong>元素的指针）组成。</p>
+<ul>
+<li><strong>单向连接：</strong> 每个节点只知道其后继节点，因此只能从头到尾单向遍历。</li>
+<li><strong>高效的插入和删除：</strong> 与 <code>std::list</code> 类似，在任意位置插入和删除元素的时间复杂度为 \(O(1)\)，但操作通常需要一个指向<strong>目标位置之前</strong>元素的迭代器。</li>
+<li><strong>空间优化：</strong> 由于每个元素只存储一个指针（指向下一个元素），它比双向链表 <code>std::list</code> 更节省内存。</li>
+<li><strong>不支持随机访问和 <code>size()</code>：</strong> 由于是单向链表，它不支持 \(O(1)\) 复杂度的随机访问（例如 <code>operator[]</code>），并且为了保持 \(O(1)\) 插入/删除的效率，它通常<strong>不提供</strong> <code>size()</code> 成员函数（除非是 C++20 引入的 <code>std::ssize</code> 全局函数）。</li>
+</ul>
+<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
+<p>由于 <code>std::forward_list</code> 的单向特性，其插入和删除操作与 <code>std::list</code> 有显著区别：它<strong>没有</strong> <code>pop_back()</code>、<code>push_back()</code> 或 <code>back()</code>，并且 <strong><code>insert</code> 和 <code>erase</code> 操作是在指定位置的</strong>后方<strong>进行。</strong></p>
+<h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>forward_list()</code>: 创建一个空的 <code>std::forward_list</code>，默认构造函数。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst;
+</code></pre>
+</li>
+<li>
+<p><code>forward_list(size_t nSize)</code>: 创建一个包含 <code>nSize</code> 个默认构造元素的 <code>std::forward_list</code>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst(10);  // 创建一个包含10个默认构造的元素的列表
+</code></pre>
+</li>
+<li>
+<p><code>forward_list(size_t nSize, const T&amp; value)</code>: 创建一个包含 <code>nSize</code> 个元素，并且所有元素的值为 <code>value</code> 的 <code>std::forward_list</code>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst(10, 5);  // 创建一个包含10个元素，值都为5的列表
+</code></pre>
+</li>
+<li>
+<p><code>forward_list(const forward_list&amp;)</code>: 复制构造函数，创建一个与另一个 <code>std::forward_list</code> 完全相同的副本。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst1 = {1, 2, 3};
+std::forward_list&lt;int&gt; lst2(lst1);  // lst2 是 lst1 的一个复制版本
+</code></pre>
+</li>
+<li>
+<p><code>forward_list(begin, end)</code>: 使用另一个容器或迭代器区间中的元素初始化 <code>std::forward_list</code>。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3};
+std::forward_list&lt;int&gt; lst(vec.begin(), vec.end());  // 复制 vector 的元素到 forward_list
+</code></pre>
+</li>
+</ol>
+<h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>bool empty() const</code>: 检查 <code>std::forward_list</code> 是否为空。若为空返回 <code>true</code>，否则返回 <code>false</code>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst;
+if (lst.empty()) {
+    std::cout &lt;&lt; "List is empty." &lt;&lt; std::endl;
+}
+</code></pre>
+</li>
+<li>
+<p><code>size_t max_size() const</code>: 返回容器可能包含的最大元素数。</p>
+</li>
+</ol>
+<h3 id="3-增加函数"><a class="header" href="#3-增加函数">(3) 增加函数</a></h3>
+<p><code>std::forward_list</code> 的所有插入操作都围绕<strong>前部</strong>或<strong>指定位置之后</strong>进行。</p>
+<ol>
+<li>
+<p><code>push_front(const T&amp; value)</code>: 将元素 <code>value</code> 添加到 <code>std::forward_list</code> 的<strong>开头</strong>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {2, 3, 4};
+lst.push_front(1);  // lst 变为 {1, 2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>emplace_front(Args&amp;&amp;... args)</code>: 在 <code>std::forward_list</code> 的<strong>前端</strong>就地构造一个元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;std::pair&lt;int, int&gt;&gt; lst;
+lst.emplace_front(1, 2);  // 在前端构造一个 pair&lt;int, int&gt;，值为 {1, 2}
+</code></pre>
+</li>
+<li>
+<p><code>insert_after(const_iterator pos, const T&amp; value)</code>: 在指定位置 <code>pos</code> 的<strong>后面</strong>插入元素 <code>value</code>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 4, 5};
+auto it = std::next(lst.begin()); // 指向元素 2
+lst.insert_after(it, 3);          // 在 2 后面插入 3，lst 变为 {1, 2, 3, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>insert_after(const_iterator pos, size_t count, const T&amp; value)</code>: 在指定位置 <code>pos</code> 的<strong>后面</strong>插入 <code>count</code> 个元素，所有元素值为 <code>value</code>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 4, 5};
+auto it = std::next(lst.begin());
+lst.insert_after(it, 2, 3);  // 在 2 后面插入两个 3，lst 变为 {1, 2, 3, 3, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>insert_after(const_iterator pos, InputIterator first, InputIterator last)</code>: 将 <code>[first, last)</code> 区间的元素插入到指定位置 <code>pos</code> 的<strong>后面</strong>。</p>
+</li>
+</ol>
+<h3 id="4-删除函数"><a class="header" href="#4-删除函数">(4) 删除函数</a></h3>
+<p><code>std::forward_list</code> 的所有删除操作都围绕<strong>前部</strong>或<strong>指定位置之后</strong>进行。</p>
+<ol>
+<li>
+<p><code>pop_front()</code>: 删除 <code>std::forward_list</code> 中的<strong>第一个</strong>元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3, 4};
+lst.pop_front();  // 删除第一个元素，lst 变为 {2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>erase_after(const_iterator pos)</code>: 删除指定位置 <code>pos</code> <strong>后面</strong>的元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3, 4};
+auto it = lst.begin(); // 指向元素 1
+lst.erase_after(it);   // 删除 1 后面的元素 2，lst 变为 {1, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>erase_after(const_iterator first, const_iterator last)</code>: 删除区间 <code>(first, last)</code> 内的所有元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3, 4, 5};
+auto it1 = lst.begin(); // 指向 1
+auto it2 = std::next(it1, 3); // 指向 4
+lst.erase_after(it1, it2); // 删除 1 后面直到 4 之前的所有元素 {2, 3}，lst 变为 {1, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>clear()</code>: 删除 <code>std::forward_list</code> 中的所有元素，使容器变为空。</p>
+</li>
+<li>
+<p><code>void remove(const T&amp; val)</code>: 删除链表中所有等于指定值 <code>val</code> 的元素。</p>
+</li>
+<li>
+<p><code>void remove_if (bool (*pred)(const T&amp;))</code>: 删除满足谓词 <code>pred</code> 条件的所有元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3, 4, 5};
+lst.remove_if([](int n) { return n % 2 == 0; }); // 删除偶数，lst 变为 {1, 3, 5}
+</code></pre>
+</li>
+</ol>
+<h3 id="5-遍历函数"><a class="header" href="#5-遍历函数">(5) 遍历函数</a></h3>
+<p><code>std::forward_list</code> <strong>只支持前向迭代器</strong>。它提供了一个特殊的迭代器 <code>before_begin()</code> 用于方便地在链表头部之前进行插入/删除操作。</p>
+<ol>
+<li>
+<p><code>const_iterator before_begin()</code>: 返回指向<strong>链表第一个元素之前</strong>位置的特殊迭代器。用于配合 <code>insert_after</code> 或 <code>erase_after</code> 在链表头部操作。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3};
+// 在链表头部插入元素 0
+lst.insert_after(lst.before_begin(), 0); // lst 变为 {0, 1, 2, 3}
+</code></pre>
+</li>
+<li>
+<p><code>iterator begin()</code>: 返回指向 <code>std::forward_list</code> <strong>第一个</strong>元素的迭代器。</p>
+</li>
+<li>
+<p><code>iterator end()</code>: 返回指向 <code>std::forward_list</code> <strong>最后一个元素之后</strong>位置的迭代器。</p>
+</li>
+<li>
+<p>使用基于范围的 <code>for</code> 循环（C++11 及以上）:</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3};
+for (const int&amp; num : lst) {
+    std::cout &lt;&lt; num &lt;&lt; " ";  // 输出: 1 2 3
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="6-其他函数"><a class="header" href="#6-其他函数">(6) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>swap(forward_list&amp; other)</code>: 交换当前 <code>std::forward_list</code> 和另一个 <code>std::forward_list</code> 的内容。</p>
+</li>
+<li>
+<p><code>assign(size_t count, const T&amp; value)</code>: 将 <code>count</code> 个 <code>value</code> 元素赋值给当前 <code>std::forward_list</code>，替换原有内容。</p>
+</li>
+<li>
+<p><code>assign(InputIterator first, InputIterator last)</code>: 使用区间 <code>[first, last)</code> 的元素来填充当前 <code>std::forward_list</code>，替换原有内容。</p>
+</li>
+<li>
+<p><code>void sort()</code>: 对链表中的元素进行排序。默认升序。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {5, 3, 4, 1, 2};
+lst.sort();  // 按升序排序，lst 变为 {1, 2, 3, 4, 5}
+</code></pre>
+</li>
+<li>
+<p><code>void merge(forward_list&amp; other)</code>: 将另一个已排序的链表 <code>other</code> 合并到当前链表中。要求两个链表都已排序。</p>
+</li>
+<li>
+<p><code>void reverse()</code>: 将链表中的元素<strong>反转</strong>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 3};
+lst.reverse();  // 反转链表，lst 变为 {3, 2, 1}
+</code></pre>
+</li>
+<li>
+<p><code>void unique()</code>: 删除链表中所有<strong>连续重复</strong>的元素。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst = {1, 2, 2, 3, 3, 3, 4};
+lst.unique(); // lst 变为 {1, 2, 3, 4}
+</code></pre>
+</li>
+<li>
+<p><code>void splice_after(const_iterator pos, forward_list&amp; other)</code>: 将 <code>other</code> 中的所有元素移动到当前列表 <code>*this</code> 中，放在 <code>pos</code> <strong>之后</strong>。<code>other</code> 变为<strong>空</strong>。</p>
+<pre><code class="language-c++">std::forward_list&lt;int&gt; lst1 = {1, 4};
+std::forward_list&lt;int&gt; lst2 = {2, 3};
+lst1.splice_after(lst1.begin(), lst2); // lst1 变为 {1, 2, 3, 4}，lst2 变为空 {}
+</code></pre>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../STL/Containers/List.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../STL/Containers/Deque.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../STL/Containers/List.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../STL/Containers/Deque.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

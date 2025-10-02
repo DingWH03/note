@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Priority_queue - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Priority_queue.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="stdpriority_queue"><a class="header" href="#stdpriority_queue">std::priority_queue</a></h1>
+<p><code>std::priority_queue</code> 是一个 <strong>容器适配器 (Container Adapter)</strong>，它基于堆 (heap) 实现，能够在对数时间内插入元素，并且始终允许在常数时间内访问到“优先级最高”的元素。</p>
+<p>默认情况下，它是一个 <strong>最大堆 (Max Heap)</strong>，即 <code>top()</code> 返回容器中的最大元素。通过自定义比较器，可以变成最小堆或实现任意的优先级规则。</p>
+<p>典型应用场景：调度系统、Dijkstra 最短路、Huffman 编码、任务队列等。</p>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;queue&gt;
+</code></pre>
+<h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<p><code>std::priority_queue</code> 内部使用一个 <strong>底层容器 (Underlying Container)</strong> 和一个 <strong>比较器 (Compare)</strong> 来实现堆的功能。</p>
+<h3 id="模板定义"><a class="header" href="#模板定义">模板定义</a></h3>
+<pre><code class="language-c++">template&lt;
+    class T,
+    class Container = std::vector&lt;T&gt;,
+    class Compare = std::less&lt;typename Container::value_type&gt;
+&gt; class priority_queue;
+</code></pre>
+<ul>
+<li><strong>T</strong>：存储的元素类型。</li>
+<li><strong>Container</strong>：底层容器，默认为 <code>std::vector&lt;T&gt;</code>。必须支持随机访问迭代器和 <code>push_back()</code>/<code>pop_back()</code>。</li>
+<li><strong>Compare</strong>：比较器，默认为 <code>std::less&lt;T&gt;</code>（大顶堆）。若改为 <code>std::greater&lt;T&gt;</code>，则变为小顶堆。</li>
+</ul>
+<h3 id="默认实现"><a class="header" href="#默认实现">默认实现</a></h3>
+<ul>
+<li><strong>大顶堆</strong>：<code>Compare = std::less&lt;T&gt;</code></li>
+<li><strong>小顶堆</strong>：<code>Compare = std::greater&lt;T&gt;</code></li>
+</ul>
+<h3 id="示例指定底层容器和比较器"><a class="header" href="#示例指定底层容器和比较器">示例：指定底层容器和比较器</a></h3>
+<pre><code class="language-c++">// 默认：大顶堆
+std::priority_queue&lt;int&gt; pq1;
+
+// 小顶堆
+std::priority_queue&lt;int, std::vector&lt;int&gt;, std::greater&lt;int&gt;&gt; pq2;
+
+// 使用 deque 作为底层容器
+std::priority_queue&lt;int, std::deque&lt;int&gt;&gt; pq3;
+</code></pre>
+<h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
+<p><code>std::priority_queue</code> 同样不提供迭代器（不能遍历），只能通过专门的接口进行操作。</p>
+<h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
+<ol>
+<li>
+<p><code>priority_queue()</code>：构造一个空的优先队列。</p>
+<pre><code class="language-c++">std::priority_queue&lt;int&gt; pq;  // 空的大顶堆
+</code></pre>
+</li>
+<li>
+<p><code>priority_queue(const Compare&amp; comp, const Container&amp; cont)</code>：用已有容器构造。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 5, 3};
+std::priority_queue&lt;int&gt; pq(std::less&lt;int&gt;(), vec);
+</code></pre>
+</li>
+<li>
+<p>复制构造 / 移动构造。</p>
+</li>
+</ol>
+<h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
+<ol>
+<li>
+<p><code>size_t size() const</code>：返回元素个数。</p>
+<pre><code class="language-c++">std::priority_queue&lt;int&gt; pq;
+pq.push(10); pq.push(20);
+std::cout &lt;&lt; pq.size(); // 输出 2
+</code></pre>
+</li>
+<li>
+<p><code>bool empty() const</code>：检查是否为空。</p>
+<pre><code class="language-c++">if (pq.empty()) std::cout &lt;&lt; "Empty\n";
+</code></pre>
+</li>
+</ol>
+<h3 id="3-元素访问函数"><a class="header" href="#3-元素访问函数">(3) 元素访问函数</a></h3>
+<ol>
+<li>
+<p><code>const_reference top() const</code>：返回堆顶元素（优先级最高的元素），复杂度 O(1)。
+调用前必须确保不为空。</p>
+<pre><code class="language-c++">pq.push(10);
+pq.push(30);
+pq.push(20);
+std::cout &lt;&lt; pq.top(); // 输出 30（大顶堆）
+</code></pre>
+</li>
+</ol>
+<h3 id="4-增加函数-插入"><a class="header" href="#4-增加函数-插入">(4) 增加函数 (插入)</a></h3>
+<ol>
+<li>
+<p><code>void push(const T&amp; value)</code>：插入元素到队列，自动保持堆序。复杂度 O(log n)。</p>
+<pre><code class="language-c++">pq.push(15);
+pq.push(40);
+</code></pre>
+</li>
+<li>
+<p><code>template&lt;class... Args&gt; void emplace(Args&amp;&amp;... args)</code>：原地构造元素并插入。</p>
+<pre><code class="language-c++">std::priority_queue&lt;std::pair&lt;int,int&gt;&gt; pq;
+pq.emplace(1, 2); // 构造 pair(1,2)
+</code></pre>
+</li>
+</ol>
+<h3 id="5-删除函数-移除"><a class="header" href="#5-删除函数-移除">(5) 删除函数 (移除)</a></h3>
+<ol>
+<li>
+<p><code>void pop()</code>：移除堆顶元素，复杂度 O(log n)。调用前必须非空。</p>
+<pre><code class="language-c++">pq.push(10);
+pq.push(20);
+pq.pop(); // 移除 20（大顶堆）
+</code></pre>
+</li>
+</ol>
+<h3 id="6-其他函数"><a class="header" href="#6-其他函数">(6) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>void swap(priority_queue&amp; other)</code>：交换两个队列的内容。</p>
+<pre><code class="language-c++">std::priority_queue&lt;int&gt; pq1, pq2;
+pq1.push(1); pq2.push(2);
+pq1.swap(pq2);
+</code></pre>
+</li>
+</ol>
+<h2 id="4-示例"><a class="header" href="#4-示例">4. 示例</a></h2>
+<h3 id="大顶堆"><a class="header" href="#大顶堆">大顶堆</a></h3>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;queue&gt;
+using namespace std;
+
+int main() {
+    priority_queue&lt;int&gt; pq;
+
+    pq.push(10);
+    pq.push(5);
+    pq.push(20);
+
+    cout &lt;&lt; pq.top() &lt;&lt; endl; // 20
+
+    pq.pop();
+    cout &lt;&lt; pq.top() &lt;&lt; endl; // 10
+}
+</code></pre>
+<h3 id="小顶堆"><a class="header" href="#小顶堆">小顶堆</a></h3>
+<pre><code class="language-c++">priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; min_heap;
+min_heap.push(10);
+min_heap.push(5);
+min_heap.push(20);
+
+cout &lt;&lt; min_heap.top() &lt;&lt; endl; // 5
+</code></pre>
+<h3 id="自定义比较器例如比较-pair-的第二个元素"><a class="header" href="#自定义比较器例如比较-pair-的第二个元素">自定义比较器（例如：比较 pair 的第二个元素）</a></h3>
+<pre><code class="language-c++">struct Compare {
+    bool operator()(const pair&lt;int,int&gt;&amp; a, const pair&lt;int,int&gt;&amp; b) {
+        return a.second &gt; b.second; // 小顶堆，按第二个元素比较
+    }
+};
+
+priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, Compare&gt; pq;
+pq.push({1, 10});
+pq.push({2, 5});
+cout &lt;&lt; pq.top().first &lt;&lt; endl; // 输出 2，因为 (2,5) 的 second 更小
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../STL/Containers/Queue.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../STL/Algorithms.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../STL/Containers/Queue.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../STL/Algorithms.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

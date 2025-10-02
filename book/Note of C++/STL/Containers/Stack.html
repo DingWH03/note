@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Unordered_multimap - Note of C++</title>
+        <title>Stack - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Unordered_multimap.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Containers/Stack.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,224 +183,129 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="stdunordered_multimap"><a class="header" href="#stdunordered_multimap">std::unordered_multimap</a></h1>
-<p><code>std::unordered_multimap</code> 是 C++ 标准库中的一个无序关联容器，存储一组键值对（<code>key-value</code>）。与 <code>std::unordered_map</code> 类似，<code>std::unordered_multimap</code> 也使用 <strong>哈希表</strong> 来组织元素，但不同的是，它允许 <strong>键重复</strong>。
-由于其底层实现为哈希表，元素顺序并不固定，完全由哈希函数决定。平均查找、插入、删除的时间复杂度为 O(1)，最坏情况下会退化为 O(n)。</p>
-<p><code>std::unordered_multimap</code> 的定义如下：</p>
-<pre><code class="language-cpp">template&lt;
-    class Key,
-    class T,
-    class Hash = std::hash&lt;Key&gt;,
-    class KeyEqual = std::equal_to&lt;Key&gt;,
-    class Allocator = std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;
-&gt; class unordered_multimap; // since C++11
-</code></pre>
-<pre><code class="language-cpp">namespace pmr {
-    template&lt;
-        class Key,
-        class T,
-        class Hash = std::hash&lt;Key&gt;,
-        class Pred = std::equal_to&lt;Key&gt;
-    &gt; using unordered_multimap =
-          std::unordered_multimap&lt;Key, T, Hash, Pred,
-              std::pmr::polymorphic_allocator&lt;std::pair&lt;const Key, T&gt;&gt;&gt;;
-} // since C++17
-</code></pre>
-<ul>
-<li>Key：键的类型（必须支持哈希和比较相等操作）。</li>
-<li>T：映射值的类型。</li>
-<li>Hash：哈希函数对象，默认为 <code>std::hash&lt;Key&gt;</code>。</li>
-<li>Pred：相等比较函数对象，默认为 <code>std::equal_to&lt;Key&gt;</code>。</li>
-<li>Alloc：分配器类型，默认为 <code>std::allocator&lt;std::pair&lt;const Key, T&gt;&gt;</code>。</li>
-</ul>
+                        <h1 id="stdstack"><a class="header" href="#stdstack">std::stack</a></h1>
+<p><code>std::stack</code> (栈) 是一个<strong>容器适配器 (Container Adapter)</strong>，它不是一个独立的容器，而是对现有顺序容器（如 <code>std::deque</code>、<code>std::list</code> 或 <code>std::vector</code>）的封装，限制了对其元素的访问，使其遵循 <strong>LIFO (Last-In, First-Out)</strong> 的数据结构规则。</p>
+<p>想象一下堆叠起来的盘子，你只能在<strong>顶部</strong>放一个新盘子，也只能从<strong>顶部</strong>取走盘子。在 <code>std::stack</code> 中，这个“顶部”对应于底层容器的<strong>尾部</strong>。</p>
 <h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
-<pre><code class="language-cpp">#include &lt;unordered_map&gt;
+<pre><code class="language-c++">#include &lt;stack&gt;
 </code></pre>
 <h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
+<p><code>std::stack</code> 通过封装一个<strong>底层容器 (Underlying Container)</strong> 来存储数据。它只暴露了符合栈（LIFO）操作的方法，例如：</p>
 <ul>
-<li><code>std::unordered_multimap</code> 底层使用 <strong>哈希表</strong> 来存储元素，每个元素（键值对）会根据其 <strong>键</strong> 被哈希到一个桶中。</li>
-<li><strong>键的唯一性</strong>：与 <code>std::unordered_map</code> 不同，<code>std::unordered_multimap</code> 允许 <strong>多个相同的键</strong> 存在，每个键对应多个值。相同键的元素会存储在同一个桶中。</li>
-<li><strong>插入与查找</strong>：所有操作（查找、插入、删除）平均时间复杂度为 <strong>O(1)</strong>，但在哈希冲突严重时，最坏情况可能退化为 <strong>O(n)</strong>。</li>
+<li><strong>推入 (Push)：</strong> 插入元素到栈顶（对应底层容器的 <code>push_back()</code>）。</li>
+<li><strong>弹出 (Pop)：</strong> 移除栈顶元素（对应底层容器的 <code>pop_back()</code>）。</li>
+<li><strong>查看 (Top)：</strong> 访问栈顶元素（对应底层容器的 <code>back()</code>）。</li>
 </ul>
+<p><strong>默认底层容器</strong>：如果创建 <code>std::stack</code> 时不指定底层容器，它默认使用 <strong><code>std::deque&lt;T&gt;</code></strong>。</p>
+<p><strong>可选底层容器</strong>：任何满足 LIFO 访问要求的顺序容器都可以作为底层容器，包括：</p>
+<ol>
+<li><strong><code>std::deque&lt;T&gt;</code> (默认)</strong>：通常是栈操作的最佳选择，因为它在两端操作（<code>push_front/pop_front</code> 和 <code>push_back/pop_back</code>）都很快。</li>
+<li><strong><code>std::vector&lt;T&gt;</code></strong>：如果内存是连续的且不需要在底部（前端）操作，这也是一个高效的选择。</li>
+<li><strong><code>std::list&lt;T&gt;</code></strong>：如果需要存储不支持连续存储或拷贝构造/赋值操作的复杂对象，可以使用它。</li>
+</ol>
+<p><strong>声明带指定底层容器的栈：</strong></p>
+<pre><code class="language-c++">// 使用 vector 作为底层容器
+std::stack&lt;int, std::vector&lt;int&gt;&gt; stack_vec;
+
+// 使用 list 作为底层容器
+std::stack&lt;int, std::list&lt;int&gt;&gt; stack_list;
+</code></pre>
 <h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
+<p>由于 <code>std::stack</code> 是一个适配器，它不提供任何迭代器（如 <code>begin()</code>/<code>end()</code>），也不支持随机访问（如 <code>operator[]</code>），只能通过 LIFO 接口进行操作。</p>
 <h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
 <ol>
 <li>
-<p><code>unordered_multimap()</code>: 默认构造函数</p>
-<pre><code class="language-cpp">std::unordered_multimap&lt;int, std::string&gt; m;
-std::unordered_multimap&lt;int, std::string&gt; m = {{1, "one"}, {2, "two"}};
+<p><code>stack()</code>: 创建一个空的 <code>std::stack</code>。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s; // 使用默认的 std::deque 作为底层容器
 </code></pre>
 </li>
 <li>
-<p><code>unordered_multimap(const unordered_multimap&amp;)</code>: 复制构造函数</p>
-<pre><code class="language-cpp">std::unordered_multimap&lt;int, std::string&gt; m1 = {{1, "one"}, {2, "two"}};
-std::unordered_multimap&lt;int, std::string&gt; m2(m1);
+<p><code>stack(const Container&amp; cont)</code>: 使用一个已存在的底层容器副本进行初始化。</p>
+<pre><code class="language-c++">std::deque&lt;int&gt; d = {1, 2, 3};
+std::stack&lt;int&gt; s(d);  // s 变为 {1, 2, 3} (1 是底，3 是顶)
 </code></pre>
 </li>
 <li>
-<p><code>unordered_multimap(begin, end)</code>: 使用另一个容器或迭代器的区间中的元素初始化</p>
-<pre><code class="language-cpp">std::vector&lt;std::pair&lt;int, std::string&gt;&gt; vec = {{1, "one"}, {2, "two"}};
-std::unordered_multimap&lt;int, std::string&gt; m(vec.begin(), vec.end());
-</code></pre>
-</li>
-<li>
-<p><code>std::unordered_multimap&lt;key, T, Hash&gt;</code>: 使用自定义的哈希函数</p>
-<pre><code class="language-cpp">struct MyHash {
-    size_t operator()(int x) const { return x % 10; }
-};
-std::unordered_multimap&lt;int, std::string, MyHash&gt; m;
-</code></pre>
+<p><code>stack(const stack&amp;)</code>: 复制构造函数。</p>
 </li>
 </ol>
 <h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
 <ol>
-<li><code>size_t size() const</code>: 返回元素个数</li>
-<li><code>bool empty() const</code>: 是否为空</li>
-<li><code>size_t max_size() const</code>: 返回最大可允许元素数量</li>
-<li><code>void reserve(size_type __n)</code>: 预分配桶的数量，减少扩容开销</li>
-</ol>
-<h3 id="3-插入函数"><a class="header" href="#3-插入函数">(3) 插入函数</a></h3>
-<ol>
 <li>
-<p><code>std::pair&lt;iterator, bool&gt; insert(const value_type&amp; __x)</code>: 插入一个键值对，返回保存指向添加键值对位置的迭代器和是否添加成功的标志的pair</p>
-<pre><code class="language-cpp">m.insert({1, "one"});
-m.insert(std::make_pair(2, "two"));
+<p><code>size_t size() const</code>: 返回 <code>std::stack</code> 中元素的个数。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s = {1, 2, 3};
+std::cout &lt;&lt; s.size();  // 输出 3
 </code></pre>
 </li>
 <li>
-<p><code>std::pair&lt;iterator, bool&gt; emplace(Key&amp;&amp; key, T&amp;&amp; obj)</code>: 如果键 <code>key</code> 不存在，就直接插入一个新元素。</p>
-<pre><code class="language-cpp">m.emplace(3, "three");
-</code></pre>
-</li>
-<li>
-<p><code>std::pair&lt;iterator, bool&gt; try_emplace(const Key&amp; key, Args&amp;&amp;... args)</code>: 只有在 <code>key</code> 不存在时，才插入新元素（避免额外的拷贝）。</p>
-<pre><code class="language-cpp">m.try_emplace(1, "one");
-</code></pre>
-</li>
-<li>
-<p><code>std::pair&lt;iterator, bool&gt; insert_or_assign(const Key&amp; key, T&amp;&amp; obj)</code>: 如果 <code>key</code> 存在，更新对应的值；如果 <code>key</code> 不存在，插入一个新的键值对。</p>
-<pre><code class="language-cpp">m.insert_or_assign(1, "uno");
-</code></pre>
-</li>
-<li>
-<p><code>operator[](const Key&amp; key)</code>: 如果 <code>key</code> 存在，返回对应的值；如果 <code>key</code> 不存在，插入一个新的键值对，值为默认构造的类型 T。</p>
-<pre><code class="language-cpp">m[4] = "four";   // 插入
-m[1] = "uno";    // 更新
-</code></pre>
-</li>
-<li>
-<p><code>at(const Key&amp; key)</code>: 如果 <code>key</code> 已存在，返回对应的值；如果 <code>key</code> 不存在，抛出 <code>std::out_of_range</code>。</p>
-<pre><code class="language-cpp">std::cout &lt;&lt; m.at(1);  // 输出值
-</code></pre>
-</li>
-</ol>
-<h3 id="4-删除元素"><a class="header" href="#4-删除元素">(4) 删除元素</a></h3>
-<ol>
-<li>
-<p><code>void clear()</code>: 清空所有元素</p>
-</li>
-<li>
-<p><code>iterator erase(iterator pos)</code>: 删除迭代器位置的元素</p>
-</li>
-<li>
-<p><code>size_t erase(const key_type&amp; key)</code>: 删除指定键的所有元素，返回删除的数量</p>
-<pre><code class="language-cpp">m.erase(1);  // 删除键为1的所有元素
-</code></pre>
-</li>
-<li>
-<p><code>iterator erase(first, last)</code>: 删除指定迭代器区间的元素</p>
-</li>
-</ol>
-<h3 id="5-查找函数"><a class="header" href="#5-查找函数">(5) 查找函数</a></h3>
-<ol>
-<li>
-<p><code>iterator find(const key_type&amp; key)</code>: 查找指定键的第一个匹配元素，返回一个指向该元素的迭代器，如果找不到返回 <code>end()</code>。</p>
-<pre><code class="language-cpp">auto it = m.find(2);
-if (it != m.end()) {
-    std::cout &lt;&lt; it-&gt;second &lt;&lt; std::endl;
-}
-</code></pre>
-</li>
-<li>
-<p><code>std::pair&lt;const_iterator, const_iterator&gt; equal_range(const key_type&amp; key) const</code>: 返回一对迭代器，表示所有具有等于键 <code>key</code> 的元素的范围。</p>
-<pre><code class="language-cpp">auto range = m.equal_range(2);
-for (auto it = range.first; it != range.second; ++it) {
-    std::cout &lt;&lt; it-&gt;second &lt;&lt; std::endl;
-}
-</code></pre>
-</li>
-<li>
-<p><code>size_t count(const key_type&amp; key)</code>: 返回容器中指定键的元素数量（对于 <code>unordered_multimap</code>，返回值可能大于 1）。</p>
-<pre><code class="language-cpp">size_t n = m.count(2);  // 返回键2的数量
-</code></pre>
-</li>
-<li>
-<p><code>bool contains(const key_type&amp; key) const</code>（C++20）：检查是否包含指定键。</p>
-<pre><code class="language-cpp">if (m.contains(2)) {
-    std::cout &lt;&lt; "Key 2 exists!" &lt;&lt; std::endl;
+<p><code>bool empty() const</code>: 检查 <code>std::stack</code> 是否为空。若为空返回 <code>true</code>。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s;
+if (s.empty()) {
+    std::cout &lt;&lt; "Stack is empty." &lt;&lt; std::endl;
 }
 </code></pre>
 </li>
 </ol>
-<h3 id="6-遍历函数"><a class="header" href="#6-遍历函数">(6) 遍历函数</a></h3>
+<h3 id="3-元素访问函数"><a class="header" href="#3-元素访问函数">(3) 元素访问函数</a></h3>
+<p><code>std::stack</code> <strong>只允许访问顶部元素</strong>。</p>
 <ol>
 <li>
-<p><code>iterator begin()</code>: 返回指向容器第一个元素的迭代器</p>
-<pre><code class="language-cpp">auto it = m.begin();
-std::cout &lt;&lt; it-&gt;first &lt;&lt; " -&gt; " &lt;&lt; it-&gt;second &lt;&lt; std::endl;
-</code></pre>
-</li>
-<li>
-<p><code>iterator end()</code>: 返回指向容器最后一个元素之后位置的迭代器</p>
-</li>
-<li>
-<p><code>reverse_iterator rbegin()</code>: 返回指向容器最后一个元素的反向迭代器</p>
-</li>
-<li>
-<p><code>reverse_iterator rend()</code>: 返回指向容器第一个元素之前位置的反向迭代器</p>
-</li>
-<li>
-<p>使用基于范围的 <code>for</code> 循环：</p>
-<pre><code class="language-cpp">for (const auto&amp; [key, value] : m) {
-    std::cout &lt;&lt; key &lt;&lt; " -&gt; " &lt;&lt; value &lt;&lt; std::endl;
-}
-</code></pre>
-</li>
-<li>
-<p>使用传统的迭代器遍历：</p>
-<pre><code class="language-cpp">for (auto it = m.begin(); it != m.end(); ++it) {
-    std::cout &lt;&lt; it-&gt;first &lt;&lt; " -&gt; " &lt;&lt; it-&gt;second &lt;&lt; std::endl;
-}
+<p><code>reference top()</code>: 返回栈顶元素（即最近 <code>push</code> 进去的元素）的引用。调用前<strong>必须</strong>确保栈不为空。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s;
+s.push(10);
+s.push(20);
+std::cout &lt;&lt; s.top(); // 输出 20
 </code></pre>
 </li>
 </ol>
-<h3 id="7-哈希相关函数"><a class="header" href="#7-哈希相关函数">(7) 哈希相关函数</a></h3>
+<h3 id="4-增加函数-推入"><a class="header" href="#4-增加函数-推入">(4) 增加函数 (推入)</a></h3>
 <ol>
-<li><code>size_t bucket_count() const</code>: 返回桶的数量</li>
-<li><code>size_t bucket_size(size_t n) const</code>: 返回指定桶的元素数量</li>
-<li><code>size_t bucket(const key_type&amp; key) const</code>: 返回给定键所落入的桶的索引</li>
-<li><code>float load_factor() const</code>: 返回当前负载因子（元素数 / 桶数）</li>
-<li><code>void rehash(size_t n)</code>: 强制调整桶的数量，避免哈希冲突</li>
-<li><code>void reserve(size_t n)</code>: 确保容器至少可以容纳 <code>n</code> 个元素</li>
+<li>
+<p><code>void push(const T&amp; value)</code>: 将元素 <code>value</code> 复制或移动到栈的<strong>顶部</strong>。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s;
+s.push(10); // 栈变为 {10}
+s.push(20); // 栈变为 {10, 20} (20 在顶)
+</code></pre>
+</li>
+<li>
+<p><code>template&lt;class... Args&gt; void emplace(Args&amp;&amp;... args)</code>: 在栈的顶部<strong>就地构造</strong>一个元素，无需拷贝或移动。这是推荐的推入方式，尤其是对于复杂对象。</p>
+<pre><code class="language-c++">std::stack&lt;std::pair&lt;int, int&gt;&gt; s;
+s.emplace(1, 2); // 直接在栈顶构造 pair {1, 2}
+</code></pre>
+</li>
 </ol>
-<h3 id="8-其他函数"><a class="header" href="#8-其他函数">(8) 其他函数</a></h3>
+<h3 id="5-删除函数-弹出"><a class="header" href="#5-删除函数-弹出">(5) 删除函数 (弹出)</a></h3>
 <ol>
-<li><code>swap(unordered_multimap&amp; other)</code>: 交换当前 <code>unordered_multimap</code> 和另一个容器的内容</li>
-<li><code>std::allocator&lt;T&gt; get_allocator() const</code>: 返回容器的分配器</li>
-<li><code>void merge(unordered_multimap&amp; other)</code>: 将另一个 <code>unordered_multimap</code> 中不重复的元素“移动”过来（C++17）</li>
-<li><code>hasher hash_function() const</code>: 返回当前使用的哈希函数</li>
-<li><code>key_equal_type key_eq() const</code>: 返回用于判断键是否相等的谓词</li>
+<li>
+<p><code>void pop()</code>: 移除栈顶的元素。此函数<strong>不返回</strong>被移除的元素。调用前<strong>必须</strong>确保栈不为空。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s;
+s.push(10);
+s.push(20); // 栈为 {10, 20}
+s.pop();    // 移除 20，栈变为 {10}
+// 注意：要获取并移除元素，需要先调用 top()，再调用 pop()
+</code></pre>
+</li>
+</ol>
+<h3 id="6-其他函数"><a class="header" href="#6-其他函数">(6) 其他函数</a></h3>
+<ol>
+<li>
+<p><code>void swap(stack&amp; other)</code>: 交换当前 <code>std::stack</code> 和另一个 <code>std::stack</code> 的内容。底层容器的内容也会随之交换。</p>
+<pre><code class="language-c++">std::stack&lt;int&gt; s1; s1.push(1);
+std::stack&lt;int&gt; s2; s2.push(2);
+s1.swap(s2); // s1 变为 {2}，s2 变为 {1}
+</code></pre>
+</li>
 </ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../STL/Containers/Unordered_map.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../STL/Containers/Unordered_multimap.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../STL/Containers/Stack.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../STL/Containers/Queue.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -410,11 +315,11 @@ std::cout &lt;&lt; it-&gt;first &lt;&lt; " -&gt; " &lt;&lt; it-&gt;second &lt;&l
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../STL/Containers/Unordered_map.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../STL/Containers/Unordered_multimap.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../STL/Containers/Stack.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../STL/Containers/Queue.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
