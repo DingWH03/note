@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>类型推导 - Note of C++</title>
+        <title>类与对象 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon.svg">
-        <link rel="shortcut icon" href="../../favicon.png">
-        <link rel="stylesheet" href="../../css/variables.css">
-        <link rel="stylesheet" href="../../css/general.css">
-        <link rel="stylesheet" href="../../css/chrome.css">
-        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Types/Deducing_Types.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/CLass&amp;Object.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,142 +183,17 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="自动类型推导"><a class="header" href="#自动类型推导">自动类型推导</a></h1>
-<p>在 C++ 中，自动类型推导（type inference）允许编译器根据初始化表达式推断变量的类型，从而减少显式指定类型的需求。C++11 引入了 <code>auto</code> 关键字，它使得变量声明更加简洁和灵活，同时也有助于避免类型错误。</p>
-<h2 id="auto-关键字的基本使用"><a class="header" href="#auto-关键字的基本使用"><code>auto</code> 关键字的基本使用</a></h2>
-<p><code>auto</code> 关键字让编译器根据初始化表达式推导出变量的类型。在声明变量时，使用 <code>auto</code> 代替类型名称，编译器将自动推断类型。</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-
-int main() {
-    auto x = 42;  // 自动推导类型为 int
-    auto y = 3.14;  // 自动推导类型为 double
-
-    std::cout &lt;&lt; "x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; std::endl;
-
-    return 0;
-}
-</code></pre>
-<p>在这个例子中，<code>auto</code> 自动推导出 <code>x</code> 的类型为 <code>int</code>，<code>y</code> 的类型为 <code>double</code>，根据其初始化值。无需显式地指定类型。</p>
-<p>输出：</p>
-<pre><code class="language-text">x: 42, y: 3.14
-</code></pre>
-<h2 id="auto-与容器"><a class="header" href="#auto-与容器"><code>auto</code> 与容器</a></h2>
-<p><code>auto</code> 在处理容器时非常有用，尤其是当容器类型复杂且冗长时，使用 <code>auto</code> 可以简化代码并提高可读性。C++11 引入了范围-based <code>for</code> 循环，配合 <code>auto</code> 使用可以轻松地遍历容器。</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include &lt;vector&gt;
-
-int main() {
-    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
-
-    // 使用 auto 遍历容器
-    for (auto&amp; v : vec) {
-        std::cout &lt;&lt; v &lt;&lt; " ";
-    }
-
-    std::cout &lt;&lt; std::endl;
-
-    return 0;
-}
-</code></pre>
-<p>在此示例中，<code>auto</code> 用来自动推导容器元素的类型。由于我们希望修改容器中的元素，所以使用了 <code>auto&amp;</code> 来获取元素的引用。</p>
-<p>输出：</p>
-<pre><code class="language-text">1 2 3 4 5
-</code></pre>
-<h2 id="auto-和指针"><a class="header" href="#auto-和指针"><code>auto</code> 和指针</a></h2>
-<p>在使用指针时，<code>auto</code> 也可以自动推导出指针的类型。注意，<code>auto</code> 仅推导出变量本身的类型，而不推导出指针指向的类型。</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-
-int main() {
-    int num = 100;
-    int* ptr = &amp;num;
-
-    // 使用 auto 推导指针类型
-    auto p = ptr;  // p 将是 int* 类型
-
-    std::cout &lt;&lt; "p points to: " &lt;&lt; *p &lt;&lt; std::endl;
-
-    return 0;
-}
-</code></pre>
-<p>在这个例子中，<code>auto</code> 推导出变量 <code>p</code> 的类型为 <code>int*</code>，与原始指针 <code>ptr</code> 类型相同。</p>
-<p>输出：</p>
-<pre><code class="language-text">p points to: 100
-</code></pre>
-<h2 id="auto-与函数返回类型"><a class="header" href="#auto-与函数返回类型"><code>auto</code> 与函数返回类型</a></h2>
-<p><code>auto</code> 不仅可以用于变量声明，还可以用于函数的返回类型。当返回类型较为复杂或需要根据返回的表达式推导时，<code>auto</code> 可以简化代码。</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include &lt;vector&gt;
-
-auto get_sum(const std::vector&lt;int&gt;&amp; vec) {
-    int sum = 0;
-    for (auto v : vec) {
-        sum += v;
-    }
-    return sum;  // 返回类型由 auto 自动推导
-}
-
-int main() {
-    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
-    std::cout &lt;&lt; "Sum: " &lt;&lt; get_sum(vec) &lt;&lt; std::endl;
-    return 0;
-}
-</code></pre>
-<p>在这个示例中，<code>auto</code> 用于函数 <code>get_sum</code> 的返回类型，编译器根据 <code>sum</code> 变量的类型推导出返回值的类型。</p>
-<p>输出：</p>
-<pre><code class="language-text">Sum: 15
-</code></pre>
-<h2 id="auto-与模板"><a class="header" href="#auto-与模板"><code>auto</code> 与模板</a></h2>
-<p><code>auto</code> 也可以与模板结合使用，尤其是在模板函数中，允许推导类型从而使得函数更加灵活。使用 <code>auto</code> 可以避免显式指定模板参数，从而简化模板代码。</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-
-template &lt;typename T&gt;
-auto add(T a, T b) {
-    return a + b;  // 返回类型自动推导
-}
-
-int main() {
-    std::cout &lt;&lt; add(1, 2) &lt;&lt; std::endl;    // 输出 3
-    std::cout &lt;&lt; add(1.5, 2.5) &lt;&lt; std::endl; // 输出 4.0
-
-    return 0;
-}
-</code></pre>
-<p>在这个示例中，<code>auto</code> 自动推导 <code>add</code> 函数的返回类型，无论是整型还是浮点型，都能正确处理。</p>
-<p>输出：</p>
-<pre><code class="language-text">3
-4
-</code></pre>
-<h2 id="注意"><a class="header" href="#注意">注意</a></h2>
-<ol>
-<li>
-<p><code>auto</code> 不能用于函数参数类型
-<code>auto</code> 只能用于变量声明和返回类型，不能用于函数的参数类型。例如，以下代码是错误的：</p>
-<pre><code class="language-cpp">auto add(auto a, auto b) { // 错误，auto 不能用于函数参数类型
-    return a + b;
-}
-</code></pre>
-</li>
-<li>
-<p><code>auto</code> 与引用、常量结合
-当使用 <code>auto</code> 时，变量的类型是根据初始化表达式的类型来推导的。如果需要引用或常量，应该明确使用 <code>auto&amp;</code> 或 <code>const auto&amp;</code> 来推导引用类型或常量类型。</p>
-<pre><code class="language-cpp">const auto&amp; ref = some_variable; // 推导为 const 引用
-</code></pre>
-</li>
-<li>
-<p>类型推导的限制
-编译器根据初始化表达式推导类型，但不能从不完整的类型推导。因此，必须确保变量在声明时能够通过表达式推导出类型。</p>
-</li>
-</ol>
+                        <h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Basis/Types/Type_Conversion.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Basis/Types/Deducing_Types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../Basis/CLass&amp;Object.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Advance.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -328,11 +203,11 @@ int main() {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Basis/Types/Type_Conversion.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Basis/Types/Deducing_Types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../Basis/CLass&amp;Object.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Advance.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -347,13 +222,13 @@ int main() {
         </script>
 
 
-        <script src="../../elasticlunr.min.js"></script>
-        <script src="../../mark.min.js"></script>
-        <script src="../../searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="../../clipboard.min.js"></script>
-        <script src="../../highlight.js"></script>
-        <script src="../../book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

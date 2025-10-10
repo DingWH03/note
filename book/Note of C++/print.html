@@ -198,7 +198,33 @@
 <p><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
+<p>在 C++ 中，<strong>数据类型（Data Types）</strong> 是程序设计的基础，它定义了变量在内存中的存储方式、可表示的取值范围以及能进行的操作。
+理解数据类型不仅是掌握语法的关键，也是进行性能优化、内存管理和类型安全编程的前提。</p>
+<p>C++ 的类型系统丰富而严格，既包含直接映射到硬件的<strong>基本类型（Fundamental Types）</strong>，也支持由这些类型构建的<strong>派生类型（Derived Types）</strong>，此外还提供了面向对象与泛型编程所需的抽象类型系统。</p>
+<p>本章将系统介绍 C++ 中的数据类型体系结构，内容包括：</p>
+<ul>
+<li>
+<p><a href="Basis/./Types/Fundamental_Types.html">基本数据类型</a>：
+描述整型、浮点型、布尔型、空类型等语言内建类型及其修饰符（<code>signed</code>、<code>unsigned</code>、<code>long</code> 等）。</p>
+</li>
+<li>
+<p><a href="Basis/./Types/Derived_Types.html">派生数据类型</a>：
+介绍数组、指针、引用、函数、结构体、类、枚举等由基本类型组合或扩展而来的类型。</p>
+</li>
+<li>
+<p><a href="Basis/./Types/Character.html">字符串类型</a>：
+涵盖 C 风格字符串 (<code>char[]</code>) 与 C++ 字符串类 (<code>std::string</code>、<code>std::wstring</code>) 的使用与区别。</p>
+</li>
+<li>
+<p><a href="Basis/./Types/Type_Conversion.html">类型转换</a>：
+探讨隐式与显式类型转换、C 风格转换与 C++ 四种安全转换（<code>static_cast</code>、<code>const_cast</code>、<code>reinterpret_cast</code>、<code>dynamic_cast</code>）。</p>
+</li>
+<li>
+<p><a href="Basis/./Types/Deducing_Types.html">类型推导</a>：
+说明 <code>auto</code>、<code>decltype</code>、模板参数推导等机制如何简化类型声明并保持类型安全。</p>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="基本数据类型"><a class="header" href="#基本数据类型">基本数据类型</a></h1>
 <h2 id="c-基本数据类型"><a class="header" href="#c-基本数据类型">C++ 基本数据类型</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>大小（字节）</th><th>范围/取值示例</th></tr></thead><tbody>
@@ -613,6 +639,9 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="派生数据类型"><a class="header" href="#派生数据类型">派生数据类型</a></h1>
 <h2 id="c派生数据类型"><a class="header" href="#c派生数据类型">C++派生数据类型</a></h2>
+<p>在 C++ 中，<strong>派生数据类型（Derived Types）</strong> 是由基本数据类型或其他派生类型构建而来的类型。
+它们扩展了语言的表达能力，使得开发者能够通过组合与抽象创建更复杂的数据结构与行为模型。</p>
+<p>派生类型包括数组、指针、引用、函数、结构体、类、联合体以及枚举类型等。</p>
 <div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
 <tr><td>数组</td><td>相同类型元素的集合</td><td><code>int arr[5] = {1, 2, 3, 4, 5};</code></td></tr>
 <tr><td>指针</td><td>存储变量内存地址的类型</td><td><code>int* ptr = &amp;x;</code></td></tr>
@@ -624,37 +653,137 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 <tr><td>枚举</td><td>用户定义的整数常量集合</td><td><code>enum Color { RED, GREEN, BLUE };</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="c类型别名"><a class="header" href="#c类型别名">C++类型别名</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>别名</th><th>描述</th><th>示例</th></tr></thead><tbody>
-<tr><td><code>typedef</code></td><td>为现有类型定义别名</td><td><code>typedef int MyInt;</code></td></tr>
-<tr><td><code>using</code></td><td>为现有类型定义别名（C++11 引入）</td><td><code>using MyInt = int;</code></td></tr>
-</tbody></table>
-</div>
-<h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
-<tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>
-<tr><td><code>std::vector</code></td><td>动态数组</td><td><code>std::vector&lt;int&gt; v = {1, 2, 3};</code></td></tr>
-<tr><td><code>std::array</code></td><td>固定大小数组（C++11 引入）</td><td><code>std::array&lt;int, 3&gt; a = {1, 2, 3};</code></td></tr>
-<tr><td><code>std::pair</code></td><td>存储两个值的容器</td><td><code>std::pair&lt;int, float&gt; p(1, 2.0);</code></td></tr>
-<tr><td><code>std::map</code></td><td>键值对容器</td><td><code>std::map&lt;int, std::string&gt; m;</code></td></tr>
-<tr><td><code>std::set</code></td><td>唯一值集合</td><td><code>std::set&lt;int&gt; s = {1, 2, 3};</code></td></tr>
-</tbody></table>
-</div>
+<h2 id="数组array"><a class="header" href="#数组array">数组（Array）</a></h2>
+<p>数组用于存储<strong>相同类型元素的固定长度序列</strong>，在内存中是连续存放的。</p>
+<pre><code class="language-cpp">int numbers[5] = {1, 2, 3, 4, 5};
+std::cout &lt;&lt; numbers[2]; // 输出 3
+</code></pre>
+<ul>
+<li>
+<p><strong>下标从 0 开始</strong>，越界访问会导致未定义行为（Undefined Behavior）。</p>
+</li>
+<li>
+<p>在函数参数中，数组会<strong>退化为指针</strong>：</p>
+<pre><code class="language-cpp">void printArray(int arr[], int size); // 等价于 void printArray(int* arr, int size);
+</code></pre>
+</li>
+<li>
+<p>若需要安全的动态数组，请使用 <code>std::vector</code>。</p>
+</li>
+</ul>
+<h2 id="指针pointer"><a class="header" href="#指针pointer">指针（Pointer）</a></h2>
+<p>指针是存储变量地址的变量，是 C++ 的核心特性之一。</p>
+<pre><code class="language-cpp">int a = 10;
+int* p = &amp;a;    // 指针p指向a
+std::cout &lt;&lt; *p; // 输出10
+</code></pre>
+<p><strong>关键点：</strong></p>
+<ul>
+<li><code>*</code> 用于定义或解引用指针；</li>
+<li><code>&amp;</code> 用于取地址；</li>
+<li>指针类型必须与目标对象类型一致；</li>
+<li><code>nullptr</code> 表示空指针（C++11 引入）。</li>
+</ul>
+<p><strong>常见错误：</strong></p>
+<ul>
+<li>
+<p>解引用空指针或野指针会导致崩溃；</p>
+</li>
+<li>
+<p>动态内存需成对使用：</p>
+<pre><code class="language-cpp">int* p = new int(5);
+delete p;
+</code></pre>
+</li>
+</ul>
+<p>推荐使用智能指针（<code>std::unique_ptr</code>, <code>std::shared_ptr</code>）来避免内存泄漏。</p>
+<h2 id="引用reference"><a class="header" href="#引用reference">引用（Reference）</a></h2>
+<p>引用是另一个变量的<strong>别名</strong>，必须在定义时初始化。</p>
+<pre><code class="language-cpp">int value = 10;
+int&amp; ref = value;
+ref = 20; // value 也变为 20
+</code></pre>
+<ul>
+<li>
+<p>引用不能为空；</p>
+</li>
+<li>
+<p>绑定后不能再更改引用目标；</p>
+</li>
+<li>
+<p>常用于函数参数传递以避免拷贝：</p>
+<pre><code class="language-cpp">void modify(int&amp; x) { x *= 2; }
+</code></pre>
+</li>
+</ul>
+<p>C++11 还引入了 <strong>右值引用 (<code>T&amp;&amp;</code>)</strong>，用于支持移动语义和完美转发。</p>
+<h2 id="函数类型function-type"><a class="header" href="#函数类型function-type">函数类型（Function Type）</a></h2>
+<p>函数本身也是一种类型，其类型由<strong>返回值类型</strong>和<strong>参数类型列表</strong>组成。</p>
+<pre><code class="language-cpp">int add(int a, int b) { return a + b; }
+</code></pre>
+<p>函数类型也可通过<strong>指针或引用</strong>使用：</p>
+<pre><code class="language-cpp">int (*funcPtr)(int, int) = add;
+std::cout &lt;&lt; funcPtr(2, 3); // 输出5
+</code></pre>
+<p>C++11 提供了更安全的函数封装：</p>
+<ul>
+<li><code>std::function</code>：可存储任意可调用对象；</li>
+<li><code>auto</code> 和 Lambda 表达式使函数类型推导更简洁。</li>
+</ul>
+<h2 id="结构体struct"><a class="header" href="#结构体struct">结构体（struct）</a></h2>
+<p>结构体是用户自定义的复合类型，可包含多个不同类型的成员。</p>
+<pre><code class="language-cpp">struct Point {
+    int x;
+    int y;
+};
+
+Point p1 = {10, 20};
+std::cout &lt;&lt; p1.x &lt;&lt; ", " &lt;&lt; p1.y;
+</code></pre>
+<ul>
+<li>默认成员访问权限是 <strong>public</strong>；</li>
+<li>可以包含成员函数；</li>
+<li>可以与类（<code>class</code>）结合使用面向对象设计。</li>
+</ul>
+<h2 id="类class"><a class="header" href="#类class">类（class）</a></h2>
+<p>类是 C++ 的核心概念之一，支持 <strong>封装（Encapsulation）</strong>、<strong>继承（Inheritance）</strong> 和 <strong>多态（Polymorphism）</strong>。</p>
+<pre><code class="language-cpp">class Rectangle {
+private:
+    int width, height;
+
+public:
+    Rectangle(int w, int h) : width(w), height(h) {}
+    int area() const { return width * height; }
+};
+</code></pre>
+<ul>
+<li>成员默认为 <strong>private</strong>；</li>
+<li>支持构造函数、析构函数、运算符重载等；</li>
+<li>是对象与抽象数据类型的基础。</li>
+</ul>
 <blockquote>
-<p>std::string类型的详细介绍见<a href="Basis/Types/./Character.html">字符串类型</a>章节，其他标准库类型见<a href="Basis/Types/../../STL.html">STL</a>章节。</p>
+<p><a href="Basis/Types/../CLass&amp;Object.html">类与对象</a>是C++语言极为重要的内容。</p>
 </blockquote>
-<h2 id="typedef-声明"><a class="header" href="#typedef-声明"><code>typedef</code> 声明</a></h2>
-<p><code>typedef</code> 允许为一个已有的类型取一个新的名字。其语法为：</p>
-<pre><code class="language-cpp">typedef type newname;
+<h2 id="联合体union"><a class="header" href="#联合体union">联合体（union）</a></h2>
+<p>联合体（<code>union</code>）允许多个成员<strong>共用同一块内存</strong>。</p>
+<pre><code class="language-cpp">union Data {
+    int i;
+    float f;
+    char c;
+};
+
+Data d;
+d.i = 10;
+std::cout &lt;&lt; d.i; // 输出10
+d.f = 3.14;       // i 被覆盖
 </code></pre>
-<p>例如，下面的语句会告诉编译器 <code>feet</code> 是 <code>int</code> 的另一个名称：</p>
-<pre><code class="language-cpp">typedef int feet;
-</code></pre>
-<p>这样，您可以声明一个整型变量 <code>distance</code>，如：</p>
-<pre><code class="language-cpp">feet distance;
-</code></pre>
-<h2 id="枚举类型"><a class="header" href="#枚举类型">枚举类型</a></h2>
-<p>枚举类型（<code>enum</code>）是 C++ 中的一种派生数据类型，它是由用户定义的若干枚举常量的集合。枚举通常用于一个变量只有几种可能的值的情况。所谓"枚举"是指将变量的值一一列举出来，变量的值只能在列举出来的值的范围内。</p>
+<ul>
+<li>占用的内存大小等于最大成员的大小；</li>
+<li>只能同时存储一个有效成员；</li>
+<li>可用于节省内存或实现类型复用。</li>
+</ul>
+<h2 id="枚举类型enum"><a class="header" href="#枚举类型enum">枚举类型（enum）</a></h2>
+<p>枚举用于定义一组具名的整数常量，提高代码可读性与类型安全。</p>
 <p>创建枚举类型时，使用关键字 <code>enum</code>。其一般形式为：</p>
 <pre><code class="language-cpp">enum 枚举名 {
      标识符[=整型常数],
@@ -671,6 +800,42 @@ c = blue;
 <pre><code class="language-cpp">enum color { red, green=5, blue };
 </code></pre>
 <p>在此示例中，<code>blue</code> 的值为 6，因为默认情况下，每个名称都会比它前面一个名称大 1，而 <code>red</code> 的值仍然为 0。</p>
+<p>C++11 引入 <strong>强类型枚举</strong>：</p>
+<pre><code class="language-cpp">enum class Status { OK, ERROR };
+Status s = Status::OK;
+</code></pre>
+<blockquote>
+<p>强类型枚举不会隐式转换为整数，作用域也更加安全。</p>
+</blockquote>
+<h2 id="c类型别名"><a class="header" href="#c类型别名">C++类型别名</a></h2>
+<p>类型别名可通过 <code>typedef</code> 或 <code>using</code> 定义。</p>
+<div class="table-wrapper"><table><thead><tr><th>关键字</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>typedef</code></td><td>为已有类型定义别名</td><td><code>typedef int MyInt;</code></td></tr>
+<tr><td><code>using</code></td><td>C++11 引入的新语法</td><td><code>using MyInt = int;</code></td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">typedef unsigned long ulong_t;
+using ushort_t = unsigned short;
+</code></pre>
+<p><code>using</code> 语法更直观，且支持模板别名：</p>
+<pre><code class="language-cpp">template &lt;typename T&gt;
+using Vec = std::vector&lt;T&gt;;
+Vec&lt;int&gt; v = {1, 2, 3};
+</code></pre>
+<h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>
+<tr><td><code>std::vector</code></td><td>动态数组</td><td><code>std::vector&lt;int&gt; v = {1, 2, 3};</code></td></tr>
+<tr><td><code>std::array</code></td><td>固定大小数组（C++11 引入）</td><td><code>std::array&lt;int, 3&gt; a = {1, 2, 3};</code></td></tr>
+<tr><td><code>std::pair</code></td><td>存储两个值的容器</td><td><code>std::pair&lt;int, float&gt; p(1, 2.0);</code></td></tr>
+<tr><td><code>std::map</code></td><td>键值对容器</td><td><code>std::map&lt;int, std::string&gt; m;</code></td></tr>
+<tr><td><code>std::set</code></td><td>唯一值集合</td><td><code>std::set&lt;int&gt; s = {1, 2, 3};</code></td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>std::string类型的详细介绍见<a href="Basis/Types/./Character.html">字符串类型</a>章节，其他标准库类型见<a href="Basis/Types/../../STL.html">STL</a>章节。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-字符串类型"><a class="header" href="#c-字符串类型">C++ 字符串类型</a></h1>
 <p>C++ 提供了两种主要的字符串表示方式：C 风格字符串和 C++ 引入的 <code>string</code> 类类型。尽管 C++ 中 <code>string</code> 类型在许多情况下更为常用，但 C 风格字符串仍然是 C++ 中的一个重要组成部分，特别是在需要与旧有的 C 库代码兼容时。</p>
 <h2 id="c-风格字符串"><a class="header" href="#c-风格字符串">C 风格字符串</a></h2>
@@ -1031,7 +1196,8 @@ int main() {
 编译器根据初始化表达式推导类型，但不能从不完整的类型推导。因此，必须确保变量在声明时能够通过表达式推导出类型。</p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
 <p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
 <p>C++ 提供了一些工具来帮助开发者更高效地管理内存，避免内存泄漏、悬空指针和野指针等常见问题。在传统的内存管理方式中，开发者需要通过 new 和 delete 来手动管理动态内存的分配和释放。而为了提高开发效率和安全性，C++11 引入了<code>智能指针</code>，如 <code>std::unique_ptr</code>、<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code>，它们自动管理内存的生命周期，减少了人为错误的可能性。</p>
@@ -5690,7 +5856,7 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>unsequenced_policy</strong> (<code>unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>乱序</strong>执行（允许编译器向量化）</td></tr>
 <tr><td style="text-align: left"><strong>is_execution_policy</strong></td><td style="text-align: left">类模板</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left">测试一个类是否表示一个执行策略</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
+</div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
     // 获取当前页面的 URL
     var currentUrl = window.location.href;
 
