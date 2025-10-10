@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>内存管理 - Note of C++</title>
+        <title>智能指针 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Advance/Memory/Smart_Pointer.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,22 +183,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
-<p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
-<p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
-<p>C++ 提供了一些工具来帮助开发者更高效地管理内存，避免内存泄漏、悬空指针和野指针等常见问题。在传统的内存管理方式中，开发者需要通过 new 和 delete 来手动管理动态内存的分配和释放。而为了提高开发效率和安全性，C++11 引入了<code>智能指针</code>，如 <code>std::unique_ptr</code>、<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code>，它们自动管理内存的生命周期，减少了人为错误的可能性。</p>
-<p>此外，C++ 还提供了内存池和内存对齐等更底层的内存管理技术，使得开发者可以根据需要进一步优化程序的内存使用。</p>
-<p>在本章中，将深入探讨 C++ 中的内存管理机制，重点介绍手动内存管理和智能指针的使用。</p>
-
+                        <h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
+<p>内存管理是 C++ 编程中的一个关键问题，尤其是当涉及到动态分配的内存时，程序员需要确保及时释放资源以避免内存泄漏或其他潜在问题。为了解决这个问题，C++ 引入了智能指针，它们通过自动管理内存的生命周期来帮助开发者更安全地进行内存操作。智能指针不仅简化了内存管理的复杂性，还提高了程序的安全性，避免了许多常见的内存错误。</p>
+<p>智能指针是 C++ 标准库中的模板类，它们的作用是通过自动释放所持有的资源来管理动态分配的内存。智能指针的核心特点是，它们会在不再需要资源时自动释放内存，从而减少内存泄漏的风险。C++11 引入了三种主要类型的智能指针：std::unique_ptr、std::shared_ptr 和 std::weak_ptr，它们适用于不同的使用场景。除此之外，std::auto_ptr 是 C++98 中的一个智能指针，但由于设计缺陷，它在 C++11 中被弃用了。</p>
+<p>在本节中，我们将详细介绍这四种智能指针的特点、适用场景以及如何使用它们。</p>
+<div class="table-wrapper"><table><thead><tr><th>智能指针类型</th><th>所有权类型</th><th>主要特点</th><th>适用场景</th><th>创建方式</th></tr></thead><tbody>
+<tr><td><code>std::auto_ptr</code></td><td>独占所有权（已弃用）</td><td>自动管理内存，但存在隐式所有权转移的问题，已在 C++11 中弃用</td><td>不推荐使用（已被 <code>std::unique_ptr</code> 取代）</td><td><code>std::auto_ptr&lt;T&gt; ptr(new T);</code></td></tr>
+<tr><td><code>std::unique_ptr</code></td><td>独占所有权</td><td>不能拷贝，只能移动，自动销毁所管理的资源</td><td>单一所有者的资源管理，适用于工厂模式等</td><td><code>std::unique_ptr&lt;T&gt; ptr = std::make_unique&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::shared_ptr</code></td><td>共享所有权</td><td>引用计数，多个指针共享同一资源，最后一个销毁时释放资源</td><td>多个对象共享资源，如缓存、资源池</td><td><code>std::shared_ptr&lt;T&gt; ptr = std::make_shared&lt;T&gt;();</code></td></tr>
+<tr><td><code>std::weak_ptr</code></td><td>不管理资源生命周期</td><td>防止 <code>shared_ptr</code> 引用计数循环引用，不能直接访问资源</td><td>避免 <code>shared_ptr</code> 的循环引用问题</td><td><code>std::weak_ptr&lt;T&gt; weak_ptr = shared_ptr;</code></td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="Types/Deducing_Types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Advance/Memory.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="Memory/Smart_Pointer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Advance/Memory/Smart_Pointer/auto_ptr.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -208,11 +212,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="Types/Deducing_Types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Advance/Memory.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="Memory/Smart_Pointer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Advance/Memory/Smart_Pointer/auto_ptr.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -227,13 +231,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
 

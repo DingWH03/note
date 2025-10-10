@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>派生数据类型 - Note of C++</title>
+        <title>数据类型 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Types/Derived_Types.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Types.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,76 +183,17 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="派生数据类型"><a class="header" href="#派生数据类型">派生数据类型</a></h1>
-<h2 id="c派生数据类型"><a class="header" href="#c派生数据类型">C++派生数据类型</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
-<tr><td>数组</td><td>相同类型元素的集合</td><td><code>int arr[5] = {1, 2, 3, 4, 5};</code></td></tr>
-<tr><td>指针</td><td>存储变量内存地址的类型</td><td><code>int* ptr = &amp;x;</code></td></tr>
-<tr><td>引用</td><td>变量的别名</td><td><code>int&amp; ref = x;</code></td></tr>
-<tr><td>函数</td><td>函数类型，表示函数的签名</td><td><code>int func(int a, int b);</code></td></tr>
-<tr><td>结构体</td><td>用户定义的数据类型，可以包含多个不同类型的成员</td><td><code>struct Point { int x; int y; };</code></td></tr>
-<tr><td>类</td><td>用户定义的数据类型，支持封装、继承和多态</td><td><code>class MyClass { ... };</code></td></tr>
-<tr><td>联合体</td><td>多个成员共享同一块内存</td><td><code>union Data { int i; float f; };</code></td></tr>
-<tr><td>枚举</td><td>用户定义的整数常量集合</td><td><code>enum Color { RED, GREEN, BLUE };</code></td></tr>
-</tbody></table>
-</div>
-<h2 id="c类型别名"><a class="header" href="#c类型别名">C++类型别名</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>别名</th><th>描述</th><th>示例</th></tr></thead><tbody>
-<tr><td><code>typedef</code></td><td>为现有类型定义别名</td><td><code>typedef int MyInt;</code></td></tr>
-<tr><td><code>using</code></td><td>为现有类型定义别名（C++11 引入）</td><td><code>using MyInt = int;</code></td></tr>
-</tbody></table>
-</div>
-<h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
-<tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>
-<tr><td><code>std::vector</code></td><td>动态数组</td><td><code>std::vector&lt;int&gt; v = {1, 2, 3};</code></td></tr>
-<tr><td><code>std::array</code></td><td>固定大小数组（C++11 引入）</td><td><code>std::array&lt;int, 3&gt; a = {1, 2, 3};</code></td></tr>
-<tr><td><code>std::pair</code></td><td>存储两个值的容器</td><td><code>std::pair&lt;int, float&gt; p(1, 2.0);</code></td></tr>
-<tr><td><code>std::map</code></td><td>键值对容器</td><td><code>std::map&lt;int, std::string&gt; m;</code></td></tr>
-<tr><td><code>std::set</code></td><td>唯一值集合</td><td><code>std::set&lt;int&gt; s = {1, 2, 3};</code></td></tr>
-</tbody></table>
-</div>
-<blockquote>
-<p>std::string类型的详细介绍见<a href="./Character.html">字符串类型</a>章节，其他标准库类型见<a href="../STL.html">STL</a>章节。</p>
-</blockquote>
-<h2 id="typedef-声明"><a class="header" href="#typedef-声明"><code>typedef</code> 声明</a></h2>
-<p><code>typedef</code> 允许为一个已有的类型取一个新的名字。其语法为：</p>
-<pre><code class="language-cpp">typedef type newname;
-</code></pre>
-<p>例如，下面的语句会告诉编译器 <code>feet</code> 是 <code>int</code> 的另一个名称：</p>
-<pre><code class="language-cpp">typedef int feet;
-</code></pre>
-<p>这样，您可以声明一个整型变量 <code>distance</code>，如：</p>
-<pre><code class="language-cpp">feet distance;
-</code></pre>
-<h2 id="枚举类型"><a class="header" href="#枚举类型">枚举类型</a></h2>
-<p>枚举类型（<code>enum</code>）是 C++ 中的一种派生数据类型，它是由用户定义的若干枚举常量的集合。枚举通常用于一个变量只有几种可能的值的情况。所谓"枚举"是指将变量的值一一列举出来，变量的值只能在列举出来的值的范围内。</p>
-<p>创建枚举类型时，使用关键字 <code>enum</code>。其一般形式为：</p>
-<pre><code class="language-cpp">enum 枚举名 {
-     标识符[=整型常数],
-     标识符[=整型常数],
-     ...
-     标识符[=整型常数]
-} 枚举变量;
-</code></pre>
-<p>例如，下面的代码定义了一个颜色枚举，变量 <code>c</code> 的类型为 <code>color</code>。最后，<code>c</code> 被赋值为 <code>blue</code>：</p>
-<pre><code class="language-cpp">enum color { red, green, blue } c;
-c = blue;
-</code></pre>
-<p>默认情况下，第一个名称的值为 0，第二个名称的值为 1，第三个名称的值为 2，以此类推。然而，您也可以给名称赋予一个特殊的值，只需要添加一个初始值即可。例如，在下面的枚举中，<code>green</code> 的值为 5：</p>
-<pre><code class="language-cpp">enum color { red, green=5, blue };
-</code></pre>
-<p>在此示例中，<code>blue</code> 的值为 6，因为默认情况下，每个名称都会比它前面一个名称大 1，而 <code>red</code> 的值仍然为 0。</p>
+                        <h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Types/Fundamental_Types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Questions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Types/Character.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Basis/Types/Fundamental_Types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -262,11 +203,11 @@ c = blue;
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Types/Fundamental_Types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Questions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Types/Character.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Basis/Types/Fundamental_Types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

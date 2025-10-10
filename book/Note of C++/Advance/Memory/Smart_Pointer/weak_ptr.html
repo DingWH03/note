@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>unique_ptr - Note of C++</title>
+        <title>weak_ptr - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon.svg">
-        <link rel="shortcut icon" href="../../favicon.png">
-        <link rel="stylesheet" href="../../css/variables.css">
-        <link rel="stylesheet" href="../../css/general.css">
-        <link rel="stylesheet" href="../../css/chrome.css">
-        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <link rel="icon" href="../../../favicon.svg">
+        <link rel="shortcut icon" href="../../../favicon.png">
+        <link rel="stylesheet" href="../../../css/variables.css">
+        <link rel="stylesheet" href="../../../css/general.css">
+        <link rel="stylesheet" href="../../../css/chrome.css">
+        <link rel="stylesheet" href="../../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <link rel="stylesheet" href="../../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex.js";
+            window.path_to_searchindex_js = "../../../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc.js"></script>
+        <script src="../../../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory/Smart_Pointer/unique_ptr.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Advance/Memory/Smart_Pointer/weak_ptr.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,62 +183,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="stdunique_ptr"><a class="header" href="#stdunique_ptr">std::unique_ptr</a></h1>
-<p><code>std::unique_ptr</code> 是 C++11 引入的智能指针类型，它为动态内存提供了更加安全和高效的管理方式。与 <code>std::auto_ptr</code> 相比，<code>std::unique_ptr</code> 引入了更严格的所有权管理机制，避免了隐式所有权转移的问题，并且仅支持通过移动语义来转移资源的所有权。这使得 <code>std::unique_ptr</code> 在现代 C++ 中成为管理动态内存的推荐方式。</p>
+                        <h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
+<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
 <h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
-<p><code>std::unique_ptr</code> 是一个模板类，用于管理指向动态分配内存的指针。它确保在其生命周期结束时自动释放资源，避免了开发者手动管理内存的复杂性。该类型的主要目标是明确地控制资源的所有权，确保资源只会被一个指针持有，避免内存泄漏和资源重复释放的风险。</p>
-<pre><code class="language-cpp">template&lt;
-    class T,
-    class Deleter = std::default_delete&lt;T&gt;
-&gt; class unique_ptr;
-</code></pre>
-<pre><code class="language-cpp">template &lt;
-    class T,
-    class Deleter
-&gt; class unique_ptr&lt;T[], Deleter&gt;;
-</code></pre>
-<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 不允许拷贝操作，它只支持移动操作。这样，<code>std::unique_ptr</code> 可以避免由于不明确的所有权转移所引发的错误和 bug。资源的所有权转移只能通过 <code>std::move</code> 完成，这使得程序员可以清晰地看到何时发生了所有权的转移，避免了拷贝构造和赋值操作带来的隐式问题。</p>
-<h2 id="资源管理的所有权控制"><a class="header" href="#资源管理的所有权控制">资源管理的所有权控制</a></h2>
-<p><code>std::unique_ptr</code> 的核心特性之一就是它持有资源的 <strong>唯一所有权</strong>。每个 <code>std::unique_ptr</code> 都确保它是唯一拥有所指向对象的所有者。当 <code>std::unique_ptr</code> 被销毁时，它会自动释放所管理的内存，无需开发者手动调用 <code>delete</code>，从而降低了内存泄漏的风险。由于不允许拷贝构造或拷贝赋值操作，<code>std::unique_ptr</code> 使得资源的所有权在多个指针之间的共享变得不可能，从而避免了多个指针指向同一资源时可能导致的多重释放或悬空指针问题。</p>
-<p>例如，考虑以下代码片段：</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 转移所有权
-</code></pre>
-<p>在这段代码中，<code>ptr1</code> 的所有权通过 <code>std::move</code> 转移给 <code>ptr2</code>，<code>ptr1</code> 变为一个空指针，无法再访问原始资源。资源的所有权不再在多个指针之间共享，因此 <code>ptr1</code> 不再需要释放资源。</p>
-<h2 id="移动语义"><a class="header" href="#移动语义">移动语义</a></h2>
-<p><code>std::unique_ptr</code> 支持 <strong>移动语义</strong>，意味着资源的所有权可以从一个 <code>unique_ptr</code> 移动到另一个 <code>unique_ptr</code>。通过移动构造函数或移动赋值操作，资源的所有权会被安全地转移，而不会引发不必要的复制操作。与拷贝构造不同，移动操作并不会增加资源的引用计数，也不会创建多个指针指向同一个对象。移动语义使得内存管理更加高效，并避免了性能上的冗余开销。</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 使用移动语义转移所有权
-</code></pre>
-<p>这里，<code>ptr1</code> 的所有权被移动到 <code>ptr2</code>，<code>ptr1</code> 被置为空。这样，<code>std::unique_ptr</code> 能够在不产生冗余复制的情况下实现资源所有权的转移。</p>
-<h2 id="自动销毁与内存管理"><a class="header" href="#自动销毁与内存管理">自动销毁与内存管理</a></h2>
-<p><code>std::unique_ptr</code> 在其生命周期结束时会自动释放它所持有的资源。它的析构函数会在 <code>unique_ptr</code> 被销毁时自动调用所管理对象的析构函数，这意味着开发者无需手动管理内存的释放操作。通过这种方式，<code>std::unique_ptr</code> 减少了内存泄漏的可能性，也避免了因为忘记释放内存而导致的错误。</p>
-<p>例如，在函数的作用域结束时，<code>std::unique_ptr</code> 会自动释放它管理的资源：</p>
-<pre><code class="language-cpp">void createObject() {
-    std::unique_ptr&lt;MyClass&gt; ptr(new MyClass());
-    // 自动释放 ptr 管理的内存
+<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
+<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
+<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
+<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
+<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::shared_ptr&lt;Node&gt; next;
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 形成循环引用
 }
 </code></pre>
-<p>当 <code>createObject</code> 函数结束时，<code>ptr</code> 会被销毁，它所管理的 <code>MyClass</code> 对象也会被自动释放。</p>
-<h2 id="不支持复制支持移动"><a class="header" href="#不支持复制支持移动">不支持复制，支持移动</a></h2>
-<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 设计上不支持拷贝构造和拷贝赋值操作，因此不会发生隐式所有权转移的问题。若需要转移所有权，开发者必须显式地使用 <code>std::move</code> 进行资源的转移，这使得代码中资源所有权的转移变得更加明确和安全。这种设计使得 <code>std::unique_ptr</code> 在资源管理上更加清晰，避免了由于误用或隐式操作而引发的错误。</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 编译错误，不能拷贝
+<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
+<pre><code class="language-cpp">struct Node {
+    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
+};
+
+void createCircularReference() {
+    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
+    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+
+    node1-&gt;next = node2;
+    node2-&gt;next = node1;  // 现在不会形成循环引用
+}
 </code></pre>
-<p>这段代码会编译错误，因为 <code>std::unique_ptr</code> 不允许拷贝构造。唯一的方式是使用 <code>std::move</code> 来进行所有权的转移：</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 通过移动操作转移所有权
+<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
+<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
+<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+} else {
+    // 对象已被销毁
+}
 </code></pre>
+<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
+<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
+<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
+std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+
+// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
+</code></pre>
+<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
+<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
+<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
+if (ptr) {
+    // 使用 ptr 来访问 MyClass 对象
+}
+</code></pre>
+<p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Memory/Smart_Pointer/auto_ptr.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../Advance/Memory/Smart_Pointer/shared_ptr.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../Memory/Smart_Pointer/shared_ptr.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../STL.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,11 +262,11 @@ std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 通过移动操作转
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Memory/Smart_Pointer/auto_ptr.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../Advance/Memory/Smart_Pointer/shared_ptr.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../Memory/Smart_Pointer/shared_ptr.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../STL.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -267,13 +281,13 @@ std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 通过移动操作转
         </script>
 
 
-        <script src="../../elasticlunr.min.js"></script>
-        <script src="../../mark.min.js"></script>
-        <script src="../../searcher.js"></script>
+        <script src="../../../elasticlunr.min.js"></script>
+        <script src="../../../mark.min.js"></script>
+        <script src="../../../searcher.js"></script>
 
-        <script src="../../clipboard.min.js"></script>
-        <script src="../../highlight.js"></script>
-        <script src="../../book.js"></script>
+        <script src="../../../clipboard.min.js"></script>
+        <script src="../../../highlight.js"></script>
+        <script src="../../../book.js"></script>
 
         <!-- Custom JS scripts -->
 

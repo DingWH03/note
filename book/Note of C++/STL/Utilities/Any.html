@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>weak_ptr - Note of C++</title>
+        <title>Any - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Memory/Smart_Pointer/weak_ptr.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Utilities/Any.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,76 +183,145 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
-<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
-<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
-<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
-<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
-<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
-<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
-<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::shared_ptr&lt;Node&gt; next;
-};
+                        <h1 id="stdany"><a class="header" href="#stdany">std::any</a></h1>
+<p><code>std::any</code> 是 C++17 引入的一个工具类，用来表示 <strong>类型安全的任意类型容器</strong>。它可以存储任何 <strong>可拷贝构造</strong> 的类型，并且在运行时动态管理其类型和生命周期。<code>std::any</code> 常用于需要存储不同类型对象，但在编译时无法确定类型的场景。</p>
+<ul>
+<li><strong>有值 (engaged)</strong>：存储一个特定类型的对象。</li>
+<li><strong>无值 (disengaged)</strong>：表示空状态，没有存储任何对象。</li>
+</ul>
+<p>相比于 <code>void*</code> 或不安全的类型转换，<code>std::any</code> 提供了类型安全的访问和异常检测机制。</p>
+<p>其模板定义如下：</p>
+<pre><code class="language-cpp">class any;
+</code></pre>
+<h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
+<p>被包括在 <code>&lt;any&gt;</code> 头文件中。</p>
+<pre><code class="language-cpp">#include &lt;any&gt;
+</code></pre>
+<p>存储的类型必须满足 <strong>CopyConstructible</strong>（可拷贝构造）。</p>
+<h2 id="2-stdany-的工作原理"><a class="header" href="#2-stdany-的工作原理">2. <code>std::any</code> 的工作原理</a></h2>
+<ul>
+<li>内部通过 <strong>指针 + 类型信息（typeid）</strong> 或小对象优化实现：
+<ul>
+<li>当对象有值时，存储实际类型对象。</li>
+<li>当对象为空时，存储状态标记为空。</li>
+</ul>
+</li>
+<li>通过 <code>any_cast</code> 提供类型安全访问，如果类型不匹配会抛出 <code>std::bad_any_cast</code> 异常。</li>
+</ul>
+<h3 id="1-为什么需要-stdany"><a class="header" href="#1-为什么需要-stdany">(1) 为什么需要 <code>std::any</code>？</a></h3>
+<ul>
+<li>当需要存储 <strong>不同类型的对象</strong>，但类型在编译时未知时。</li>
+<li>用于实现 <strong>动态类型容器</strong>、事件系统或通用缓存。</li>
+<li>避免使用不安全的 <code>void*</code> 或 <code>union</code>。</li>
+</ul>
+<h3 id="2-基本使用"><a class="header" href="#2-基本使用">(2) 基本使用</a></h3>
+<pre><code class="language-cpp">std::any a = 1;             // 存储 int
+a = 3.14;                   // 改为存储 double
+a = std::string("hello");   // 改为存储 std::string
 
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 形成循环引用
+if (a.has_value()) {
+    std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
 }
 </code></pre>
-<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
-};
+<h2 id="3-使用-stdany-的场景"><a class="header" href="#3-使用-stdany-的场景">3. 使用 <code>std::any</code> 的场景</a></h2>
+<h3 id="1-动态类型存储"><a class="header" href="#1-动态类型存储">(1) 动态类型存储</a></h3>
+<pre><code class="language-cpp">std::vector&lt;std::any&gt; values;
+values.push_back(10);
+values.push_back(3.14);
+values.push_back(std::string("text"));
 
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 现在不会形成循环引用
+for (auto&amp; v : values) {
+    if (v.type() == typeid(int))
+        std::cout &lt;&lt; std::any_cast&lt;int&gt;(v) &lt;&lt; "\n";
 }
 </code></pre>
-<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
-<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
-<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
-if (ptr) {
-    // 使用 ptr 来访问 MyClass 对象
-} else {
-    // 对象已被销毁
+<h3 id="2-类型安全访问"><a class="header" href="#2-类型安全访问">(2) 类型安全访问</a></h3>
+<p>通过 <code>any_cast</code> 访问内部对象，类型不匹配会抛异常：</p>
+<pre><code class="language-cpp">std::any a = 42;
+try {
+    double d = std::any_cast&lt;double&gt;(a);  // 类型错误，会抛出 std::bad_any_cast
+} catch (const std::bad_any_cast&amp; e) {
+    std::cout &lt;&lt; e.what() &lt;&lt; "\n";
 }
 </code></pre>
-<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
-<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
-<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
-std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+<h3 id="3-指针访问"><a class="header" href="#3-指针访问">(3) 指针访问</a></h3>
+<p><code>any_cast</code> 也可返回指针，类型错误时返回 nullptr：</p>
+<pre><code class="language-cpp">std::any a = 3;
+if (int* p = std::any_cast&lt;int&gt;(&amp;a)) {
+    std::cout &lt;&lt; *p &lt;&lt; "\n";  // 输出 3
+}
+</code></pre>
+<h2 id="4-常用操作"><a class="header" href="#4-常用操作">4. 常用操作</a></h2>
+<h3 id="0-构造与析构"><a class="header" href="#0-构造与析构">(0) 构造与析构</a></h3>
+<pre><code class="language-cpp">std::any a;                 // 默认构造：无值
+std::any b = 42;            // 从值构造
+std::any c = std::string("hi"); // 从其他类型构造
 
-// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
+// 拷贝构造 / 拷贝赋值
+std::any d = b;
+d = c;
+
+// 移动构造 / 移动赋值
+std::any e = std::move(c);
+e = std::move(b);
+
+// 析构：生命周期结束时自动析构存储的对象
+{
+    std::any f = std::string("RAII");
+} // f 的析构自动调用 std::string 析构函数
 </code></pre>
-<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
-<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
-<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
-if (ptr) {
-    // 使用 ptr 来访问 MyClass 对象
+<h3 id="1-has_value-与-type"><a class="header" href="#1-has_value-与-type">(1) <code>has_value()</code> 与 <code>type()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+if (a.has_value()) {
+    std::cout &lt;&lt; "类型: " &lt;&lt; a.type().name() &lt;&lt; "\n";
 }
 </code></pre>
-<p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
+<h3 id="2-emplace-与-reset"><a class="header" href="#2-emplace-与-reset">(2) <code>emplace()</code> 与 <code>reset()</code></a></h3>
+<pre><code class="language-cpp">std::any a;
+a.emplace&lt;std::string&gt;("Hello");  // 原地构造新值
+std::cout &lt;&lt; std::any_cast&lt;std::string&gt;(a) &lt;&lt; "\n";
+a.reset();                         // 清空
+</code></pre>
+<h3 id="3-赋值操作-operator"><a class="header" href="#3-赋值操作-operator">(3) 赋值操作 <code>operator=</code></a></h3>
+<pre><code class="language-cpp">std::any a, b;
+a = 10;                // 赋值 int
+b = std::string("hi"); // 赋值 string
+a = b;                 // 拷贝 b 的值到 a
+</code></pre>
+<h3 id="4-swap"><a class="header" href="#4-swap">(4) <code>swap()</code></a></h3>
+<pre><code class="language-cpp">std::any a = 1, b = 2;
+a.swap(b);
+std::cout &lt;&lt; std::any_cast&lt;int&gt;(a) &lt;&lt; " " &lt;&lt; std::any_cast&lt;int&gt;(b) &lt;&lt; "\n"; // 输出 2 1
+</code></pre>
+<h3 id="5-工厂函数-stdmake_any"><a class="header" href="#5-工厂函数-stdmake_any">(5) 工厂函数 <code>std::make_any</code></a></h3>
+<pre><code class="language-cpp">auto a = std::make_any&lt;int&gt;(42);           // 创建 any 并存储 int
+auto b = std::make_any&lt;std::string&gt;("hi"); // 创建 any 并存储 string
+</code></pre>
+<h3 id="6-非成员函数-any_cast"><a class="header" href="#6-非成员函数-any_cast">(6) 非成员函数 <code>any_cast</code></a></h3>
+<pre><code class="language-cpp">std::any a = 123;
+int* p = std::any_cast&lt;int&gt;(&amp;a);           // 指针访问
+int v = std::any_cast&lt;int&gt;(a);             // 值访问，类型错误抛异常
+</code></pre>
+<h2 id="5-stdany-的常见误用"><a class="header" href="#5-stdany-的常见误用">5. <code>std::any</code> 的常见误用</a></h2>
+<h3 id="1-滥用"><a class="header" href="#1-滥用">(1) 滥用</a></h3>
+<ul>
+<li>不应将 <code>std::any</code> 用作所有类型的通用容器，它不能替代容器或指针管理。</li>
+<li>仅在 <strong>存储单个动态类型对象</strong> 且类型不确定时使用。</li>
+</ul>
+<h3 id="2-忘记类型检查"><a class="header" href="#2-忘记类型检查">(2) 忘记类型检查</a></h3>
+<pre><code class="language-cpp">std::any a = 42;
+std::cout &lt;&lt; std::any_cast&lt;double&gt;(a); // 未检查类型，抛异常
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Memory/Smart_Pointer/shared_ptr.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../STL/Utilities/Optional.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../Utility.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../STL/Utilities/Variant.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -262,11 +331,11 @@ if (ptr) {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Memory/Smart_Pointer/shared_ptr.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../STL/Utilities/Optional.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../Utility.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../STL/Utilities/Variant.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
