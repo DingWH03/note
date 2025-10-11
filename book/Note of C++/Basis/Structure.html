@@ -1,0 +1,534 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>控制结构 - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Structure.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="控制结构control-structures"><a class="header" href="#控制结构control-structures">控制结构（Control Structures）</a></h1>
+<p>在 C++ 中，控制结构用于控制程序语句的执行顺序。C++ 的控制流主要分为三种类型：</p>
+<ol>
+<li><strong>顺序结构</strong>：从上到下依次执行语句，是程序的默认执行方式。</li>
+<li><strong>选择结构</strong>：根据条件判断，执行不同的分支语句。</li>
+<li><strong>循环结构</strong>：重复执行一段代码，直到某个条件满足为止。</li>
+</ol>
+<p>在理解控制结构时，最关键的是掌握<strong>表达式求值时机</strong>、<strong>作用域规则</strong>与<strong>循环/分支退出机制</strong>。</p>
+<h2 id="一循环结构loop-structure"><a class="header" href="#一循环结构loop-structure">一、循环结构（Loop Structure）</a></h2>
+<p>循环结构的本质是<strong>在某个条件满足时重复执行代码块</strong>。
+C++ 提供了三种主要循环语法：<code>for</code>、<code>while</code> 和 <code>do...while</code>。</p>
+<p>虽然三者都能实现循环逻辑，但它们在<strong>执行顺序</strong>与<strong>条件判断时机</strong>上存在显著差异。</p>
+<h3 id="1-for-循环"><a class="header" href="#1-for-循环">1. <code>for</code> 循环</a></h3>
+<pre><code class="language-cpp">for (初始化表达式; 条件表达式; 迭代表达式) {
+    // 循环体
+}
+</code></pre>
+<p>在执行时，<code>for</code> 循环遵循如下过程：</p>
+<ol>
+<li><strong>初始化表达式</strong>在循环开始时执行一次；</li>
+<li>计算<strong>条件表达式</strong>，若为 <code>true</code>，则进入循环体；</li>
+<li>执行循环体中的语句；</li>
+<li>执行<strong>迭代表达式</strong>（通常为自增或自减操作）；</li>
+<li>再次判断条件表达式；</li>
+<li>若条件仍为真，继续循环；否则退出循环。</li>
+</ol>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    for (int i = 0; i &lt; 5; ++i) {
+        cout &lt;&lt; "当前 i = " &lt;&lt; i &lt;&lt; endl;
+    }
+}
+</code></pre>
+<p>程序执行顺序如下：</p>
+<pre><code class="language-text">初始化：i = 0
+判断条件：i &lt; 5 → true
+执行循环体：输出 i
+迭代表达式：i++
+再判断...
+</code></pre>
+<ul>
+<li>
+<p><strong>局部作用域</strong>：在 <code>for</code> 循环中声明的变量（如 <code>int i</code>）仅在循环内部可见，循环结束后变量被销毁。</p>
+</li>
+<li>
+<p><strong>可省略项</strong>：</p>
+<pre><code class="language-cpp">for (;;) {
+    // 无限循环
+}
+</code></pre>
+<p>如果条件表达式被省略，默认为 <code>true</code>。</p>
+</li>
+<li>
+<p><strong>循环控制建议</strong>：</p>
+<ul>
+<li>在循环内部修改循环变量容易出错；</li>
+<li>条件表达式应当保证能在有限次迭代后终止，否则会造成死循环。</li>
+</ul>
+</li>
+</ul>
+<p>C++11 引入了<strong>基于范围的 for 循环</strong>（range-based for loop）：</p>
+<pre><code class="language-cpp">#include &lt;vector&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; nums = {1, 2, 3, 4, 5};
+    for (int x : nums) {
+        cout &lt;&lt; x &lt;&lt; " ";
+    }
+}
+</code></pre>
+<p>等价于传统形式：</p>
+<pre><code class="language-cpp">for (auto it = nums.begin(); it != nums.end(); ++it)
+    cout &lt;&lt; *it &lt;&lt; " ";
+</code></pre>
+<p>这种写法更简洁、安全，也更符合 STL 容器的使用习惯。</p>
+<h3 id="2-while-循环"><a class="header" href="#2-while-循环">2. <code>while</code> 循环</a></h3>
+<pre><code class="language-cpp">while (条件表达式) {
+    // 循环体
+}
+</code></pre>
+<p><code>while</code> 循环先判断条件，再执行循环体。执行流程如下：</p>
+<ol>
+<li>判断条件；</li>
+<li>若条件为 <code>true</code>，执行循环体；</li>
+<li>循环体执行完毕后，再次判断条件；</li>
+<li>若条件为 <code>false</code>，循环终止。</li>
+</ol>
+<pre><code class="language-cpp">int i = 0;
+while (i &lt; 5) {
+    cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+    ++i;
+}
+</code></pre>
+<p>与 <code>for</code> 相比，<code>while</code> 更适用于<strong>循环次数不确定但终止条件明确</strong>的情况，例如文件读取或网络接收：</p>
+<pre><code class="language-cpp">string line;
+while (getline(cin, line)) {
+    cout &lt;&lt; line &lt;&lt; endl;
+}
+</code></pre>
+<p>这种结构常见于 IO 流循环，因为输入次数事先未知。</p>
+<p>一个经典的初学者错误：</p>
+<pre><code class="language-cpp">int i = 0;
+while (i &lt; 10);
+{
+    cout &lt;&lt; i &lt;&lt; endl;
+    ++i;
+}
+</code></pre>
+<p>这里的分号 <code>;</code> 结束了 <code>while</code> 语句，导致循环体为空。
+实际运行时这段代码会陷入死循环，因为条件判断永远为真而循环体无法修改变量。</p>
+<h3 id="3-dowhile-循环"><a class="header" href="#3-dowhile-循环">3. <code>do...while</code> 循环</a></h3>
+<pre><code class="language-cpp">do {
+    // 循环体
+} while (条件表达式);
+</code></pre>
+<p>与 <code>while</code> 不同，<code>do...while</code> <strong>先执行循环体一次，再判断条件</strong>。
+因此，无论条件是否为真，循环体至少会被执行一次。</p>
+<pre><code class="language-cpp">int n;
+do {
+    cout &lt;&lt; "请输入一个正数：";
+    cin &gt;&gt; n;
+} while (n &lt;= 0);
+</code></pre>
+<p>程序会反复要求输入，直到输入值大于零。
+这种结构常用于需要<strong>先执行一次再决定是否继续</strong>的交互逻辑。</p>
+<h3 id="4-循环控制语句"><a class="header" href="#4-循环控制语句">4. 循环控制语句</a></h3>
+<ul>
+<li>
+<p><code>break</code> —— 提前结束循环</p>
+<p><code>break</code> 用于<strong>立即终止当前循环</strong>或 <code>switch</code> 语句，不会再执行后续的循环体和条件判断。</p>
+<pre><code class="language-cpp">for (int i = 0; i &lt; 10; ++i) {
+    if (i == 5)
+        break;
+    cout &lt;&lt; i &lt;&lt; " ";
+}
+</code></pre>
+</li>
+<li>
+<p><code>continue</code> —— 跳过当前迭代</p>
+<p><code>continue</code> 会<strong>跳过本次循环剩余部分</strong>，直接进入下一次条件判断。</p>
+<pre><code class="language-cpp">for (int i = 0; i &lt; 10; ++i) {
+    if (i % 2 == 0)
+        continue; // 跳过偶数
+    cout &lt;&lt; i &lt;&lt; " ";
+}
+</code></pre>
+</li>
+<li>
+<p><code>goto</code> —— 无条件跳转（极少使用）</p>
+<pre><code class="language-cpp">int i = 0;
+loop_start:
+if (i &lt; 5) {
+    cout &lt;&lt; i &lt;&lt; endl;
+    ++i;
+    goto loop_start;
+}
+</code></pre>
+<p>虽然语法合法，但这种写法不符合结构化编程思想，现代 C++ 中几乎不使用。</p>
+</li>
+</ul>
+<h3 id="5-嵌套循环与性能考量"><a class="header" href="#5-嵌套循环与性能考量">5. 嵌套循环与性能考量</a></h3>
+<p>循环可以嵌套，例如输出九九乘法表：</p>
+<pre><code class="language-cpp">for (int i = 1; i &lt;= 9; ++i) {
+    for (int j = 1; j &lt;= i; ++j) {
+        cout &lt;&lt; j &lt;&lt; "x" &lt;&lt; i &lt;&lt; "=" &lt;&lt; i * j &lt;&lt; "\t";
+    }
+    cout &lt;&lt; endl;
+}
+</code></pre>
+<p>嵌套循环会带来<strong>O(n²)</strong> 级别的时间复杂度，因此在数据量大时应当考虑优化：</p>
+<ul>
+<li>减少内层循环的迭代次数；</li>
+<li>将不必要的计算提前至循环外；</li>
+<li>使用 <code>break</code> 或条件提前退出。</li>
+</ul>
+<h2 id="二判断结构selection-structure"><a class="header" href="#二判断结构selection-structure">二、判断结构（Selection Structure）</a></h2>
+<p>判断结构的目的是让程序<strong>在不同条件下执行不同语句</strong>。
+C++ 提供了两种主要形式：<code>if</code> 与 <code>switch</code>，另有三目运算符用于简单条件判断。</p>
+<h3 id="1-if-条件语句"><a class="header" href="#1-if-条件语句">1. <code>if</code> 条件语句</a></h3>
+<pre><code class="language-cpp">if (条件表达式) {
+    // 条件成立时执行
+}
+else {
+    // 条件不成立时执行
+}
+</code></pre>
+<p>在执行时，编译器首先计算条件表达式的布尔值：</p>
+<ul>
+<li>若为 <code>true</code>，执行 <code>if</code> 块；</li>
+<li>否则执行 <code>else</code> 块（如果存在）。</li>
+</ul>
+<p>除此以外，<code>if</code>还支持多分支判断：</p>
+<pre><code class="language-cpp">if (score &gt;= 90)
+    cout &lt;&lt; "优秀";
+else if (score &gt;= 80)
+    cout &lt;&lt; "良好";
+else if (score &gt;= 60)
+    cout &lt;&lt; "及格";
+else
+    cout &lt;&lt; "不及格";
+</code></pre>
+<p>编译器从上至下依次判断条件表达式。
+当某个条件为真时，后续分支将被跳过。</p>
+<ul>
+<li>短路求值（short-circuit evaluation）</li>
+</ul>
+<p>逻辑运算符 <code>&amp;&amp;</code> 和 <code>||</code> 在判断中具有<strong>短路行为</strong>：</p>
+<pre><code class="language-cpp">if (x != 0 &amp;&amp; 10 / x &gt; 1)  // 安全
+</code></pre>
+<p>若 <code>x == 0</code>，第一个条件为 <code>false</code>，第二个表达式不会被求值，从而避免除零错误。
+短路机制是 C++ 逻辑判断中非常重要的性能与安全特性。</p>
+<ul>
+<li>悬挂 else（dangling else）问题</li>
+</ul>
+<pre><code class="language-cpp">if (a &gt; 0)
+    if (b &gt; 0)
+        cout &lt;&lt; "A";
+    else
+        cout &lt;&lt; "B";
+</code></pre>
+<p>此时 <code>else</code> 默认匹配<strong>最近的未匹配 if</strong>，即第二个 <code>if</code>。
+建议始终使用大括号 <code>{}</code> 明确逻辑边界。</p>
+<h3 id="2-switch-语句"><a class="header" href="#2-switch-语句">2. <code>switch</code> 语句</a></h3>
+<pre><code class="language-cpp">switch (表达式) {
+    case 常量1:
+        // 语句
+        break;
+    case 常量2:
+        // 语句
+        break;
+    default:
+        // 默认语句
+        break;
+}
+</code></pre>
+<p><code>switch</code> 表达式的值会与每个 <code>case</code> 标签进行匹配，若相等，则从该处开始执行，直到遇到 <code>break</code> 或 <code>switch</code> 结束。</p>
+<pre><code class="language-cpp">int day = 3;
+switch (day) {
+    case 1: cout &lt;&lt; "Monday"; break;
+    case 2: cout &lt;&lt; "Tuesday"; break;
+    case 3: cout &lt;&lt; "Wednesday"; break;
+    default: cout &lt;&lt; "Invalid";
+}
+</code></pre>
+<ul>
+<li>
+<p>语义分析与注意事项</p>
+</li>
+<li>
+<p><code>switch</code> 的判断值必须是<strong>整数类型或枚举类型</strong>；</p>
+</li>
+<li>
+<p><code>case</code> 标签必须是<strong>常量表达式</strong>；</p>
+</li>
+<li>
+<p>若 <code>break</code> 省略，将导致<strong>贯穿 (fall through)</strong>，继续执行后续分支；</p>
+</li>
+<li>
+<p><code>default</code> 分支可选，但建议始终保留。</p>
+</li>
+<li>
+<p>现代 C++ 的枚举与 <code>switch</code></p>
+</li>
+</ul>
+<pre><code class="language-cpp">enum class Color { Red, Green, Blue };
+
+Color c = Color::Green;
+switch (c) {
+    case Color::Red: cout &lt;&lt; "Red"; break;
+    case Color::Green: cout &lt;&lt; "Green"; break;
+    case Color::Blue: cout &lt;&lt; "Blue"; break;
+}
+</code></pre>
+<p>使用 <code>enum class</code> 可避免命名冲突和隐式转换，提高类型安全性。</p>
+<h3 id="3-条件运算符三目运算符"><a class="header" href="#3-条件运算符三目运算符">3. 条件运算符（三目运算符）</a></h3>
+<p>C++ 提供了简洁的条件表达式：</p>
+<pre><code class="language-cpp">表达式1 ? 表达式2 : 表达式3;
+</code></pre>
+<p>求值逻辑：</p>
+<ul>
+<li>若表达式1为真，则整个表达式结果为表达式2；</li>
+<li>否则结果为表达式3。</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-cpp">int a = 10, b = 20;
+int max = (a &gt; b) ? a : b;
+</code></pre>
+<p>该语句的效果等价于：</p>
+<pre><code class="language-cpp">if (a &gt; b) max = a;
+else max = b;
+</code></pre>
+<p>三目运算符常用于简单赋值，但不适合复杂逻辑，因为可读性较差。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Basis/Types/Deducing_Types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Basis/Operators.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Basis/Types/Deducing_Types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Basis/Operators.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

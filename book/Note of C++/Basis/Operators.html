@@ -1,0 +1,516 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>操作符 - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Operators.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="操作符operators"><a class="header" href="#操作符operators">操作符（Operators）</a></h1>
+<p>操作符（Operator）是 C++ 表达式的核心组成部分，用于对操作数（Operand）进行各种运算、比较或逻辑处理。
+在编译阶段，操作符会被转化为相应的汇编指令或函数调用（例如运算符重载时）。</p>
+<p>C++ 拥有丰富的操作符体系，并且允许程序员通过<strong>运算符重载</strong>（operator overloading）定义自定义类型的操作方式，从而实现与内置类型一致的自然语法。</p>
+<h2 id="一操作符的分类"><a class="header" href="#一操作符的分类">一、操作符的分类</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类别</th><th style="text-align: left">示例</th><th style="text-align: left">用途</th></tr></thead><tbody>
+<tr><td style="text-align: center">算术操作符</td><td style="text-align: left"><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td><td style="text-align: left">数值计算</td></tr>
+<tr><td style="text-align: center">自增/自减操作符</td><td style="text-align: left"><code>++</code>, <code>--</code></td><td style="text-align: left">累加或递减</td></tr>
+<tr><td style="text-align: center">关系操作符</td><td style="text-align: left"><code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td><td style="text-align: left">比较</td></tr>
+<tr><td style="text-align: center">逻辑操作符</td><td style="text-align: left"><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td><td style="text-align: left">逻辑判断</td></tr>
+<tr><td style="text-align: center">位操作符</td><td style="text-align: left"><code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code></td><td style="text-align: left">位级运算</td></tr>
+<tr><td style="text-align: center">赋值操作符</td><td style="text-align: left"><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code> 等</td><td style="text-align: left">赋值与复合赋值</td></tr>
+<tr><td style="text-align: center">条件运算符</td><td style="text-align: left"><code>?:</code></td><td style="text-align: left">三目条件判断</td></tr>
+<tr><td style="text-align: center">逗号运算符</td><td style="text-align: left"><code>,</code></td><td style="text-align: left">顺序求值</td></tr>
+<tr><td style="text-align: center">成员操作符</td><td style="text-align: left"><code>.</code>, <code>-&gt;</code>, <code>.*</code>, <code>-&gt;*</code></td><td style="text-align: left">成员访问</td></tr>
+<tr><td style="text-align: center">指针与地址操作符</td><td style="text-align: left"><code>*</code>, <code>&amp;</code></td><td style="text-align: left">指针解引用与取地址</td></tr>
+<tr><td style="text-align: center">类型转换操作符</td><td style="text-align: left"><code>(type)</code>, <code>static_cast</code>, <code>dynamic_cast</code> 等</td><td style="text-align: left">类型转换</td></tr>
+<tr><td style="text-align: center">其他特殊操作符</td><td style="text-align: left"><code>sizeof</code>, <code>typeid</code>, <code>new</code>, <code>delete</code></td><td style="text-align: left">特殊用途</td></tr>
+</tbody></table>
+</div>
+<h2 id="二算术操作符arithmetic-operators"><a class="header" href="#二算术操作符arithmetic-operators">二、算术操作符（Arithmetic Operators）</a></h2>
+<h3 id="1-基本算术运算"><a class="header" href="#1-基本算术运算">1. 基本算术运算</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>+</code></td><td style="text-align: left">加法</td><td style="text-align: left"><code>a + b</code></td></tr>
+<tr><td style="text-align: center"><code>-</code></td><td style="text-align: left">减法</td><td style="text-align: left"><code>a - b</code></td></tr>
+<tr><td style="text-align: center"><code>*</code></td><td style="text-align: left">乘法</td><td style="text-align: left"><code>a * b</code></td></tr>
+<tr><td style="text-align: center"><code>/</code></td><td style="text-align: left">除法</td><td style="text-align: left"><code>a / b</code></td></tr>
+<tr><td style="text-align: center"><code>%</code></td><td style="text-align: left">取余（模运算）</td><td style="text-align: left"><code>a % b</code></td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">int a = 10, b = 3;
+cout &lt;&lt; a + b &lt;&lt; endl; // 13
+cout &lt;&lt; a - b &lt;&lt; endl; // 7
+cout &lt;&lt; a * b &lt;&lt; endl; // 30
+cout &lt;&lt; a / b &lt;&lt; endl; // 3
+cout &lt;&lt; a % b &lt;&lt; endl; // 1
+</code></pre>
+<h3 id="2-注意事项"><a class="header" href="#2-注意事项">2. 注意事项</a></h3>
+<ul>
+<li>
+<p><strong>整数除法</strong>：两个整数相除结果仍为整数，小数部分会被截断。</p>
+</li>
+<li>
+<p><strong>浮点除法</strong>：若任一操作数为浮点型，则结果为浮点数。</p>
+</li>
+<li>
+<p><strong>取余运算 <code>%</code></strong>：仅适用于整数类型。</p>
+</li>
+<li>
+<p><strong>负数取余</strong>：结果的符号与被除数相同，例如：</p>
+<pre><code class="language-cpp">cout &lt;&lt; (-7) % 4; // 输出 -3
+</code></pre>
+</li>
+</ul>
+<h2 id="三自增与自减操作符-与---"><a class="header" href="#三自增与自减操作符-与---">三、自增与自减操作符（<code>++</code> 与 <code>--</code>）</a></h2>
+<h3 id="1-区分前置与后置"><a class="header" href="#1-区分前置与后置">1. 区分前置与后置</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">形式</th><th style="text-align: left">名称</th><th style="text-align: left">求值顺序</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>++i</code></td><td style="text-align: left">前置自增</td><td style="text-align: left">先自增再返回值</td><td style="text-align: left"><code>int a = 1; cout &lt;&lt; ++a; // 输出 2</code></td></tr>
+<tr><td style="text-align: center"><code>i++</code></td><td style="text-align: left">后置自增</td><td style="text-align: left">先返回值再自增</td><td style="text-align: left"><code>int a = 1; cout &lt;&lt; a++; // 输出 1</code></td></tr>
+</tbody></table>
+</div>
+<p>同理适用于 <code>--</code>。</p>
+<h3 id="2-编译层面的区别"><a class="header" href="#2-编译层面的区别">2. 编译层面的区别</a></h3>
+<p>前置自增：</p>
+<pre><code class="language-cpp">int&amp; operator++(int&amp; i) { i += 1; return i; }
+</code></pre>
+<p>后置自增：</p>
+<pre><code class="language-cpp">int operator++(int&amp; i, int) { int old = i; ++i; return old; }
+</code></pre>
+<p>因此后置版本通常会创建临时对象，性能略低。</p>
+<h2 id="四关系操作符relational-operators"><a class="header" href="#四关系操作符relational-operators">四、关系操作符（Relational Operators）</a></h2>
+<p>用于比较两个值的大小或相等性，结果为 <code>bool</code> 类型。</p>
+<pre><code class="language-cpp">int a = 5, b = 10;
+cout &lt;&lt; (a &lt; b) &lt;&lt; endl;  // 1
+cout &lt;&lt; (a == b) &lt;&lt; endl; // 0
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>==</code></td><td style="text-align: left">等于</td><td style="text-align: left"><code>a == b</code></td></tr>
+<tr><td style="text-align: center"><code>!=</code></td><td style="text-align: left">不等于</td><td style="text-align: left"><code>a != b</code></td></tr>
+<tr><td style="text-align: center"><code>&lt;</code></td><td style="text-align: left">小于</td><td style="text-align: left"><code>a &lt; b</code></td></tr>
+<tr><td style="text-align: center"><code>&gt;</code></td><td style="text-align: left">大于</td><td style="text-align: left"><code>a &gt; b</code></td></tr>
+<tr><td style="text-align: center"><code>&lt;=</code></td><td style="text-align: left">小于等于</td><td style="text-align: left"><code>a &lt;= b</code></td></tr>
+<tr><td style="text-align: center"><code>&gt;=</code></td><td style="text-align: left">大于等于</td><td style="text-align: left"><code>a &gt;= b</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="五逻辑操作符logical-operators"><a class="header" href="#五逻辑操作符logical-operators">五、逻辑操作符（Logical Operators）</a></h2>
+<p>逻辑操作符用于<strong>布尔表达式组合</strong>，返回 <code>true</code> 或 <code>false</code>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th><th style="text-align: left">特性</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;&amp;</code></td><td style="text-align: left">逻辑与</td><td style="text-align: left"><code>(x &gt; 0 &amp;&amp; y &gt; 0)</code></td><td style="text-align: left"><strong>短路</strong>：若左侧为假，右侧不求值</td></tr>
+<tr><td style="text-align: center"><code>||</code></td><td style="text-align: left">逻辑或</td><td style="text-align: left"><code>(x &lt; 0 || y &lt; 0)</code></td><td style="text-align: left"><strong>短路</strong>：若左侧为真，右侧不求值</td></tr>
+<tr><td style="text-align: center"><code>!</code></td><td style="text-align: left">逻辑非</td><td style="text-align: left"><code>!flag</code></td><td style="text-align: left">取反</td></tr>
+</tbody></table>
+</div>
+<p><strong>短路求值</strong>（short-circuit evaluation）是逻辑运算的重要特性，它不仅提升性能，也避免非法运算（例如除零）。</p>
+<pre><code class="language-cpp">if (ptr != nullptr &amp;&amp; *ptr &gt; 10)
+    cout &lt;&lt; "安全访问";
+</code></pre>
+<h2 id="六位操作符bitwise-operators"><a class="header" href="#六位操作符bitwise-operators">六、位操作符（Bitwise Operators）</a></h2>
+<p>位操作符直接作用于整数的<strong>二进制表示</strong>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th><th></th><th></th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;</code></td><td style="text-align: left">按位与</td><td style="text-align: left"><code>a &amp; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center">`</td><td style="text-align: left">`</td><td style="text-align: left">按位或</td><td>`a</td><td>b`</td></tr>
+<tr><td style="text-align: center"><code>^</code></td><td style="text-align: left">按位异或</td><td style="text-align: left"><code>a ^ b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>~</code></td><td style="text-align: left">按位取反</td><td style="text-align: left"><code>~a</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&lt;&lt;</code></td><td style="text-align: left">左移</td><td style="text-align: left"><code>a &lt;&lt; n</code> （相当于乘以 2ⁿ）</td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&gt;&gt;</code></td><td style="text-align: left">右移</td><td style="text-align: left"><code>a &gt;&gt; n</code> （相当于除以 2ⁿ）</td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">unsigned int a = 5;  // 00000101
+unsigned int b = 3;  // 00000011
+cout &lt;&lt; (a &amp; b);     // 00000001 -&gt; 1
+cout &lt;&lt; (a | b);     // 00000111 -&gt; 7
+cout &lt;&lt; (a ^ b);     // 00000110 -&gt; 6
+cout &lt;&lt; (~a);        // 11111010 -&gt; 取反
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>位移运算的右操作数必须为非负；</li>
+<li>有符号右移的高位填充由实现定义；</li>
+<li>通常使用无符号类型进行位操作以避免歧义。</li>
+</ul>
+<h2 id="七赋值与复合赋值操作符assignment-operators"><a class="header" href="#七赋值与复合赋值操作符assignment-operators">七、赋值与复合赋值操作符（Assignment Operators）</a></h2>
+<h3 id="1-基本赋值"><a class="header" href="#1-基本赋值">1. 基本赋值</a></h3>
+<pre><code class="language-cpp">int x = 10;
+</code></pre>
+<h3 id="2-复合赋值"><a class="header" href="#2-复合赋值">2. 复合赋值</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">等价形式</th><th></th><th></th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>+=</code></td><td style="text-align: left"><code>a = a + b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>-=</code></td><td style="text-align: left"><code>a = a - b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>*=</code></td><td style="text-align: left"><code>a = a * b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>/=</code></td><td style="text-align: left"><code>a = a / b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>%=</code></td><td style="text-align: left"><code>a = a % b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&amp;=</code></td><td style="text-align: left"><code>a = a &amp; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center">`</td><td style="text-align: left">=`</td><td>`a = a</td><td>b`</td></tr>
+<tr><td style="text-align: center"><code>^=</code></td><td style="text-align: left"><code>a = a ^ b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&lt;&lt;=</code></td><td style="text-align: left"><code>a = a &lt;&lt; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&gt;&gt;=</code></td><td style="text-align: left"><code>a = a &gt;&gt; b</code></td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>复合赋值的优点是<strong>只计算一次左值</strong>，因此在复杂左值表达式中效率更高：</p>
+<pre><code class="language-cpp">arr[getIndex()] += 10; // getIndex() 只调用一次
+</code></pre>
+<h2 id="八条件运算符ternary-operator"><a class="header" href="#八条件运算符ternary-operator">八、条件运算符（Ternary Operator）</a></h2>
+<p>三目运算符语法：</p>
+<pre><code class="language-cpp">条件 ? 表达式1 : 表达式2;
+</code></pre>
+<p>示例：</p>
+<pre><code class="language-cpp">int max = (a &gt; b) ? a : b;
+</code></pre>
+<p>等价于：</p>
+<pre><code class="language-cpp">if (a &gt; b)
+    max = a;
+else
+    max = b;
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>运算符返回一个值，因此可嵌入表达式；</li>
+<li>但应避免多层嵌套，影响可读性。</li>
+</ul>
+<h2 id="九逗号运算符comma-operator"><a class="header" href="#九逗号运算符comma-operator">九、逗号运算符（Comma Operator）</a></h2>
+<p>逗号运算符从左到右依次求值，整个表达式的结果是<strong>最后一个表达式的值</strong>：</p>
+<pre><code class="language-cpp">int a = (b = 3, b + 2); // b=3执行后，再计算b+2，a=5
+</code></pre>
+<p>在 <code>for</code> 循环中常见：</p>
+<pre><code class="language-cpp">for (int i = 0, j = 10; i &lt; j; ++i, --j)
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; endl;
+</code></pre>
+<h2 id="十成员与指针操作符member--pointer-operators"><a class="header" href="#十成员与指针操作符member--pointer-operators">十、成员与指针操作符（Member &amp; Pointer Operators）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>.</code></td><td style="text-align: left">访问对象成员</td><td style="text-align: left"><code>obj.member</code></td></tr>
+<tr><td style="text-align: center"><code>-&gt;</code></td><td style="text-align: left">访问指针所指对象的成员</td><td style="text-align: left"><code>ptr-&gt;member</code></td></tr>
+<tr><td style="text-align: center"><code>.*</code></td><td style="text-align: left">访问对象的成员指针</td><td style="text-align: left"><code>(obj.*ptrMember)</code></td></tr>
+<tr><td style="text-align: center"><code>-&gt;*</code></td><td style="text-align: left">通过指针访问成员指针</td><td style="text-align: left"><code>(ptr-&gt;*ptrMember)</code></td></tr>
+</tbody></table>
+</div>
+<p><strong>示例：</strong></p>
+<pre><code class="language-cpp">struct Test { int x; void show() { cout &lt;&lt; x; } };
+Test t{42};
+Test* p = &amp;t;
+cout &lt;&lt; t.x;    // 使用 .
+cout &lt;&lt; p-&gt;x;   // 使用 -&gt;
+</code></pre>
+<h2 id="十一指针相关操作符"><a class="header" href="#十一指针相关操作符">十一、指针相关操作符</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">作用</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;</code></td><td style="text-align: left">取地址</td><td style="text-align: left"><code>int* p = &amp;x;</code></td></tr>
+<tr><td style="text-align: center"><code>*</code></td><td style="text-align: left">解引用</td><td style="text-align: left"><code>cout &lt;&lt; *p;</code></td></tr>
+</tbody></table>
+</div>
+<p>这两个符号在声明与使用中含义不同：</p>
+<pre><code class="language-cpp">int* p;   // 声明指针类型
+*p = 10;  // 解引用赋值
+</code></pre>
+<h2 id="十二类型转换操作符cast-operators"><a class="header" href="#十二类型转换操作符cast-operators">十二、类型转换操作符（Cast Operators）</a></h2>
+<h3 id="1-c-风格强制类型转换"><a class="header" href="#1-c-风格强制类型转换">1. C 风格强制类型转换</a></h3>
+<pre><code class="language-cpp">int a = 10;
+double b = (double)a;
+</code></pre>
+<h3 id="2-c-风格强制类型转换"><a class="header" href="#2-c-风格强制类型转换">2. C++ 风格强制类型转换</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">用途</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>static_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">编译期已知的安全类型转换</td></tr>
+<tr><td style="text-align: center"><code>dynamic_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">用于多态类型的安全向下转换（运行期检查）</td></tr>
+<tr><td style="text-align: center"><code>const_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">去除或添加 <code>const</code> 属性</td></tr>
+<tr><td style="text-align: center"><code>reinterpret_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">强制重解释类型（高风险）</td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">Base* b = new Derived();
+Derived* d = dynamic_cast&lt;Derived*&gt;(b); // 安全类型检查
+</code></pre>
+<h2 id="十三其他特殊操作符"><a class="header" href="#十三其他特殊操作符">十三、其他特殊操作符</a></h2>
+<h3 id="1-sizeof"><a class="header" href="#1-sizeof">1. <code>sizeof</code></a></h3>
+<p>返回对象或类型的<strong>字节大小</strong>，结果类型为 <code>size_t</code>：</p>
+<pre><code class="language-cpp">cout &lt;&lt; sizeof(int); // 通常为4
+</code></pre>
+<p>对数组时返回整个数组的大小，而不是指针大小：</p>
+<pre><code class="language-cpp">int arr[10];
+cout &lt;&lt; sizeof(arr); // 40 (假设int为4字节)
+</code></pre>
+<h3 id="2-typeid"><a class="header" href="#2-typeid">2. <code>typeid</code></a></h3>
+<p>用于在运行时获取类型信息，常与 RTTI（运行时类型识别）配合使用。</p>
+<pre><code class="language-cpp">#include &lt;typeinfo&gt;
+int a = 5;
+cout &lt;&lt; typeid(a).name(); // 输出类型名
+</code></pre>
+<h3 id="3-new-与-delete"><a class="header" href="#3-new-与-delete">3. <code>new</code> 与 <code>delete</code></a></h3>
+<p>动态内存分配与释放：</p>
+<pre><code class="language-cpp">int* p = new int(10);
+delete p;
+
+int* arr = new int[5];
+delete[] arr;
+</code></pre>
+<p><code>new</code> 会自动调用构造函数，而 <code>delete</code> 调用析构函数。</p>
+<h2 id="十四运算符优先级与结合性"><a class="header" href="#十四运算符优先级与结合性">十四、运算符优先级与结合性</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">优先级（高→低）</th><th style="text-align: left">操作符</th><th style="text-align: left">结合方向</th></tr></thead><tbody>
+<tr><td style="text-align: center">1</td><td style="text-align: left"><code>::</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">2</td><td style="text-align: left"><code>()</code> <code>[]</code> <code>-&gt;</code> <code>.</code> <code>++</code> <code>--</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">3</td><td style="text-align: left"><code>!</code> <code>~</code> <code>++</code> <code>--</code> <code>+</code> <code>-</code> <code>(type)</code> <code>*</code> <code>&amp;</code> <code>sizeof</code> <code>new</code> <code>delete</code></td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">4</td><td style="text-align: left"><code>*</code> <code>/</code> <code>%</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">5</td><td style="text-align: left"><code>+</code> <code>-</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">6</td><td style="text-align: left"><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">7</td><td style="text-align: left"><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">8</td><td style="text-align: left"><code>==</code> <code>!=</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">9</td><td style="text-align: left"><code>&amp;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">10</td><td style="text-align: left"><code>^</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">11</td><td style="text-align: left"><code>|</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">12</td><td style="text-align: left"><code>&amp;&amp;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">13</td><td style="text-align: left"><code>||</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">14</td><td style="text-align: left"><code>?:</code></td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">15</td><td style="text-align: left"><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code> 等</td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">16</td><td style="text-align: left"><code>,</code></td><td style="text-align: left">左到右</td></tr>
+</tbody></table>
+</div>
+<p>建议使用<strong>括号明确运算顺序</strong>，尤其在混合表达式中。</p>
+<h2 id="十五运算符重载operator-overloading"><a class="header" href="#十五运算符重载operator-overloading">十五、运算符重载（Operator Overloading）</a></h2>
+<p>C++ 允许为自定义类型定义运算符行为。例如：</p>
+<pre><code class="language-cpp">class Vector {
+public:
+    int x, y;
+    Vector(int x, int y): x(x), y(y) {}
+    Vector operator+(const Vector&amp; v) const {
+        return Vector(x + v.x, y + v.y);
+    }
+};
+</code></pre>
+<p>使用：</p>
+<pre><code class="language-cpp">Vector a(1, 2), b(3, 4);
+Vector c = a + b; // 等价于 a.operator+(b)
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>不能重载 <code>.</code>、<code>::</code>、<code>?:</code>、<code>sizeof</code>；</li>
+<li>运算符重载不会改变操作符优先级；</li>
+<li>应保证语义一致性（例如重载 <code>==</code> 时应与 <code>!=</code> 保持逻辑对称）。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Basis/Structure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Basis/CLass&amp;Object.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Basis/Structure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Basis/CLass&amp;Object.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

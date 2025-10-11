@@ -1196,6 +1196,580 @@ int main() {
 编译器根据初始化表达式推导类型，但不能从不完整的类型推导。因此，必须确保变量在声明时能够通过表达式推导出类型。</p>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="控制结构control-structures"><a class="header" href="#控制结构control-structures">控制结构（Control Structures）</a></h1>
+<p>在 C++ 中，控制结构用于控制程序语句的执行顺序。C++ 的控制流主要分为三种类型：</p>
+<ol>
+<li><strong>顺序结构</strong>：从上到下依次执行语句，是程序的默认执行方式。</li>
+<li><strong>选择结构</strong>：根据条件判断，执行不同的分支语句。</li>
+<li><strong>循环结构</strong>：重复执行一段代码，直到某个条件满足为止。</li>
+</ol>
+<p>在理解控制结构时，最关键的是掌握<strong>表达式求值时机</strong>、<strong>作用域规则</strong>与<strong>循环/分支退出机制</strong>。</p>
+<h2 id="一循环结构loop-structure"><a class="header" href="#一循环结构loop-structure">一、循环结构（Loop Structure）</a></h2>
+<p>循环结构的本质是<strong>在某个条件满足时重复执行代码块</strong>。
+C++ 提供了三种主要循环语法：<code>for</code>、<code>while</code> 和 <code>do...while</code>。</p>
+<p>虽然三者都能实现循环逻辑，但它们在<strong>执行顺序</strong>与<strong>条件判断时机</strong>上存在显著差异。</p>
+<h3 id="1-for-循环"><a class="header" href="#1-for-循环">1. <code>for</code> 循环</a></h3>
+<pre><code class="language-cpp">for (初始化表达式; 条件表达式; 迭代表达式) {
+    // 循环体
+}
+</code></pre>
+<p>在执行时，<code>for</code> 循环遵循如下过程：</p>
+<ol>
+<li><strong>初始化表达式</strong>在循环开始时执行一次；</li>
+<li>计算<strong>条件表达式</strong>，若为 <code>true</code>，则进入循环体；</li>
+<li>执行循环体中的语句；</li>
+<li>执行<strong>迭代表达式</strong>（通常为自增或自减操作）；</li>
+<li>再次判断条件表达式；</li>
+<li>若条件仍为真，继续循环；否则退出循环。</li>
+</ol>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    for (int i = 0; i &lt; 5; ++i) {
+        cout &lt;&lt; "当前 i = " &lt;&lt; i &lt;&lt; endl;
+    }
+}
+</code></pre>
+<p>程序执行顺序如下：</p>
+<pre><code class="language-text">初始化：i = 0
+判断条件：i &lt; 5 → true
+执行循环体：输出 i
+迭代表达式：i++
+再判断...
+</code></pre>
+<ul>
+<li>
+<p><strong>局部作用域</strong>：在 <code>for</code> 循环中声明的变量（如 <code>int i</code>）仅在循环内部可见，循环结束后变量被销毁。</p>
+</li>
+<li>
+<p><strong>可省略项</strong>：</p>
+<pre><code class="language-cpp">for (;;) {
+    // 无限循环
+}
+</code></pre>
+<p>如果条件表达式被省略，默认为 <code>true</code>。</p>
+</li>
+<li>
+<p><strong>循环控制建议</strong>：</p>
+<ul>
+<li>在循环内部修改循环变量容易出错；</li>
+<li>条件表达式应当保证能在有限次迭代后终止，否则会造成死循环。</li>
+</ul>
+</li>
+</ul>
+<p>C++11 引入了<strong>基于范围的 for 循环</strong>（range-based for loop）：</p>
+<pre><code class="language-cpp">#include &lt;vector&gt;
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; nums = {1, 2, 3, 4, 5};
+    for (int x : nums) {
+        cout &lt;&lt; x &lt;&lt; " ";
+    }
+}
+</code></pre>
+<p>等价于传统形式：</p>
+<pre><code class="language-cpp">for (auto it = nums.begin(); it != nums.end(); ++it)
+    cout &lt;&lt; *it &lt;&lt; " ";
+</code></pre>
+<p>这种写法更简洁、安全，也更符合 STL 容器的使用习惯。</p>
+<h3 id="2-while-循环"><a class="header" href="#2-while-循环">2. <code>while</code> 循环</a></h3>
+<pre><code class="language-cpp">while (条件表达式) {
+    // 循环体
+}
+</code></pre>
+<p><code>while</code> 循环先判断条件，再执行循环体。执行流程如下：</p>
+<ol>
+<li>判断条件；</li>
+<li>若条件为 <code>true</code>，执行循环体；</li>
+<li>循环体执行完毕后，再次判断条件；</li>
+<li>若条件为 <code>false</code>，循环终止。</li>
+</ol>
+<pre><code class="language-cpp">int i = 0;
+while (i &lt; 5) {
+    cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+    ++i;
+}
+</code></pre>
+<p>与 <code>for</code> 相比，<code>while</code> 更适用于<strong>循环次数不确定但终止条件明确</strong>的情况，例如文件读取或网络接收：</p>
+<pre><code class="language-cpp">string line;
+while (getline(cin, line)) {
+    cout &lt;&lt; line &lt;&lt; endl;
+}
+</code></pre>
+<p>这种结构常见于 IO 流循环，因为输入次数事先未知。</p>
+<p>一个经典的初学者错误：</p>
+<pre><code class="language-cpp">int i = 0;
+while (i &lt; 10);
+{
+    cout &lt;&lt; i &lt;&lt; endl;
+    ++i;
+}
+</code></pre>
+<p>这里的分号 <code>;</code> 结束了 <code>while</code> 语句，导致循环体为空。
+实际运行时这段代码会陷入死循环，因为条件判断永远为真而循环体无法修改变量。</p>
+<h3 id="3-dowhile-循环"><a class="header" href="#3-dowhile-循环">3. <code>do...while</code> 循环</a></h3>
+<pre><code class="language-cpp">do {
+    // 循环体
+} while (条件表达式);
+</code></pre>
+<p>与 <code>while</code> 不同，<code>do...while</code> <strong>先执行循环体一次，再判断条件</strong>。
+因此，无论条件是否为真，循环体至少会被执行一次。</p>
+<pre><code class="language-cpp">int n;
+do {
+    cout &lt;&lt; "请输入一个正数：";
+    cin &gt;&gt; n;
+} while (n &lt;= 0);
+</code></pre>
+<p>程序会反复要求输入，直到输入值大于零。
+这种结构常用于需要<strong>先执行一次再决定是否继续</strong>的交互逻辑。</p>
+<h3 id="4-循环控制语句"><a class="header" href="#4-循环控制语句">4. 循环控制语句</a></h3>
+<ul>
+<li>
+<p><code>break</code> —— 提前结束循环</p>
+<p><code>break</code> 用于<strong>立即终止当前循环</strong>或 <code>switch</code> 语句，不会再执行后续的循环体和条件判断。</p>
+<pre><code class="language-cpp">for (int i = 0; i &lt; 10; ++i) {
+    if (i == 5)
+        break;
+    cout &lt;&lt; i &lt;&lt; " ";
+}
+</code></pre>
+</li>
+<li>
+<p><code>continue</code> —— 跳过当前迭代</p>
+<p><code>continue</code> 会<strong>跳过本次循环剩余部分</strong>，直接进入下一次条件判断。</p>
+<pre><code class="language-cpp">for (int i = 0; i &lt; 10; ++i) {
+    if (i % 2 == 0)
+        continue; // 跳过偶数
+    cout &lt;&lt; i &lt;&lt; " ";
+}
+</code></pre>
+</li>
+<li>
+<p><code>goto</code> —— 无条件跳转（极少使用）</p>
+<pre><code class="language-cpp">int i = 0;
+loop_start:
+if (i &lt; 5) {
+    cout &lt;&lt; i &lt;&lt; endl;
+    ++i;
+    goto loop_start;
+}
+</code></pre>
+<p>虽然语法合法，但这种写法不符合结构化编程思想，现代 C++ 中几乎不使用。</p>
+</li>
+</ul>
+<h3 id="5-嵌套循环与性能考量"><a class="header" href="#5-嵌套循环与性能考量">5. 嵌套循环与性能考量</a></h3>
+<p>循环可以嵌套，例如输出九九乘法表：</p>
+<pre><code class="language-cpp">for (int i = 1; i &lt;= 9; ++i) {
+    for (int j = 1; j &lt;= i; ++j) {
+        cout &lt;&lt; j &lt;&lt; "x" &lt;&lt; i &lt;&lt; "=" &lt;&lt; i * j &lt;&lt; "\t";
+    }
+    cout &lt;&lt; endl;
+}
+</code></pre>
+<p>嵌套循环会带来<strong>O(n²)</strong> 级别的时间复杂度，因此在数据量大时应当考虑优化：</p>
+<ul>
+<li>减少内层循环的迭代次数；</li>
+<li>将不必要的计算提前至循环外；</li>
+<li>使用 <code>break</code> 或条件提前退出。</li>
+</ul>
+<h2 id="二判断结构selection-structure"><a class="header" href="#二判断结构selection-structure">二、判断结构（Selection Structure）</a></h2>
+<p>判断结构的目的是让程序<strong>在不同条件下执行不同语句</strong>。
+C++ 提供了两种主要形式：<code>if</code> 与 <code>switch</code>，另有三目运算符用于简单条件判断。</p>
+<h3 id="1-if-条件语句"><a class="header" href="#1-if-条件语句">1. <code>if</code> 条件语句</a></h3>
+<pre><code class="language-cpp">if (条件表达式) {
+    // 条件成立时执行
+}
+else {
+    // 条件不成立时执行
+}
+</code></pre>
+<p>在执行时，编译器首先计算条件表达式的布尔值：</p>
+<ul>
+<li>若为 <code>true</code>，执行 <code>if</code> 块；</li>
+<li>否则执行 <code>else</code> 块（如果存在）。</li>
+</ul>
+<p>除此以外，<code>if</code>还支持多分支判断：</p>
+<pre><code class="language-cpp">if (score &gt;= 90)
+    cout &lt;&lt; "优秀";
+else if (score &gt;= 80)
+    cout &lt;&lt; "良好";
+else if (score &gt;= 60)
+    cout &lt;&lt; "及格";
+else
+    cout &lt;&lt; "不及格";
+</code></pre>
+<p>编译器从上至下依次判断条件表达式。
+当某个条件为真时，后续分支将被跳过。</p>
+<ul>
+<li>短路求值（short-circuit evaluation）</li>
+</ul>
+<p>逻辑运算符 <code>&amp;&amp;</code> 和 <code>||</code> 在判断中具有<strong>短路行为</strong>：</p>
+<pre><code class="language-cpp">if (x != 0 &amp;&amp; 10 / x &gt; 1)  // 安全
+</code></pre>
+<p>若 <code>x == 0</code>，第一个条件为 <code>false</code>，第二个表达式不会被求值，从而避免除零错误。
+短路机制是 C++ 逻辑判断中非常重要的性能与安全特性。</p>
+<ul>
+<li>悬挂 else（dangling else）问题</li>
+</ul>
+<pre><code class="language-cpp">if (a &gt; 0)
+    if (b &gt; 0)
+        cout &lt;&lt; "A";
+    else
+        cout &lt;&lt; "B";
+</code></pre>
+<p>此时 <code>else</code> 默认匹配<strong>最近的未匹配 if</strong>，即第二个 <code>if</code>。
+建议始终使用大括号 <code>{}</code> 明确逻辑边界。</p>
+<h3 id="2-switch-语句"><a class="header" href="#2-switch-语句">2. <code>switch</code> 语句</a></h3>
+<pre><code class="language-cpp">switch (表达式) {
+    case 常量1:
+        // 语句
+        break;
+    case 常量2:
+        // 语句
+        break;
+    default:
+        // 默认语句
+        break;
+}
+</code></pre>
+<p><code>switch</code> 表达式的值会与每个 <code>case</code> 标签进行匹配，若相等，则从该处开始执行，直到遇到 <code>break</code> 或 <code>switch</code> 结束。</p>
+<pre><code class="language-cpp">int day = 3;
+switch (day) {
+    case 1: cout &lt;&lt; "Monday"; break;
+    case 2: cout &lt;&lt; "Tuesday"; break;
+    case 3: cout &lt;&lt; "Wednesday"; break;
+    default: cout &lt;&lt; "Invalid";
+}
+</code></pre>
+<ul>
+<li>
+<p>语义分析与注意事项</p>
+</li>
+<li>
+<p><code>switch</code> 的判断值必须是<strong>整数类型或枚举类型</strong>；</p>
+</li>
+<li>
+<p><code>case</code> 标签必须是<strong>常量表达式</strong>；</p>
+</li>
+<li>
+<p>若 <code>break</code> 省略，将导致<strong>贯穿 (fall through)</strong>，继续执行后续分支；</p>
+</li>
+<li>
+<p><code>default</code> 分支可选，但建议始终保留。</p>
+</li>
+<li>
+<p>现代 C++ 的枚举与 <code>switch</code></p>
+</li>
+</ul>
+<pre><code class="language-cpp">enum class Color { Red, Green, Blue };
+
+Color c = Color::Green;
+switch (c) {
+    case Color::Red: cout &lt;&lt; "Red"; break;
+    case Color::Green: cout &lt;&lt; "Green"; break;
+    case Color::Blue: cout &lt;&lt; "Blue"; break;
+}
+</code></pre>
+<p>使用 <code>enum class</code> 可避免命名冲突和隐式转换，提高类型安全性。</p>
+<h3 id="3-条件运算符三目运算符"><a class="header" href="#3-条件运算符三目运算符">3. 条件运算符（三目运算符）</a></h3>
+<p>C++ 提供了简洁的条件表达式：</p>
+<pre><code class="language-cpp">表达式1 ? 表达式2 : 表达式3;
+</code></pre>
+<p>求值逻辑：</p>
+<ul>
+<li>若表达式1为真，则整个表达式结果为表达式2；</li>
+<li>否则结果为表达式3。</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-cpp">int a = 10, b = 20;
+int max = (a &gt; b) ? a : b;
+</code></pre>
+<p>该语句的效果等价于：</p>
+<pre><code class="language-cpp">if (a &gt; b) max = a;
+else max = b;
+</code></pre>
+<p>三目运算符常用于简单赋值，但不适合复杂逻辑，因为可读性较差。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="操作符operators"><a class="header" href="#操作符operators">操作符（Operators）</a></h1>
+<p>操作符（Operator）是 C++ 表达式的核心组成部分，用于对操作数（Operand）进行各种运算、比较或逻辑处理。
+在编译阶段，操作符会被转化为相应的汇编指令或函数调用（例如运算符重载时）。</p>
+<p>C++ 拥有丰富的操作符体系，并且允许程序员通过<strong>运算符重载</strong>（operator overloading）定义自定义类型的操作方式，从而实现与内置类型一致的自然语法。</p>
+<h2 id="一操作符的分类"><a class="header" href="#一操作符的分类">一、操作符的分类</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">类别</th><th style="text-align: left">示例</th><th style="text-align: left">用途</th></tr></thead><tbody>
+<tr><td style="text-align: center">算术操作符</td><td style="text-align: left"><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></td><td style="text-align: left">数值计算</td></tr>
+<tr><td style="text-align: center">自增/自减操作符</td><td style="text-align: left"><code>++</code>, <code>--</code></td><td style="text-align: left">累加或递减</td></tr>
+<tr><td style="text-align: center">关系操作符</td><td style="text-align: left"><code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td><td style="text-align: left">比较</td></tr>
+<tr><td style="text-align: center">逻辑操作符</td><td style="text-align: left"><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td><td style="text-align: left">逻辑判断</td></tr>
+<tr><td style="text-align: center">位操作符</td><td style="text-align: left"><code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code></td><td style="text-align: left">位级运算</td></tr>
+<tr><td style="text-align: center">赋值操作符</td><td style="text-align: left"><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code> 等</td><td style="text-align: left">赋值与复合赋值</td></tr>
+<tr><td style="text-align: center">条件运算符</td><td style="text-align: left"><code>?:</code></td><td style="text-align: left">三目条件判断</td></tr>
+<tr><td style="text-align: center">逗号运算符</td><td style="text-align: left"><code>,</code></td><td style="text-align: left">顺序求值</td></tr>
+<tr><td style="text-align: center">成员操作符</td><td style="text-align: left"><code>.</code>, <code>-&gt;</code>, <code>.*</code>, <code>-&gt;*</code></td><td style="text-align: left">成员访问</td></tr>
+<tr><td style="text-align: center">指针与地址操作符</td><td style="text-align: left"><code>*</code>, <code>&amp;</code></td><td style="text-align: left">指针解引用与取地址</td></tr>
+<tr><td style="text-align: center">类型转换操作符</td><td style="text-align: left"><code>(type)</code>, <code>static_cast</code>, <code>dynamic_cast</code> 等</td><td style="text-align: left">类型转换</td></tr>
+<tr><td style="text-align: center">其他特殊操作符</td><td style="text-align: left"><code>sizeof</code>, <code>typeid</code>, <code>new</code>, <code>delete</code></td><td style="text-align: left">特殊用途</td></tr>
+</tbody></table>
+</div>
+<h2 id="二算术操作符arithmetic-operators"><a class="header" href="#二算术操作符arithmetic-operators">二、算术操作符（Arithmetic Operators）</a></h2>
+<h3 id="1-基本算术运算"><a class="header" href="#1-基本算术运算">1. 基本算术运算</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>+</code></td><td style="text-align: left">加法</td><td style="text-align: left"><code>a + b</code></td></tr>
+<tr><td style="text-align: center"><code>-</code></td><td style="text-align: left">减法</td><td style="text-align: left"><code>a - b</code></td></tr>
+<tr><td style="text-align: center"><code>*</code></td><td style="text-align: left">乘法</td><td style="text-align: left"><code>a * b</code></td></tr>
+<tr><td style="text-align: center"><code>/</code></td><td style="text-align: left">除法</td><td style="text-align: left"><code>a / b</code></td></tr>
+<tr><td style="text-align: center"><code>%</code></td><td style="text-align: left">取余（模运算）</td><td style="text-align: left"><code>a % b</code></td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">int a = 10, b = 3;
+cout &lt;&lt; a + b &lt;&lt; endl; // 13
+cout &lt;&lt; a - b &lt;&lt; endl; // 7
+cout &lt;&lt; a * b &lt;&lt; endl; // 30
+cout &lt;&lt; a / b &lt;&lt; endl; // 3
+cout &lt;&lt; a % b &lt;&lt; endl; // 1
+</code></pre>
+<h3 id="2-注意事项"><a class="header" href="#2-注意事项">2. 注意事项</a></h3>
+<ul>
+<li>
+<p><strong>整数除法</strong>：两个整数相除结果仍为整数，小数部分会被截断。</p>
+</li>
+<li>
+<p><strong>浮点除法</strong>：若任一操作数为浮点型，则结果为浮点数。</p>
+</li>
+<li>
+<p><strong>取余运算 <code>%</code></strong>：仅适用于整数类型。</p>
+</li>
+<li>
+<p><strong>负数取余</strong>：结果的符号与被除数相同，例如：</p>
+<pre><code class="language-cpp">cout &lt;&lt; (-7) % 4; // 输出 -3
+</code></pre>
+</li>
+</ul>
+<h2 id="三自增与自减操作符-与---"><a class="header" href="#三自增与自减操作符-与---">三、自增与自减操作符（<code>++</code> 与 <code>--</code>）</a></h2>
+<h3 id="1-区分前置与后置"><a class="header" href="#1-区分前置与后置">1. 区分前置与后置</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">形式</th><th style="text-align: left">名称</th><th style="text-align: left">求值顺序</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>++i</code></td><td style="text-align: left">前置自增</td><td style="text-align: left">先自增再返回值</td><td style="text-align: left"><code>int a = 1; cout &lt;&lt; ++a; // 输出 2</code></td></tr>
+<tr><td style="text-align: center"><code>i++</code></td><td style="text-align: left">后置自增</td><td style="text-align: left">先返回值再自增</td><td style="text-align: left"><code>int a = 1; cout &lt;&lt; a++; // 输出 1</code></td></tr>
+</tbody></table>
+</div>
+<p>同理适用于 <code>--</code>。</p>
+<h3 id="2-编译层面的区别"><a class="header" href="#2-编译层面的区别">2. 编译层面的区别</a></h3>
+<p>前置自增：</p>
+<pre><code class="language-cpp">int&amp; operator++(int&amp; i) { i += 1; return i; }
+</code></pre>
+<p>后置自增：</p>
+<pre><code class="language-cpp">int operator++(int&amp; i, int) { int old = i; ++i; return old; }
+</code></pre>
+<p>因此后置版本通常会创建临时对象，性能略低。</p>
+<h2 id="四关系操作符relational-operators"><a class="header" href="#四关系操作符relational-operators">四、关系操作符（Relational Operators）</a></h2>
+<p>用于比较两个值的大小或相等性，结果为 <code>bool</code> 类型。</p>
+<pre><code class="language-cpp">int a = 5, b = 10;
+cout &lt;&lt; (a &lt; b) &lt;&lt; endl;  // 1
+cout &lt;&lt; (a == b) &lt;&lt; endl; // 0
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>==</code></td><td style="text-align: left">等于</td><td style="text-align: left"><code>a == b</code></td></tr>
+<tr><td style="text-align: center"><code>!=</code></td><td style="text-align: left">不等于</td><td style="text-align: left"><code>a != b</code></td></tr>
+<tr><td style="text-align: center"><code>&lt;</code></td><td style="text-align: left">小于</td><td style="text-align: left"><code>a &lt; b</code></td></tr>
+<tr><td style="text-align: center"><code>&gt;</code></td><td style="text-align: left">大于</td><td style="text-align: left"><code>a &gt; b</code></td></tr>
+<tr><td style="text-align: center"><code>&lt;=</code></td><td style="text-align: left">小于等于</td><td style="text-align: left"><code>a &lt;= b</code></td></tr>
+<tr><td style="text-align: center"><code>&gt;=</code></td><td style="text-align: left">大于等于</td><td style="text-align: left"><code>a &gt;= b</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="五逻辑操作符logical-operators"><a class="header" href="#五逻辑操作符logical-operators">五、逻辑操作符（Logical Operators）</a></h2>
+<p>逻辑操作符用于<strong>布尔表达式组合</strong>，返回 <code>true</code> 或 <code>false</code>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th><th style="text-align: left">特性</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;&amp;</code></td><td style="text-align: left">逻辑与</td><td style="text-align: left"><code>(x &gt; 0 &amp;&amp; y &gt; 0)</code></td><td style="text-align: left"><strong>短路</strong>：若左侧为假，右侧不求值</td></tr>
+<tr><td style="text-align: center"><code>||</code></td><td style="text-align: left">逻辑或</td><td style="text-align: left"><code>(x &lt; 0 || y &lt; 0)</code></td><td style="text-align: left"><strong>短路</strong>：若左侧为真，右侧不求值</td></tr>
+<tr><td style="text-align: center"><code>!</code></td><td style="text-align: left">逻辑非</td><td style="text-align: left"><code>!flag</code></td><td style="text-align: left">取反</td></tr>
+</tbody></table>
+</div>
+<p><strong>短路求值</strong>（short-circuit evaluation）是逻辑运算的重要特性，它不仅提升性能，也避免非法运算（例如除零）。</p>
+<pre><code class="language-cpp">if (ptr != nullptr &amp;&amp; *ptr &gt; 10)
+    cout &lt;&lt; "安全访问";
+</code></pre>
+<h2 id="六位操作符bitwise-operators"><a class="header" href="#六位操作符bitwise-operators">六、位操作符（Bitwise Operators）</a></h2>
+<p>位操作符直接作用于整数的<strong>二进制表示</strong>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th><th></th><th></th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;</code></td><td style="text-align: left">按位与</td><td style="text-align: left"><code>a &amp; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center">`</td><td style="text-align: left">`</td><td style="text-align: left">按位或</td><td>`a</td><td>b`</td></tr>
+<tr><td style="text-align: center"><code>^</code></td><td style="text-align: left">按位异或</td><td style="text-align: left"><code>a ^ b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>~</code></td><td style="text-align: left">按位取反</td><td style="text-align: left"><code>~a</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&lt;&lt;</code></td><td style="text-align: left">左移</td><td style="text-align: left"><code>a &lt;&lt; n</code> （相当于乘以 2ⁿ）</td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&gt;&gt;</code></td><td style="text-align: left">右移</td><td style="text-align: left"><code>a &gt;&gt; n</code> （相当于除以 2ⁿ）</td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">unsigned int a = 5;  // 00000101
+unsigned int b = 3;  // 00000011
+cout &lt;&lt; (a &amp; b);     // 00000001 -&gt; 1
+cout &lt;&lt; (a | b);     // 00000111 -&gt; 7
+cout &lt;&lt; (a ^ b);     // 00000110 -&gt; 6
+cout &lt;&lt; (~a);        // 11111010 -&gt; 取反
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>位移运算的右操作数必须为非负；</li>
+<li>有符号右移的高位填充由实现定义；</li>
+<li>通常使用无符号类型进行位操作以避免歧义。</li>
+</ul>
+<h2 id="七赋值与复合赋值操作符assignment-operators"><a class="header" href="#七赋值与复合赋值操作符assignment-operators">七、赋值与复合赋值操作符（Assignment Operators）</a></h2>
+<h3 id="1-基本赋值"><a class="header" href="#1-基本赋值">1. 基本赋值</a></h3>
+<pre><code class="language-cpp">int x = 10;
+</code></pre>
+<h3 id="2-复合赋值"><a class="header" href="#2-复合赋值">2. 复合赋值</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">等价形式</th><th></th><th></th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>+=</code></td><td style="text-align: left"><code>a = a + b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>-=</code></td><td style="text-align: left"><code>a = a - b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>*=</code></td><td style="text-align: left"><code>a = a * b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>/=</code></td><td style="text-align: left"><code>a = a / b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>%=</code></td><td style="text-align: left"><code>a = a % b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&amp;=</code></td><td style="text-align: left"><code>a = a &amp; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center">`</td><td style="text-align: left">=`</td><td>`a = a</td><td>b`</td></tr>
+<tr><td style="text-align: center"><code>^=</code></td><td style="text-align: left"><code>a = a ^ b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&lt;&lt;=</code></td><td style="text-align: left"><code>a = a &lt;&lt; b</code></td><td></td><td></td></tr>
+<tr><td style="text-align: center"><code>&gt;&gt;=</code></td><td style="text-align: left"><code>a = a &gt;&gt; b</code></td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>复合赋值的优点是<strong>只计算一次左值</strong>，因此在复杂左值表达式中效率更高：</p>
+<pre><code class="language-cpp">arr[getIndex()] += 10; // getIndex() 只调用一次
+</code></pre>
+<h2 id="八条件运算符ternary-operator"><a class="header" href="#八条件运算符ternary-operator">八、条件运算符（Ternary Operator）</a></h2>
+<p>三目运算符语法：</p>
+<pre><code class="language-cpp">条件 ? 表达式1 : 表达式2;
+</code></pre>
+<p>示例：</p>
+<pre><code class="language-cpp">int max = (a &gt; b) ? a : b;
+</code></pre>
+<p>等价于：</p>
+<pre><code class="language-cpp">if (a &gt; b)
+    max = a;
+else
+    max = b;
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>运算符返回一个值，因此可嵌入表达式；</li>
+<li>但应避免多层嵌套，影响可读性。</li>
+</ul>
+<h2 id="九逗号运算符comma-operator"><a class="header" href="#九逗号运算符comma-operator">九、逗号运算符（Comma Operator）</a></h2>
+<p>逗号运算符从左到右依次求值，整个表达式的结果是<strong>最后一个表达式的值</strong>：</p>
+<pre><code class="language-cpp">int a = (b = 3, b + 2); // b=3执行后，再计算b+2，a=5
+</code></pre>
+<p>在 <code>for</code> 循环中常见：</p>
+<pre><code class="language-cpp">for (int i = 0, j = 10; i &lt; j; ++i, --j)
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; endl;
+</code></pre>
+<h2 id="十成员与指针操作符member--pointer-operators"><a class="header" href="#十成员与指针操作符member--pointer-operators">十、成员与指针操作符（Member &amp; Pointer Operators）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">含义</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>.</code></td><td style="text-align: left">访问对象成员</td><td style="text-align: left"><code>obj.member</code></td></tr>
+<tr><td style="text-align: center"><code>-&gt;</code></td><td style="text-align: left">访问指针所指对象的成员</td><td style="text-align: left"><code>ptr-&gt;member</code></td></tr>
+<tr><td style="text-align: center"><code>.*</code></td><td style="text-align: left">访问对象的成员指针</td><td style="text-align: left"><code>(obj.*ptrMember)</code></td></tr>
+<tr><td style="text-align: center"><code>-&gt;*</code></td><td style="text-align: left">通过指针访问成员指针</td><td style="text-align: left"><code>(ptr-&gt;*ptrMember)</code></td></tr>
+</tbody></table>
+</div>
+<p><strong>示例：</strong></p>
+<pre><code class="language-cpp">struct Test { int x; void show() { cout &lt;&lt; x; } };
+Test t{42};
+Test* p = &amp;t;
+cout &lt;&lt; t.x;    // 使用 .
+cout &lt;&lt; p-&gt;x;   // 使用 -&gt;
+</code></pre>
+<h2 id="十一指针相关操作符"><a class="header" href="#十一指针相关操作符">十一、指针相关操作符</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">作用</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>&amp;</code></td><td style="text-align: left">取地址</td><td style="text-align: left"><code>int* p = &amp;x;</code></td></tr>
+<tr><td style="text-align: center"><code>*</code></td><td style="text-align: left">解引用</td><td style="text-align: left"><code>cout &lt;&lt; *p;</code></td></tr>
+</tbody></table>
+</div>
+<p>这两个符号在声明与使用中含义不同：</p>
+<pre><code class="language-cpp">int* p;   // 声明指针类型
+*p = 10;  // 解引用赋值
+</code></pre>
+<h2 id="十二类型转换操作符cast-operators"><a class="header" href="#十二类型转换操作符cast-operators">十二、类型转换操作符（Cast Operators）</a></h2>
+<h3 id="1-c-风格强制类型转换"><a class="header" href="#1-c-风格强制类型转换">1. C 风格强制类型转换</a></h3>
+<pre><code class="language-cpp">int a = 10;
+double b = (double)a;
+</code></pre>
+<h3 id="2-c-风格强制类型转换"><a class="header" href="#2-c-风格强制类型转换">2. C++ 风格强制类型转换</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">操作符</th><th style="text-align: left">用途</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>static_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">编译期已知的安全类型转换</td></tr>
+<tr><td style="text-align: center"><code>dynamic_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">用于多态类型的安全向下转换（运行期检查）</td></tr>
+<tr><td style="text-align: center"><code>const_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">去除或添加 <code>const</code> 属性</td></tr>
+<tr><td style="text-align: center"><code>reinterpret_cast&lt;T&gt;(expr)</code></td><td style="text-align: left">强制重解释类型（高风险）</td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">Base* b = new Derived();
+Derived* d = dynamic_cast&lt;Derived*&gt;(b); // 安全类型检查
+</code></pre>
+<h2 id="十三其他特殊操作符"><a class="header" href="#十三其他特殊操作符">十三、其他特殊操作符</a></h2>
+<h3 id="1-sizeof"><a class="header" href="#1-sizeof">1. <code>sizeof</code></a></h3>
+<p>返回对象或类型的<strong>字节大小</strong>，结果类型为 <code>size_t</code>：</p>
+<pre><code class="language-cpp">cout &lt;&lt; sizeof(int); // 通常为4
+</code></pre>
+<p>对数组时返回整个数组的大小，而不是指针大小：</p>
+<pre><code class="language-cpp">int arr[10];
+cout &lt;&lt; sizeof(arr); // 40 (假设int为4字节)
+</code></pre>
+<h3 id="2-typeid"><a class="header" href="#2-typeid">2. <code>typeid</code></a></h3>
+<p>用于在运行时获取类型信息，常与 RTTI（运行时类型识别）配合使用。</p>
+<pre><code class="language-cpp">#include &lt;typeinfo&gt;
+int a = 5;
+cout &lt;&lt; typeid(a).name(); // 输出类型名
+</code></pre>
+<h3 id="3-new-与-delete"><a class="header" href="#3-new-与-delete">3. <code>new</code> 与 <code>delete</code></a></h3>
+<p>动态内存分配与释放：</p>
+<pre><code class="language-cpp">int* p = new int(10);
+delete p;
+
+int* arr = new int[5];
+delete[] arr;
+</code></pre>
+<p><code>new</code> 会自动调用构造函数，而 <code>delete</code> 调用析构函数。</p>
+<h2 id="十四运算符优先级与结合性"><a class="header" href="#十四运算符优先级与结合性">十四、运算符优先级与结合性</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">优先级（高→低）</th><th style="text-align: left">操作符</th><th style="text-align: left">结合方向</th></tr></thead><tbody>
+<tr><td style="text-align: center">1</td><td style="text-align: left"><code>::</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">2</td><td style="text-align: left"><code>()</code> <code>[]</code> <code>-&gt;</code> <code>.</code> <code>++</code> <code>--</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">3</td><td style="text-align: left"><code>!</code> <code>~</code> <code>++</code> <code>--</code> <code>+</code> <code>-</code> <code>(type)</code> <code>*</code> <code>&amp;</code> <code>sizeof</code> <code>new</code> <code>delete</code></td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">4</td><td style="text-align: left"><code>*</code> <code>/</code> <code>%</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">5</td><td style="text-align: left"><code>+</code> <code>-</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">6</td><td style="text-align: left"><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">7</td><td style="text-align: left"><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">8</td><td style="text-align: left"><code>==</code> <code>!=</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">9</td><td style="text-align: left"><code>&amp;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">10</td><td style="text-align: left"><code>^</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">11</td><td style="text-align: left"><code>|</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">12</td><td style="text-align: left"><code>&amp;&amp;</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">13</td><td style="text-align: left"><code>||</code></td><td style="text-align: left">左到右</td></tr>
+<tr><td style="text-align: center">14</td><td style="text-align: left"><code>?:</code></td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">15</td><td style="text-align: left"><code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code> 等</td><td style="text-align: left">右到左</td></tr>
+<tr><td style="text-align: center">16</td><td style="text-align: left"><code>,</code></td><td style="text-align: left">左到右</td></tr>
+</tbody></table>
+</div>
+<p>建议使用<strong>括号明确运算顺序</strong>，尤其在混合表达式中。</p>
+<h2 id="十五运算符重载operator-overloading"><a class="header" href="#十五运算符重载operator-overloading">十五、运算符重载（Operator Overloading）</a></h2>
+<p>C++ 允许为自定义类型定义运算符行为。例如：</p>
+<pre><code class="language-cpp">class Vector {
+public:
+    int x, y;
+    Vector(int x, int y): x(x), y(y) {}
+    Vector operator+(const Vector&amp; v) const {
+        return Vector(x + v.x, y + v.y);
+    }
+};
+</code></pre>
+<p>使用：</p>
+<pre><code class="language-cpp">Vector a(1, 2), b(3, 4);
+Vector c = a + b; // 等价于 a.operator+(b)
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li>不能重载 <code>.</code>、<code>::</code>、<code>?:</code>、<code>sizeof</code>；</li>
+<li>运算符重载不会改变操作符优先级；</li>
+<li>应保证语义一致性（例如重载 <code>==</code> 时应与 <code>!=</code> 保持逻辑对称）。</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
