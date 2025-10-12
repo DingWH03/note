@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>文件与流 - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Practice/Stream.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="文件与流files-and-streams"><a class="header" href="#文件与流files-and-streams">文件与流（Files and Streams）</a></h1>
+<p>在 C++ 中，<strong>流（Stream）</strong> 是输入输出系统的核心概念。所有数据的读写操作——无论来自键盘、内存、文件还是网络——都被统一抽象为“流”的形式。
+从概念上讲，<strong>文件是流的一种具体实现</strong>：流是一种数据传输通道，而文件流则是通向磁盘文件的通道。</p>
+<h2 id="一流的基本概念"><a class="header" href="#一流的基本概念">一、流的基本概念</a></h2>
+<p>在程序运行过程中，数据在设备之间不断流动。C++ 将数据的输入输出过程抽象为一个“流（stream）”，即：</p>
+<blockquote>
+<p>数据在内存与外部设备之间的有序传输。</p>
+</blockquote>
+<p>流有两种基本方向：</p>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>类名</th><th>说明</th></tr></thead><tbody>
+<tr><td>输入流</td><td><code>istream</code></td><td>数据从设备流入程序（例如键盘输入、文件读取）</td></tr>
+<tr><td>输出流</td><td><code>ostream</code></td><td>数据从程序流向设备（例如屏幕输出、文件写入）</td></tr>
+</tbody></table>
+</div>
+<p>C++ 的标准输入输出（如 <code>cin</code>、<code>cout</code>、<code>cerr</code>、<code>clog</code>）都是基于这套流机制实现的。</p>
+<h2 id="二c-流类层次结构"><a class="header" href="#二c-流类层次结构">二、C++ 流类层次结构</a></h2>
+<p>C++ 标准库为不同的数据来源提供了不同种类的流类，这些类共同组成一个继承体系：</p>
+<pre><code class="language-text">ios_base
+ └── ios
+      ├── istream          // 输入流
+      │    ├── ifstream     // 文件输入流
+      │    └── istringstream// 字符串输入流
+      ├── ostream          // 输出流
+      │    ├── ofstream     // 文件输出流
+      │    └── ostringstream// 字符串输出流
+      └── iostream         // 输入输出流
+           ├── fstream      // 文件输入输出流
+           └── stringstream // 字符串输入输出流
+</code></pre>
+<p>可以看到，无论是文件流、字符串流还是标准流，它们都共享相同的接口和操作方式。
+因此，掌握流的基本用法，就能轻松在不同输入输出介质之间迁移代码。</p>
+<h2 id="三流的分类与用途"><a class="header" href="#三流的分类与用途">三、流的分类与用途</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>头文件</th><th>主要类</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>标准输入输出流</td><td><code>&lt;iostream&gt;</code></td><td><code>cin</code>, <code>cout</code>, <code>cerr</code>, <code>clog</code></td><td>控制台输入输出</td></tr>
+<tr><td>文件流</td><td><code>&lt;fstream&gt;</code></td><td><code>ifstream</code>, <code>ofstream</code>, <code>fstream</code></td><td>读取与写入文件</td></tr>
+<tr><td>字符串流</td><td><code>&lt;sstream&gt;</code></td><td><code>istringstream</code>, <code>ostringstream</code>, <code>stringstream</code></td><td>内存中字符串格式化与解析</td></tr>
+</tbody></table>
+</div>
+<h2 id="四文件作为流的体现"><a class="header" href="#四文件作为流的体现">四、文件作为流的体现</a></h2>
+<p>在操作文件时，我们使用 <code>ifstream</code>、<code>ofstream</code>、<code>fstream</code> 来打开磁盘文件并执行读写。
+但本质上，这些类并没有引入新的 I/O 模型，而是继承自 <code>istream</code> / <code>ostream</code>，仅仅改变了<strong>流的来源或去向</strong>：</p>
+<ul>
+<li><code>ifstream</code>：从文件读取数据（输入流）</li>
+<li><code>ofstream</code>：向文件写入数据（输出流）</li>
+<li><code>fstream</code>：既可读也可写（双向流）</li>
+</ul>
+<p>这种统一的流模型让文件操作与普通输入输出完全一致：</p>
+<pre><code class="language-cpp">std::ifstream fin("input.txt");
+std::ofstream fout("output.txt");
+
+int x;
+fin &gt;&gt; x;       // 从文件读取
+fout &lt;&lt; x * 2;  // 写入文件
+</code></pre>
+<p>同时，为了适应多种文件类型，还支持基于二进制操作文件流：</p>
+<pre><code class="language-cpp">// 二进制写入
+std::ofstream fout_bin("data.bin", std::ios::binary);
+int x = 42;
+fout_bin.write(reinterpret_cast&lt;const char*&gt;(&amp;x), sizeof(x));
+</code></pre>
+<h2 id="五字符串流的作用"><a class="header" href="#五字符串流的作用">五、字符串流的作用</a></h2>
+<p><code>&lt;sstream&gt;</code> 提供了面向内存字符串的流操作。
+它们与文件流类似，但数据读写的目标是内存字符串而非磁盘文件，非常适合：</p>
+<ul>
+<li>格式化文本（如将数值转为字符串）</li>
+<li>从字符串中提取结构化数据</li>
+<li>临时缓冲输出内容</li>
+</ul>
+<pre><code class="language-cpp">std::stringstream ss;
+ss &lt;&lt; "Result: " &lt;&lt; 42;
+std::string text = ss.str();  // "Result: 42"
+</code></pre>
+<blockquote>
+<p>早期 C++ 还提供 <code>&lt;strstream&gt;</code> 实现基于字符数组的流，但由于安全性和内存管理问题，现已由 <code>&lt;sstream&gt;</code> 完全取代。</p>
+</blockquote>
+<h2 id="六流状态与错误处理"><a class="header" href="#六流状态与错误处理">六、流状态与错误处理</a></h2>
+<p>在 C++ 的流系统中，无论是标准输入输出流、文件流还是字符串流，<strong>都共享一套统一的状态机制</strong>。
+每个流对象都维护着一个内部状态，用于反映当前输入输出操作的健康状况。程序可以通过这些状态来判断流是否处于可用、结束或错误状态，从而实现可靠的错误控制。</p>
+<h3 id="1-状态标志stream-state-flags"><a class="header" href="#1-状态标志stream-state-flags">1. 状态标志（Stream State Flags）</a></h3>
+<p>C++ 通过四种主要的状态标志来描述流的状态，这些标志可能同时存在，用于表达复杂情况：</p>
+<div class="table-wrapper"><table><thead><tr><th>状态名</th><th>成员常量</th><th>含义</th></tr></thead><tbody>
+<tr><td><strong><code>goodbit</code></strong></td><td><code>std::ios::goodbit</code></td><td>一切正常，流处于可用状态</td></tr>
+<tr><td><strong><code>eofbit</code></strong></td><td><code>std::ios::eofbit</code></td><td>已到达输入结束（End Of File）</td></tr>
+<tr><td><strong><code>failbit</code></strong></td><td><code>std::ios::failbit</code></td><td>输入失败，通常是格式不匹配（如期望数字却读到字符）</td></tr>
+<tr><td><strong><code>badbit</code></strong></td><td><code>std::ios::badbit</code></td><td>流已损坏，通常是严重的系统性错误（如设备失效）</td></tr>
+</tbody></table>
+</div>
+<p>流的状态存储在 <code>std::ios</code> 基类中，因此所有继承自它的类（如 <code>istream</code>、<code>ostream</code>、<code>fstream</code>、<code>stringstream</code>）都拥有相同的状态接口。</p>
+<h3 id="2-状态检查接口"><a class="header" href="#2-状态检查接口">2. 状态检查接口</a></h3>
+<p>流对象提供了多种方式用于检查状态：</p>
+<div class="table-wrapper"><table><thead><tr><th>函数</th><th>返回值</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>good()</code></td><td><code>true</code> / <code>false</code></td><td>流是否处于正常状态</td></tr>
+<tr><td><code>eof()</code></td><td><code>true</code> / <code>false</code></td><td>是否到达文件或输入末尾</td></tr>
+<tr><td><code>fail()</code></td><td><code>true</code> / <code>false</code></td><td>是否发生输入失败</td></tr>
+<tr><td><code>bad()</code></td><td><code>true</code> / <code>false</code></td><td>是否出现系统性错误</td></tr>
+<tr><td><code>rdstate()</code></td><td><code>iostate</code></td><td>返回全部状态标志的组合</td></tr>
+</tbody></table>
+</div>
+<p>例如：</p>
+<pre><code class="language-cpp">int x;
+std::cin &gt;&gt; x;
+if (std::cin.fail()) {
+    std::cerr &lt;&lt; "输入错误：类型不匹配。" &lt;&lt; std::endl;
+}
+</code></pre>
+<p>当用户输入非数字时，<code>cin.fail()</code> 将为 <code>true</code>，表示提取操作失败。</p>
+<h3 id="3-状态恢复与忽略输入"><a class="header" href="#3-状态恢复与忽略输入">3. 状态恢复与忽略输入</a></h3>
+<p>一旦流进入错误状态，后续输入输出操作将被阻塞。要恢复流，需要手动清除错误标志并可能丢弃无效输入：</p>
+<pre><code class="language-cpp">std::cin.clear(); // 清除所有错误标志
+std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n'); // 忽略当前行
+</code></pre>
+<p>这段代码常用于防止错误输入导致程序陷入死循环，是交互式程序中非常典型的输入修复模式。</p>
+<h3 id="4-状态机制的意义"><a class="header" href="#4-状态机制的意义">4. 状态机制的意义</a></h3>
+<p>C++ 的流状态机制让输入输出更具鲁棒性和通用性。
+无论是键盘输入、文件读取，还是内存字符串解析，都可以通过相同的方式检测和处理异常。这种设计体现了“<strong>统一的流模型</strong>”思想：</p>
+<ul>
+<li>所有流对象共享同一组状态接口；</li>
+<li>程序可根据状态灵活决定后续逻辑；</li>
+<li>错误恢复无需依赖具体 I/O 类型。</li>
+</ul>
+<p>这种一致性为大型项目中的 I/O 管理提供了强大的可移植性与可扩展性。</p>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>“文件与流”既是 C++ I/O 系统的核心概念，也是工程实践中最常用的技术之一：</p>
+<ul>
+<li>日志系统基于文件流；</li>
+<li>配置文件解析常通过字符串流；</li>
+<li>网络传输底层也可抽象为流。</li>
+</ul>
+<p>掌握流的思想，意味着可以用同一套接口处理不同数据源，为程序的输入输出设计提供统一模型。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Practice.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../Practice/Stream/Iostream.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Practice.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../Practice/Stream/Iostream.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

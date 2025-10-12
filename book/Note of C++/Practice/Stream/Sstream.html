@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>C++实践 - Note of C++</title>
+        <title>字符串流 (sstream) - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Practice.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Practice/Stream/Sstream.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,16 +183,135 @@
 
                 <div id="content" class="content">
                     <main>
-                        
+                        <h1 id="字符串流sstream"><a class="header" href="#字符串流sstream">字符串流（sstream）</a></h1>
+<p>在 C++ 中，<strong>字符串流（String Streams）</strong> 是一种特殊的内存流，它将字符串抽象为输入输出流，从而允许程序像操作文件或控制台那样读写字符串。字符串流的核心头文件为 <code>&lt;sstream&gt;</code>，主要用于格式化文本、解析数据或在内存中临时缓存输出内容。相比直接操作字符串，字符串流提供了统一、可扩展且安全的接口。</p>
+<h2 id="一字符串流的分类"><a class="header" href="#一字符串流的分类">一、字符串流的分类</a></h2>
+<p>字符串流继承自标准流类体系，但其输入输出目标不是物理设备，而是内存中的字符串。C++ 提供三种主要类型的字符串流：</p>
+<ol>
+<li>
+<p><strong><code>istringstream</code></strong>
+面向输入的字符串流，用于从字符串中提取数据。它将字符串当作数据源，实现类似于从文件读取的行为。</p>
+</li>
+<li>
+<p><strong><code>ostringstream</code></strong>
+面向输出的字符串流，用于向字符串写入数据。它提供了格式化输出的能力，将数据以文本形式存储在内存字符串中。</p>
+</li>
+<li>
+<p><strong><code>stringstream</code></strong>
+同时支持输入和输出，可以在同一个字符串流对象上进行读写操作。适合需要在内存中反复解析和构建字符串的场景。</p>
+</li>
+</ol>
+<p>这种设计与标准流对象保持一致，使得对内存字符串的操作与文件或控制台的操作具有统一的接口和方法。</p>
+<h2 id="二基本用法"><a class="header" href="#二基本用法">二、基本用法</a></h2>
+<p>使用字符串流时，通常的步骤包括创建流对象、向流中写入或从流中读取数据，然后获取最终字符串或解析结果。示例：</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+
+std::ostringstream oss;
+oss &lt;&lt; "Name: " &lt;&lt; "Alice" &lt;&lt; ", Age: " &lt;&lt; 30;
+std::string result = oss.str();
+std::cout &lt;&lt; result &lt;&lt; std::endl;  // 输出 "Name: Alice, Age: 30"
+</code></pre>
+<pre><code class="language-cpp">std::string data = "42 3.14 hello";
+std::istringstream iss(data); // 从已有的字符串中建立字符流
+
+int i;
+double d;
+std::string s;
+iss &gt;&gt; i &gt;&gt; d &gt;&gt; s;  // 从字符串中提取整数、浮点数和字符串
+</code></pre>
+<p>通过这种方式，程序可以像处理标准流那样操作字符串，利用 <code>&gt;&gt;</code> 和 <code>&lt;&lt;</code> 运算符进行格式化输入输出。</p>
+<h2 id="三流的格式化能力"><a class="header" href="#三流的格式化能力">三、流的格式化能力</a></h2>
+<p>字符串流继承自标准流类，因此支持所有流的格式化特性：</p>
+<ul>
+<li>可以使用操纵符（<code>setw</code>, <code>setprecision</code>, <code>fixed</code> 等）控制输出格式。</li>
+<li>可以通过 <code>setf()</code>、<code>unsetf()</code> 设置流的格式标志，实现对齐方式、数值进制或符号显示的控制。</li>
+<li>可以链式调用输入输出操作，使字符串构建或解析更加简洁。</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-cpp">#include &lt;iomanip&gt;
+std::ostringstream oss2;
+double pi = 3.14159265;
+oss2 &lt;&lt; std::fixed &lt;&lt; std::setprecision(2) &lt;&lt; pi;
+std::cout &lt;&lt; oss2.str();  // 输出 "3.14"
+</code></pre>
+<h2 id="四常见操作方法"><a class="header" href="#四常见操作方法">四、常见操作方法</a></h2>
+<p>字符串流提供了丰富的成员函数，用于在内存字符串上实现精细控制：</p>
+<ol>
+<li>
+<p><strong>获取内容</strong></p>
+<ul>
+<li><code>str()</code>：返回当前流中的字符串内容。</li>
+<li><code>str(const std::string&amp;)</code>：设置或替换流的内容，为流重新赋值。</li>
+</ul>
+</li>
+<li>
+<p><strong>清空或重置流</strong></p>
+<ul>
+<li><code>clear()</code>：重置流的状态，使其可重新进行读写操作。</li>
+<li><code>seekg()</code> / <code>seekp()</code>：调整读写位置，实现从特定位置开始读取或写入。</li>
+</ul>
+</li>
+<li>
+<p><strong>读取与写入</strong></p>
+<ul>
+<li>使用 <code>&gt;&gt;</code> 从字符串中提取数据，使用 <code>&lt;&lt;</code> 向流中插入数据。</li>
+<li>可以使用 <code>getline()</code> 从字符串中逐行读取内容，与文件或控制台操作保持一致。</li>
+</ul>
+</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">std::stringstream ss("123 456");
+int a, b;
+ss &gt;&gt; a &gt;&gt; b;  // 提取两个整数
+ss.str("");    // 清空流内容
+ss.clear();    // 重置状态
+ss &lt;&lt; "New content";
+</code></pre>
+<h2 id="五应用实例"><a class="header" href="#五应用实例">五、应用实例</a></h2>
+<h3 id="1-解析数组"><a class="header" href="#1-解析数组">1. 解析数组</a></h3>
+<p>解析<code>"[2,-1,3,0,12]"</code>这样的字符串为数组：</p>
+<pre><code class="language-cpp">std::string s = "[2,-1,3,0,12]";
+std::stringstream ss(s);
+char ch;
+std::vector&lt;int&gt; nums;
+std::string temp;
+
+// 读取第一个字符，应该是 '['
+ss &gt;&gt; ch;
+if (ch != '[') {
+    std::cerr &lt;&lt; "Invalid input format!" &lt;&lt; std::endl;
+    return 1;
+}
+
+while (ss &gt;&gt; ch) {
+    if (ch == ',' || ch == ']') {
+        if (!temp.empty()) {
+            nums.push_back(std::stoi(temp)); // 转换字符串为整数
+            temp.clear();
+        }
+        if (ch == ']') break; // 数组结束
+    } else {
+        temp += ch; // 累积数字字符，包括负号
+    }
+}
+
+// 输出结果
+std::cout &lt;&lt; "Numbers: ";
+for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
+std::cout &lt;&lt; std::endl;
+</code></pre>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="STL/Algorithms.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Practice/Stream/Fstream.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="Practice/Stream.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../note.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -202,11 +321,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="STL/Algorithms.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Practice/Stream/Fstream.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="Practice/Stream.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../note.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -221,13 +340,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
 

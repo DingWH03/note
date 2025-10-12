@@ -183,6 +183,7 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p>该文档记录部分(不太准确的)C++知识。</p>
+<p>大部分知识均<strong>不完善</strong>，不是手册，仅仅作为笔记。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c语言面试题汇总"><a class="header" href="#c语言面试题汇总">C++语言面试题汇总</a></h1>
 <ol>
 <li>
@@ -6430,7 +6431,405 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>unsequenced_policy</strong> (<code>unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>乱序</strong>执行（允许编译器向量化）</td></tr>
 <tr><td style="text-align: left"><strong>is_execution_policy</strong></td><td style="text-align: left">类模板</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left">测试一个类是否表示一个执行策略</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
+</div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="文件与流files-and-streams"><a class="header" href="#文件与流files-and-streams">文件与流（Files and Streams）</a></h1>
+<p>在 C++ 中，<strong>流（Stream）</strong> 是输入输出系统的核心概念。所有数据的读写操作——无论来自键盘、内存、文件还是网络——都被统一抽象为“流”的形式。
+从概念上讲，<strong>文件是流的一种具体实现</strong>：流是一种数据传输通道，而文件流则是通向磁盘文件的通道。</p>
+<h2 id="一流的基本概念"><a class="header" href="#一流的基本概念">一、流的基本概念</a></h2>
+<p>在程序运行过程中，数据在设备之间不断流动。C++ 将数据的输入输出过程抽象为一个“流（stream）”，即：</p>
+<blockquote>
+<p>数据在内存与外部设备之间的有序传输。</p>
+</blockquote>
+<p>流有两种基本方向：</p>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>类名</th><th>说明</th></tr></thead><tbody>
+<tr><td>输入流</td><td><code>istream</code></td><td>数据从设备流入程序（例如键盘输入、文件读取）</td></tr>
+<tr><td>输出流</td><td><code>ostream</code></td><td>数据从程序流向设备（例如屏幕输出、文件写入）</td></tr>
+</tbody></table>
+</div>
+<p>C++ 的标准输入输出（如 <code>cin</code>、<code>cout</code>、<code>cerr</code>、<code>clog</code>）都是基于这套流机制实现的。</p>
+<h2 id="二c-流类层次结构"><a class="header" href="#二c-流类层次结构">二、C++ 流类层次结构</a></h2>
+<p>C++ 标准库为不同的数据来源提供了不同种类的流类，这些类共同组成一个继承体系：</p>
+<pre><code class="language-text">ios_base
+ └── ios
+      ├── istream          // 输入流
+      │    ├── ifstream     // 文件输入流
+      │    └── istringstream// 字符串输入流
+      ├── ostream          // 输出流
+      │    ├── ofstream     // 文件输出流
+      │    └── ostringstream// 字符串输出流
+      └── iostream         // 输入输出流
+           ├── fstream      // 文件输入输出流
+           └── stringstream // 字符串输入输出流
+</code></pre>
+<p>可以看到，无论是文件流、字符串流还是标准流，它们都共享相同的接口和操作方式。
+因此，掌握流的基本用法，就能轻松在不同输入输出介质之间迁移代码。</p>
+<h2 id="三流的分类与用途"><a class="header" href="#三流的分类与用途">三、流的分类与用途</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>头文件</th><th>主要类</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>标准输入输出流</td><td><code>&lt;iostream&gt;</code></td><td><code>cin</code>, <code>cout</code>, <code>cerr</code>, <code>clog</code></td><td>控制台输入输出</td></tr>
+<tr><td>文件流</td><td><code>&lt;fstream&gt;</code></td><td><code>ifstream</code>, <code>ofstream</code>, <code>fstream</code></td><td>读取与写入文件</td></tr>
+<tr><td>字符串流</td><td><code>&lt;sstream&gt;</code></td><td><code>istringstream</code>, <code>ostringstream</code>, <code>stringstream</code></td><td>内存中字符串格式化与解析</td></tr>
+</tbody></table>
+</div>
+<h2 id="四文件作为流的体现"><a class="header" href="#四文件作为流的体现">四、文件作为流的体现</a></h2>
+<p>在操作文件时，我们使用 <code>ifstream</code>、<code>ofstream</code>、<code>fstream</code> 来打开磁盘文件并执行读写。
+但本质上，这些类并没有引入新的 I/O 模型，而是继承自 <code>istream</code> / <code>ostream</code>，仅仅改变了<strong>流的来源或去向</strong>：</p>
+<ul>
+<li><code>ifstream</code>：从文件读取数据（输入流）</li>
+<li><code>ofstream</code>：向文件写入数据（输出流）</li>
+<li><code>fstream</code>：既可读也可写（双向流）</li>
+</ul>
+<p>这种统一的流模型让文件操作与普通输入输出完全一致：</p>
+<pre><code class="language-cpp">std::ifstream fin("input.txt");
+std::ofstream fout("output.txt");
+
+int x;
+fin &gt;&gt; x;       // 从文件读取
+fout &lt;&lt; x * 2;  // 写入文件
+</code></pre>
+<p>同时，为了适应多种文件类型，还支持基于二进制操作文件流：</p>
+<pre><code class="language-cpp">// 二进制写入
+std::ofstream fout_bin("data.bin", std::ios::binary);
+int x = 42;
+fout_bin.write(reinterpret_cast&lt;const char*&gt;(&amp;x), sizeof(x));
+</code></pre>
+<h2 id="五字符串流的作用"><a class="header" href="#五字符串流的作用">五、字符串流的作用</a></h2>
+<p><code>&lt;sstream&gt;</code> 提供了面向内存字符串的流操作。
+它们与文件流类似，但数据读写的目标是内存字符串而非磁盘文件，非常适合：</p>
+<ul>
+<li>格式化文本（如将数值转为字符串）</li>
+<li>从字符串中提取结构化数据</li>
+<li>临时缓冲输出内容</li>
+</ul>
+<pre><code class="language-cpp">std::stringstream ss;
+ss &lt;&lt; "Result: " &lt;&lt; 42;
+std::string text = ss.str();  // "Result: 42"
+</code></pre>
+<blockquote>
+<p>早期 C++ 还提供 <code>&lt;strstream&gt;</code> 实现基于字符数组的流，但由于安全性和内存管理问题，现已由 <code>&lt;sstream&gt;</code> 完全取代。</p>
+</blockquote>
+<h2 id="六流状态与错误处理"><a class="header" href="#六流状态与错误处理">六、流状态与错误处理</a></h2>
+<p>在 C++ 的流系统中，无论是标准输入输出流、文件流还是字符串流，<strong>都共享一套统一的状态机制</strong>。
+每个流对象都维护着一个内部状态，用于反映当前输入输出操作的健康状况。程序可以通过这些状态来判断流是否处于可用、结束或错误状态，从而实现可靠的错误控制。</p>
+<h3 id="1-状态标志stream-state-flags"><a class="header" href="#1-状态标志stream-state-flags">1. 状态标志（Stream State Flags）</a></h3>
+<p>C++ 通过四种主要的状态标志来描述流的状态，这些标志可能同时存在，用于表达复杂情况：</p>
+<div class="table-wrapper"><table><thead><tr><th>状态名</th><th>成员常量</th><th>含义</th></tr></thead><tbody>
+<tr><td><strong><code>goodbit</code></strong></td><td><code>std::ios::goodbit</code></td><td>一切正常，流处于可用状态</td></tr>
+<tr><td><strong><code>eofbit</code></strong></td><td><code>std::ios::eofbit</code></td><td>已到达输入结束（End Of File）</td></tr>
+<tr><td><strong><code>failbit</code></strong></td><td><code>std::ios::failbit</code></td><td>输入失败，通常是格式不匹配（如期望数字却读到字符）</td></tr>
+<tr><td><strong><code>badbit</code></strong></td><td><code>std::ios::badbit</code></td><td>流已损坏，通常是严重的系统性错误（如设备失效）</td></tr>
+</tbody></table>
+</div>
+<p>流的状态存储在 <code>std::ios</code> 基类中，因此所有继承自它的类（如 <code>istream</code>、<code>ostream</code>、<code>fstream</code>、<code>stringstream</code>）都拥有相同的状态接口。</p>
+<h3 id="2-状态检查接口"><a class="header" href="#2-状态检查接口">2. 状态检查接口</a></h3>
+<p>流对象提供了多种方式用于检查状态：</p>
+<div class="table-wrapper"><table><thead><tr><th>函数</th><th>返回值</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>good()</code></td><td><code>true</code> / <code>false</code></td><td>流是否处于正常状态</td></tr>
+<tr><td><code>eof()</code></td><td><code>true</code> / <code>false</code></td><td>是否到达文件或输入末尾</td></tr>
+<tr><td><code>fail()</code></td><td><code>true</code> / <code>false</code></td><td>是否发生输入失败</td></tr>
+<tr><td><code>bad()</code></td><td><code>true</code> / <code>false</code></td><td>是否出现系统性错误</td></tr>
+<tr><td><code>rdstate()</code></td><td><code>iostate</code></td><td>返回全部状态标志的组合</td></tr>
+</tbody></table>
+</div>
+<p>例如：</p>
+<pre><code class="language-cpp">int x;
+std::cin &gt;&gt; x;
+if (std::cin.fail()) {
+    std::cerr &lt;&lt; "输入错误：类型不匹配。" &lt;&lt; std::endl;
+}
+</code></pre>
+<p>当用户输入非数字时，<code>cin.fail()</code> 将为 <code>true</code>，表示提取操作失败。</p>
+<h3 id="3-状态恢复与忽略输入"><a class="header" href="#3-状态恢复与忽略输入">3. 状态恢复与忽略输入</a></h3>
+<p>一旦流进入错误状态，后续输入输出操作将被阻塞。要恢复流，需要手动清除错误标志并可能丢弃无效输入：</p>
+<pre><code class="language-cpp">std::cin.clear(); // 清除所有错误标志
+std::cin.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n'); // 忽略当前行
+</code></pre>
+<p>这段代码常用于防止错误输入导致程序陷入死循环，是交互式程序中非常典型的输入修复模式。</p>
+<h3 id="4-状态机制的意义"><a class="header" href="#4-状态机制的意义">4. 状态机制的意义</a></h3>
+<p>C++ 的流状态机制让输入输出更具鲁棒性和通用性。
+无论是键盘输入、文件读取，还是内存字符串解析，都可以通过相同的方式检测和处理异常。这种设计体现了“<strong>统一的流模型</strong>”思想：</p>
+<ul>
+<li>所有流对象共享同一组状态接口；</li>
+<li>程序可根据状态灵活决定后续逻辑；</li>
+<li>错误恢复无需依赖具体 I/O 类型。</li>
+</ul>
+<p>这种一致性为大型项目中的 I/O 管理提供了强大的可移植性与可扩展性。</p>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>“文件与流”既是 C++ I/O 系统的核心概念，也是工程实践中最常用的技术之一：</p>
+<ul>
+<li>日志系统基于文件流；</li>
+<li>配置文件解析常通过字符串流；</li>
+<li>网络传输底层也可抽象为流。</li>
+</ul>
+<p>掌握流的思想，意味着可以用同一套接口处理不同数据源，为程序的输入输出设计提供统一模型。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="标准输入输出流iostream"><a class="header" href="#标准输入输出流iostream">标准输入输出流（iostream）</a></h1>
+<p>C++ 的输入输出体系以 <code>&lt;iostream&gt;</code> 头文件为核心。它定义了程序与外部设备（例如键盘与显示器）交互的最基本机制，是所有流操作的基础。标准输入输出流提供了一组通用接口，用于在内存与外部设备之间以流的形式进行数据传输。</p>
+<h2 id="一标准流对象"><a class="header" href="#一标准流对象">一、标准流对象</a></h2>
+<p>C++ 预定义了四个标准流对象，分别用于输入、输出与错误处理：</p>
+<div class="table-wrapper"><table><thead><tr><th>对象名</th><th>所属类</th><th>方向</th><th>描述</th></tr></thead><tbody>
+<tr><td><code>cin</code></td><td><code>istream</code></td><td>输入</td><td>从标准输入（键盘）读取数据</td></tr>
+<tr><td><code>cout</code></td><td><code>ostream</code></td><td>输出</td><td>向标准输出（控制台）写入数据</td></tr>
+<tr><td><code>cerr</code></td><td><code>ostream</code></td><td>输出</td><td>向标准错误输出写入数据（不带缓冲）</td></tr>
+<tr><td><code>clog</code></td><td><code>ostream</code></td><td>输出</td><td>向标准错误输出写入数据（带缓冲）</td></tr>
+</tbody></table>
+</div>
+<p><code>cin</code> 和 <code>cout</code> 是最常用的两个流对象，它们对应于 C 语言中的 <code>stdin</code> 与 <code>stdout</code>。而 <code>cerr</code> 与 <code>clog</code> 则用于错误与日志输出：</p>
+<ul>
+<li><code>cerr</code> 立即输出，不经过缓冲，适合错误提示；</li>
+<li><code>clog</code> 使用缓冲区，适合记录日志或调试信息。</li>
+</ul>
+<h2 id="二输入与输出运算符"><a class="header" href="#二输入与输出运算符">二、输入与输出运算符</a></h2>
+<p>C++ 使用运算符重载机制，使输入与输出操作更自然直观：</p>
+<pre><code class="language-cpp">int a;
+std::cin &gt;&gt; a;       // 输入，将数据流入变量 a
+std::cout &lt;&lt; a &lt;&lt; '\n'; // 输出，将数据流出到控制台
+</code></pre>
+<p><code>&gt;&gt;</code> 是提取运算符（extraction operator），从输入流中提取数据；
+<code>&lt;&lt;</code> 是插入运算符（insertion operator），向输出流中插入数据。</p>
+<p>这两个运算符被广泛重载，可用于所有基本类型与标准容器（通过 <code>operator&lt;&lt;</code> 的重载），使得流式编程成为 C++ 的一大特色。例如：</p>
+<pre><code class="language-cpp">std::string name;
+int age;
+std::cin &gt;&gt; name &gt;&gt; age;
+std::cout &lt;&lt; "Name: " &lt;&lt; name &lt;&lt; ", Age: " &lt;&lt; age &lt;&lt; std::endl;
+</code></pre>
+<p>每个操作符都返回流对象自身的引用，从而允许<strong>链式调用</strong>。</p>
+<h2 id="三流缓冲与刷新机制"><a class="header" href="#三流缓冲与刷新机制">三、流缓冲与刷新机制</a></h2>
+<p>所有标准输出流都带有缓冲区。输出内容首先被写入缓冲区，当缓冲区满、遇到换行符、调用 <code>flush</code> 或程序结束时，缓冲内容才会真正输出到设备。</p>
+<p>常见的刷新方式有：</p>
+<ul>
+<li><code>std::endl</code>：输出换行并刷新缓冲区；</li>
+<li><code>std::flush</code>：仅刷新缓冲区；</li>
+<li><code>std::ends</code>：输出一个空字符并刷新缓冲区。</li>
+</ul>
+<pre><code class="language-cpp">std::cout &lt;&lt; "Hello, world!" &lt;&lt; std::endl;  // 换行并刷新
+</code></pre>
+<p>这种延迟输出机制提高了效率，但在交互程序中需要注意及时刷新，否则可能出现输出滞后。</p>
+<h2 id="四格式化输出"><a class="header" href="#四格式化输出">四、格式化输出</a></h2>
+<p>C++ 流提供了丰富的格式化控制机制，用于调整输出格式。最常见的控制包括：</p>
+<ol>
+<li>
+<p><strong>操纵符（Manipulators）</strong>
+通过 <code>&lt;iomanip&gt;</code> 头文件可以使用 <code>setw</code>, <code>setfill</code>, <code>setprecision</code>, <code>fixed</code>, <code>scientific</code> 等控制输出格式：</p>
+<pre><code class="language-cpp">#include &lt;iomanip&gt;
+double pi = 3.14159265;
+std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(3) &lt;&lt; pi;  // 输出 3.142
+</code></pre>
+</li>
+<li>
+<p><strong>流格式标志</strong>
+可以通过 <code>setf()</code>、<code>unsetf()</code> 修改流的格式状态，例如控制对齐方式、进制表示、是否显示符号等：</p>
+<pre><code class="language-cpp">std::cout.setf(std::ios::showpos);
+std::cout &lt;&lt; 42;  // 输出 +42
+</code></pre>
+</li>
+</ol>
+<h2 id="五ios-与-ios_base"><a class="header" href="#五ios-与-ios_base">五、<code>ios</code> 与 <code>ios_base</code></a></h2>
+<p><code>ios_base</code> 是所有流类的根基，提供全局的格式化与状态管理功能，如：</p>
+<ul>
+<li>格式标志（<code>fmtflags</code>）</li>
+<li>I/O 状态（<code>iostate</code>）</li>
+<li>用户自定义存储（<code>xalloc</code>, <code>iword</code>, <code>pword</code>）</li>
+</ul>
+<p>而 <code>ios</code> 则在此基础上增加了缓冲区管理与错误处理机制，是 <code>istream</code> 与 <code>ostream</code> 的共同父类。</p>
+<h2 id="六标准流的重定向"><a class="header" href="#六标准流的重定向">六、标准流的重定向</a></h2>
+<p>C++ 允许将标准输入输出流重定向到文件或其他流对象，实现灵活的数据通道。例如：</p>
+<pre><code class="language-cpp">std::ofstream fout("log.txt");
+std::streambuf* backup = std::cout.rdbuf(fout.rdbuf());  // 重定向 cout 到文件
+std::cout &lt;&lt; "This will be written to file." &lt;&lt; std::endl;
+std::cout.rdbuf(backup); // 恢复
+</code></pre>
+<p>这种技术常用于日志系统或单元测试环境，能够让程序在不修改逻辑的情况下改变输出目标。</p>
+<h2 id="七非格式化输入与其他高级输入方法"><a class="header" href="#七非格式化输入与其他高级输入方法">七、非格式化输入与其他高级输入方法</a></h2>
+<p>提取运算符 <code>&gt;&gt;</code>（格式化输入）在读取数据时会跳过开头的空白符，并且遇到空格、制表符或换行符时会停止，这不适用于读取包含空格的字符串或需要精确控制读取字节数的情况。C++ iostream 库提供了一系列<strong>非格式化输入函数</strong>来满足这些需求。</p>
+<h3 id="1-读取整行getline"><a class="header" href="#1-读取整行getline">1. 读取整行：<code>getline()</code></a></h3>
+<p><code>std::getline()</code> 是最常用的非格式化输入函数之一，用于读取一行文本，包括其中的空格。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>std::getline(istream&amp; is, std::string&amp; str, char delim)</code></td><td style="text-align: left">从输入流 <code>is</code> 中读取字符，直到遇到指定的分隔符 <code>delim</code>（默认为 <code>\n</code>），并将读取的内容存入 <code>str</code>。<strong>分隔符会被读取，但不会存入 <code>str</code>。</strong></td></tr>
+<tr><td style="text-align: left"><code>std::getline(istream&amp; is, std::string&amp; str)</code></td><td style="text-align: left">使用默认的分隔符 <code>\n</code> 读取一行。</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+std::string fullName;
+std::cout &lt;&lt; "Enter your full name: ";
+// 读取整行输入，直到遇到换行符
+std::getline(std::cin, fullName);
+std::cout &lt;&lt; "Welcome, " &lt;&lt; fullName &lt;&lt; std::endl;
+</code></pre>
+<h3 id="2-读取单个字符get"><a class="header" href="#2-读取单个字符get">2. 读取单个字符：<code>get()</code></a></h3>
+<p><code>get()</code> 函数用于从流中读取单个字符，且<strong>不会跳过空白符</strong>。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>is.get(char&amp; ch)</code></td><td style="text-align: left">将流中的下一个字符存入 <code>ch</code>。</td></tr>
+<tr><td style="text-align: left"><code>is.get()</code></td><td style="text-align: left">返回流中的下一个字符（作为 <code>int</code> 类型），或返回 <code>EOF</code>（文件结束）。</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">char c1, c2;
+std::cin.get(c1); // 读取第一个字符（可能是空格）
+std::cin.get(c2); // 读取第二个字符
+std::cout &lt;&lt; "c1: " &lt;&lt; c1 &lt;&lt; ", c2: " &lt;&lt; c2 &lt;&lt; std::endl;
+</code></pre>
+<h3 id="3-忽略流中字符ignore"><a class="header" href="#3-忽略流中字符ignore">3. 忽略流中字符：<code>ignore()</code></a></h3>
+<p><code>ignore()</code> 函数常用于清除输入缓冲区中残余的字符，特别是在混合使用格式化输入（<code>&gt;&gt;</code>）和 <code>getline()</code> 时。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>is.ignore(streamsize count, char delim)</code></td><td style="text-align: left">从输入流中丢弃最多 <code>count</code> 个字符，直到遇到指定的分隔符 <code>delim</code>。<strong>分隔符也会被丢弃</strong>。</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">int age;
+char gender;
+
+std::cin &gt;&gt; age;
+// 假设用户输入 "25\n"
+// `&gt;&gt; age` 读取了 25，但换行符 '\n' 仍留在缓冲区。
+
+// 清除缓冲区中剩余的字符，直到遇到换行符
+std::cin.ignore(10000, '\n');
+
+std::cout &lt;&lt; "Enter gender (M/F): ";
+std::cin.get(gender);
+// 现在 `get()` 可以正确读取新的输入，而不是残留在缓冲区的 '\n'
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> <code>10000</code> 是一个较大的数字，确保能够处理大多数行长度。</p>
+</blockquote>
+<h3 id="4-窥视下一个字符peek"><a class="header" href="#4-窥视下一个字符peek">4. 窥视下一个字符：<code>peek()</code></a></h3>
+<p><code>peek()</code> 函数用于查看流中下一个可用的字符，但<strong>不会将其从流中移除</strong>。</p>
+<pre><code class="language-cpp">// 假设流中下一个字符是 'H'
+char nextChar = std::cin.peek();
+// nextChar 是 'H'
+// 'H' 仍然在输入流中，可供下次操作读取
+</code></pre>
+<h3 id="5-高级操作read-与-gcount"><a class="header" href="#5-高级操作read-与-gcount">5. 高级操作：<code>read()</code> 与 <code>gcount()</code></a></h3>
+<p><code>read()</code> 是一个底层的非格式化输入函数，用于读取指定数量的原始字节数据，常用于处理二进制文件。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>is.read(char* s, streamsize n)</code></td><td style="text-align: left">从流中读取 <code>n</code> 个字节到内存地址 <code>s</code> 开始的缓冲区。</td></tr>
+</tbody></table>
+</div>
+<p>在调用 <code>read()</code> 或任何非格式化输入函数后，可以使用 <code>gcount()</code> 来获取<strong>最近一次非格式化输入操作实际读取的字符数量</strong>。</p>
+<pre><code class="language-cpp">char buffer[10];
+// 尝试从流中读取 10 个字节
+std::cin.read(buffer, 10);
+// 报告实际读取的字节数（可能小于 10，例如遇到文件末尾）
+std::streamsize actualRead = std::cin.gcount();
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="字符串流sstream"><a class="header" href="#字符串流sstream">字符串流（sstream）</a></h1>
+<p>在 C++ 中，<strong>字符串流（String Streams）</strong> 是一种特殊的内存流，它将字符串抽象为输入输出流，从而允许程序像操作文件或控制台那样读写字符串。字符串流的核心头文件为 <code>&lt;sstream&gt;</code>，主要用于格式化文本、解析数据或在内存中临时缓存输出内容。相比直接操作字符串，字符串流提供了统一、可扩展且安全的接口。</p>
+<h2 id="一字符串流的分类"><a class="header" href="#一字符串流的分类">一、字符串流的分类</a></h2>
+<p>字符串流继承自标准流类体系，但其输入输出目标不是物理设备，而是内存中的字符串。C++ 提供三种主要类型的字符串流：</p>
+<ol>
+<li>
+<p><strong><code>istringstream</code></strong>
+面向输入的字符串流，用于从字符串中提取数据。它将字符串当作数据源，实现类似于从文件读取的行为。</p>
+</li>
+<li>
+<p><strong><code>ostringstream</code></strong>
+面向输出的字符串流，用于向字符串写入数据。它提供了格式化输出的能力，将数据以文本形式存储在内存字符串中。</p>
+</li>
+<li>
+<p><strong><code>stringstream</code></strong>
+同时支持输入和输出，可以在同一个字符串流对象上进行读写操作。适合需要在内存中反复解析和构建字符串的场景。</p>
+</li>
+</ol>
+<p>这种设计与标准流对象保持一致，使得对内存字符串的操作与文件或控制台的操作具有统一的接口和方法。</p>
+<h2 id="二基本用法"><a class="header" href="#二基本用法">二、基本用法</a></h2>
+<p>使用字符串流时，通常的步骤包括创建流对象、向流中写入或从流中读取数据，然后获取最终字符串或解析结果。示例：</p>
+<pre><code class="language-cpp">#include &lt;sstream&gt;
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+
+std::ostringstream oss;
+oss &lt;&lt; "Name: " &lt;&lt; "Alice" &lt;&lt; ", Age: " &lt;&lt; 30;
+std::string result = oss.str();
+std::cout &lt;&lt; result &lt;&lt; std::endl;  // 输出 "Name: Alice, Age: 30"
+</code></pre>
+<pre><code class="language-cpp">std::string data = "42 3.14 hello";
+std::istringstream iss(data); // 从已有的字符串中建立字符流
+
+int i;
+double d;
+std::string s;
+iss &gt;&gt; i &gt;&gt; d &gt;&gt; s;  // 从字符串中提取整数、浮点数和字符串
+</code></pre>
+<p>通过这种方式，程序可以像处理标准流那样操作字符串，利用 <code>&gt;&gt;</code> 和 <code>&lt;&lt;</code> 运算符进行格式化输入输出。</p>
+<h2 id="三流的格式化能力"><a class="header" href="#三流的格式化能力">三、流的格式化能力</a></h2>
+<p>字符串流继承自标准流类，因此支持所有流的格式化特性：</p>
+<ul>
+<li>可以使用操纵符（<code>setw</code>, <code>setprecision</code>, <code>fixed</code> 等）控制输出格式。</li>
+<li>可以通过 <code>setf()</code>、<code>unsetf()</code> 设置流的格式标志，实现对齐方式、数值进制或符号显示的控制。</li>
+<li>可以链式调用输入输出操作，使字符串构建或解析更加简洁。</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-cpp">#include &lt;iomanip&gt;
+std::ostringstream oss2;
+double pi = 3.14159265;
+oss2 &lt;&lt; std::fixed &lt;&lt; std::setprecision(2) &lt;&lt; pi;
+std::cout &lt;&lt; oss2.str();  // 输出 "3.14"
+</code></pre>
+<h2 id="四常见操作方法"><a class="header" href="#四常见操作方法">四、常见操作方法</a></h2>
+<p>字符串流提供了丰富的成员函数，用于在内存字符串上实现精细控制：</p>
+<ol>
+<li>
+<p><strong>获取内容</strong></p>
+<ul>
+<li><code>str()</code>：返回当前流中的字符串内容。</li>
+<li><code>str(const std::string&amp;)</code>：设置或替换流的内容，为流重新赋值。</li>
+</ul>
+</li>
+<li>
+<p><strong>清空或重置流</strong></p>
+<ul>
+<li><code>clear()</code>：重置流的状态，使其可重新进行读写操作。</li>
+<li><code>seekg()</code> / <code>seekp()</code>：调整读写位置，实现从特定位置开始读取或写入。</li>
+</ul>
+</li>
+<li>
+<p><strong>读取与写入</strong></p>
+<ul>
+<li>使用 <code>&gt;&gt;</code> 从字符串中提取数据，使用 <code>&lt;&lt;</code> 向流中插入数据。</li>
+<li>可以使用 <code>getline()</code> 从字符串中逐行读取内容，与文件或控制台操作保持一致。</li>
+</ul>
+</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">std::stringstream ss("123 456");
+int a, b;
+ss &gt;&gt; a &gt;&gt; b;  // 提取两个整数
+ss.str("");    // 清空流内容
+ss.clear();    // 重置状态
+ss &lt;&lt; "New content";
+</code></pre>
+<h2 id="五应用实例"><a class="header" href="#五应用实例">五、应用实例</a></h2>
+<h3 id="1-解析数组"><a class="header" href="#1-解析数组">1. 解析数组</a></h3>
+<p>解析<code>"[2,-1,3,0,12]"</code>这样的字符串为数组：</p>
+<pre><code class="language-cpp">std::string s = "[2,-1,3,0,12]";
+std::stringstream ss(s);
+char ch;
+std::vector&lt;int&gt; nums;
+std::string temp;
+
+// 读取第一个字符，应该是 '['
+ss &gt;&gt; ch;
+if (ch != '[') {
+    std::cerr &lt;&lt; "Invalid input format!" &lt;&lt; std::endl;
+    return 1;
+}
+
+while (ss &gt;&gt; ch) {
+    if (ch == ',' || ch == ']') {
+        if (!temp.empty()) {
+            nums.push_back(std::stoi(temp)); // 转换字符串为整数
+            temp.clear();
+        }
+        if (ch == ']') break; // 数组结束
+    } else {
+        temp += ch; // 累积数字字符，包括负号
+    }
+}
+
+// 输出结果
+std::cout &lt;&lt; "Numbers: ";
+for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
+std::cout &lt;&lt; std::endl;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><script type="text/javascript">
     // 获取当前页面的 URL
     var currentUrl = window.location.href;
 
