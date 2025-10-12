@@ -199,7 +199,145 @@
 <p><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="命名规则-naming-conventions"><a class="header" href="#命名规则-naming-conventions">命名规则 (Naming Conventions)</a></h1>
+<p>命名规则是代码风格的重要组成部分，它能显著提高代码的可读性、可维护性和团队协作效率。在 C++ 社区中，存在多种主流命名规范（如 Google Style、LLVM Style）。</p>
+<h2 id="核心原则"><a class="header" href="#核心原则">核心原则</a></h2>
+<ol>
+<li>
+<p><strong>一致性 (Consistency)：</strong>
+在一个项目或代码库中，一旦选定了一种命名风格，就必须始终如一地使用它，避免混用多种风格导致的混乱。</p>
+</li>
+<li>
+<p><strong>描述性 (Descriptive)：</strong>
+名称应清晰地描述其所代表的实体的用途或含义，便于其他开发者理解代码。</p>
+</li>
+<li>
+<p><strong>避免歧义 (Avoid Ambiguity)：</strong>
+避免使用容易引起误解的缩写或模糊单词，例如 <code>tmp</code>、<code>data</code> 等，必要时增加上下文信息。</p>
+</li>
+</ol>
+<h2 id="常用命名风格"><a class="header" href="#常用命名风格">常用命名风格</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">风格名称</th><th style="text-align: left">描述</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>PascalCase</strong> / 大驼峰</td><td style="text-align: left">每个单词首字母大写，不使用分隔符。通常用于类型名称。</td><td style="text-align: left"><code>MyClassName</code></td></tr>
+<tr><td style="text-align: left"><strong>camelCase</strong> / 小驼峰</td><td style="text-align: left">第一个单词首字母小写，其余单词首字母大写。通常用于变量和函数。</td><td style="text-align: left"><code>calculateSum</code></td></tr>
+<tr><td style="text-align: left"><strong>snake_case</strong> / 下划线</td><td style="text-align: left">所有字母小写，单词之间用下划线 <code>_</code> 分隔。</td><td style="text-align: left"><code>current_balance</code></td></tr>
+<tr><td style="text-align: left"><strong>UPPER_CASE</strong> / 全大写</td><td style="text-align: left">所有字母大写，单词之间用下划线 <code>_</code> 分隔。通常用于常量或宏。</td><td style="text-align: left"><code>MAX_SIZE</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="命名实体规范"><a class="header" href="#命名实体规范">命名实体规范</a></h2>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">实体类型</th><th style="text-align: left">推荐风格</th><th style="text-align: left">示例</th><th style="text-align: left">备注</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>类 (Class)</strong></td><td style="text-align: left">PascalCase</td><td style="text-align: left"><code>Customer</code>, <code>FileManager</code></td><td style="text-align: left">类名通常是<strong>名词</strong>。</td></tr>
+<tr><td style="text-align: left"><strong>结构体 (Struct)</strong></td><td style="text-align: left">PascalCase</td><td style="text-align: left"><code>Point2D</code>, <code>StudentInfo</code></td><td style="text-align: left">与类一致，都是用户自定义类型。</td></tr>
+<tr><td style="text-align: left"><strong>函数/方法 (Function)</strong></td><td style="text-align: left">camelCase</td><td style="text-align: left"><code>calculateArea()</code>, <code>getFileSize()</code></td><td style="text-align: left">通常是<strong>动词或动宾短语</strong>，表示行为。</td></tr>
+<tr><td style="text-align: left"><strong>局部变量 (Local Variable)</strong></td><td style="text-align: left">camelCase</td><td style="text-align: left"><code>age</code>, <code>totalCount</code>, <code>isValid</code></td><td style="text-align: left">保持简洁、描述清晰。</td></tr>
+<tr><td style="text-align: left"><strong>成员变量 (Member Variable)</strong></td><td style="text-align: left">camelCase + 后缀或前缀</td><td style="text-align: left"><code>m_value</code> 或 <code>value_</code></td><td style="text-align: left">用于区分成员变量和局部变量，提高可读性。</td></tr>
+<tr><td style="text-align: left"><strong>常量 (Constants)</strong></td><td style="text-align: left">UPPER_CASE</td><td style="text-align: left"><code>MAX_ITEMS</code>, <code>PI_VALUE</code></td><td style="text-align: left">用于 <code>#define</code> 或 <code>const/constexpr</code> 编译期常量。</td></tr>
+<tr><td style="text-align: left"><strong>枚举 (Enums/Enum Class)</strong></td><td style="text-align: left">PascalCase</td><td style="text-align: left"><code>ColorType</code></td><td style="text-align: left">枚举类型使用 PascalCase。</td></tr>
+<tr><td style="text-align: left"><strong>枚举值 (Enum Values)</strong></td><td style="text-align: left">PascalCase 或 UPPER_CASE</td><td style="text-align: left"><code>Red</code>, <code>Green</code> 或 <code>COLOR_RED</code>, <code>COLOR_GREEN</code></td><td style="text-align: left">建议加类型前缀避免冲突。</td></tr>
+<tr><td style="text-align: left"><strong>命名空间 (Namespace)</strong></td><td style="text-align: left">snake_case 或 全小写</td><td style="text-align: left"><code>my_project</code>, <code>network</code></td><td style="text-align: left">命名空间通常是项目名或模块名。</td></tr>
+<tr><td style="text-align: left"><strong>宏 (Macros)</strong></td><td style="text-align: left">UPPER_CASE</td><td style="text-align: left"><code>#define DEBUG_MODE</code></td><td style="text-align: left">宏是全局预处理符号，必须与变量/常量区分。</td></tr>
+</tbody></table>
+</div>
+<h2 id="命名限制与最佳实践"><a class="header" href="#命名限制与最佳实践">命名限制与最佳实践</a></h2>
+<h3 id="1-c-保留标识符"><a class="header" href="#1-c-保留标识符">1. C++ 保留标识符</a></h3>
+<p>C++ 标准保留了某些名称供编译器和标准库使用，用户代码<strong>禁止使用</strong>：</p>
+<h4 id="11-全局范围global-scope保留"><a class="header" href="#11-全局范围global-scope保留">1.1 全局范围（Global Scope）保留</a></h4>
+<ul>
+<li><strong>包含两个连续下划线 <code>__</code> 的名称</strong>
+示例：<code>__myVar</code>, <code>My__Class</code></li>
+<li><strong>以下划线 <code>_</code> 开头，紧跟大写字母</strong>
+示例：<code>_PrivateMember</code>, <code>_Max_Value</code></li>
+</ul>
+<h4 id="12-全局命名空间global-namespace保留"><a class="header" href="#12-全局命名空间global-namespace保留">1.2 全局命名空间（Global Namespace）保留</a></h4>
+<ul>
+<li><strong>以下划线 <code>_</code> 开头的名称</strong>
+示例：<code>_name</code>, <code>_a_local_var</code>
+在局部作用域内可能安全，但全局范围内使用会违反标准。最佳实践：<strong>避免任何下划线开头的自定义名称</strong>。</li>
+</ul>
+<h4 id="13-关键字-keywords"><a class="header" href="#13-关键字-keywords">1.3 关键字 (Keywords)</a></h4>
+<p>绝对禁止使用 C++ 关键字作为标识符：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">C++ 关键字（部分）</th><th style="text-align: left"></th><th style="text-align: left"></th><th style="text-align: left"></th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>alignas</code></td><td style="text-align: left"><code>decltype</code></td><td style="text-align: left"><code>if</code></td><td style="text-align: left"><code>return</code></td></tr>
+<tr><td style="text-align: left"><code>auto</code></td><td style="text-align: left"><code>do</code></td><td style="text-align: left"><code>inline</code></td><td style="text-align: left"><code>short</code></td></tr>
+<tr><td style="text-align: left"><code>bool</code></td><td style="text-align: left"><code>double</code></td><td style="text-align: left"><code>int</code></td><td style="text-align: left"><code>sizeof</code></td></tr>
+<tr><td style="text-align: left"><code>break</code></td><td style="text-align: left"><code>else</code></td><td style="text-align: left"><code>long</code></td><td style="text-align: left"><code>struct</code></td></tr>
+<tr><td style="text-align: left"><code>case</code></td><td style="text-align: left"><code>enum</code></td><td style="text-align: left"><code>namespace</code></td><td style="text-align: left"><code>switch</code></td></tr>
+<tr><td style="text-align: left"><code>char</code></td><td style="text-align: left"><code>extern</code></td><td style="text-align: left"><code>new</code></td><td style="text-align: left"><code>template</code></td></tr>
+<tr><td style="text-align: left"><code>class</code></td><td style="text-align: left"><code>float</code></td><td style="text-align: left"><code>private</code></td><td style="text-align: left"><code>this</code></td></tr>
+<tr><td style="text-align: left"><code>const</code></td><td style="text-align: left"><code>for</code></td><td style="text-align: left"><code>public</code></td><td style="text-align: left"><code>try</code></td></tr>
+<tr><td style="text-align: left"><code>continue</code></td><td style="text-align: left"><code>goto</code></td><td style="text-align: left"><code>register</code></td><td style="text-align: left"><code>void</code></td></tr>
+<tr><td style="text-align: left"><code>default</code></td><td style="text-align: left"><code>thread_local</code></td><td style="text-align: left"><code>virtual</code></td><td style="text-align: left"><code>while</code></td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p><strong>C++11/14/17/20 新增</strong>：<code>constexpr</code>, <code>noexcept</code>, <code>override</code>, <code>concept</code></p>
+</blockquote>
+<h3 id="2-命名技巧与长度"><a class="header" href="#2-命名技巧与长度">2. 命名技巧与长度</a></h3>
+<ul>
+<li>
+<p><strong>避免单字母名称</strong>：除循环迭代器（<code>i, j, k</code>）和数学变量（<code>x, y, z</code>）外，应使用描述性名称。</p>
+<p><strong>差：</strong> <code>int s;</code>
+<strong>好：</strong> <code>int studentCount;</code></p>
+</li>
+<li>
+<p><strong>避免匈牙利命名法</strong>：现代 C++ 不推荐通过前缀标注类型，如 <code>iAge</code>、<code>szName</code>。类型信息已由编译器和 IDE 提供。</p>
+</li>
+<li>
+<p><strong>布尔值命名</strong>：布尔变量或函数应以动词开头，清晰表达状态。
+示例：<code>bool isValid;</code>, <code>bool hasError();</code>, <code>bool isFinished;</code></p>
+</li>
+<li>
+<p><strong>Getter/Setter 命名</strong>：遵循约定提高可读性。</p>
+<ul>
+<li>Getter: <code>getValue()</code> 或 <code>value()</code> (变量名 <code>value_</code>)</li>
+<li>Setter: <code>setValue(int newValue)</code> 或 <code>set_value(int newValue)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-文件命名规范"><a class="header" href="#3-文件命名规范">3. 文件命名规范</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">风格</th><th style="text-align: left">头文件 (.h)</th><th style="text-align: left">源文件 (.cpp)</th><th style="text-align: left">备注</th></tr></thead><tbody>
+<tr><td style="text-align: left">PascalCase</td><td style="text-align: left"><code>FileManager.h</code></td><td style="text-align: left"><code>FileManager.cpp</code></td><td style="text-align: left">常用于 Qt 等 IDE/框架，与类名一致</td></tr>
+<tr><td style="text-align: left">snake_case</td><td style="text-align: left"><code>file_manager.h</code></td><td style="text-align: left"><code>file_manager.cc</code></td><td style="text-align: left"><strong>Google 风格推荐</strong>，更便于跨平台和工具链使用</td></tr>
+</tbody></table>
+</div>
+<p><strong>头文件保护 (Header Guards)</strong>：确保文件内容只被编译一次。推荐使用 <strong>全大写 + 项目/目录/文件名</strong> 的宏。</p>
+<pre><code class="language-cpp">// network/tcp_socket.h
+#ifndef MYPROJECT_NETWORK_TCP_SOCKET_H
+#define MYPROJECT_NETWORK_TCP_SOCKET_H
+
+// ... 代码 ...
+
+#endif // MYPROJECT_NETWORK_TCP_SOCKET_H
+</code></pre>
+<h3 id="示例代码"><a class="header" href="#示例代码">示例代码</a></h3>
+<pre><code class="language-cpp">// 1. 类型 (PascalCase)
+class EmployeeManager {
+private:
+    // 2. 成员变量 (推荐使用后缀，避免保留标识符)
+    int employee_count_;
+
+    // 错误示范（应避免）
+    // int __bad_var;           // 双下划线
+    // int _AnotherBadVar;      // 下划线开头 + 大写
+    // int _safe_in_local_scope; // 全局范围不安全
+
+public:
+    // 3. 函数/方法 (camelCase)
+    bool isValidEmployee(const std::string&amp; name) {
+        // 4. 局部变量 (camelCase)
+        int maxHours = 40;
+
+        if (this-&gt;employee_count_ &lt; maxHours) { // 使用 this-&gt; 或后缀区分成员
+            return true;
+        }
+        return false;
+    }
+};
+
+// 5. 宏常量 (UPPER_CASE)
+#define MAX_BUFFER_SIZE 1024
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
 <p>在 C++ 中，<strong>数据类型（Data Types）</strong> 是程序设计的基础，它定义了变量在内存中的存储方式、可表示的取值范围以及能进行的操作。
 理解数据类型不仅是掌握语法的关键，也是进行性能优化、内存管理和类型安全编程的前提。</p>
 <p>C++ 的类型系统丰富而严格，既包含直接映射到硬件的<strong>基本类型（Fundamental Types）</strong>，也支持由这些类型构建的<strong>派生类型（Derived Types）</strong>，此外还提供了面向对象与泛型编程所需的抽象类型系统。</p>
@@ -1771,6 +1909,220 @@ Vector c = a + b; // 等价于 a.operator+(b)
 <li>运算符重载不会改变操作符优先级；</li>
 <li>应保证语义一致性（例如重载 <code>==</code> 时应与 <code>!=</code> 保持逻辑对称）。</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="函数-functions"><a class="header" href="#函数-functions">函数 (Functions)</a></h1>
+<p>函数是 C++ 程序的基本组成部分，它们用于将程序分解为可管理、可重复使用的代码块。</p>
+<h2 id="一函数的基本概念"><a class="header" href="#一函数的基本概念">一、函数的基本概念</a></h2>
+<h3 id="1-定义"><a class="header" href="#1-定义">1. 定义</a></h3>
+<p>函数是一段执行特定任务的命名代码块。</p>
+<h3 id="2-优点"><a class="header" href="#2-优点">2. 优点</a></h3>
+<ul>
+<li><strong>模块化 (Modularity):</strong> 使程序结构清晰，易于理解和维护。</li>
+<li><strong>代码重用 (Code Reusability):</strong> 一次编写，多次调用，避免重复劳动。</li>
+<li><strong>简化调试 (Easier Debugging):</strong> 易于隔离和测试代码。</li>
+</ul>
+<h2 id="二函数的构成要素"><a class="header" href="#二函数的构成要素">二、函数的构成要素</a></h2>
+<p>一个函数通常由以下几个部分组成：</p>
+<h3 id="1-函数原型-function-prototype--函数声明-declaration"><a class="header" href="#1-函数原型-function-prototype--函数声明-declaration">1. 函数原型 (Function Prototype) / 函数声明 (Declaration)</a></h3>
+<p>告诉编译器函数的名称、返回类型和参数列表，但没有函数体。</p>
+<p><strong>格式:</strong></p>
+<pre><code class="language-cpp">返回类型 函数名(参数类型 参数名, ...);
+</code></pre>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">int add(int a, int b); // 函数原型
+</code></pre>
+<ul>
+<li><strong>注意:</strong> 函数原型通常放在 <code>main</code> 函数之前或头文件 (<code>.h</code> 文件) 中。</li>
+</ul>
+<h3 id="2-函数定义-function-definition"><a class="header" href="#2-函数定义-function-definition">2. 函数定义 (Function Definition)</a></h3>
+<p>包含函数头和函数体（实际执行的代码）。</p>
+<p><strong>格式:</strong></p>
+<pre><code class="language-cpp">返回类型 函数名(参数类型 参数名, ...)
+{
+    // 函数体：执行任务的代码
+    // ...
+    return 表达式; // 如果返回类型不是 void
+}
+</code></pre>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">int add(int a, int b) // 函数头
+{
+    // 函数体
+    return a + b;
+}
+</code></pre>
+<h3 id="3-函数调用-function-call"><a class="header" href="#3-函数调用-function-call">3. 函数调用 (Function Call)</a></h3>
+<p>在程序中执行函数。</p>
+<p><strong>格式:</strong></p>
+<pre><code class="language-cpp">函数名(实参1, 实参2, ...);
+</code></pre>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">int sum = add(5, 3); // 调用 add 函数，5 和 3 是实参
+</code></pre>
+<h2 id="三函数的关键要素"><a class="header" href="#三函数的关键要素">三、函数的关键要素</a></h2>
+<h3 id="1-返回类型-return-type"><a class="header" href="#1-返回类型-return-type">1. 返回类型 (Return Type)</a></h3>
+<p>函数执行完毕后返回给调用者的值的类型。</p>
+<ul>
+<li>可以是任何有效的数据类型（如 <code>int</code>, <code>double</code>, <code>bool</code>, 自定义类型等）。</li>
+<li><strong><code>void</code>:</strong> 如果函数不返回任何值，则使用 <code>void</code>。</li>
+</ul>
+<h3 id="2-函数名-function-name"><a class="header" href="#2-函数名-function-name">2. 函数名 (Function Name)</a></h3>
+<p>用于唯一标识函数。遵循 C++ 命名规则。</p>
+<h3 id="3-参数-parameters--形参-formal-parameters"><a class="header" href="#3-参数-parameters--形参-formal-parameters">3. 参数 (Parameters) / 形参 (Formal Parameters)</a></h3>
+<p>定义在函数头中，用于接收调用者传递的数据。</p>
+<ul>
+<li><strong>格式:</strong> <code>类型 名称</code> (例如 <code>int x</code>)</li>
+</ul>
+<h3 id="4-实参-arguments"><a class="header" href="#4-实参-arguments">4. 实参 (Arguments)</a></h3>
+<p>调用函数时传递给形参的实际值。</p>
+<h3 id="5-return-语句"><a class="header" href="#5-return-语句">5. <code>return</code> 语句</a></h3>
+<p>用于：</p>
+<ul>
+<li><strong>返回值:</strong> 将一个值返回给调用者。</li>
+<li><strong>结束执行:</strong> 立即终止函数的执行。</li>
+<li><strong>注意:</strong> 对于返回类型非 <code>void</code> 的函数，必须有 <code>return</code> 语句返回一个与返回类型兼容的值。</li>
+</ul>
+<h2 id="四参数传递-argument-passing"><a class="header" href="#四参数传递-argument-passing">四、参数传递 (Argument Passing)</a></h2>
+<p>函数调用时，将实参的值复制或引用到形参中，主要有三种方式：</p>
+<h3 id="1-值传递-pass-by-value-最常用"><a class="header" href="#1-值传递-pass-by-value-最常用">1. 值传递 (Pass by Value) <strong>(最常用)</strong></a></h3>
+<ul>
+<li>
+<p><strong>机制:</strong> 将实参的值复制给形参。</p>
+</li>
+<li>
+<p><strong>效果:</strong> 函数内部对形参的任何修改，<strong>不会</strong> 影响到外部的实参。</p>
+</li>
+<li>
+<p><strong>声明:</strong></p>
+<pre><code class="language-cpp">void func(int x); // x 是一个副本
+</code></pre>
+</li>
+</ul>
+<h3 id="2-地址传递-pass-by-pointer-c-风格c-中不推荐"><a class="header" href="#2-地址传递-pass-by-pointer-c-风格c-中不推荐">2. 地址传递 (Pass by Pointer) <strong>(C 风格，C++ 中不推荐)</strong></a></h3>
+<ul>
+<li>
+<p><strong>机制:</strong> 传递实参的内存地址（指针）。</p>
+</li>
+<li>
+<p><strong>效果:</strong> 函数可以通过指针修改实参的值。</p>
+</li>
+<li>
+<p><strong>声明:</strong></p>
+<pre><code class="language-cpp">void func(int *ptr); // ptr 是一个指向 int 的指针
+</code></pre>
+</li>
+</ul>
+<h3 id="3-引用传递-pass-by-reference-c-推荐"><a class="header" href="#3-引用传递-pass-by-reference-c-推荐">3. 引用传递 (Pass by Reference) <strong>(C++ 推荐)</strong></a></h3>
+<ul>
+<li>
+<p><strong>机制:</strong> 形参成为实参的别名（引用）。</p>
+</li>
+<li>
+<p><strong>效果:</strong> 函数内部对形参的任何修改，<strong>会</strong> 直接影响到外部的实参。</p>
+</li>
+<li>
+<p><strong>声明:</strong></p>
+<pre><code class="language-cpp">void func(int &amp;ref); // ref 是实参的引用
+</code></pre>
+<ul>
+<li><strong>优点:</strong> 既能修改外部变量，又避免了指针的复杂性和值传递的开销。</li>
+</ul>
+</li>
+</ul>
+<h2 id="五函数的进阶特性"><a class="header" href="#五函数的进阶特性">五、函数的进阶特性</a></h2>
+<h3 id="1-默认参数-default-arguments"><a class="header" href="#1-默认参数-default-arguments">1. 默认参数 (Default Arguments)</a></h3>
+<p>允许在函数声明时给参数设定一个默认值。调用时若不提供该实参，则使用默认值。</p>
+<ul>
+<li><strong>规则:</strong> 默认参数必须从右向左依次设置。一旦一个参数有了默认值，它右边的所有参数都必须有默认值。</li>
+</ul>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">void print_info(int a, int b = 10, int c = 20); // b 和 c 是默认参数
+
+// 调用方式
+print_info(1);      // a=1, b=10, c=20
+print_info(1, 5);   // a=1, b=5, c=20
+print_info(1, 5, 8); // a=1, b=5, c=8
+</code></pre>
+<h3 id="2-函数重载-function-overloading"><a class="header" href="#2-函数重载-function-overloading">2. 函数重载 (Function Overloading)</a></h3>
+<p>在同一作用域内，允许存在多个同名函数，但它们的 <strong>参数列表</strong> 必须不同（数量、类型或顺序）。</p>
+<ul>
+<li><strong>作用:</strong> 使程序能够使用一个统一的名称来执行相似但操作不同数据类型的任务。</li>
+</ul>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">int operate(int a, int b)
+{ return a + b; }
+
+double operate(double a, double b)
+{ return a * b; }
+
+int operate(int a) // 与前两个函数参数数量不同
+{ return a * a; }
+</code></pre>
+<h3 id="3-内联函数-inline-functions"><a class="header" href="#3-内联函数-inline-functions">3. 内联函数 (Inline Functions)</a></h3>
+<p>使用 <code>inline</code> 关键字修饰的函数。</p>
+<ul>
+<li><strong>目的:</strong> 建议编译器在函数被调用的地方直接将函数体的代码展开，而不是执行常规的函数调用机制。</li>
+<li><strong>优点:</strong> 消除函数调用开销，提高小函数的执行效率。</li>
+<li><strong>缺点:</strong> 可能导致代码膨胀（占用更多内存）。</li>
+<li><strong>适用场景:</strong> 函数体非常简单（只有一两行代码）的情况。</li>
+</ul>
+<p><strong>示例:</strong></p>
+<pre><code class="language-cpp">inline int square(int x) { return x * x; }
+</code></pre>
+<ul>
+<li><strong>注意:</strong> <code>inline</code> 只是对编译器的<strong>建议</strong>，编译器可以忽略它。</li>
+</ul>
+<h2 id="示例代码-1"><a class="header" href="#示例代码-1">示例代码</a></h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+// 函数原型 (声明)
+int add(int a, int b);
+void swap_by_ref(int &amp;x, int &amp;y);
+
+// 带有默认参数的函数原型
+void greet(std::string name, std::string greeting = "Hello");
+
+// main 函数 (程序入口)
+int main() {
+    int num1 = 10, num2 = 5;
+
+    // 1. 函数调用
+    int sum = add(num1, num2); // num1, num2 是实参
+    std::cout &lt;&lt; "Sum: " &lt;&lt; sum &lt;&lt; std::endl; // 输出: 15
+
+    // 2. 引用传递示例
+    int x = 100, y = 200;
+    std::cout &lt;&lt; "Before swap: x=" &lt;&lt; x &lt;&lt; ", y=" &lt;&lt; y &lt;&lt; std::endl;
+    swap_by_ref(x, y); // 交换 x 和 y 的值
+    std::cout &lt;&lt; "After swap: x=" &lt;&lt; x &lt;&lt; ", y=" &lt;&lt; y &lt;&lt; std::endl; // 输出: x=200, y=100
+
+    // 3. 默认参数示例
+    greet("Alice");           // 使用默认问候语: Hello Alice
+    greet("Bob", "Good Morning"); // 使用自定义问候语: Good Morning Bob
+
+    return 0;
+}
+
+// 函数定义
+int add(int a, int b) // a, b 是形参 (值传递)
+{
+    return a + b;
+}
+
+// 引用传递实现值交换
+void swap_by_ref(int &amp;x, int &amp;y) // x, y 是引用
+{
+    int temp = x;
+    x = y;
+    y = temp;
+    // x 和 y 的改变会影响到 main 函数中的实参
+}
+
+// 默认参数实现
+void greet(std::string name, std::string greeting)
+{
+    std::cout &lt;&lt; greeting &lt;&lt; " " &lt;&lt; name &lt;&lt; std::endl;
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
@@ -1790,7 +2142,7 @@ Vector c = a + b; // 等价于 a.operator+(b)
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="stdauto_ptr"><a class="header" href="#stdauto_ptr">std::auto_ptr</a></h1>
 <p><code>std::auto_ptr</code> 是 C++98 中引入的智能指针类型，它提供了一种自动管理动态内存的方式。其主要功能是通过自动销毁对象来避免内存泄漏。然而，由于其所有权转移的语义问题（例如，拷贝操作时所有权隐式转移），<code>std::auto_ptr</code> 在 C++11 中被 <strong>弃用</strong>，并且在 C++17 中被 <strong>完全移除</strong>。因此，建议开发者使用 <code>std::unique_ptr</code> 来替代 <code>std::auto_ptr</code>。</p>
-<h2 id="1-定义"><a class="header" href="#1-定义">1. 定义</a></h2>
+<h2 id="1-定义-1"><a class="header" href="#1-定义-1">1. 定义</a></h2>
 <p><code>std::auto_ptr</code> 的模板定义如下：</p>
 <pre><code class="language-cpp">template&lt;class T&gt;
 class auto_ptr;
