@@ -199,7 +199,400 @@
 <p><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="命名规则-naming-conventions"><a class="header" href="#命名规则-naming-conventions">命名规则 (Naming Conventions)</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
+<p>初识C++应知必会的基础概念。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序结构program-structure"><a class="header" href="#c-程序结构program-structure">C++ 程序结构（Program Structure）</a></h1>
+<h2 id="引言"><a class="header" href="#引言">引言</a></h2>
+<p>C++ 程序的结构决定了它的组织方式、执行流程和可维护性。
+从最小的“Hello, World!”程序开始，我们可以认识一个 C++ 程序通常包含的<strong>头文件、命名空间、函数定义、语句块</strong>等组成部分。</p>
+<h2 id="一个最小可运行的-c-程序"><a class="header" href="#一个最小可运行的-c-程序">一个最小可运行的 C++ 程序</a></h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;   // 头文件：引入输入输出库
+using namespace std;  // 使用标准命名空间
+
+int main() {          // 主函数：程序执行入口
+    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;  // 输出语句
+    return 0;         // 返回值：表示程序是否成功结束
+}
+</code></pre>
+<h3 id="程序执行流程说明"><a class="header" href="#程序执行流程说明">程序执行流程说明</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>行号</th><th>内容</th><th>说明</th></tr></thead><tbody>
+<tr><td>1</td><td><code>#include &lt;iostream&gt;</code></td><td>预处理指令，引入标准输入输出库</td></tr>
+<tr><td>2</td><td><code>using namespace std;</code></td><td>告诉编译器默认使用 <code>std</code> 命名空间</td></tr>
+<tr><td>3</td><td><code>int main() {</code></td><td>主函数是程序的入口点（返回类型必须是 <code>int</code>）</td></tr>
+<tr><td>4</td><td><code>cout &lt;&lt; "Hello, World!" &lt;&lt; endl;</code></td><td>使用 <code>cout</code> 输出字符串并换行</td></tr>
+<tr><td>5</td><td><code>return 0;</code></td><td>返回 <code>0</code> 表示程序正常结束</td></tr>
+</tbody></table>
+</div>
+<h2 id="程序的基本组成部分"><a class="header" href="#程序的基本组成部分">程序的基本组成部分</a></h2>
+<p>一个完整的 C++ 程序通常由以下几个部分组成：</p>
+<ol>
+<li>
+<p><strong>预处理指令（Preprocessor Directives）</strong>
+在编译前由预处理器执行，例如：</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#define PI 3.14159
+</code></pre>
+</li>
+<li>
+<p><strong>命名空间（Namespace）</strong>
+命名空间用于避免名称冲突：</p>
+<pre><code class="language-cpp">namespace myspace {
+    int x = 10;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>主函数 <code>main()</code></strong>
+所有可执行 C++ 程序都必须有且仅有一个 <code>main()</code> 函数。</p>
+</li>
+<li>
+<p><strong>函数定义（Functions）</strong>
+函数是代码逻辑的基本单元，示例：</p>
+<pre><code class="language-cpp">int add(int a, int b) {
+    return a + b;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>变量与语句（Variables &amp; Statements）</strong>
+程序的逻辑通过语句执行，通过变量存储数据。</p>
+<pre><code class="language-cpp">int sum = add(2, 3);
+cout &lt;&lt; sum &lt;&lt; endl;
+</code></pre>
+</li>
+</ol>
+<h2 id="c-程序的执行入口"><a class="header" href="#c-程序的执行入口">C++ 程序的执行入口</a></h2>
+<ul>
+<li>
+<p>程序从 <code>main()</code> 函数开始执行。</p>
+</li>
+<li>
+<p><code>main()</code> 的返回值会传递给操作系统。</p>
+</li>
+<li>
+<p>常见的两种形式：</p>
+<pre><code class="language-cpp">int main() {
+    // 无参数版本
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
+    // 带命令行参数的版本
+    // argc 表示参数数量
+    // argv 表示参数数组
+    return 0;
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="程序的语句块与作用域"><a class="header" href="#程序的语句块与作用域">程序的语句块与作用域</a></h2>
+<p>语句块使用花括号 <code>{}</code> 表示，定义一个新的作用域（scope）：</p>
+<pre><code class="language-cpp">int x = 10;
+{
+    int x = 20;   // 内层作用域的 x 隐藏外层变量
+    cout &lt;&lt; x;    // 输出 20
+}
+cout &lt;&lt; x;        // 输出 10
+</code></pre>
+<p>作用域是 C++ 的重要概念，影响变量的可见性与生命周期。</p>
+<h2 id="程序结构的逻辑层次层级模型"><a class="header" href="#程序结构的逻辑层次层级模型">程序结构的逻辑层次（层级模型）</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>层级</th><th>名称</th><th>说明</th></tr></thead><tbody>
+<tr><td>顶层</td><td>预处理部分</td><td>定义宏、引入头文件</td></tr>
+<tr><td>全局层</td><td>命名空间、全局变量、函数声明</td><td></td></tr>
+<tr><td>主函数层</td><td>程序入口、主流程</td><td></td></tr>
+<tr><td>函数层</td><td>逻辑实现与局部变量</td><td></td></tr>
+<tr><td>语句层</td><td>执行单元（表达式、控制语句等）</td><td></td></tr>
+</tbody></table>
+</div>
+<p>这是一种从外到内的逻辑组织结构。良好的层级划分有助于程序的模块化。</p>
+<h2 id="程序文件结构大型项目"><a class="header" href="#程序文件结构大型项目">程序文件结构（大型项目）</a></h2>
+<p>在真实项目中，一个 C++ 程序通常被拆分为多个文件：</p>
+<pre><code class="language-text">project/
+├── main.cpp        // 程序入口
+├── math/
+│   ├── add.cpp
+│   └── add.h
+└── utils/
+    ├── log.cpp
+    └── log.h
+</code></pre>
+<p>通过 <strong>头文件 (.h/.hpp)</strong> 声明接口，<strong>源文件 (.cpp)</strong> 实现功能：</p>
+<ul>
+<li>
+<p>add.h</p>
+<pre><code class="language-cpp">#ifndef ADD_H
+#define ADD_H
+
+int add(int a, int b);
+
+#endif
+</code></pre>
+</li>
+<li>
+<p>add.cpp</p>
+<pre><code class="language-cpp">#include "add.h"
+int add(int a, int b) {
+    return a + b;
+}
+</code></pre>
+</li>
+<li>
+<p>main.cpp</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include "add.h"
+
+int main() {
+    std::cout &lt;&lt; add(3, 4) &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p>大型工程中，通常直接或间接地使用<code>Cmake</code>或<code>make</code>进行编译和项目管理。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序的编译与运行compilation-and-execution"><a class="header" href="#c-程序的编译与运行compilation-and-execution">C++ 程序的编译与运行（Compilation and Execution）</a></h1>
+<h2 id="引言-1"><a class="header" href="#引言-1">引言</a></h2>
+<p>C++ 是一种 <strong>编译型语言（compiled language）</strong>。
+这意味着在执行程序之前，必须先将源代码 (<code>.cpp</code>) 转换为计算机可以理解的机器指令（可执行文件）。</p>
+<p>整个过程通常包括以下几个阶段：</p>
+<pre><code class="language-text">源代码 (.cpp)
+   ↓
+预处理（Preprocessing）
+   ↓
+编译（Compilation）
+   ↓
+汇编（Assembly）
+   ↓
+链接（Linking）
+   ↓
+可执行文件（Executable）
+   ↓
+运行（Execution）
+</code></pre>
+<h2 id="编译过程的四个主要阶段"><a class="header" href="#编译过程的四个主要阶段">编译过程的四个主要阶段</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>阶段</th><th>作用</th><th>示例命令</th><th>输出文件</th></tr></thead><tbody>
+<tr><td>预处理（Preprocessing）</td><td>展开宏、包含头文件、删除注释</td><td><code>g++ -E main.cpp -o main.i</code></td><td><code>main.i</code></td></tr>
+<tr><td>编译（Compilation）</td><td>将预处理后的代码转换为汇编代码</td><td><code>g++ -S main.i -o main.s</code></td><td><code>main.s</code></td></tr>
+<tr><td>汇编（Assembly）</td><td>将汇编代码转换为机器指令（目标文件）</td><td><code>g++ -c main.s -o main.o</code></td><td><code>main.o</code></td></tr>
+<tr><td>链接（Linking）</td><td>将多个目标文件与库链接生成可执行文件</td><td><code>g++ main.o -o main</code></td><td><code>main</code></td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>可以通过这些命令观察 C++ 源码在每个阶段的输出，理解“编译器到底做了什么”。</p>
+</blockquote>
+<h2 id="完整编译命令示例"><a class="header" href="#完整编译命令示例">完整编译命令示例</a></h2>
+<p>最常用的编译命令只需一行：</p>
+<pre><code class="language-bash">g++ main.cpp -o main
+</code></pre>
+<ul>
+<li><code>g++</code>：GNU C++ 编译器（GCC 的 C++ 前端）</li>
+<li><code>main.cpp</code>：源文件</li>
+<li><code>-o main</code>：指定输出文件名（不写则默认为 <code>a.out</code>）</li>
+</ul>
+<p>运行程序：</p>
+<pre><code class="language-bash">./main
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">Hello, World!
+</code></pre>
+<h2 id="多文件编译示例"><a class="header" href="#多文件编译示例">多文件编译示例</a></h2>
+<p>大型项目通常由多个源文件组成：</p>
+<pre><code class="language-text">project/
+├── main.cpp
+├── add.cpp
+└── add.h
+</code></pre>
+<h3 id="编译方式一一步完成"><a class="header" href="#编译方式一一步完成">编译方式一：一步完成</a></h3>
+<pre><code class="language-bash">g++ main.cpp add.cpp -o main
+</code></pre>
+<h3 id="编译方式二分步编译"><a class="header" href="#编译方式二分步编译">编译方式二：分步编译</a></h3>
+<pre><code class="language-bash">g++ -c main.cpp -o main.o
+g++ -c add.cpp -o add.o
+g++ main.o add.o -o main
+</code></pre>
+<blockquote>
+<p>分步编译的好处是：当部分文件修改时，只需重新编译变动的部分，而不是整个项目。</p>
+</blockquote>
+<h2 id="运行机制详解"><a class="header" href="#运行机制详解">运行机制详解</a></h2>
+<p>C++ 程序编译完成后，会生成一个<strong>可执行文件</strong>（如 <code>main</code> 或 <code>main.exe</code>）。
+程序的运行流程如下：</p>
+<pre><code class="language-text">操作系统加载可执行文件
+   ↓
+执行程序的入口函数 main()
+   ↓
+程序逻辑执行
+   ↓
+return 返回值传递给操作系统
+</code></pre>
+<p>返回值 <code>0</code> 通常表示正常退出，非零值表示错误或异常终止。</p>
+<h2 id="编译器与构建工具"><a class="header" href="#编译器与构建工具">编译器与构建工具</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>工具</th><th>说明</th><th>适用平台</th></tr></thead><tbody>
+<tr><td><strong>g++</strong></td><td>GNU 编译器套件中的 C++ 编译器</td><td>Linux / macOS / Windows（MinGW）</td></tr>
+<tr><td><strong>clang++</strong></td><td>LLVM 项目的 C++ 编译器，语法检查友好</td><td>跨平台</td></tr>
+<tr><td><strong>MSVC (cl.exe)</strong></td><td>微软的 C++ 编译器</td><td>Windows</td></tr>
+<tr><td><strong>CMake</strong></td><td>构建系统生成工具，可跨平台生成编译脚本</td><td>所有平台</td></tr>
+<tr><td><strong>Makefile</strong></td><td>编译自动化脚本，用于管理依赖</td><td>Linux / macOS</td></tr>
+</tbody></table>
+</div>
+<h2 id="使用-ide-进行编译运行"><a class="header" href="#使用-ide-进行编译运行">使用 IDE 进行编译运行</a></h2>
+<h3 id="常见-ide"><a class="header" href="#常见-ide">常见 IDE</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>IDE</th><th>编译器</th><th>特点</th></tr></thead><tbody>
+<tr><td>Visual Studio</td><td>MSVC</td><td>Windows 下功能最全</td></tr>
+<tr><td>CLion</td><td>CMake + g++/clang++</td><td>跨平台支持强</td></tr>
+<tr><td>VS Code</td><td>可结合 <code>g++</code>、<code>clang++</code></td><td>轻量灵活</td></tr>
+<tr><td>Qt Creator</td><td>qmake / CMake</td><td>适用于图形界面开发</td></tr>
+</tbody></table>
+</div>
+<h3 id="在-ide-中执行的隐含步骤"><a class="header" href="#在-ide-中执行的隐含步骤">在 IDE 中执行的隐含步骤</a></h3>
+<p>当你点击“运行（Run）”时，IDE 实际执行了以下操作：</p>
+<ol>
+<li>调用编译器生成目标文件；</li>
+<li>执行链接步骤生成可执行程序；</li>
+<li>启动该可执行文件并显示输出。</li>
+</ol>
+<h2 id="常见编译选项"><a class="header" href="#常见编译选项">常见编译选项</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>选项</th><th>含义</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>-o &lt;file&gt;</code></td><td>指定输出文件名</td><td><code>g++ main.cpp -o app</code></td></tr>
+<tr><td><code>-Wall</code></td><td>启用所有警告信息</td><td><code>g++ -Wall main.cpp</code></td></tr>
+<tr><td><code>-g</code></td><td>生成调试信息</td><td><code>g++ -g main.cpp</code></td></tr>
+<tr><td><code>-O2</code></td><td>优化等级 2，提高执行效率</td><td><code>g++ -O2 main.cpp</code></td></tr>
+<tr><td><code>-std=c++17</code></td><td>指定 C++ 标准版本</td><td><code>g++ -std=c++17 main.cpp</code></td></tr>
+<tr><td><code>-I &lt;dir&gt;</code></td><td>添加头文件搜索路径</td><td><code>g++ -I include main.cpp</code></td></tr>
+<tr><td><code>-L &lt;dir&gt;</code></td><td>添加库文件路径</td><td><code>g++ -L lib -lmylib main.cpp</code></td></tr>
+<tr><td><code>-D &lt;macro&gt;</code></td><td>定义宏</td><td><code>g++ -DDEBUG main.cpp</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="扩展"><a class="header" href="#扩展">扩展</a></h2>
+<ul>
+<li>
+<p><strong>交叉编译 (Cross Compilation)</strong>：在一台机器上为另一架构（如 ARM、RISC-V）生成可执行程序。
+示例：</p>
+<pre><code class="language-bash">riscv64-linux-gnu-g++ main.cpp -o main_rv
+</code></pre>
+</li>
+<li>
+<p><strong>静态链接 vs 动态链接</strong>：</p>
+<ul>
+<li>静态链接 (<code>.a</code>)：在编译时嵌入库文件。</li>
+<li>动态链接 (<code>.so</code> / <code>.dll</code>)：运行时动态加载库。</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-注释comments"><a class="header" href="#c-注释comments">C++ 注释（Comments）</a></h1>
+<h2 id="1-概述"><a class="header" href="#1-概述">1. 概述</a></h2>
+<p>注释用于解释程序逻辑、记录设计思路、说明接口功能或在调试时暂时屏蔽代码。
+C++ 编译器在编译阶段会忽略注释内容，它们不会出现在目标文件中。
+良好的注释能显著提升代码的可读性与可维护性。</p>
+<h2 id="2-注释的基本类型"><a class="header" href="#2-注释的基本类型">2. 注释的基本类型</a></h2>
+<p>C++ 提供两种常见的注释形式：</p>
+<h3 id="21-单行注释single-line-comment"><a class="header" href="#21-单行注释single-line-comment">2.1 单行注释（Single-line Comment）</a></h3>
+<p>以 <code>//</code> 开头，直到行尾结束。</p>
+<pre><code class="language-cpp">// 输出欢迎信息
+std::cout &lt;&lt; "Hello, World!" &lt;&lt; std::endl;
+
+// 在行末添加说明
+int count = 10;  // 循环次数
+</code></pre>
+<p>适用于简短说明或临时调试。</p>
+<h3 id="22-多行注释multi-line-comment"><a class="header" href="#22-多行注释multi-line-comment">2.2 多行注释（Multi-line Comment）</a></h3>
+<p>以 <code>/*</code> 开始，以 <code>*/</code> 结束，可以跨越多行。</p>
+<pre><code class="language-cpp">/*
+此部分用于初始化程序资源。
+包括：
+1. 配置加载
+2. 内存分配
+3. 日志系统启动
+*/
+initialize_system();
+</code></pre>
+<p>注意：多行注释 <strong>不支持嵌套</strong>，即不能在 <code>/* ... */</code> 内再次使用 <code>/* ... */</code>。</p>
+<h2 id="3-注释编写原则"><a class="header" href="#3-注释编写原则">3. 注释编写原则</a></h2>
+<ol>
+<li><strong>准确</strong>：注释必须与代码逻辑一致。</li>
+<li><strong>必要</strong>：解释“为什么这样做”，而非“代码做了什么”。</li>
+<li><strong>简洁</strong>：避免冗长或与代码重复的描述。</li>
+<li><strong>及时</strong>：修改代码时应同步更新注释。</li>
+<li><strong>一致</strong>：保持统一的注释风格与格式。</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">// 不推荐：重复代码逻辑
+int x = x + 1; // x 加 1
+
+// 推荐：说明设计目的
+// 自增以保持计数连续性
+x++;
+</code></pre>
+<h2 id="4-文档化注释documentation-comments"><a class="header" href="#4-文档化注释documentation-comments">4. 文档化注释（Documentation Comments）</a></h2>
+<p>在较大的工程中，可以通过特殊格式的注释自动生成接口文档。
+常用工具为 <strong>Doxygen</strong>，支持从源码中提取函数、类、参数等说明信息。</p>
+<h3 id="41-格式示例"><a class="header" href="#41-格式示例">4.1 格式示例</a></h3>
+<pre><code class="language-cpp">/**
+ * @brief 计算两个整数的和
+ * @param a 第一个整数
+ * @param b 第二个整数
+ * @return 两数之和
+ */
+int add(int a, int b) {
+    return a + b;
+}
+</code></pre>
+<p>或者：</p>
+<pre><code class="language-cpp">/// 计算矩形面积
+/// @param width 宽度
+/// @param height 高度
+/// @return 面积
+double area(double width, double height);
+</code></pre>
+<h3 id="42-常用标签"><a class="header" href="#42-常用标签">4.2 常用标签</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>标签</th><th>含义</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>@brief</code></td><td>简要说明</td><td><code>@brief 初始化系统资源</code></td></tr>
+<tr><td><code>@param</code></td><td>参数说明</td><td><code>@param path 配置文件路径</code></td></tr>
+<tr><td><code>@return</code></td><td>返回值说明</td><td><code>@return 初始化是否成功</code></td></tr>
+<tr><td><code>@note</code></td><td>备注说明</td><td><code>@note 必须在主线程调用</code></td></tr>
+<tr><td><code>@warning</code></td><td>警告信息</td><td><code>@warning 该函数非线程安全</code></td></tr>
+<tr><td><code>@todo</code></td><td>待办事项</td><td><code>@todo 增加异常处理</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="5-实际使用规范"><a class="header" href="#5-实际使用规范">5. 实际使用规范</a></h2>
+<p>在团队开发或课程项目中，建议采用以下注释习惯：</p>
+<ol>
+<li><strong>文件头部</strong>：说明文件用途、作者、日期。</li>
+<li><strong>函数前</strong>：使用文档注释描述功能、参数与返回值。</li>
+<li><strong>代码内部</strong>：仅在逻辑复杂处添加必要注释。</li>
+<li><strong>调试阶段</strong>：临时屏蔽代码时使用 <code>//</code>，不保留旧逻辑。</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">/**
+ * @file user_manager.cpp
+ * @brief 用户管理模块
+ * @author Ding
+ * @date 2025-10-13
+ */
+
+/// 初始化用户系统
+/// @return 初始化是否成功
+bool init_user_system() {
+    // TODO: 支持从配置文件加载默认用户
+    return true;
+}
+</code></pre>
+<h2 id="6-调试与维护中的注释"><a class="header" href="#6-调试与维护中的注释">6. 调试与维护中的注释</a></h2>
+<ul>
+<li>
+<p><strong>调试时临时屏蔽代码</strong></p>
+<pre><code class="language-cpp">// 禁用日志输出
+// std::cout &lt;&lt; "Debug info" &lt;&lt; std::endl;
+</code></pre>
+</li>
+<li>
+<p><strong>避免保留废弃代码</strong></p>
+<pre><code class="language-cpp">// 不推荐：应使用版本控制系统管理
+// old_function();
+</code></pre>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="命名规则-naming-conventions"><a class="header" href="#命名规则-naming-conventions">命名规则 (Naming Conventions)</a></h1>
 <p>命名规则是代码风格的重要组成部分，它能显著提高代码的可读性、可维护性和团队协作效率。在 C++ 社区中，存在多种主流命名规范（如 Google Style、LLVM Style）。</p>
 <h2 id="核心原则"><a class="header" href="#核心原则">核心原则</a></h2>
 <ol>

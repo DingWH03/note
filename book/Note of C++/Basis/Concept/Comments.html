@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>基础概念与环境 - Note of C++</title>
+        <title>注释 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +35,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "../../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="../../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +108,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,13 +143,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Concept.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Concept/Comments.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,18 +183,129 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
-<p>初识C++应知必会的基础概念。</p>
+                        <h1 id="c-注释comments"><a class="header" href="#c-注释comments">C++ 注释（Comments）</a></h1>
+<h2 id="1-概述"><a class="header" href="#1-概述">1. 概述</a></h2>
+<p>注释用于解释程序逻辑、记录设计思路、说明接口功能或在调试时暂时屏蔽代码。
+C++ 编译器在编译阶段会忽略注释内容，它们不会出现在目标文件中。
+良好的注释能显著提升代码的可读性与可维护性。</p>
+<h2 id="2-注释的基本类型"><a class="header" href="#2-注释的基本类型">2. 注释的基本类型</a></h2>
+<p>C++ 提供两种常见的注释形式：</p>
+<h3 id="21-单行注释single-line-comment"><a class="header" href="#21-单行注释single-line-comment">2.1 单行注释（Single-line Comment）</a></h3>
+<p>以 <code>//</code> 开头，直到行尾结束。</p>
+<pre><code class="language-cpp">// 输出欢迎信息
+std::cout &lt;&lt; "Hello, World!" &lt;&lt; std::endl;
+
+// 在行末添加说明
+int count = 10;  // 循环次数
+</code></pre>
+<p>适用于简短说明或临时调试。</p>
+<h3 id="22-多行注释multi-line-comment"><a class="header" href="#22-多行注释multi-line-comment">2.2 多行注释（Multi-line Comment）</a></h3>
+<p>以 <code>/*</code> 开始，以 <code>*/</code> 结束，可以跨越多行。</p>
+<pre><code class="language-cpp">/*
+此部分用于初始化程序资源。
+包括：
+1. 配置加载
+2. 内存分配
+3. 日志系统启动
+*/
+initialize_system();
+</code></pre>
+<p>注意：多行注释 <strong>不支持嵌套</strong>，即不能在 <code>/* ... */</code> 内再次使用 <code>/* ... */</code>。</p>
+<h2 id="3-注释编写原则"><a class="header" href="#3-注释编写原则">3. 注释编写原则</a></h2>
+<ol>
+<li><strong>准确</strong>：注释必须与代码逻辑一致。</li>
+<li><strong>必要</strong>：解释“为什么这样做”，而非“代码做了什么”。</li>
+<li><strong>简洁</strong>：避免冗长或与代码重复的描述。</li>
+<li><strong>及时</strong>：修改代码时应同步更新注释。</li>
+<li><strong>一致</strong>：保持统一的注释风格与格式。</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">// 不推荐：重复代码逻辑
+int x = x + 1; // x 加 1
+
+// 推荐：说明设计目的
+// 自增以保持计数连续性
+x++;
+</code></pre>
+<h2 id="4-文档化注释documentation-comments"><a class="header" href="#4-文档化注释documentation-comments">4. 文档化注释（Documentation Comments）</a></h2>
+<p>在较大的工程中，可以通过特殊格式的注释自动生成接口文档。
+常用工具为 <strong>Doxygen</strong>，支持从源码中提取函数、类、参数等说明信息。</p>
+<h3 id="41-格式示例"><a class="header" href="#41-格式示例">4.1 格式示例</a></h3>
+<pre><code class="language-cpp">/**
+ * @brief 计算两个整数的和
+ * @param a 第一个整数
+ * @param b 第二个整数
+ * @return 两数之和
+ */
+int add(int a, int b) {
+    return a + b;
+}
+</code></pre>
+<p>或者：</p>
+<pre><code class="language-cpp">/// 计算矩形面积
+/// @param width 宽度
+/// @param height 高度
+/// @return 面积
+double area(double width, double height);
+</code></pre>
+<h3 id="42-常用标签"><a class="header" href="#42-常用标签">4.2 常用标签</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>标签</th><th>含义</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>@brief</code></td><td>简要说明</td><td><code>@brief 初始化系统资源</code></td></tr>
+<tr><td><code>@param</code></td><td>参数说明</td><td><code>@param path 配置文件路径</code></td></tr>
+<tr><td><code>@return</code></td><td>返回值说明</td><td><code>@return 初始化是否成功</code></td></tr>
+<tr><td><code>@note</code></td><td>备注说明</td><td><code>@note 必须在主线程调用</code></td></tr>
+<tr><td><code>@warning</code></td><td>警告信息</td><td><code>@warning 该函数非线程安全</code></td></tr>
+<tr><td><code>@todo</code></td><td>待办事项</td><td><code>@todo 增加异常处理</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="5-实际使用规范"><a class="header" href="#5-实际使用规范">5. 实际使用规范</a></h2>
+<p>在团队开发或课程项目中，建议采用以下注释习惯：</p>
+<ol>
+<li><strong>文件头部</strong>：说明文件用途、作者、日期。</li>
+<li><strong>函数前</strong>：使用文档注释描述功能、参数与返回值。</li>
+<li><strong>代码内部</strong>：仅在逻辑复杂处添加必要注释。</li>
+<li><strong>调试阶段</strong>：临时屏蔽代码时使用 <code>//</code>，不保留旧逻辑。</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-cpp">/**
+ * @file user_manager.cpp
+ * @brief 用户管理模块
+ * @author Ding
+ * @date 2025-10-13
+ */
+
+/// 初始化用户系统
+/// @return 初始化是否成功
+bool init_user_system() {
+    // TODO: 支持从配置文件加载默认用户
+    return true;
+}
+</code></pre>
+<h2 id="6-调试与维护中的注释"><a class="header" href="#6-调试与维护中的注释">6. 调试与维护中的注释</a></h2>
+<ul>
+<li>
+<p><strong>调试时临时屏蔽代码</strong></p>
+<pre><code class="language-cpp">// 禁用日志输出
+// std::cout &lt;&lt; "Debug info" &lt;&lt; std::endl;
+</code></pre>
+</li>
+<li>
+<p><strong>避免保留废弃代码</strong></p>
+<pre><code class="language-cpp">// 不推荐：应使用版本控制系统管理
+// old_function();
+</code></pre>
+</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Basis.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Basis/Concept/Compile_Run.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Basis/Concept/Structure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Basis/Concept/Naming_Rules.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -204,11 +315,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Basis.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Basis/Concept/Compile_Run.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Basis/Concept/Structure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Basis/Concept/Naming_Rules.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -223,13 +334,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
 
