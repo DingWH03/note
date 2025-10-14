@@ -545,6 +545,149 @@ void unused_param_func(int x)
 </ul>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="命名空间namespace"><a class="header" href="#命名空间namespace">命名空间（Namespace）</a></h1>
+<h2 id="一概念与作用"><a class="header" href="#一概念与作用">一、概念与作用</a></h2>
+<ul>
+<li>定义：命名空间是<strong>声明性区域</strong>，它提供了一种将代码组织成<strong>逻辑组</strong>并<strong>避免命名冲突</strong>的机制。</li>
+<li>作用：
+<ul>
+<li>将类型、函数、变量等<strong>标识符</strong>包含在一个有名称的范围（Scope）内。</li>
+<li>在大型程序中，尤其当程序包含多个库时，有效解决<strong>名称冲突</strong>问题（例如，不同库中可能存在同名的函数或变量）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="二命名空间声明"><a class="header" href="#二命名空间声明">二、命名空间声明</a></h2>
+<p>使用 <code>namespace</code> 关键字来声明一个命名空间。</p>
+<pre><code class="language-cpp">// 文件: MyCode.h
+
+namespace MyNamespace {
+    int value;
+
+    void FunctionA() {
+        // ...
+    }
+
+    class MyClass {
+        // ...
+    };
+}
+</code></pre>
+<h2 id="三访问命名空间成员"><a class="header" href="#三访问命名空间成员">三、访问命名空间成员</a></h2>
+<p>要访问命名空间内的成员，需要使用<strong>范围解析运算符</strong> <code>::</code>。</p>
+<h3 id="方式一完整限定名称fully-qualified-name"><a class="header" href="#方式一完整限定名称fully-qualified-name">方式一：完整限定名称（Fully Qualified Name）</a></h3>
+<p>在命名空间外部使用完整的名称来限定成员。</p>
+<pre><code class="language-cpp">// 访问 MyNamespace 中的 value 和 FunctionA
+MyNamespace::value = 10;
+MyNamespace::FunctionA();
+</code></pre>
+<h3 id="方式二using-声明using-declaration"><a class="header" href="#方式二using-声明using-declaration">方式二：<code>using</code> 声明（<code>using</code> Declaration）</a></h3>
+<p>将命名空间中的<strong>特定名称</strong>引入当前作用域。</p>
+<pre><code class="language-cpp">#include "MyCode.h"
+
+// 引入 MyNamespace 中的 FunctionA
+using MyNamespace::FunctionA;
+
+void SomeOtherFunction() {
+    // 此时可以直接使用 FunctionA，而不需要 MyNamespace::
+    FunctionA();
+
+    // 访问 value 仍需限定
+    MyNamespace::value = 20;
+}
+</code></pre>
+<h3 id="方式三using-指示词using-directive"><a class="header" href="#方式三using-指示词using-directive">方式三：<code>using</code> 指示词（<code>using</code> Directive）</a></h3>
+<p>将命名空间中的<strong>所有名称</strong>引入当前作用域。</p>
+<pre><code class="language-cpp">#include "MyCode.h"
+
+// 将 MyNamespace 中的所有名称引入
+using namespace MyNamespace;
+
+void AnotherFunction() {
+    // 此时可以直接使用所有成员
+    value = 30;
+    FunctionA();
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>避免</strong>在<strong>头文件</strong>（<code>.h</code> 或 <code>.hpp</code>）中使用 <code>using namespace</code> 指示词，因为这会将命名空间中的所有名称带入所有包含该头文件的文件中，可能导致难以调试的名称冲突或隐藏问题。</li>
+<li>在<strong>实现文件</strong>（<code>.cpp</code>）的顶部或函数内部，可以使用 <code>using namespace</code> 指示词以简化代码。</li>
+<li>如果只使用一两个标识符，建议使用<strong>完整限定名称</strong>或<code>using</code> 声明。</li>
+</ol>
+</blockquote>
+<h2 id="四命名空间的特性"><a class="header" href="#四命名空间的特性">四、命名空间的特性</a></h2>
+<h3 id="1-分散定义separated-definition"><a class="header" href="#1-分散定义separated-definition">1. 分散定义（Separated Definition）</a></h3>
+<p>命名空间可以在单个文件中的<strong>多个块</strong>中声明，也可以在<strong>多个文件</strong>中声明。编译器会将所有部分<strong>连接</strong>起来。</p>
+<pre><code class="language-cpp">// 文件 A.h
+namespace Utils {
+    void func1();
+}
+
+// 文件 B.h
+namespace Utils {
+    void func2(); // 即使在不同文件，也属于同一个 Utils 命名空间
+}
+</code></pre>
+<h3 id="2-全局命名空间global-namespace"><a class="header" href="#2-全局命名空间global-namespace">2. 全局命名空间（Global Namespace）</a></h3>
+<ul>
+<li>
+<p>未在任何显式命名空间中声明的标识符属于<strong>隐式全局命名空间</strong>。</p>
+</li>
+<li>
+<p>要显式访问全局命名空间中的标识符，可以使用<strong>没有名称</strong>的范围解析运算符 <code>::</code>：</p>
+<pre><code class="language-cpp">int globalVar = 100;
+
+namespace Local {
+    int globalVar = 200; // 隐藏全局变量
+
+    void test() {
+        int val1 = globalVar; // 使用 Local::globalVar (200)
+        int val2 = ::globalVar; // 使用 全局命名空间 的 globalVar (100)
+    }
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="3-嵌套命名空间nested-namespaces"><a class="header" href="#3-嵌套命名空间nested-namespaces">3. 嵌套命名空间（Nested Namespaces）</a></h3>
+<p>命名空间可以嵌套，C++17 引入了<strong>内联嵌套</strong>简化语法。</p>
+<pre><code class="language-cpp">namespace Outer {
+    namespace Inner {
+        void innerFunc();
+    } // 结束 Inner
+} // 结束 Outer
+
+// 访问方式：
+Outer::Inner::innerFunc();
+
+// C++17 简化写法：
+namespace Outer::Inner {
+    void anotherInnerFunc();
+}
+</code></pre>
+<h3 id="4-匿名或未命名命名空间anonymousunnamed-namespaces"><a class="header" href="#4-匿名或未命名命名空间anonymousunnamed-namespaces">4. 匿名或未命名命名空间（Anonymous/Unnamed Namespaces）</a></h3>
+<p>声明一个没有名称的命名空间。</p>
+<pre><code class="language-cpp">namespace {
+    int MyFunc() { return 0; }
+    int internalVar;
+}
+</code></pre>
+<ul>
+<li><strong>作用</strong>：未命名命名空间中的变量和函数<strong>只在当前编译单元（文件）内可见</strong>，它们具有<strong>内部链接（internal linkage）</strong>，等同于在全局作用域中使用 <code>static</code> 关键字。</li>
+<li><strong>用途</strong>：避免在其他文件中看到变量声明，替代老式的 <code>static</code> 全局/函数定义。</li>
+</ul>
+<h3 id="5-命名空间别名namespace-alias"><a class="header" href="#5-命名空间别名namespace-alias">5. 命名空间别名（Namespace Alias）</a></h3>
+<p>用于为过长的命名空间名称创建别名，以提高代码可读性和输入效率。</p>
+<pre><code class="language-cpp">namespace VeryLongNamespaceName {
+    void func();
+}
+
+// 创建别名
+namespace VLNN = VeryLongNamespaceName;
+
+// 使用别名访问
+VLNN::func();
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序的编译与运行compilation-and-execution"><a class="header" href="#c-程序的编译与运行compilation-and-execution">C++ 程序的编译与运行（Compilation and Execution）</a></h1>
 <h2 id="引言-1"><a class="header" href="#引言-1">引言</a></h2>
 <p>C++ 是一种 <strong>编译型语言（compiled language）</strong>。
