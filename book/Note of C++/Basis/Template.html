@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>类与对象 - Note of C++</title>
+        <title>模板 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/CLass&amp;Object.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Template.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,17 +183,142 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
+                        <h1 id="模板-template"><a class="header" href="#模板-template">模板 (Template)</a></h1>
+<p><strong>模板</strong>是C++中实现<strong>泛型编程</strong>的基础工具，泛型编程即以一种独立于任何特定类型的方式编写代码。模板是创建泛型类或函数的蓝图或公式。库容器，比如迭代器和算法，都是泛型编程的例子，它们都使用了模板的概念。它允许我们编写与类型无关的代码（如类或函数），从而提高代码的重用性。编译器在编译时会根据用户提供的类型参数，从模板生成具体的类型或函数，这个过程称为<strong>模板实例化（Template Instantiation）</strong>。</p>
+<h2 id="一模板的基本类型"><a class="header" href="#一模板的基本类型">一、模板的基本类型</a></h2>
+<p>C++主要有两种模板：</p>
+<h3 id="1-函数模板-function-template"><a class="header" href="#1-函数模板-function-template">1. 函数模板 (Function Template)</a></h3>
+<p>用于创建可处理不同数据类型的函数。</p>
+<p><strong>语法:</strong></p>
+<pre><code class="language-cpp">template &lt;typename T&gt;
+T minimum(const T&amp; lhs, const T&amp; rhs) {
+    return lhs &lt; rhs ? lhs : rhs;
+}
+
+// 或使用 class 关键字，效果等同于 typename
+template &lt;class T&gt;
+T maximum(const T&amp; lhs, const T&amp; rhs) {
+    return lhs &gt; rhs ? lhs : rhs;
+}
+</code></pre>
+<p><strong>使用:</strong></p>
+<pre><code class="language-cpp">int a = 10, b = 20;
+int min_val = minimum(a, b);         // 编译器推导 T 为 int
+double x = 3.14, y = 1.618;
+double max_val = maximum&lt;double&gt;(x, y); // 显式指定 T 为 double
+</code></pre>
+<h3 id="2-类模板-class-template"><a class="header" href="#2-类模板-class-template">2. 类模板 (Class Template)</a></h3>
+<p>用于创建可处理不同数据类型的类，常用于实现容器（如 <code>std::vector</code>、<code>std::pair</code>）。</p>
+<p><strong>语法:</strong></p>
+<pre><code class="language-cpp">template &lt;typename T1, typename T2&gt;
+class Pair {
+public:
+    T1 first;
+    T2 second;
+    Pair(T1 f, T2 s) : first(f), second(s) {}
+    // 成员函数也可以使用模板参数
+    void print() const;
+};
+
+template &lt;typename T1, typename T2&gt;
+void Pair&lt;T1, T2&gt;::print() const {
+    // ... 实现细节
+}
+</code></pre>
+<p><strong>使用:</strong></p>
+<pre><code class="language-cpp">Pair&lt;int, double&gt; p(10, 3.14); // 实例化 Pair&lt;int, double&gt; 类
+</code></pre>
+<h2 id="二模板参数-template-parameters"><a class="header" href="#二模板参数-template-parameters">二、模板参数 (Template Parameters)</a></h2>
+<p>模板参数可以是以下几种类型：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">参数类型</th><th style="text-align: left">描述</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>类型参数</strong></td><td style="text-align: left">作为类型的占位符。使用 <code>typename</code> 或 <code>class</code> 关键字声明。</td><td style="text-align: left"><code>template &lt;typename T&gt;</code></td></tr>
+<tr><td style="text-align: left"><strong>非类型参数</strong></td><td style="text-align: left">模板参数可以是整型、枚举、指针、引用、<code>std::nullptr_t</code> 等编译期常量。</td><td style="text-align: left"><code>template &lt;typename T, size_t N&gt;</code> (如 <code>std::array</code>)</td></tr>
+<tr><td style="text-align: left"><strong>模板的模板参数</strong></td><td style="text-align: left">参数本身是一个模板（较高级）。</td><td style="text-align: left"><code>template &lt;typename T, template&lt;typename&gt; class Container&gt;</code></td></tr>
+</tbody></table>
+</div>
+<p><strong>默认模板参数:</strong></p>
+<p>模板参数可以拥有默认值（从C++11开始，函数模板也可以拥有默认模板参数）。</p>
+<pre><code class="language-cpp">template &lt;typename T, size_t N = 10&gt; // N 的默认值为 10
+struct Array { T arr[N]; };
+Array&lt;int&gt; a; // N 默认为 10
+Array&lt;double, 5&gt; b; // N 显式指定为 5
+</code></pre>
+<h2 id="三模板特化-template-specialization"><a class="header" href="#三模板特化-template-specialization">三、模板特化 (Template Specialization)</a></h2>
+<p>模板特化允许为特定的类型参数提供一个<strong>不同的</strong>实现，以优化性能或处理通用模板无法处理的情况。</p>
+<h3 id="1-完全特化-full-specialization"><a class="header" href="#1-完全特化-full-specialization">1. 完全特化 (Full Specialization)</a></h3>
+<p>为模板的所有参数提供具体的类型或值。</p>
+<p><strong>语法:</strong></p>
+<pre><code class="language-cpp">// 原始函数模板
+template &lt;typename T&gt;
+T process(T value) { /* 通用实现 */ }
+
+// int 类型的完全特化
+template &lt;&gt; // 尖括号内为空
+int process&lt;int&gt;(int value) {
+    // 针对 int 类型的优化或特殊实现
+    return value * 2;
+}
+</code></pre>
+<h3 id="2-部分特化-partial-specialization"><a class="header" href="#2-部分特化-partial-specialization">2. 部分特化 (Partial Specialization)</a></h3>
+<p>只对模板的部分参数进行特化，或对参数的形式进行限制（例如，特化为指针类型）。<strong>注意：只有类模板可以进行部分特化，函数模板不能。</strong></p>
+<p><strong>语法 (类模板):</strong></p>
+<pre><code class="language-cpp">// 原始类模板
+template &lt;typename T1, typename T2&gt;
+class MyPair { /* 通用实现 */ };
+
+// 部分特化：当第二个参数为 int 时
+template &lt;typename T1&gt;
+class MyPair&lt;T1, int&gt; { /* T2 固定为 int 的实现 */ };
+
+// 部分特化：当两个参数都是指针时
+template &lt;typename T1, typename T2&gt;
+class MyPair&lt;T1*, T2*&gt; { /* 两个参数都是指针的实现 */ };
+</code></pre>
+<h2 id="四关键字-typename"><a class="header" href="#四关键字-typename">四、关键字 <code>typename</code></a></h2>
+<p><code>typename</code> 关键字有两个主要用途：</p>
+<ol>
+<li>
+<p><strong>在模板参数列表中</strong>，指示一个模板参数是一个类型参数（等同于 <code>class</code>）。</p>
+<pre><code class="language-cpp">template &lt;typename T&gt; // 或 template &lt;class T&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>在模板定义内部</strong>，用于显式告诉编译器一个<strong>依赖于模板参数的嵌套名称</strong>是一个类型。
+这是因为在编译时，编译器无法确定依赖名称是否是一个类型或静态成员。</p>
+<pre><code class="language-cpp">template &lt;typename T&gt;
+void func(T value) {
+    // 假设 T::InnerType 是 T 内部定义的类型
+    typename T::InnerType *ptr; // 必须加 typename
+}
+</code></pre>
+</li>
+</ol>
+<h2 id="五模板参数推导-argument-deduction"><a class="header" href="#五模板参数推导-argument-deduction">五、模板参数推导 (Argument Deduction)</a></h2>
+<h3 id="1-函数模板参数推导"><a class="header" href="#1-函数模板参数推导">1. 函数模板参数推导</a></h3>
+<p>调用函数模板时，编译器通常可以根据传递的实参类型自动推导出模板参数的类型。</p>
+<pre><code class="language-cpp">template &lt;typename T&gt; void print(T val) { /* ... */ }
+print(42);   // 编译器推导 T 为 int
+print("abc"); // 编译器推导 T 为 const char*
+</code></pre>
+<h3 id="2-类模板参数推导-ctad-c17"><a class="header" href="#2-类模板参数推导-ctad-c17">2. 类模板参数推导 (CTAD, C++17)</a></h3>
+<p>从 C++17 开始，类模板的实例化也可以进行类型推导，无需显式指定模板参数。</p>
+<pre><code class="language-cpp">// 假设 Pair 是一个类模板
+// C++17 之前:
+Pair&lt;int, double&gt; p1(1, 2.3);
+
+// C++17 之后:
+Pair p2(1, 2.3); // 编译器推导为 Pair&lt;int, double&gt;
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../Basis/Functions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../Basis/CLass&amp;Object.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../Basis/Template.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Advance.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -203,11 +328,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../Basis/Functions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../Basis/CLass&amp;Object.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../Basis/Template.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Advance.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
