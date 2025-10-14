@@ -688,7 +688,86 @@ namespace VLNN = VeryLongNamespaceName;
 // 使用别名访问
 VLNN::func();
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序的编译与运行compilation-and-execution"><a class="header" href="#c-程序的编译与运行compilation-and-execution">C++ 程序的编译与运行（Compilation and Execution）</a></h1>
+<h2 id="五std-命名空间"><a class="header" href="#五std-命名空间">五、<code>std</code> 命名空间</a></h2>
+<h3 id="1-std-命名空间简介"><a class="header" href="#1-std-命名空间简介">1. <code>std</code> 命名空间简介</a></h3>
+<ul>
+<li><strong>标准库</strong>：<code>std</code> 是 <strong>Standard</strong>（标准）的缩写，是 C++ <strong>标准库</strong>（Standard Library）中所有实体（Entities）的容器。</li>
+<li><strong>内容</strong>：所有 C++ 标准库提供的类、函数、变量、模板等都被声明在 <code>std</code> 命名空间内。
+<ul>
+<li>常见的例子包括：
+<ul>
+<li><strong>输入/输出</strong>：<code>std::cout</code>, <code>std::cin</code>, <code>std::endl</code></li>
+<li><strong>字符串</strong>：<code>std::string</code></li>
+<li><strong>容器</strong>：<code>std::vector</code>, <code>std::map</code>, <code>std::list</code></li>
+<li><strong>算法</strong>：<code>std::sort</code>, <code>std::find</code></li>
+<li><strong>其他</strong>：<code>std::unique_ptr</code>, <code>std::exception</code> 等。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-使用-std-成员"><a class="header" href="#2-使用-std-成员">2. 使用 <code>std</code> 成员</a></h3>
+<p>由于标准库的所有内容都在 <code>std</code> 命名空间内，因此需要使用前面介绍的三种方式来访问它们。</p>
+<h4 id="示例完整限定名称推荐"><a class="header" href="#示例完整限定名称推荐">示例：完整限定名称（推荐）</a></h4>
+<p>这是最安全、最清晰的方式，尤其是在头文件和库代码中。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+void print_message() {
+    // 每次使用都需要前缀 std::
+    std::cout &lt;&lt; "Hello, C++ World!" &lt;&lt; std::endl;
+}
+</code></pre>
+<h4 id="示例using-声明"><a class="header" href="#示例using-声明">示例：<code>using</code> 声明</a></h4>
+<p>将特定的标准库成员引入当前作用域。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+using std::cout;
+using std::vector;
+
+void process_data() {
+    // 可以直接使用 cout 和 vector
+    cout &lt;&lt; "Processing data..." &lt;&lt; '\n';
+    vector&lt;int&gt; numbers = {1, 2, 3};
+    // 但 std::endl 仍需限定
+    cout &lt;&lt; "Done." &lt;&lt; std::endl;
+}
+</code></pre>
+<h4 id="示例using-指示词"><a class="header" href="#示例using-指示词">示例：<code>using</code> 指示词</a></h4>
+<p>将整个 <code>std</code> 命名空间引入当前作用域。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+// 将所有 std:: 成员引入
+using namespace std;
+
+void dangerous_example() {
+    // 可以直接使用 cout 和 endl
+    cout &lt;&lt; "This is quick but potentially risky." &lt;&lt; endl;
+
+    // 风险：如果用户定义了名为 'cout' 的变量，则会发生命名冲突或名称隐藏。
+    // int cout = 100; // 错误：在某些编译器上可能导致二义性或隐藏 std::cout
+}
+</code></pre>
+<h3 id="3-c-库头文件的兼容性"><a class="header" href="#3-c-库头文件的兼容性">3. C 库头文件的兼容性</a></h3>
+<p>C++ 标准库也包含了 C 语言的标准库函数（如 <code>printf</code>, <code>malloc</code> 等）。</p>
+<ul>
+<li><strong>C++ 风格</strong>：使用 <code>c</code> 前缀和不带 <code>.h</code> 后缀的头文件（例如，<code>&lt;cmath&gt;</code> 对应 C 语言的 <code>&lt;math.h&gt;</code>）。
+<ul>
+<li>在 C++ 风格的头文件中，所有函数和类型都位于 <strong><code>std::</code></strong> 命名空间中。</li>
+</ul>
+</li>
+<li><strong>C 风格（兼容性）</strong>：使用带 <code>.h</code> 后缀的头文件（例如，<code>&lt;math.h&gt;</code>）。
+<ul>
+<li>为了兼容性，在 C 风格的头文件中，函数和类型通常同时位于<strong>全局命名空间</strong>和 <strong><code>std::</code></strong> 命名空间中。</li>
+</ul>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">语言</th><th style="text-align: left">头文件</th><th style="text-align: left">函数位置</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left">C</td><td style="text-align: left"><code>&lt;stdlib.h&gt;</code></td><td style="text-align: left">全局命名空间</td><td style="text-align: left"><code>malloc(...)</code></td></tr>
+<tr><td style="text-align: left">C++</td><td style="text-align: left"><code>&lt;cstdlib&gt;</code></td><td style="text-align: left"><code>std::</code> 命名空间</td><td style="text-align: left"><code>std::malloc(...)</code></td></tr>
+<tr><td style="text-align: left">C++ (兼容性)</td><td style="text-align: left"><code>&lt;stdlib.h&gt;</code></td><td style="text-align: left">全局 + <code>std::</code></td><td style="text-align: left"><code>malloc(...)</code> 或 <code>std::malloc(...)</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序的编译与运行compilation-and-execution"><a class="header" href="#c-程序的编译与运行compilation-and-execution">C++ 程序的编译与运行（Compilation and Execution）</a></h1>
 <h2 id="引言-1"><a class="header" href="#引言-1">引言</a></h2>
 <p>C++ 是一种 <strong>编译型语言（compiled language）</strong>。
 这意味着在执行程序之前，必须先将源代码 (<code>.cpp</code>) 转换为计算机可以理解的机器指令（可执行文件）。</p>
