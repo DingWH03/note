@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>C++程序结构 - Note of C++</title>
+        <title>预处理器 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -149,7 +149,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Concept/Structure.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Concept/Preprocessor.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -183,166 +183,210 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="c-程序结构program-structure"><a class="header" href="#c-程序结构program-structure">C++ 程序结构（Program Structure）</a></h1>
-<h2 id="引言"><a class="header" href="#引言">引言</a></h2>
-<p>C++ 程序的结构决定了它的组织方式、执行流程和可维护性。
-从最小的“Hello, World!”程序开始，我们可以认识一个 C++ 程序通常包含的<strong>头文件、命名空间、函数定义、语句块</strong>等组成部分。</p>
-<h2 id="一个最小可运行的-c-程序"><a class="header" href="#一个最小可运行的-c-程序">一个最小可运行的 C++ 程序</a></h2>
-<pre><code class="language-cpp">#include &lt;iostream&gt;   // 头文件：引入输入输出库
-using namespace std;  // 使用标准命名空间
-
-int main() {          // 主函数：程序执行入口
-    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;  // 输出语句
-    return 0;         // 返回值：表示程序是否成功结束
-}
-</code></pre>
-<h3 id="程序执行流程说明"><a class="header" href="#程序执行流程说明">程序执行流程说明</a></h3>
-<div class="table-wrapper"><table><thead><tr><th>行号</th><th>内容</th><th>说明</th></tr></thead><tbody>
-<tr><td>1</td><td><code>#include &lt;iostream&gt;</code></td><td>预处理指令，引入标准输入输出库</td></tr>
-<tr><td>2</td><td><code>using namespace std;</code></td><td>告诉编译器默认使用 <code>std</code> 命名空间</td></tr>
-<tr><td>3</td><td><code>int main() {</code></td><td>主函数是程序的入口点（返回类型必须是 <code>int</code>）</td></tr>
-<tr><td>4</td><td><code>cout &lt;&lt; "Hello, World!" &lt;&lt; endl;</code></td><td>使用 <code>cout</code> 输出字符串并换行</td></tr>
-<tr><td>5</td><td><code>return 0;</code></td><td>返回 <code>0</code> 表示程序正常结束</td></tr>
+                        <h1 id="预处理器-preprocessor"><a class="header" href="#预处理器-preprocessor">预处理器 (Preprocessor)</a></h1>
+<p>C++ 预处理器（Preprocessor）是 C++ 编译过程中的第一阶段。它负责处理源代码中所有以 <code>#</code> 开头的指令，在实际编译（生成目标代码）之前对源代码进行文本替换、文件包含、条件编译等操作。</p>
+<h2 id="一预处理指令-directives"><a class="header" href="#一预处理指令-directives">一、预处理指令 (Directives)</a></h2>
+<p>预处理指令以 <code>#</code> 符号开头，并且占据一行。它们不是 C++ 语句，因此不需要以分号 (<code>;</code>) 结尾。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">指令</th><th style="text-align: left">目的</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>#include</code></td><td style="text-align: left">文件包含。将指定文件的内容插入到当前位置。</td><td style="text-align: left"><code>#include &lt;iostream&gt;</code></td></tr>
+<tr><td style="text-align: left"><code>#define</code></td><td style="text-align: left">宏定义。定义常量宏或函数宏。</td><td style="text-align: left"><code>#define PI 3.14159</code></td></tr>
+<tr><td style="text-align: left"><code>#undef</code></td><td style="text-align: left">取消宏定义。</td><td style="text-align: left"><code>#undef PI</code></td></tr>
+<tr><td style="text-align: left"><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></td><td style="text-align: left">条件编译。根据条件决定是否编译某段代码。</td><td style="text-align: left"><code>#if VERSION &gt;= 2</code></td></tr>
+<tr><td style="text-align: left"><code>#ifdef</code> / <code>#ifndef</code></td><td style="text-align: left">条件编译。检查宏是否已被定义。</td><td style="text-align: left"><code>#ifndef DEBUG_MODE</code></td></tr>
+<tr><td style="text-align: left"><code>#error</code></td><td style="text-align: left">停止编译，并输出指定的错误信息。</td><td style="text-align: left"><code>#error "Platform not supported"</code></td></tr>
+<tr><td style="text-align: left"><code>#warning</code></td><td style="text-align: left">输出指定的警告信息，继续编译（非标准，但广泛支持）。</td><td style="text-align: left"><code>#warning "Legacy code detected"</code></td></tr>
+<tr><td style="text-align: left"><code>#pragma</code></td><td style="text-align: left"><strong>编译器特定</strong>的指令，用于向编译器发出特殊指令。</td><td style="text-align: left"><code>#pragma once</code>, <code>#pragma warning</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="程序的基本组成部分"><a class="header" href="#程序的基本组成部分">程序的基本组成部分</a></h2>
-<p>一个完整的 C++ 程序通常由以下几个部分组成：</p>
+<h2 id="二宏定义-define"><a class="header" href="#二宏定义-define">二、宏定义 (<code>#define</code>)</a></h2>
+<p>宏定义是预处理器最重要的功能之一，它执行的是<strong>文本替换</strong>。</p>
 <ol>
 <li>
-<p><strong>预处理指令（Preprocessor Directives）</strong>
-在编译前由预处理器执行，例如：</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#define PI 3.14159
+<p>对象式宏 (Object-like Macros) - 定义常量</p>
+<pre><code class="language-cpp">#define BUFFER_SIZE 1024
+// 预处理后：所有 BUFFER_SIZE 都会被替换为 1024
 </code></pre>
 </li>
 <li>
-<p><strong>命名空间（Namespace）</strong>
-命名空间用于避免名称冲突：</p>
-<pre><code class="language-cpp">namespace myspace {
-    int x = 10;
-}
+<p>函数式宏 (Function-like Macros) - 定义类似函数的替换</p>
+<p>使用时注意：必须在参数和整个宏体周围加上括号，以避免运算符优先级问题。</p>
+<pre><code class="language-cpp">#define SQUARE(x) ( (x) * (x) )
+
+// 错误示例：#define SQUARE(x) x * x
+// SQUARE(1 + 2) -&gt; 1 + 2 * 1 + 2 -&gt; 5 (错误!)
+// 正确示例：SQUARE(1 + 2) -&gt; ( (1 + 2) * (1 + 2) ) -&gt; 9 (正确!)
 </code></pre>
+<blockquote>
+<p>最佳实践: 除非必要，在 C++ 中应使用 <code>const</code> 或 <code>constexpr</code> 变量代替对象式宏，使用 <strong>内联函数 (<code>inline</code>)</strong> 或 <strong>模板</strong> 代替函数式宏，以获得类型检查和更好的可读性。</p>
+</blockquote>
 </li>
 <li>
-<p><strong>主函数 <code>main()</code></strong>
-所有可执行 C++ 程序都必须有且仅有一个 <code>main()</code> 函数。</p>
-</li>
-<li>
-<p><strong>函数定义（Functions）</strong>
-函数是代码逻辑的基本单元，示例：</p>
-<pre><code class="language-cpp">int add(int a, int b) {
-    return a + b;
-}
-</code></pre>
-</li>
-<li>
-<p><strong>变量与语句（Variables &amp; Statements）</strong>
-程序的逻辑通过语句执行，通过变量存储数据。</p>
-<pre><code class="language-cpp">int sum = add(2, 3);
-cout &lt;&lt; sum &lt;&lt; endl;
-</code></pre>
-</li>
-</ol>
-<h2 id="c-程序的执行入口"><a class="header" href="#c-程序的执行入口">C++ 程序的执行入口</a></h2>
+<p>宏的特殊操作符</p>
 <ul>
 <li>
-<p>程序从 <code>main()</code> 函数开始执行。</p>
+<p><code>#</code> (字符串化运算符 / Stringizing Operator)：将宏参数转换为字符串字面值。</p>
+<pre><code class="language-cpp">#define MESSAGE(x) #x
+// std::cout &lt;&lt; MESSAGE(Hello World);  -&gt;  输出: Hello World
+</code></pre>
 </li>
 <li>
-<p><code>main()</code> 的返回值会传递给操作系统。</p>
-</li>
-<li>
-<p>常见的两种形式：</p>
-<pre><code class="language-cpp">int main() {
-    // 无参数版本
-    return 0;
-}
-
-int main(int argc, char* argv[]) {
-    // 带命令行参数的版本
-    // argc 表示参数数量
-    // argv 表示参数数组
-    return 0;
-}
+<p><code>##</code> (连接运算符 / Token-Pasting Operator)：连接两个宏标记（token），形成一个新的标记。</p>
+<pre><code class="language-cpp">#define GLUE(a, b) a ## b
+// int GLUE(my, Variable) = 10;  -&gt;  int myVariable = 10;
 </code></pre>
 </li>
 </ul>
-<h2 id="程序的语句块与作用域"><a class="header" href="#程序的语句块与作用域">程序的语句块与作用域</a></h2>
-<p>语句块使用花括号 <code>{}</code> 表示，定义一个新的作用域（scope）：</p>
-<pre><code class="language-cpp">int x = 10;
-{
-    int x = 20;   // 内层作用域的 x 隐藏外层变量
-    cout &lt;&lt; x;    // 输出 20
-}
-cout &lt;&lt; x;        // 输出 10
-</code></pre>
-<p>作用域是 C++ 的重要概念，影响变量的可见性与生命周期。</p>
-<h2 id="程序结构的逻辑层次层级模型"><a class="header" href="#程序结构的逻辑层次层级模型">程序结构的逻辑层次（层级模型）</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>层级</th><th>名称</th><th>说明</th></tr></thead><tbody>
-<tr><td>顶层</td><td>预处理部分</td><td>定义宏、引入头文件</td></tr>
-<tr><td>全局层</td><td>命名空间、全局变量、函数声明</td><td></td></tr>
-<tr><td>主函数层</td><td>程序入口、主流程</td><td></td></tr>
-<tr><td>函数层</td><td>逻辑实现与局部变量</td><td></td></tr>
-<tr><td>语句层</td><td>执行单元（表达式、控制语句等）</td><td></td></tr>
-</tbody></table>
-</div>
-<p>这是一种从外到内的逻辑组织结构。良好的层级划分有助于程序的模块化。</p>
-<h2 id="程序文件结构大型项目"><a class="header" href="#程序文件结构大型项目">程序文件结构（大型项目）</a></h2>
-<p>在真实项目中，一个 C++ 程序通常被拆分为多个文件：</p>
-<pre><code class="language-text">project/
-├── main.cpp        // 程序入口
-├── math/
-│   ├── add.cpp
-│   └── add.h
-└── utils/
-    ├── log.cpp
-    └── log.h
-</code></pre>
-<p>通过 <strong>头文件 (.h/.hpp)</strong> 声明接口，<strong>源文件 (.cpp)</strong> 实现功能：</p>
-<ul>
+</li>
+</ol>
+<h2 id="三文件包含-include"><a class="header" href="#三文件包含-include">三、文件包含 (<code>#include</code>)</a></h2>
+<p>用于将一个文件的内容插入到另一个文件中。</p>
+<ol>
 <li>
-<p>add.h</p>
-<pre><code class="language-cpp">#ifndef ADD_H
-#define ADD_H
+<p>尖括号 (<code>&lt;&gt;</code>)：用于包含<strong>标准库头文件</strong>。编译器会在标准系统路径下查找。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+</code></pre>
+</li>
+<li>
+<p>双引号 (<code>""</code>)：用于包含<strong>用户自定义头文件</strong>。编译器首先在当前源文件目录查找，然后才在标准系统路径下查找（具体的查找路径取决于编译器设置）。</p>
+<pre><code class="language-cpp">#include "my_header.h"
+</code></pre>
+</li>
+</ol>
+<h2 id="四条件编译-conditional-compilation"><a class="header" href="#四条件编译-conditional-compilation">四、条件编译 (Conditional Compilation)</a></h2>
+<p>条件编译允许根据预处理器定义的条件，决定是否将一段代码发送给编译器。这对于平台移植、调试开关和头文件保护至关重要。</p>
+<ol>
+<li>
+<p>头文件保护 (Header Guards) - 经典方式</p>
+<p>用于防止头文件被重复包含，导致重定义错误。</p>
+<pre><code class="language-cpp">#ifndef MY_HEADER_H // IF Not DEFined
+#define MY_HEADER_H
 
-int add(int a, int b);
+// 头文件内容
 
+#endif // MY_HEADER_H
+</code></pre>
+</li>
+<li>
+<p>基于宏的条件</p>
+<pre><code class="language-cpp">#define DEBUG_MODE // 开启调试模式
+
+// ...
+
+#ifdef DEBUG_MODE   // 如果 DEBUG_MODE 宏已定义，则编译以下代码
+    std::cout &lt;&lt; "Debugging output." &lt;&lt; std::endl;
+#endif
+
+#ifndef RELEASE_MODE // 如果 RELEASE_MODE 宏未定义，则编译以下代码
+    // ...
 #endif
 </code></pre>
 </li>
 <li>
-<p>add.cpp</p>
-<pre><code class="language-cpp">#include "add.h"
-int add(int a, int b) {
-    return a + b;
-}
+<p>多分支条件</p>
+<pre><code class="language-cpp">#define OS_LINUX 1 // 假设在 Linux 平台编译
+
+#if OS_LINUX
+    #include &lt;unistd.h&gt;
+#elif OS_WINDOWS
+    #include &lt;windows.h&gt;
+#else
+    #error "Unsupported OS!"
+#endif
+</code></pre>
+<ul>
+<li><code>#if</code> 后面要求表达式求值为非零（真）或零（假）。表达式中未定义的宏会被当作零处理。</li>
+<li><code>defined</code> 运算符：<code>#if defined(MACRO_NAME)</code> 与 <code>#ifdef MACRO_NAME</code> 效果相似，但 <code>defined</code> 可以用于更复杂的布尔表达式中，例如 <code>#if defined(A) &amp;&amp; !defined(B)</code>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="五编译器特定指令-pragma"><a class="header" href="#五编译器特定指令-pragma">五、编译器特定指令 (<code>#pragma</code>)</a></h2>
+<p><code>#pragma</code> 指令是一种特殊的预处理指令，用于向编译器提供特定于编译器或平台的指示。由于它们是非标准的（不属于 C++ 语言规范），因此其功能和语法可能在不同编译器之间有所不同。</p>
+<ol>
+<li>
+<p><code>#pragma once</code></p>
+<ul>
+<li>
+<p><strong>目的：</strong> 实现头文件保护，防止头文件被重复包含。</p>
+</li>
+<li>
+<p><strong>优点：</strong> 代码更简洁，不会污染全局宏命名空间，并且大多数现代编译器（GCC, Clang, MSVC 等）都支持且执行效率更高（编译器可以直接比较文件名或路径）。</p>
+</li>
+<li>
+<p><strong>用法：</strong> 放在头文件的最开始。</p>
+<pre><code class="language-cpp">// my_header.h
+#pragma once
+
+struct MyData { /* ... */ };
 </code></pre>
 </li>
 <li>
-<p>main.cpp</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include "add.h"
+<p><strong>对比 <code>#ifndef</code>：</strong></p>
+</li>
+<li>
+<p><code>#ifndef</code> 是标准 C++ 的一部分，可移植性最高。</p>
+</li>
+<li>
+<p><code>#pragma once</code> 是事实上的行业标准，使用更方便，但技术上非标准。在新的代码中通常推荐使用它。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>#pragma warning</code> (主要用于 MSVC)</p>
+<ul>
+<li>
+<p><strong>目的：</strong> 临时修改或控制编译器警告的行为。</p>
+</li>
+<li>
+<p><strong>关键语法：</strong></p>
+</li>
+<li>
+<p><code>#pragma warning( disable : 警告编号 )</code>：禁用特定的警告。</p>
+</li>
+<li>
+<p><code>#pragma warning( error : 警告编号 )</code>：将特定的警告视为错误。</p>
+</li>
+<li>
+<p><code>#pragma warning( push )</code>：保存当前的警告状态到堆栈。</p>
+</li>
+<li>
+<p><code>#pragma warning( pop )</code>：恢复最近一次保存的警告状态。</p>
+</li>
+<li>
+<p><strong>用途示例：</strong> 临时禁用第三方库中产生的警告。</p>
+<pre><code class="language-cpp">#pragma warning( push )         // 保存当前警告状态
+#pragma warning( disable : 4100 ) // 禁用 MSVC 警告 C4100 (未使用的形参)
 
-int main() {
-    std::cout &lt;&lt; add(3, 4) &lt;&lt; std::endl;
-    return 0;
+void unused_param_func(int x)
+{
+    // ... code that intentionally doesn't use x
 }
+
+#pragma warning( pop )          // 恢复之前的警告状态
 </code></pre>
 </li>
 </ul>
 <blockquote>
-<p>大型工程中，通常直接或间接地使用<code>Cmake</code>或<code>make</code>进行编译和项目管理。</p>
+<p>GCC/Clang 对应功能： 它们通常使用 <code>#pragma GCC diagnostic push</code>/<code>pop</code> 和 <code>#pragma GCC diagnostic ignored "-Wxxx"</code>。</p>
 </blockquote>
+</li>
+<li>
+<p>其它特定 <code>#pragma</code></p>
+<ul>
+<li><code>#pragma pack(n)</code>：指定结构体成员的对齐字节数，常用于跨平台或与硬件交互。</li>
+<li><code>#pragma comment(...)</code>：向目标文件中插入注释信息或链接器指令（如链接特定的库文件）。</li>
+</ul>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Basis/Concept.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Basis/Concept/Structure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../../Basis/Concept/Preprocessor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Basis/Concept/Compile_Run.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -352,11 +396,11 @@ int main() {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Basis/Concept.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Basis/Concept/Structure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../../Basis/Concept/Preprocessor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Basis/Concept/Compile_Run.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -351,6 +351,200 @@ int main() {
 <blockquote>
 <p>大型工程中，通常直接或间接地使用<code>Cmake</code>或<code>make</code>进行编译和项目管理。</p>
 </blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="预处理器-preprocessor"><a class="header" href="#预处理器-preprocessor">预处理器 (Preprocessor)</a></h1>
+<p>C++ 预处理器（Preprocessor）是 C++ 编译过程中的第一阶段。它负责处理源代码中所有以 <code>#</code> 开头的指令，在实际编译（生成目标代码）之前对源代码进行文本替换、文件包含、条件编译等操作。</p>
+<h2 id="一预处理指令-directives"><a class="header" href="#一预处理指令-directives">一、预处理指令 (Directives)</a></h2>
+<p>预处理指令以 <code>#</code> 符号开头，并且占据一行。它们不是 C++ 语句，因此不需要以分号 (<code>;</code>) 结尾。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">指令</th><th style="text-align: left">目的</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>#include</code></td><td style="text-align: left">文件包含。将指定文件的内容插入到当前位置。</td><td style="text-align: left"><code>#include &lt;iostream&gt;</code></td></tr>
+<tr><td style="text-align: left"><code>#define</code></td><td style="text-align: left">宏定义。定义常量宏或函数宏。</td><td style="text-align: left"><code>#define PI 3.14159</code></td></tr>
+<tr><td style="text-align: left"><code>#undef</code></td><td style="text-align: left">取消宏定义。</td><td style="text-align: left"><code>#undef PI</code></td></tr>
+<tr><td style="text-align: left"><code>#if</code> / <code>#elif</code> / <code>#else</code> / <code>#endif</code></td><td style="text-align: left">条件编译。根据条件决定是否编译某段代码。</td><td style="text-align: left"><code>#if VERSION &gt;= 2</code></td></tr>
+<tr><td style="text-align: left"><code>#ifdef</code> / <code>#ifndef</code></td><td style="text-align: left">条件编译。检查宏是否已被定义。</td><td style="text-align: left"><code>#ifndef DEBUG_MODE</code></td></tr>
+<tr><td style="text-align: left"><code>#error</code></td><td style="text-align: left">停止编译，并输出指定的错误信息。</td><td style="text-align: left"><code>#error "Platform not supported"</code></td></tr>
+<tr><td style="text-align: left"><code>#warning</code></td><td style="text-align: left">输出指定的警告信息，继续编译（非标准，但广泛支持）。</td><td style="text-align: left"><code>#warning "Legacy code detected"</code></td></tr>
+<tr><td style="text-align: left"><code>#pragma</code></td><td style="text-align: left"><strong>编译器特定</strong>的指令，用于向编译器发出特殊指令。</td><td style="text-align: left"><code>#pragma once</code>, <code>#pragma warning</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="二宏定义-define"><a class="header" href="#二宏定义-define">二、宏定义 (<code>#define</code>)</a></h2>
+<p>宏定义是预处理器最重要的功能之一，它执行的是<strong>文本替换</strong>。</p>
+<ol>
+<li>
+<p>对象式宏 (Object-like Macros) - 定义常量</p>
+<pre><code class="language-cpp">#define BUFFER_SIZE 1024
+// 预处理后：所有 BUFFER_SIZE 都会被替换为 1024
+</code></pre>
+</li>
+<li>
+<p>函数式宏 (Function-like Macros) - 定义类似函数的替换</p>
+<p>使用时注意：必须在参数和整个宏体周围加上括号，以避免运算符优先级问题。</p>
+<pre><code class="language-cpp">#define SQUARE(x) ( (x) * (x) )
+
+// 错误示例：#define SQUARE(x) x * x
+// SQUARE(1 + 2) -&gt; 1 + 2 * 1 + 2 -&gt; 5 (错误!)
+// 正确示例：SQUARE(1 + 2) -&gt; ( (1 + 2) * (1 + 2) ) -&gt; 9 (正确!)
+</code></pre>
+<blockquote>
+<p>最佳实践: 除非必要，在 C++ 中应使用 <code>const</code> 或 <code>constexpr</code> 变量代替对象式宏，使用 <strong>内联函数 (<code>inline</code>)</strong> 或 <strong>模板</strong> 代替函数式宏，以获得类型检查和更好的可读性。</p>
+</blockquote>
+</li>
+<li>
+<p>宏的特殊操作符</p>
+<ul>
+<li>
+<p><code>#</code> (字符串化运算符 / Stringizing Operator)：将宏参数转换为字符串字面值。</p>
+<pre><code class="language-cpp">#define MESSAGE(x) #x
+// std::cout &lt;&lt; MESSAGE(Hello World);  -&gt;  输出: Hello World
+</code></pre>
+</li>
+<li>
+<p><code>##</code> (连接运算符 / Token-Pasting Operator)：连接两个宏标记（token），形成一个新的标记。</p>
+<pre><code class="language-cpp">#define GLUE(a, b) a ## b
+// int GLUE(my, Variable) = 10;  -&gt;  int myVariable = 10;
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="三文件包含-include"><a class="header" href="#三文件包含-include">三、文件包含 (<code>#include</code>)</a></h2>
+<p>用于将一个文件的内容插入到另一个文件中。</p>
+<ol>
+<li>
+<p>尖括号 (<code>&lt;&gt;</code>)：用于包含<strong>标准库头文件</strong>。编译器会在标准系统路径下查找。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+</code></pre>
+</li>
+<li>
+<p>双引号 (<code>""</code>)：用于包含<strong>用户自定义头文件</strong>。编译器首先在当前源文件目录查找，然后才在标准系统路径下查找（具体的查找路径取决于编译器设置）。</p>
+<pre><code class="language-cpp">#include "my_header.h"
+</code></pre>
+</li>
+</ol>
+<h2 id="四条件编译-conditional-compilation"><a class="header" href="#四条件编译-conditional-compilation">四、条件编译 (Conditional Compilation)</a></h2>
+<p>条件编译允许根据预处理器定义的条件，决定是否将一段代码发送给编译器。这对于平台移植、调试开关和头文件保护至关重要。</p>
+<ol>
+<li>
+<p>头文件保护 (Header Guards) - 经典方式</p>
+<p>用于防止头文件被重复包含，导致重定义错误。</p>
+<pre><code class="language-cpp">#ifndef MY_HEADER_H // IF Not DEFined
+#define MY_HEADER_H
+
+// 头文件内容
+
+#endif // MY_HEADER_H
+</code></pre>
+</li>
+<li>
+<p>基于宏的条件</p>
+<pre><code class="language-cpp">#define DEBUG_MODE // 开启调试模式
+
+// ...
+
+#ifdef DEBUG_MODE   // 如果 DEBUG_MODE 宏已定义，则编译以下代码
+    std::cout &lt;&lt; "Debugging output." &lt;&lt; std::endl;
+#endif
+
+#ifndef RELEASE_MODE // 如果 RELEASE_MODE 宏未定义，则编译以下代码
+    // ...
+#endif
+</code></pre>
+</li>
+<li>
+<p>多分支条件</p>
+<pre><code class="language-cpp">#define OS_LINUX 1 // 假设在 Linux 平台编译
+
+#if OS_LINUX
+    #include &lt;unistd.h&gt;
+#elif OS_WINDOWS
+    #include &lt;windows.h&gt;
+#else
+    #error "Unsupported OS!"
+#endif
+</code></pre>
+<ul>
+<li><code>#if</code> 后面要求表达式求值为非零（真）或零（假）。表达式中未定义的宏会被当作零处理。</li>
+<li><code>defined</code> 运算符：<code>#if defined(MACRO_NAME)</code> 与 <code>#ifdef MACRO_NAME</code> 效果相似，但 <code>defined</code> 可以用于更复杂的布尔表达式中，例如 <code>#if defined(A) &amp;&amp; !defined(B)</code>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="五编译器特定指令-pragma"><a class="header" href="#五编译器特定指令-pragma">五、编译器特定指令 (<code>#pragma</code>)</a></h2>
+<p><code>#pragma</code> 指令是一种特殊的预处理指令，用于向编译器提供特定于编译器或平台的指示。由于它们是非标准的（不属于 C++ 语言规范），因此其功能和语法可能在不同编译器之间有所不同。</p>
+<ol>
+<li>
+<p><code>#pragma once</code></p>
+<ul>
+<li>
+<p><strong>目的：</strong> 实现头文件保护，防止头文件被重复包含。</p>
+</li>
+<li>
+<p><strong>优点：</strong> 代码更简洁，不会污染全局宏命名空间，并且大多数现代编译器（GCC, Clang, MSVC 等）都支持且执行效率更高（编译器可以直接比较文件名或路径）。</p>
+</li>
+<li>
+<p><strong>用法：</strong> 放在头文件的最开始。</p>
+<pre><code class="language-cpp">// my_header.h
+#pragma once
+
+struct MyData { /* ... */ };
+</code></pre>
+</li>
+<li>
+<p><strong>对比 <code>#ifndef</code>：</strong></p>
+</li>
+<li>
+<p><code>#ifndef</code> 是标准 C++ 的一部分，可移植性最高。</p>
+</li>
+<li>
+<p><code>#pragma once</code> 是事实上的行业标准，使用更方便，但技术上非标准。在新的代码中通常推荐使用它。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>#pragma warning</code> (主要用于 MSVC)</p>
+<ul>
+<li>
+<p><strong>目的：</strong> 临时修改或控制编译器警告的行为。</p>
+</li>
+<li>
+<p><strong>关键语法：</strong></p>
+</li>
+<li>
+<p><code>#pragma warning( disable : 警告编号 )</code>：禁用特定的警告。</p>
+</li>
+<li>
+<p><code>#pragma warning( error : 警告编号 )</code>：将特定的警告视为错误。</p>
+</li>
+<li>
+<p><code>#pragma warning( push )</code>：保存当前的警告状态到堆栈。</p>
+</li>
+<li>
+<p><code>#pragma warning( pop )</code>：恢复最近一次保存的警告状态。</p>
+</li>
+<li>
+<p><strong>用途示例：</strong> 临时禁用第三方库中产生的警告。</p>
+<pre><code class="language-cpp">#pragma warning( push )         // 保存当前警告状态
+#pragma warning( disable : 4100 ) // 禁用 MSVC 警告 C4100 (未使用的形参)
+
+void unused_param_func(int x)
+{
+    // ... code that intentionally doesn't use x
+}
+
+#pragma warning( pop )          // 恢复之前的警告状态
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p>GCC/Clang 对应功能： 它们通常使用 <code>#pragma GCC diagnostic push</code>/<code>pop</code> 和 <code>#pragma GCC diagnostic ignored "-Wxxx"</code>。</p>
+</blockquote>
+</li>
+<li>
+<p>其它特定 <code>#pragma</code></p>
+<ul>
+<li><code>#pragma pack(n)</code>：指定结构体成员的对齐字节数，常用于跨平台或与硬件交互。</li>
+<li><code>#pragma comment(...)</code>：向目标文件中插入注释信息或链接器指令（如链接特定的库文件）。</li>
+</ul>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序的编译与运行compilation-and-execution"><a class="header" href="#c-程序的编译与运行compilation-and-execution">C++ 程序的编译与运行（Compilation and Execution）</a></h1>
 <h2 id="引言-1"><a class="header" href="#引言-1">引言</a></h2>
 <p>C++ 是一种 <strong>编译型语言（compiled language）</strong>。
@@ -1927,7 +2121,7 @@ Color c = GREEN;
 <p>自定义起始值：</p>
 <pre><code class="language-cpp">enum ErrorCode { OK = 0, NotFound = 404, ServerError = 500 };
 </code></pre>
-<h2 id="4-变量与常量的对比"><a class="header" href="#4-变量与常量的对比">4. 变量与常量的对比</a></h2>
+<h2 id="四变量与常量的对比"><a class="header" href="#四变量与常量的对比">四、变量与常量的对比</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>特性</th><th>变量</th><th>常量</th></tr></thead><tbody>
 <tr><td>值是否可修改</td><td>可修改</td><td>不可修改</td></tr>
 <tr><td>是否必须初始化</td><td>否（但推荐）</td><td>是</td></tr>
@@ -1935,7 +2129,7 @@ Color c = GREEN;
 <tr><td>示例</td><td><code>int x = 5;</code></td><td><code>const int x = 5;</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="5-示例代码"><a class="header" href="#5-示例代码">5. 示例代码</a></h2>
+<h2 id="五示例代码"><a class="header" href="#五示例代码">五、示例代码</a></h2>
 <pre><code class="language-cpp">#include &lt;iostream&gt;
 using namespace std;
 
