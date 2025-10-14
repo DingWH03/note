@@ -791,6 +791,8 @@ public:
 <tr><td><code>constexpr</code></td><td>编译期常量，值在编译时计算，可用于常量表达式和元编程</td><td><code>constexpr int size = 10;</code></td></tr>
 <tr><td><code>volatile</code></td><td>变量可能被意外修改，禁止编译器优化</td><td><code>volatile int c = 10;</code></td></tr>
 <tr><td><code>mutable</code></td><td>类成员可以在 <code>const</code> 对象中修改</td><td><code>mutable int counter;</code></td></tr>
+<tr><td><code>extern</code></td><td>声明一个在其他源文件中定义的变量或函数，用于跨文件共享全局符号</td><td><code>extern int global_var;</code></td></tr>
+<tr><td><code>register</code></td><td>建议编译器将变量存放在 CPU 寄存器中以提高访问速度（现代编译器多已自动优化）</td><td><code>register int counter = 0;</code></td></tr>
 </tbody></table>
 </div>
 <h2 id="c11-新增数据类型"><a class="header" href="#c11-新增数据类型">C++11 新增数据类型</a></h2>
@@ -1104,7 +1106,7 @@ const int *const p; // 指向常量的常量指针
 <li>
 <p>作用域与链接</p>
 <ul>
-<li>在 C 中，<code>const</code> 全局变量默认是 <strong>外部链接</strong>，除非显式加 <code>static</code>。</li>
+<li>在 C 中，<code>const</code> 全局变量默认是 <strong>外部链接</strong>，除非显式加 <code>static</code>使得在本文件可见。</li>
 <li>在 C++ 中，<code>const</code> 全局变量默认是 <strong>内部链接</strong>（只在本翻译单元内可见），若要在多个文件共享，需加 <code>extern</code>。</li>
 </ul>
 </li>
@@ -1169,6 +1171,83 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 </code></pre>
 </li>
 </ol>
+<h3 id="extern"><a class="header" href="#extern"><code>extern</code></a></h3>
+<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。
+它通常出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
+<ul>
+<li>
+<p>作用：</p>
+<ul>
+<li>告诉编译器“该变量或函数在别处定义”；</li>
+<li>不会为其分配存储空间（除非在定义处）；</li>
+<li>避免重复定义全局符号。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">// file1.cpp
+int count = 10;  // 定义全局变量
+
+// file2.cpp
+#include &lt;iostream&gt;
+extern int count;  // 声明外部变量（非定义）
+int main() {
+    std::cout &lt;&lt; count &lt;&lt; std::endl;  // 输出 10
+    return 0;
+}
+</code></pre>
+<ul>
+<li>
+<p>在C++中：</p>
+<p>C++ 默认情况下，<code>const</code> 全局变量具有内部链接（<code>internal linkage</code>），也就是仅在本文件内可见。
+若希望跨文件共享一个常量变量，必须结合 <code>extern</code> 使用：</p>
+<pre><code class="language-cpp">// file1.cpp
+extern const int BUFFER_SIZE = 1024;
+
+// file2.cpp
+extern const int BUFFER_SIZE;  // 声明外部常量
+</code></pre>
+</li>
+<li>
+<p>与函数结合使用：</p>
+<p>对于函数来说，<code>extern</code> 是默认属性，即所有非 <code>static</code> 函数都具有外部链接性，因此通常可省略：</p>
+<pre><code class="language-cpp">extern void foo();  // 与 void foo(); 等价
+</code></pre>
+</li>
+</ul>
+<h3 id="register"><a class="header" href="#register"><code>register</code></a></h3>
+<p><code>register</code> 是早期 C/C++ 时代用于<strong>提升变量访问速度</strong>的关键字，提示编译器将变量存储在 CPU 寄存器中，而非内存中。</p>
+<ul>
+<li>
+<p>特点：</p>
+<ul>
+<li>变量可能被存放在 CPU 寄存器中，而非内存；</li>
+<li>不能对 <code>register</code> 变量使用取地址操作符 <code>&amp;</code>；</li>
+<li>仅能修饰局部变量或函数参数；</li>
+<li>在现代编译器中通常<strong>被自动优化机制取代</strong>，因此多用于教学或历史理解。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    register int i;  // 建议编译器将 i 放入寄存器中
+    for (i = 0; i &lt; 5; ++i) {
+        std::cout &lt;&lt; i &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<ul>
+<li>
+<p><strong>局限性：</strong></p>
+<ul>
+<li>编译器不保证一定会将其放入寄存器；</li>
+<li>不能取地址（即 <code>&amp;i</code> 是非法的）；</li>
+<li>在现代 C++ 中几乎没有实际性能提升，优化器会自动选择合适的寄存器分配策略。</li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="派生数据类型"><a class="header" href="#派生数据类型">派生数据类型</a></h1>
 <h2 id="c派生数据类型"><a class="header" href="#c派生数据类型">C++派生数据类型</a></h2>
 <p>在 C++ 中，<strong>派生数据类型（Derived Types）</strong> 是由基本数据类型或其他派生类型构建而来的类型。
@@ -1728,6 +1807,155 @@ int main() {
 编译器根据初始化表达式推导类型，但不能从不完整的类型推导。因此，必须确保变量在声明时能够通过表达式推导出类型。</p>
 </li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="变量与常量"><a class="header" href="#变量与常量">变量与常量</a></h1>
+<h2 id="一基本概念"><a class="header" href="#一基本概念">一、基本概念</a></h2>
+<p>在 C++ 中，<strong>变量 (Variable)</strong> 是内存中的一块可命名的存储空间，用于保存数据值。
+<strong>常量 (Constant)</strong> 则是在程序执行期间<strong>不能被修改</strong>的值。</p>
+<p>变量与常量是程序存储数据和表达逻辑的基础。</p>
+<h2 id="二变量-variable"><a class="header" href="#二变量-variable">二、变量 (Variable)</a></h2>
+<h3 id="1-定义变量"><a class="header" href="#1-定义变量">1. 定义变量</a></h3>
+<p>变量在使用前必须定义。定义时需指定类型，并可选地赋初值。</p>
+<pre><code class="language-cpp">int age = 20;        // 定义并初始化一个整型变量
+double weight;       // 定义一个浮点型变量，但未初始化
+char grade = 'A';    // 定义并初始化一个字符型变量
+</code></pre>
+<blockquote>
+<p>建议始终初始化变量，避免使用未定义的值（否则可能产生未定义行为）。</p>
+</blockquote>
+<h3 id="2-变量的命名规则"><a class="header" href="#2-变量的命名规则">2. 变量的命名规则</a></h3>
+<p>变量的命名要求符合一定的命名规则，具体可参考<a href="Basis/./Concept/Naming_Rules.html">命名规则</a>，可简要总结为：</p>
+<ol>
+<li>
+<p>只能包含字母、数字和下划线 <code>_</code></p>
+</li>
+<li>
+<p>不能以数字开头</p>
+</li>
+<li>
+<p>区分大小写 (<code>score</code> 与 <code>Score</code> 不同)</p>
+</li>
+<li>
+<p>不能使用 C++ 关键字 (<code>int</code>, <code>return</code> 等)</p>
+</li>
+<li>
+<p>应体现变量含义，例如：</p>
+<pre><code class="language-cpp">int studentCount;  // 好
+int sc;            // 不推荐
+</code></pre>
+</li>
+</ol>
+<h3 id="3-变量的作用域与生命周期"><a class="header" href="#3-变量的作用域与生命周期">3. 变量的作用域与生命周期</a></h3>
+<h4 id="1作用域-scope"><a class="header" href="#1作用域-scope">(1)作用域 (Scope)</a></h4>
+<p>变量的可见范围取决于其定义位置：</p>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>定义位置</th><th>可见范围</th></tr></thead><tbody>
+<tr><td>局部变量</td><td>函数或代码块内</td><td>仅在当前函数或块中可见</td></tr>
+<tr><td>全局变量</td><td>所有函数外部</td><td>在整个文件中可见</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">int globalVar = 10;  // 全局变量
+
+void func() {
+    int localVar = 5;  // 局部变量
+}
+</code></pre>
+<h4 id="2生命周期-lifetime"><a class="header" href="#2生命周期-lifetime">(2)生命周期 (Lifetime)</a></h4>
+<ul>
+<li><strong>局部变量</strong>：进入作用域时创建，离开作用域时销毁。</li>
+<li><strong>全局变量/静态变量</strong>：程序启动时创建，程序结束时销毁。</li>
+</ul>
+<pre><code class="language-cpp">void counter() {
+    static int count = 0; // 静态局部变量，只初始化一次
+    count++;
+    std::cout &lt;&lt; count &lt;&lt; std::endl;
+}
+</code></pre>
+<h3 id="4-变量的存储类型说明符"><a class="header" href="#4-变量的存储类型说明符">4. 变量的存储类型说明符</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>关键字</th><th>含义</th></tr></thead><tbody>
+<tr><td><code>auto</code></td><td>自动类型推断（C++11 引入）</td></tr>
+<tr><td><code>register</code></td><td>建议编译器将变量存储在寄存器中（已过时）</td></tr>
+<tr><td><code>static</code></td><td>使局部变量在函数多次调用间保持值不变</td></tr>
+<tr><td><code>extern</code></td><td>引用外部定义的变量</td></tr>
+<tr><td><code>mutable</code></td><td>允许在 <code>const</code> 对象中修改该成员（仅类成员有效）</td></tr>
+</tbody></table>
+</div>
+<pre><code class="language-cpp">extern int count; // 声明外部变量
+auto x = 3.14;    // 类型自动推断为 double
+</code></pre>
+<blockquote>
+<p>还有更多的变量修饰符，详见<a href="Basis/./Types/Fundamental_Types.html">基本数据类型</a>。</p>
+</blockquote>
+<h2 id="三常量-constant"><a class="header" href="#三常量-constant">三、常量 (Constant)</a></h2>
+<h3 id="1-字面值常量-literal-constant"><a class="header" href="#1-字面值常量-literal-constant">1. 字面值常量 (Literal Constant)</a></h3>
+<p>直接出现在代码中的固定值：</p>
+<pre><code class="language-cpp">123          // 整数常量
+3.14         // 浮点常量
+'a'          // 字符常量
+"Hello"      // 字符串常量
+true, false  // 布尔常量
+</code></pre>
+<blockquote>
+<p>有时候会以宏定义的方式存在，例如<code>#define pi 3.14</code>，在预处理阶段完成替换处理，本质上还是字面值常量。</p>
+<p>使用宏替换的方式，被替换的常量在编译出来的二进制中会重复存在，因此使用<code>constexpr</code>会提高空间利用率。</p>
+</blockquote>
+<h3 id="2-const-常量"><a class="header" href="#2-const-常量">2. <code>const</code> 常量</a></h3>
+<p><code>const</code> 修饰的变量一旦初始化，其值不能被修改，因此<code>const</code>常量本质上是不可变化的变量：</p>
+<pre><code class="language-cpp">const double PI = 3.14159;
+PI = 3.14; // 错误：不能修改常量
+</code></pre>
+<h4 id="常量指针与指向常量的指针"><a class="header" href="#常量指针与指向常量的指针">常量指针与指向常量的指针</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>形式</th><th>含义</th></tr></thead><tbody>
+<tr><td><code>const int* p</code></td><td>指针指向的值不能改</td></tr>
+<tr><td><code>int* const p</code></td><td>指针本身不能改</td></tr>
+<tr><td><code>const int* const p</code></td><td>值与指针均不可改</td></tr>
+</tbody></table>
+</div>
+<h3 id="3-constexpr-常量表达式c11-起"><a class="header" href="#3-constexpr-常量表达式c11-起">3. <code>constexpr</code> 常量表达式（C++11 起）</a></h3>
+<p><code>constexpr</code> 表示在<strong>编译期即可确定值</strong>的常量。它比 <code>const</code> 更严格：</p>
+<pre><code class="language-cpp">constexpr int max_size = 100;
+constexpr int square(int x) { return x * x; }
+
+int arr[square(4)]; // 编译期确定数组大小
+</code></pre>
+<blockquote>
+<p><code>const</code> 表示<strong>值不可改</strong>，而 <code>constexpr</code> 表示<strong>在编译时确定值</strong>。</p>
+</blockquote>
+<h3 id="4-枚举常量-enumeration"><a class="header" href="#4-枚举常量-enumeration">4. 枚举常量 (Enumeration)</a></h3>
+<p>枚举用于定义一组命名的整型常量：</p>
+<pre><code class="language-cpp">enum Color { RED, GREEN, BLUE };
+Color c = GREEN;
+</code></pre>
+<p>自定义起始值：</p>
+<pre><code class="language-cpp">enum ErrorCode { OK = 0, NotFound = 404, ServerError = 500 };
+</code></pre>
+<h2 id="4-变量与常量的对比"><a class="header" href="#4-变量与常量的对比">4. 变量与常量的对比</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>特性</th><th>变量</th><th>常量</th></tr></thead><tbody>
+<tr><td>值是否可修改</td><td>可修改</td><td>不可修改</td></tr>
+<tr><td>是否必须初始化</td><td>否（但推荐）</td><td>是</td></tr>
+<tr><td>存储位置</td><td>栈 / 堆 / 静态区</td><td>通常在只读区</td></tr>
+<tr><td>示例</td><td><code>int x = 5;</code></td><td><code>const int x = 5;</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="5-示例代码"><a class="header" href="#5-示例代码">5. 示例代码</a></h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+using namespace std;
+
+constexpr double PI = 3.14159;
+
+int main() {
+    int radius = 5;
+    const double area = PI * radius * radius;
+
+    cout &lt;&lt; "半径：" &lt;&lt; radius &lt;&lt; endl;
+    cout &lt;&lt; "圆面积：" &lt;&lt; area &lt;&lt; endl;
+
+    // area = 100; // 常量不可修改
+    return 0;
+}
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-text">半径：5
+圆面积：78.5397
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="控制结构control-structures"><a class="header" href="#控制结构control-structures">控制结构（Control Structures）</a></h1>
 <p>在 C++ 中，控制结构用于控制程序语句的执行顺序。C++ 的控制流主要分为三种类型：</p>
 <ol>

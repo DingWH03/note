@@ -217,6 +217,8 @@
 <tr><td><code>constexpr</code></td><td>编译期常量，值在编译时计算，可用于常量表达式和元编程</td><td><code>constexpr int size = 10;</code></td></tr>
 <tr><td><code>volatile</code></td><td>变量可能被意外修改，禁止编译器优化</td><td><code>volatile int c = 10;</code></td></tr>
 <tr><td><code>mutable</code></td><td>类成员可以在 <code>const</code> 对象中修改</td><td><code>mutable int counter;</code></td></tr>
+<tr><td><code>extern</code></td><td>声明一个在其他源文件中定义的变量或函数，用于跨文件共享全局符号</td><td><code>extern int global_var;</code></td></tr>
+<tr><td><code>register</code></td><td>建议编译器将变量存放在 CPU 寄存器中以提高访问速度（现代编译器多已自动优化）</td><td><code>register int counter = 0;</code></td></tr>
 </tbody></table>
 </div>
 <h2 id="c11-新增数据类型"><a class="header" href="#c11-新增数据类型">C++11 新增数据类型</a></h2>
@@ -530,7 +532,7 @@ const int *const p; // 指向常量的常量指针
 <li>
 <p>作用域与链接</p>
 <ul>
-<li>在 C 中，<code>const</code> 全局变量默认是 <strong>外部链接</strong>，除非显式加 <code>static</code>。</li>
+<li>在 C 中，<code>const</code> 全局变量默认是 <strong>外部链接</strong>，除非显式加 <code>static</code>使得在本文件可见。</li>
 <li>在 C++ 中，<code>const</code> 全局变量默认是 <strong>内部链接</strong>（只在本翻译单元内可见），若要在多个文件共享，需加 <code>extern</code>。</li>
 </ul>
 </li>
@@ -595,6 +597,83 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 </code></pre>
 </li>
 </ol>
+<h3 id="extern"><a class="header" href="#extern"><code>extern</code></a></h3>
+<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。
+它通常出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
+<ul>
+<li>
+<p>作用：</p>
+<ul>
+<li>告诉编译器“该变量或函数在别处定义”；</li>
+<li>不会为其分配存储空间（除非在定义处）；</li>
+<li>避免重复定义全局符号。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">// file1.cpp
+int count = 10;  // 定义全局变量
+
+// file2.cpp
+#include &lt;iostream&gt;
+extern int count;  // 声明外部变量（非定义）
+int main() {
+    std::cout &lt;&lt; count &lt;&lt; std::endl;  // 输出 10
+    return 0;
+}
+</code></pre>
+<ul>
+<li>
+<p>在C++中：</p>
+<p>C++ 默认情况下，<code>const</code> 全局变量具有内部链接（<code>internal linkage</code>），也就是仅在本文件内可见。
+若希望跨文件共享一个常量变量，必须结合 <code>extern</code> 使用：</p>
+<pre><code class="language-cpp">// file1.cpp
+extern const int BUFFER_SIZE = 1024;
+
+// file2.cpp
+extern const int BUFFER_SIZE;  // 声明外部常量
+</code></pre>
+</li>
+<li>
+<p>与函数结合使用：</p>
+<p>对于函数来说，<code>extern</code> 是默认属性，即所有非 <code>static</code> 函数都具有外部链接性，因此通常可省略：</p>
+<pre><code class="language-cpp">extern void foo();  // 与 void foo(); 等价
+</code></pre>
+</li>
+</ul>
+<h3 id="register"><a class="header" href="#register"><code>register</code></a></h3>
+<p><code>register</code> 是早期 C/C++ 时代用于<strong>提升变量访问速度</strong>的关键字，提示编译器将变量存储在 CPU 寄存器中，而非内存中。</p>
+<ul>
+<li>
+<p>特点：</p>
+<ul>
+<li>变量可能被存放在 CPU 寄存器中，而非内存；</li>
+<li>不能对 <code>register</code> 变量使用取地址操作符 <code>&amp;</code>；</li>
+<li>仅能修饰局部变量或函数参数；</li>
+<li>在现代编译器中通常<strong>被自动优化机制取代</strong>，因此多用于教学或历史理解。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    register int i;  // 建议编译器将 i 放入寄存器中
+    for (i = 0; i &lt; 5; ++i) {
+        std::cout &lt;&lt; i &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<ul>
+<li>
+<p><strong>局限性：</strong></p>
+<ul>
+<li>编译器不保证一定会将其放入寄存器；</li>
+<li>不能取地址（即 <code>&amp;i</code> 是非法的）；</li>
+<li>在现代 C++ 中几乎没有实际性能提升，优化器会自动选择合适的寄存器分配策略。</li>
+</ul>
+</li>
+</ul>
 
                     </main>
 
