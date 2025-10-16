@@ -186,9 +186,140 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="虚函数与多态"><a class="header" href="#虚函数与多态">虚函数与多态</a></h1>
-<p>虚函数表机制
-纯虚函数与抽象类
-动态绑定 vs 静态绑定</p>
+<p>多态（Polymorphism）是面向对象的核心特征之一，它让我们可以通过<strong>统一的接口</strong>来操作不同类型的对象。C++ 的多态是通过 <strong>虚函数（virtual function）机制</strong> 实现的，它使得函数调用在运行时（而非编译时）才确定具体执行哪个版本——这被称为 <strong>动态绑定（Dynamic Binding）</strong>。</p>
+<h2 id="一虚函数表机制vtable"><a class="header" href="#一虚函数表机制vtable">一、虚函数表机制（vtable）</a></h2>
+<p>理解虚函数，必须先理解它背后的实现机制：<strong>虚函数表（Virtual Table）</strong>。</p>
+<p>当一个类中包含虚函数时，编译器会为该类自动生成一张“虚函数表”，记录所有虚函数的地址。
+每个含虚函数的对象中，会隐式包含一个指向这张表的指针（称为 vptr）。</p>
+<ol>
+<li>生成虚函数表（<code>vtable</code>）： 为该类自动生成一张只读表，其中记录了所有虚函数的地址。</li>
+<li>植入虚指针（<code>vptr</code>）： 每个含虚函数的对象中，会<strong>隐式</strong>包含一个指向这张表的指针（<code>vptr</code>）。在主流编译器中，<code>vptr</code> 通常是对象内存布局中的<strong>第一个成员</strong>。</li>
+</ol>
+<blockquote>
+<p>换句话说，每个对象在内存中都携带一张“函数地址目录”，在调用虚函数时，程序会通过这张表找到该对象对应的函数实现。</p>
+</blockquote>
+<p>一个典型的过程如下：</p>
+<ol>
+<li>为该类生成一张虚函数表（vtable）。</li>
+<li>每个对象内部会有一个指针（vptr），在构造函数中初始化，指向所属类的 vtable。</li>
+<li>当通过基类指针或引用调用虚函数时，程序会查找 vtable 来决定实际执行哪个函数。</li>
+</ol>
+<p>例如：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    virtual void show() { std::cout &lt;&lt; "Base\n"; }
+};
+
+class Derived : public Base {
+public:
+    void show() override { std::cout &lt;&lt; "Derived\n"; } // C++11 推荐使用 override
+};
+
+Base* p = new Derived();
+p-&gt;show();  // 输出：Derived
+</code></pre>
+<p>编译器生成的伪逻辑相当于：</p>
+<pre><code class="language-cpp">(*(p-&gt;vptr[0]))(p);  // 从 vtable[0] 取出函数指针并调用
+</code></pre>
+<p>这就是 <strong>动态绑定</strong> 的本质。</p>
+<h2 id="二纯虚函数与抽象类"><a class="header" href="#二纯虚函数与抽象类">二、纯虚函数与抽象类</a></h2>
+<p>有时，基类只定义接口而不提供具体实现，这时就需要 <strong>纯虚函数（pure virtual function）</strong>。</p>
+<p>纯虚函数的定义方式是在声明末尾加上 <code>= 0</code>：</p>
+<pre><code class="language-cpp">class Shape {
+public:
+    // 纯虚函数，只提供接口，没有实现体
+    virtual void draw() = 0;
+};
+</code></pre>
+<p>当类中含有至少一个纯虚函数时，该类就成为 <strong>抽象类（Abstract Class）</strong>。</p>
+<p>抽象类不能被实例化，只能被继承。</p>
+<p>它的作用是定义一个统一的接口，让派生类去实现具体行为。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">class Shape {
+public:
+    virtual void draw() = 0;
+};
+
+class Circle : public Shape {
+public:
+    void draw() override { std::cout &lt;&lt; "Drawing Circle\n"; } // 必须实现 draw()
+};
+
+// Shape s; // 错误：不能实例化抽象类
+Circle c;    // 正确：Circle 实现了所有纯虚函数
+</code></pre>
+<p><code>Shape</code> 不能直接创建对象，但 <code>Circle</code> 可以，因为它实现了 <code>draw()</code>。</p>
+<p>这种方式让我们能通过“基类接口”统一管理不同对象，实现真正意义上的多态。</p>
+<h2 id="三动态绑定-vs-静态绑定"><a class="header" href="#三动态绑定-vs-静态绑定">三、动态绑定 vs 静态绑定</a></h2>
+<p><strong>静态绑定（Static Binding）</strong> 是在编译阶段就决定函数调用的目标，依据是<strong>变量的声明类型</strong>。
+<strong>动态绑定（Dynamic Binding）</strong> 则在运行时根据<strong>对象的实际类型</strong>决定调用哪个函数。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">绑定类型</th><th style="text-align: left">发生时机</th><th style="text-align: left">调用依据</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left">静态绑定</td><td style="text-align: left">编译期</td><td style="text-align: left">变量声明类型</td><td style="text-align: left">非虚函数调用、重载函数</td></tr>
+<tr><td style="text-align: left">动态绑定</td><td style="text-align: left">运行期</td><td style="text-align: left">对象实际类型</td><td style="text-align: left">虚函数调用</td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    void func() { std::cout &lt;&lt; "Base::func\n"; }
+    virtual void vfunc() { std::cout &lt;&lt; "Base::vfunc\n"; }
+};
+
+class Derived : public Base {
+public:
+    void func() { std::cout &lt;&lt; "Derived::func\n"; }
+    void vfunc() override { std::cout &lt;&lt; "Derived::vfunc\n"; }
+};
+
+Base* p = new Derived();
+p-&gt;func();   // 静态绑定 -&gt; 调用 Base::func (基类指针只能看到基类声明的非虚函数)
+p-&gt;vfunc();  // 动态绑定 -&gt; 调用 Derived::vfunc (通过 vtable 确定实际类型)
+</code></pre>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-tip"></a>
+</div>
+<div>
+<p>强烈建议在派生类中重写虚函数时使用 <code>override</code> 关键字。
+<code>override</code> 显式告知编译器该函数意图是重写基类的虚函数。如果签名（函数名、参数、const 性）与基类不匹配，编译器将报错，从而避免了重写失败导致的行为错误。</p>
+</div>
+</div>
+<h2 id="四析构函数的虚函数问题"><a class="header" href="#四析构函数的虚函数问题">四、析构函数的虚函数问题</a></h2>
+<p>一个常见的陷阱：基类的析构函数必须声明为虚函数。</p>
+<p>否则当通过<strong>基类指针</strong> <code>delete</code> 派生类对象时，如果析构函数不是虚函数，将发生静态绑定，只会调用基类的析构函数。
+会导致派生类中特有的资源（如动态分配的内存、文件句柄等）将不会被释放，导致内存泄漏或资源泄漏。</p>
+<pre><code class="language-cpp">class Base {
+public:
+    // 必须是虚函数，确保通过基类指针删除时能触发动态绑定
+    virtual ~Base() { std::cout &lt;&lt; "Base destroyed\n"; }
+};
+
+class Derived : public Base {
+private:
+    int* data;
+public:
+    Derived() : data(new int[10]) {}
+    ~Derived() override {
+        delete[] data; // 派生类特有的资源释放
+        std::cout &lt;&lt; "Derived destroyed\n";
+    }
+};
+
+Base* p = new Derived();
+delete p;  // 1. 动态绑定调用 Derived::~Derived() 2. 调用 Base::~Base()
+// 保证了所有资源的正确释放
+</code></pre>
+<h2 id="五虚函数的开销"><a class="header" href="#五虚函数的开销">五、虚函数的开销</a></h2>
+<p>虚函数机制提供了强大的灵活性（多态），但它不是零代价的。使用虚函数会带来一定的性能和内存开销：</p>
+<ol>
+<li>空间开销 (对象层面)： 每个含有虚函数的对象，都会增加一个 <code>vptr</code> 指针的存储空间（在 64 位系统上通常是 8 字节）。</li>
+<li>空间开销 (类层面)： 每个含有虚函数的类都需要生成一张 <code>vtable</code> 来存储函数指针。</li>
+<li>时间开销： 虚函数的调用比普通函数（静态绑定）多了一步<strong>间接寻址</strong>（查找 <code>vptr</code> \(\to\) 访问 <code>vtable</code> \(\to\) 调用函数）。虽然开销微小，但在高度性能敏感的循环中，可能会产生可见的影响。</li>
+</ol>
+<p>因此，只有当确实需要多态特性时，才应该将函数声明为虚函数。</p>
 
                     </main>
 

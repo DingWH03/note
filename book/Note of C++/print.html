@@ -202,19 +202,26 @@
 <li>
 <p><code>volatile</code>关键字有什么作用？</p>
 <ul>
-<li><a href="./Basis/Types/Fundamental_Types.html#volatile">数据类型-基本数据类型-修饰符</a></li>
+<li><a href="./Basis/Types/Fundamental_Types.html#volatile">数据类型-基本数据类型-修饰符-volatile</a></li>
 </ul>
 </li>
 <li>
 <p><code>const</code>和<code>constexpr</code>关键字有什么作用，有什么区别？</p>
 <ul>
-<li><a href="./Basis/Types/Fundamental_Types.html#const">数据类型-基本数据类型-修饰符</a></li>
+<li><a href="./Basis/Types/Fundamental_Types.html#const">数据类型-基本数据类型-修饰符-const</a></li>
+<li><a href="./Basis/Types/Fundamental_Types.html#constexpr">数据类型-基本数据类型-修饰符-constexpr</a></li>
 </ul>
 </li>
 <li>
 <p><code>static</code>关键字有什么作用？和C语言中的有什么区别？</p>
 <ul>
-<li><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></li>
+<li><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符-static</a></li>
+</ul>
+</li>
+<li>
+<p><code>extern</code>有什么作用？</p>
+<ul>
+<li><a href="./Basis/Types/Fundamental_Types.html#extern">数据类型-基本数据类型-修饰符-extern</a></li>
 </ul>
 </li>
 <li>
@@ -231,8 +238,17 @@
 <li><a href="./Basis/Types/Derived_Types.html#admonition-typedef%E5%92%8Cdefine%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB">tips-typedef和define有什么区别</a></li>
 </ul>
 </li>
+<li>
+<p>指针常量与常量指针各是什么，二者有什么区别？</p>
+<ul>
+<li><a href="./Basis/Variable_Constant.html#%E5%B8%B8%E9%87%8F%E6%8C%87%E9%92%88%E4%B8%8E%E6%8C%87%E5%90%91%E5%B8%B8%E9%87%8F%E7%9A%84%E6%8C%87%E9%92%88">变量与常量-常量指针与指向常量的指针</a></li>
+</ul>
+</li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c基础知识"><a class="header" href="#c基础知识">C++基础知识</a></h1>
+<p>C++基础部分包括语言的核心语法与程序结构，理解从“源代码到可执行程序”的基本过程。本部分将介绍变量与常量、数据类型、运算符、控制结构、函数、数组、指针、结构体、类与对象等基础概念。</p>
+<p>掌握这些内容后，就能编写出功能完整、逻辑清晰的小型程序，理解程序的输入输出、流程控制和内存中数据的基本表示方式。C++基础知识不仅是学习更复杂特性的起点，也是理解程序设计思想与计算机工作原理的重要桥梁。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
 <p>初识C++应知必会的基础概念。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c-程序结构program-structure"><a class="header" href="#c-程序结构program-structure">C++ 程序结构（Program Structure）</a></h1>
 <h2 id="引言"><a class="header" href="#引言">引言</a></h2>
@@ -1621,8 +1637,8 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 </li>
 </ol>
 <h3 id="extern"><a class="header" href="#extern"><code>extern</code></a></h3>
-<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。
-它通常出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
+<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。被<code>extern</code>标识的变量或者函数声明其定义在别的文件中，提示编译器遇到此变量和函数时在其他模块寻找其定义。
+它出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
 <ul>
 <li>
 <p>作用：</p>
@@ -2387,11 +2403,24 @@ PI = 3.14; // 错误：不能修改常量
 </code></pre>
 <h4 id="常量指针与指向常量的指针"><a class="header" href="#常量指针与指向常量的指针">常量指针与指向常量的指针</a></h4>
 <div class="table-wrapper"><table><thead><tr><th>形式</th><th>含义</th></tr></thead><tbody>
-<tr><td><code>const int* p</code></td><td>指针指向的值不能改</td></tr>
-<tr><td><code>int* const p</code></td><td>指针本身不能改</td></tr>
+<tr><td><code>const int* p</code> // 常量指针</td><td>指针指向的值不能改</td></tr>
+<tr><td><code>int* const p</code> // 指针常量</td><td>指针本身不能改</td></tr>
 <tr><td><code>const int* const p</code></td><td>值与指针均不可改</td></tr>
 </tbody></table>
+</div><details id="admonition-指针常量和常量指针各是什么有什么区别" class="admonition admonish-tip" role="note" aria-labelledby="admonition-指针常量和常量指针各是什么有什么区别-title">
+<summary class="admonition-title">
+<div id="admonition-指针常量和常量指针各是什么有什么区别-title">
+<p>指针常量和常量指针各是什么，有什么区别？</p>
 </div>
+<a class="admonition-anchor-link" href="Basis/Variable_Constant.html#admonition-指针常量和常量指针各是什么有什么区别"></a>
+</summary>
+<div>
+<p>指针常量是指定义了一个指针，这个指针的值只能在定义时进行初始化，其他时候不能改变。</p>
+<p>常量指针是指定义了一个指针，这个指针指向了一个只读的对象，不能通过常量指针来修改这个对象的值。</p>
+<p>指针常量强调的是指针本身的不可改变性，而常量指针强调的是指针对其所指对象的不可改变性。</p>
+<p>无论是指针常量还是常量指针，其最大的用途就是作为函数的形式参数，保证实参在被调用函数中的不可改变特性。</p>
+</div>
+</details>
 <h3 id="3-constexpr-常量表达式c11-起"><a class="header" href="#3-constexpr-常量表达式c11-起">3. <code>constexpr</code> 常量表达式（C++11 起）</a></h3>
 <p><code>constexpr</code> 表示在<strong>编译期即可确定值</strong>的常量。它比 <code>const</code> 更严格：</p>
 <pre><code class="language-cpp">constexpr int max_size = 100;
@@ -3950,13 +3979,20 @@ Pair&lt;int, double&gt; p1(1, 2.3);
 // C++17 之后:
 Pair p2(1, 2.3); // 编译器推导为 Pair&lt;int, double&gt;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c进阶知识"><a class="header" href="#c进阶知识">C++进阶知识</a></h1>
+<p>C++进阶部分将深入语言内部机制与底层实现，理解编译器如何处理对象模型、内存布局、虚函数表、模板实例化以及异常机制等。</p>
+<p>本部分不再局限于语法层面的使用，而是关注性能、抽象与控制力。内容包括高级内存管理、面向对象、多线程与并发、智能指针等内容。</p>
+<p>只有理解语言设计背后的思想，真正做到“以C++思考”，才能具备面向底层系统优化与大型工程开发的能力。</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
 <p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
 <p>C++ 提供了一些工具来帮助开发者更高效地管理内存，避免内存泄漏、悬空指针和野指针等常见问题。在传统的内存管理方式中，开发者需要通过 new 和 delete 来手动管理动态内存的分配和释放。而为了提高开发效率和安全性，C++11 引入了<code>智能指针</code>，如 <code>std::unique_ptr</code>、<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code>，它们自动管理内存的生命周期，减少了人为错误的可能性。</p>
 <p>此外，C++ 还提供了内存池和内存对齐等更底层的内存管理技术，使得开发者可以根据需要进一步优化程序的内存使用。</p>
 <p>在本章中，将深入探讨 C++ 中的内存管理机制，重点介绍手动内存管理和智能指针的使用。</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="内存布局与模型"><a class="header" href="#内存布局与模型">内存布局与模型</a></h1>
+<p>C++ 程序的内存管理建立在计算机的<strong>存储模型</strong>(Memory Model)之上。理解程序在内存中的布局，是掌握变量生命周期、作用域、动态分配与释放机制的基础。
+一个典型的 C++ 程序在运行时会被划分为多个区域，每个区域负责存储不同类型的数据，并具有各自的生命周期与访问特性。</p>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
 <p>内存管理是 C++ 编程中的一个关键问题，尤其是当涉及到动态分配的内存时，程序员需要确保及时释放资源以避免内存泄漏或其他潜在问题。为了解决这个问题，C++ 引入了智能指针，它们通过自动管理内存的生命周期来帮助开发者更安全地进行内存操作。智能指针不仅简化了内存管理的复杂性，还提高了程序的安全性，避免了许多常见的内存错误。</p>
 <p>智能指针是 C++ 标准库中的模板类，它们的作用是通过自动释放所持有的资源来管理动态分配的内存。智能指针的核心特点是，它们会在不再需要资源时自动释放内存，从而减少内存泄漏的风险。C++11 引入了三种主要类型的智能指针：std::unique_ptr、std::shared_ptr 和 std::weak_ptr，它们适用于不同的使用场景。除此之外，std::auto_ptr 是 C++98 中的一个智能指针，但由于设计缺陷，它在 C++11 中被弃用了。</p>
 <p>在本节中，我们将详细介绍这四种智能指针的特点、适用场景以及如何使用它们。</p>
@@ -4217,7 +4253,47 @@ if (ptr) {
 }
 </code></pre>
 <p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="面向对象进阶"><a class="header" href="#面向对象进阶">面向对象进阶</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="面向对象进阶"><a class="header" href="#面向对象进阶">面向对象进阶</a></h1>
+<p>在这一阶段，需要解决的问题不再是“能不能用类”，而是“如何让类体系设计得更合理、更高效、更安全”。</p>
+<p>这一部分的核心是深入理解对象间的关系与行为机制，理解编译器在背后为我们做了什么，从而能在面对复杂系统时，自信地控制对象生命周期、类型转换和继承结构。</p>
+<ol>
+<li>
+<p>运算符重载：
+对象能否像内置类型一样使用 <code>+</code>、<code>==</code>、<code>[]</code> 等运算符？怎样定义它们才能符合直觉又不出错？特别是赋值运算符、比较运算符的语义要与类设计保持一致。</p>
+</li>
+<li>
+<p>继承与派生结构：
+为什么要继承？什么时候该用继承、什么时候该用组合？多继承会引发哪些问题（比如二义性和菱形继承）？虚继承又是如何解决的？</p>
+</li>
+<li>
+<p>虚函数与多态：
+运行时多态是如何实现的？虚表（vtable）是怎么工作的？析构函数为什么要定义为虚函数？什么场景下多态反而会带来性能或逻辑问题？</p>
+</li>
+<li>
+<p>友元与类关系：
+当类之间需要共享私有数据时，友元机制如何使用？为什么要谨慎使用友元？在大型项目中，友元往往是“设计不合理”的信号还是必要的桥梁？</p>
+</li>
+<li>
+<p>模板高级应用：
+模板不只是泛型编程，它还能实现多态、类型推导、SFINAE 等复杂行为。要理解模板与继承、多态的结合——如何用模板替代虚函数以获得更高性能。</p>
+</li>
+<li>
+<p>类型转换与转换运算符：
+从基本类型到类类型的转换（构造函数隐式转换），从类类型到基本类型（转换运算符）之间隐藏着哪些风险？如何避免意外转换或歧义？</p>
+</li>
+<li>
+<p>拷贝控制：
+拷贝构造、赋值运算符、移动构造、移动赋值和析构函数的完整语义——RAII 的核心。理解“拷贝与移动”意味着理解对象的完整生命周期。</p>
+</li>
+<li>
+<p>C++新特性在面向对象中的影响：
+现代C++（C++11及之后）的特性，如智能指针、右值引用、<code>override</code>、<code>final</code>、<code>=default</code>、<code>=delete</code> 等，改变了我们对类设计的传统思维。要掌握如何用这些新特性强化封装性和安全性。</p>
+</li>
+</ol>
+<p>这一章的目标，不是单纯记住语法，而是要能回答：</p>
+<blockquote>
+<p>“当我写下一个类、继承一个父类、重载一个函数时，编译器究竟在背后做了什么？”</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="运算符重载operator-overloading"><a class="header" href="#运算符重载operator-overloading">运算符重载（Operator Overloading）</a></h1>
 <h2 id="一概述"><a class="header" href="#一概述">一、概述</a></h2>
 <p>C++ 是一种支持面向对象编程的语言，在其类型系统中，除了内置类型（如 <code>int</code>、<code>double</code>）外，用户还可以自定义类（Class）来表示复杂数据结构。
@@ -4417,13 +4493,381 @@ public:
 };
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="继承"><a class="header" href="#继承">继承</a></h1>
-<p>单继承与多继承
-访问控制与基类构造函数
-多重继承菱形问题与虚继承</p>
+<p>继承（Inheritance）是面向对象编程的三大特征之一（封装、继承、多态）之一，它使得我们可以在已有类的基础上创建新的类，从而实现代码复用与层次结构的抽象建模。</p>
+<p>C++ 的继承机制极其灵活，既可以实现简单的单继承（Single Inheritance），也可以进行复杂的多继承（Multiple Inheritance），甚至支持通过**虚继承（Virtual Inheritance）**来解决多重继承带来的“菱形问题”。</p>
+<h2 id="一继承的基本概念"><a class="header" href="#一继承的基本概念">一、继承的基本概念</a></h2>
+<p>继承是从一个已有的类（称为基类 / 父类 Base Class）派生出一个新的类（称为派生类 / 子类 Derived Class）。
+派生类自动拥有基类的成员（数据与函数），并可以在此基础上新增成员或重写行为。</p>
+<p>语法格式如下：</p>
+<pre><code class="language-cpp">class 派生类名 : 继承方式 基类名 {
+    // 派生类成员
+};
+</code></pre>
+<h2 id="二基类构造与派生类构造顺序"><a class="header" href="#二基类构造与派生类构造顺序">二、基类构造与派生类构造顺序</a></h2>
+<p>派生类对象中包含了基类子对象，因此在创建派生类实例时，必须先调用基类构造函数来完成基类部分的初始化。</p>
+<p>调用顺序如下：</p>
+<ol>
+<li>按声明顺序调用所有基类构造函数（从上到下）。</li>
+<li>再调用派生类自身构造函数。</li>
+</ol>
+<p>销毁顺序则相反：
+先调用派生类析构函数，再调用基类析构函数。</p>
+<p>示例：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    Base() { std::cout &lt;&lt; "Base constructed\n"; }
+    ~Base() { std::cout &lt;&lt; "Base destroyed\n"; }
+};
+
+class Derived : public Base {
+public:
+    Derived() { std::cout &lt;&lt; "Derived constructed\n"; }
+    ~Derived() { std::cout &lt;&lt; "Derived destroyed\n"; }
+};
+
+int main() {
+    Derived d;
+}
+</code></pre>
+<p>输出结果为：</p>
+<pre><code class="language-text">Base constructed
+Derived constructed
+Derived destroyed
+Base destroyed
+</code></pre>
+<p>若基类构造函数需要参数，必须在派生类的构造函数初始化列表中显式调用：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    Base(int x) { std::cout &lt;&lt; "Base(" &lt;&lt; x &lt;&lt; ")\n"; }
+};
+
+class Derived : public Base {
+public:
+    Derived(int x) : Base(x) {
+        std::cout &lt;&lt; "Derived(" &lt;&lt; x &lt;&lt; ")\n";
+    }
+};
+</code></pre>
+<blockquote>
+<p>构造函数调用顺序是从“上至下”，析构顺序是从“下至上”。
+这种严格的顺序保证了对象的完整性和资源的正确释放。</p>
+</blockquote>
+<h2 id="三访问控制与继承权限"><a class="header" href="#三访问控制与继承权限">三、访问控制与继承权限</a></h2>
+<p>访问控制是继承体系中非常重要的机制，它决定了哪些成员可以在派生类中被访问。</p>
+<p>继承方式主要有三种：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">继承方式</th><th style="text-align: center">基类 <code>public</code> 成员在派生类中的访问属性</th><th style="text-align: center">基类 <code>protected</code> 成员在派生类中的访问属性</th><th style="text-align: left">特点说明</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>public</code> 继承</td><td style="text-align: center"><code>public</code> → <code>public</code></td><td style="text-align: center"><code>protected</code> → <code>protected</code></td><td style="text-align: left">常用方式，保持原有访问级别</td></tr>
+<tr><td style="text-align: center"><code>protected</code> 继承</td><td style="text-align: center"><code>public</code> → <code>protected</code></td><td style="text-align: center"><code>protected</code> → <code>protected</code></td><td style="text-align: left">用于希望限制外部访问但允许派生使用的情况</td></tr>
+<tr><td style="text-align: center"><code>private</code> 继承</td><td style="text-align: center"><code>public</code> → <code>private</code></td><td style="text-align: center"><code>protected</code> → <code>private</code></td><td style="text-align: left">派生类对外隐藏基类接口</td></tr>
+</tbody></table>
+</div>
+<ol>
+<li>
+<p>public 成员</p>
+<ul>
+<li>在 <code>public</code> 继承中保持 <code>public</code>，外部依然可以访问。</li>
+<li>在 <code>protected/private</code> 继承中则变为不可外部访问。</li>
+</ul>
+</li>
+<li>
+<p>protected 成员</p>
+<ul>
+<li>在 <code>public/protected</code> 继承中可被派生类访问。</li>
+<li>在 <code>private</code> 继承中仅在本类可访问。</li>
+</ul>
+</li>
+<li>
+<p>private 成员</p>
+<ul>
+<li>永远不能被派生类直接访问。</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-cpp">class Base {
+public:
+    int a;
+protected:
+    int b;
+private:
+    int c;
+};
+
+class Derived : public Base {
+public:
+    void show() {
+        a = 1;   // 可访问（public继承下保持public）
+        b = 2;   // 可访问（protected继承下保持protected）
+        // c = 3; // 不可访问（private成员永远不能被继承访问）
+    }
+};
+</code></pre>
+<p>在继承中，private 成员虽然被继承，但不可直接访问，只能通过基类的 <code>public</code> 或 <code>protected</code> 接口间接访问。</p>
+<h2 id="四单继承与多继承"><a class="header" href="#四单继承与多继承">四、单继承与多继承</a></h2>
+<h3 id="1-单继承"><a class="header" href="#1-单继承">1. 单继承</a></h3>
+<p>最常见的继承方式，一个派生类只有一个直接基类：</p>
+<pre><code class="language-cpp">class Animal {
+public:
+    void eat() { std::cout &lt;&lt; "Eating\n"; }
+};
+
+class Dog : public Animal {
+public:
+    void bark() { std::cout &lt;&lt; "Barking\n"; }
+};
+</code></pre>
+<p><code>Dog</code> 继承了 <code>Animal</code> 的所有非私有成员，因此：</p>
+<pre><code class="language-cpp">Dog d;
+d.eat();  // 继承自 Animal
+d.bark(); // 自身成员
+</code></pre>
+<h3 id="2-多继承"><a class="header" href="#2-多继承">2. 多继承</a></h3>
+<p>C++ 支持一个类继承自多个基类，从而组合多种功能：</p>
+<pre><code class="language-cpp">class A {
+public:
+    void funcA() { std::cout &lt;&lt; "A\n"; }
+};
+
+class B {
+public:
+    void funcB() { std::cout &lt;&lt; "B\n"; }
+};
+
+class C : public A, public B {
+public:
+    void funcC() { std::cout &lt;&lt; "C\n"; }
+};
+</code></pre>
+<p><code>C</code> 同时拥有 <code>A</code> 和 <code>B</code> 的成员：</p>
+<pre><code class="language-cpp">C obj;
+obj.funcA();
+obj.funcB();
+obj.funcC();
+</code></pre>
+<p>但多继承容易引入<strong>命名冲突</strong>：</p>
+<pre><code class="language-cpp">class A { public: void show() { std::cout &lt;&lt; "A\n"; } };
+class B { public: void show() { std::cout &lt;&lt; "B\n"; } };
+class C : public A, public B {};
+
+C c;
+c.show();  // 二义性错误：不知该调用 A::show 还是 B::show
+</code></pre>
+<p>需使用作用域限定符解决：</p>
+<pre><code class="language-cpp">c.A::show();
+</code></pre>
+<h2 id="五多重继承的菱形问题"><a class="header" href="#五多重继承的菱形问题">五、多重继承的菱形问题</a></h2>
+<p>多继承中最著名的问题是“菱形继承问题（Diamond Problem）”。</p>
+<p>示例：</p>
+<pre><code class="language-cpp">class A {
+public:
+    int value = 1;
+};
+
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};
+</code></pre>
+<p>继承关系如下：</p>
+<pre><code class="language-text">    A
+   / \
+  B   C
+   \ /
+    D
+</code></pre>
+<p>此时，<code>D</code> 同时继承了两份 <code>A</code>，因此 <code>value</code> 出现二义性：</p>
+<pre><code class="language-cpp">D d;
+d.value = 10;   // 二义性：B::A::value 与 C::A::value 冲突
+</code></pre>
+<h2 id="六虚继承virtual-inheritance"><a class="header" href="#六虚继承virtual-inheritance">六、虚继承（Virtual Inheritance）</a></h2>
+<p>为解决菱形问题，C++ 引入了 虚继承（Virtual Inheritance）。</p>
+<p>通过在继承声明前加上关键字 <code>virtual</code>，可以让共同的基类只保留一份共享副本。</p>
+<p>修改上例：</p>
+<pre><code class="language-cpp">class A {
+public:
+    int value = 1;
+};
+
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};
+</code></pre>
+<p>此时：</p>
+<pre><code class="language-cpp">D d;
+d.value = 10;   // 不再二义性，A仅保留一份
+</code></pre>
+<p>在对象布局上，编译器会通过额外的“虚基表指针（vbptr）”来实现共享基类的唯一性。
+因此，虚继承的对象模型更复杂，但解决了最棘手的多继承冲突问题。</p>
+<details id="admonition-虚基表指针vbptr如何实现共享基类的唯一性" class="admonition admonish-tip" role="note" aria-labelledby="admonition-虚基表指针vbptr如何实现共享基类的唯一性-title">
+<summary class="admonition-title">
+<div id="admonition-虚基表指针vbptr如何实现共享基类的唯一性-title">
+<p>虚基表指针(vbptr)如何实现共享基类的唯一性？</p>
+</div>
+<a class="admonition-anchor-link" href="Advance/Object/Inheritance.html#admonition-虚基表指针vbptr如何实现共享基类的唯一性"></a>
+</summary>
+<div>
+<p>在普通多继承中，如果一个基类被多个派生类重复继承（如“菱形继承”结构），最底层派生类对象中会包含多份相同的基类成员，造成 <strong>数据冗余</strong> 和 <strong>二义性</strong>。</p>
+<p>为了解决这一问题，C++ 提供了 <strong>虚继承（virtual inheritance）</strong>。编译器通过在对象中引入一套特殊的指针机制——<strong>虚基表指针（<code>vbptr</code>）</strong> 和 <strong>虚基表（<code>vbtable</code>）</strong>，来确保所有派生路径最终共享同一个虚基类实例。</p>
+<ul>
+<li>当一个类以 <code>virtual</code> 方式继承基类时，编译器会在该类的对象布局中添加一个隐藏成员：<code>vbptr</code>。</li>
+<li><code>vbptr</code> 指向一张由编译器生成的 <strong>虚基表（vbtable）</strong>。</li>
+<li><code>vbtable</code> 中记录了<strong>从当前对象地址到虚基类子对象地址的偏移量</strong>。</li>
+<li>当程序访问虚基类的成员时，编译器通过 <code>vbptr</code> 查表计算出正确的虚基类位置，确保所有继承路径共享同一个虚基类实例。</li>
+</ul>
+<pre><code class="language-cpp">class A { int x; };
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};
+</code></pre>
+<p>在 <code>D</code> 的对象布局中：</p>
+<pre><code>D
+├── B 子对象（含 vbptr → 指向 B 的 vbtable）
+├── C 子对象（含 vbptr → 指向 C 的 vbtable）
+└── A 虚基类子对象（唯一一份）
+</code></pre>
+<p>访问 <code>A::x</code> 时：</p>
+<ul>
+<li>若通过 <code>B</code> 或 <code>C</code> 访问，编译器都会通过 <code>vbptr</code> 找到唯一的 <code>A</code> 子对象；</li>
+<li>从而避免了重复继承带来的“二义性”与“多份拷贝”问题。</li>
+</ul>
+</div>
+</details>
+<blockquote>
+<p>虚继承常用于框架或接口设计中，尤其当多个中间层类共享同一顶层基类时。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="虚函数与多态"><a class="header" href="#虚函数与多态">虚函数与多态</a></h1>
-<p>虚函数表机制
-纯虚函数与抽象类
-动态绑定 vs 静态绑定</p>
+<p>多态（Polymorphism）是面向对象的核心特征之一，它让我们可以通过<strong>统一的接口</strong>来操作不同类型的对象。C++ 的多态是通过 <strong>虚函数（virtual function）机制</strong> 实现的，它使得函数调用在运行时（而非编译时）才确定具体执行哪个版本——这被称为 <strong>动态绑定（Dynamic Binding）</strong>。</p>
+<h2 id="一虚函数表机制vtable"><a class="header" href="#一虚函数表机制vtable">一、虚函数表机制（vtable）</a></h2>
+<p>理解虚函数，必须先理解它背后的实现机制：<strong>虚函数表（Virtual Table）</strong>。</p>
+<p>当一个类中包含虚函数时，编译器会为该类自动生成一张“虚函数表”，记录所有虚函数的地址。
+每个含虚函数的对象中，会隐式包含一个指向这张表的指针（称为 vptr）。</p>
+<ol>
+<li>生成虚函数表（<code>vtable</code>）： 为该类自动生成一张只读表，其中记录了所有虚函数的地址。</li>
+<li>植入虚指针（<code>vptr</code>）： 每个含虚函数的对象中，会<strong>隐式</strong>包含一个指向这张表的指针（<code>vptr</code>）。在主流编译器中，<code>vptr</code> 通常是对象内存布局中的<strong>第一个成员</strong>。</li>
+</ol>
+<blockquote>
+<p>换句话说，每个对象在内存中都携带一张“函数地址目录”，在调用虚函数时，程序会通过这张表找到该对象对应的函数实现。</p>
+</blockquote>
+<p>一个典型的过程如下：</p>
+<ol>
+<li>为该类生成一张虚函数表（vtable）。</li>
+<li>每个对象内部会有一个指针（vptr），在构造函数中初始化，指向所属类的 vtable。</li>
+<li>当通过基类指针或引用调用虚函数时，程序会查找 vtable 来决定实际执行哪个函数。</li>
+</ol>
+<p>例如：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    virtual void show() { std::cout &lt;&lt; "Base\n"; }
+};
+
+class Derived : public Base {
+public:
+    void show() override { std::cout &lt;&lt; "Derived\n"; } // C++11 推荐使用 override
+};
+
+Base* p = new Derived();
+p-&gt;show();  // 输出：Derived
+</code></pre>
+<p>编译器生成的伪逻辑相当于：</p>
+<pre><code class="language-cpp">(*(p-&gt;vptr[0]))(p);  // 从 vtable[0] 取出函数指针并调用
+</code></pre>
+<p>这就是 <strong>动态绑定</strong> 的本质。</p>
+<h2 id="二纯虚函数与抽象类"><a class="header" href="#二纯虚函数与抽象类">二、纯虚函数与抽象类</a></h2>
+<p>有时，基类只定义接口而不提供具体实现，这时就需要 <strong>纯虚函数（pure virtual function）</strong>。</p>
+<p>纯虚函数的定义方式是在声明末尾加上 <code>= 0</code>：</p>
+<pre><code class="language-cpp">class Shape {
+public:
+    // 纯虚函数，只提供接口，没有实现体
+    virtual void draw() = 0;
+};
+</code></pre>
+<p>当类中含有至少一个纯虚函数时，该类就成为 <strong>抽象类（Abstract Class）</strong>。</p>
+<p>抽象类不能被实例化，只能被继承。</p>
+<p>它的作用是定义一个统一的接口，让派生类去实现具体行为。</p>
+<p>例如：</p>
+<pre><code class="language-cpp">class Shape {
+public:
+    virtual void draw() = 0;
+};
+
+class Circle : public Shape {
+public:
+    void draw() override { std::cout &lt;&lt; "Drawing Circle\n"; } // 必须实现 draw()
+};
+
+// Shape s; // 错误：不能实例化抽象类
+Circle c;    // 正确：Circle 实现了所有纯虚函数
+</code></pre>
+<p><code>Shape</code> 不能直接创建对象，但 <code>Circle</code> 可以，因为它实现了 <code>draw()</code>。</p>
+<p>这种方式让我们能通过“基类接口”统一管理不同对象，实现真正意义上的多态。</p>
+<h2 id="三动态绑定-vs-静态绑定"><a class="header" href="#三动态绑定-vs-静态绑定">三、动态绑定 vs 静态绑定</a></h2>
+<p><strong>静态绑定（Static Binding）</strong> 是在编译阶段就决定函数调用的目标，依据是<strong>变量的声明类型</strong>。
+<strong>动态绑定（Dynamic Binding）</strong> 则在运行时根据<strong>对象的实际类型</strong>决定调用哪个函数。</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">绑定类型</th><th style="text-align: left">发生时机</th><th style="text-align: left">调用依据</th><th style="text-align: left">示例</th></tr></thead><tbody>
+<tr><td style="text-align: left">静态绑定</td><td style="text-align: left">编译期</td><td style="text-align: left">变量声明类型</td><td style="text-align: left">非虚函数调用、重载函数</td></tr>
+<tr><td style="text-align: left">动态绑定</td><td style="text-align: left">运行期</td><td style="text-align: left">对象实际类型</td><td style="text-align: left">虚函数调用</td></tr>
+</tbody></table>
+</div>
+<p>示例：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    void func() { std::cout &lt;&lt; "Base::func\n"; }
+    virtual void vfunc() { std::cout &lt;&lt; "Base::vfunc\n"; }
+};
+
+class Derived : public Base {
+public:
+    void func() { std::cout &lt;&lt; "Derived::func\n"; }
+    void vfunc() override { std::cout &lt;&lt; "Derived::vfunc\n"; }
+};
+
+Base* p = new Derived();
+p-&gt;func();   // 静态绑定 -&gt; 调用 Base::func (基类指针只能看到基类声明的非虚函数)
+p-&gt;vfunc();  // 动态绑定 -&gt; 调用 Derived::vfunc (通过 vtable 确定实际类型)
+</code></pre>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="Advance/Object/Virtual_Function.html#admonition-tip"></a>
+</div>
+<div>
+<p>强烈建议在派生类中重写虚函数时使用 <code>override</code> 关键字。
+<code>override</code> 显式告知编译器该函数意图是重写基类的虚函数。如果签名（函数名、参数、const 性）与基类不匹配，编译器将报错，从而避免了重写失败导致的行为错误。</p>
+</div>
+</div>
+<h2 id="四析构函数的虚函数问题"><a class="header" href="#四析构函数的虚函数问题">四、析构函数的虚函数问题</a></h2>
+<p>一个常见的陷阱：基类的析构函数必须声明为虚函数。</p>
+<p>否则当通过<strong>基类指针</strong> <code>delete</code> 派生类对象时，如果析构函数不是虚函数，将发生静态绑定，只会调用基类的析构函数。
+会导致派生类中特有的资源（如动态分配的内存、文件句柄等）将不会被释放，导致内存泄漏或资源泄漏。</p>
+<pre><code class="language-cpp">class Base {
+public:
+    // 必须是虚函数，确保通过基类指针删除时能触发动态绑定
+    virtual ~Base() { std::cout &lt;&lt; "Base destroyed\n"; }
+};
+
+class Derived : public Base {
+private:
+    int* data;
+public:
+    Derived() : data(new int[10]) {}
+    ~Derived() override {
+        delete[] data; // 派生类特有的资源释放
+        std::cout &lt;&lt; "Derived destroyed\n";
+    }
+};
+
+Base* p = new Derived();
+delete p;  // 1. 动态绑定调用 Derived::~Derived() 2. 调用 Base::~Base()
+// 保证了所有资源的正确释放
+</code></pre>
+<h2 id="五虚函数的开销"><a class="header" href="#五虚函数的开销">五、虚函数的开销</a></h2>
+<p>虚函数机制提供了强大的灵活性（多态），但它不是零代价的。使用虚函数会带来一定的性能和内存开销：</p>
+<ol>
+<li>空间开销 (对象层面)： 每个含有虚函数的对象，都会增加一个 <code>vptr</code> 指针的存储空间（在 64 位系统上通常是 8 字节）。</li>
+<li>空间开销 (类层面)： 每个含有虚函数的类都需要生成一张 <code>vtable</code> 来存储函数指针。</li>
+<li>时间开销： 虚函数的调用比普通函数（静态绑定）多了一步<strong>间接寻址</strong>（查找 <code>vptr</code> \(\to\) 访问 <code>vtable</code> \(\to\) 调用函数）。虽然开销微小，但在高度性能敏感的循环中，可能会产生可见的影响。</li>
+</ol>
+<p>因此，只有当确实需要多态特性时，才应该将函数声明为虚函数。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="友元与类关系"><a class="header" href="#友元与类关系">友元与类关系</a></h1>
 <p>友元函数与友元类
 类的组合与聚合</p>
@@ -4443,7 +4887,7 @@ Rule of Three / Five / Zero</p>
 右值引用与 <code>std::move</code>
 <code>constexpr</code>、<code>noexcept</code> 与类设计</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stl"><a class="header" href="#stl">STL</a></h1>
-<p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。</p>
+<p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。将STL结合到程序中可以更方便地编写出更简洁且优质的代码。</p>
 <div class="table-wrapper"><table><thead><tr><th>组件</th><th>描述</th></tr></thead><tbody>
 <tr><td><strong>容器 (Containers)</strong></td><td>容器是 STL 中最基本的组件之一，提供了各种数据结构，包括向量（vector）、链表（list）、队列（queue）、栈（stack）、集合（set）、映射（map）等。这些容器具有不同的特性和用途，可以根据实际需求选择合适的容器。</td></tr>
 <tr><td><strong>算法 (Algorithms)</strong></td><td>STL 提供了大量的算法，用于对容器中的元素进行各种操作，包括排序、搜索、复制、移动、变换等。这些算法在使用时不需要关心容器的具体类型，只需要指定要操作的范围即可。</td></tr>

@@ -186,9 +186,246 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="继承"><a class="header" href="#继承">继承</a></h1>
-<p>单继承与多继承
-访问控制与基类构造函数
-多重继承菱形问题与虚继承</p>
+<p>继承（Inheritance）是面向对象编程的三大特征之一（封装、继承、多态）之一，它使得我们可以在已有类的基础上创建新的类，从而实现代码复用与层次结构的抽象建模。</p>
+<p>C++ 的继承机制极其灵活，既可以实现简单的单继承（Single Inheritance），也可以进行复杂的多继承（Multiple Inheritance），甚至支持通过**虚继承（Virtual Inheritance）**来解决多重继承带来的“菱形问题”。</p>
+<h2 id="一继承的基本概念"><a class="header" href="#一继承的基本概念">一、继承的基本概念</a></h2>
+<p>继承是从一个已有的类（称为基类 / 父类 Base Class）派生出一个新的类（称为派生类 / 子类 Derived Class）。
+派生类自动拥有基类的成员（数据与函数），并可以在此基础上新增成员或重写行为。</p>
+<p>语法格式如下：</p>
+<pre><code class="language-cpp">class 派生类名 : 继承方式 基类名 {
+    // 派生类成员
+};
+</code></pre>
+<h2 id="二基类构造与派生类构造顺序"><a class="header" href="#二基类构造与派生类构造顺序">二、基类构造与派生类构造顺序</a></h2>
+<p>派生类对象中包含了基类子对象，因此在创建派生类实例时，必须先调用基类构造函数来完成基类部分的初始化。</p>
+<p>调用顺序如下：</p>
+<ol>
+<li>按声明顺序调用所有基类构造函数（从上到下）。</li>
+<li>再调用派生类自身构造函数。</li>
+</ol>
+<p>销毁顺序则相反：
+先调用派生类析构函数，再调用基类析构函数。</p>
+<p>示例：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    Base() { std::cout &lt;&lt; "Base constructed\n"; }
+    ~Base() { std::cout &lt;&lt; "Base destroyed\n"; }
+};
+
+class Derived : public Base {
+public:
+    Derived() { std::cout &lt;&lt; "Derived constructed\n"; }
+    ~Derived() { std::cout &lt;&lt; "Derived destroyed\n"; }
+};
+
+int main() {
+    Derived d;
+}
+</code></pre>
+<p>输出结果为：</p>
+<pre><code class="language-text">Base constructed
+Derived constructed
+Derived destroyed
+Base destroyed
+</code></pre>
+<p>若基类构造函数需要参数，必须在派生类的构造函数初始化列表中显式调用：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    Base(int x) { std::cout &lt;&lt; "Base(" &lt;&lt; x &lt;&lt; ")\n"; }
+};
+
+class Derived : public Base {
+public:
+    Derived(int x) : Base(x) {
+        std::cout &lt;&lt; "Derived(" &lt;&lt; x &lt;&lt; ")\n";
+    }
+};
+</code></pre>
+<blockquote>
+<p>构造函数调用顺序是从“上至下”，析构顺序是从“下至上”。
+这种严格的顺序保证了对象的完整性和资源的正确释放。</p>
+</blockquote>
+<h2 id="三访问控制与继承权限"><a class="header" href="#三访问控制与继承权限">三、访问控制与继承权限</a></h2>
+<p>访问控制是继承体系中非常重要的机制，它决定了哪些成员可以在派生类中被访问。</p>
+<p>继承方式主要有三种：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">继承方式</th><th style="text-align: center">基类 <code>public</code> 成员在派生类中的访问属性</th><th style="text-align: center">基类 <code>protected</code> 成员在派生类中的访问属性</th><th style="text-align: left">特点说明</th></tr></thead><tbody>
+<tr><td style="text-align: center"><code>public</code> 继承</td><td style="text-align: center"><code>public</code> → <code>public</code></td><td style="text-align: center"><code>protected</code> → <code>protected</code></td><td style="text-align: left">常用方式，保持原有访问级别</td></tr>
+<tr><td style="text-align: center"><code>protected</code> 继承</td><td style="text-align: center"><code>public</code> → <code>protected</code></td><td style="text-align: center"><code>protected</code> → <code>protected</code></td><td style="text-align: left">用于希望限制外部访问但允许派生使用的情况</td></tr>
+<tr><td style="text-align: center"><code>private</code> 继承</td><td style="text-align: center"><code>public</code> → <code>private</code></td><td style="text-align: center"><code>protected</code> → <code>private</code></td><td style="text-align: left">派生类对外隐藏基类接口</td></tr>
+</tbody></table>
+</div>
+<ol>
+<li>
+<p>public 成员</p>
+<ul>
+<li>在 <code>public</code> 继承中保持 <code>public</code>，外部依然可以访问。</li>
+<li>在 <code>protected/private</code> 继承中则变为不可外部访问。</li>
+</ul>
+</li>
+<li>
+<p>protected 成员</p>
+<ul>
+<li>在 <code>public/protected</code> 继承中可被派生类访问。</li>
+<li>在 <code>private</code> 继承中仅在本类可访问。</li>
+</ul>
+</li>
+<li>
+<p>private 成员</p>
+<ul>
+<li>永远不能被派生类直接访问。</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-cpp">class Base {
+public:
+    int a;
+protected:
+    int b;
+private:
+    int c;
+};
+
+class Derived : public Base {
+public:
+    void show() {
+        a = 1;   // 可访问（public继承下保持public）
+        b = 2;   // 可访问（protected继承下保持protected）
+        // c = 3; // 不可访问（private成员永远不能被继承访问）
+    }
+};
+</code></pre>
+<p>在继承中，private 成员虽然被继承，但不可直接访问，只能通过基类的 <code>public</code> 或 <code>protected</code> 接口间接访问。</p>
+<h2 id="四单继承与多继承"><a class="header" href="#四单继承与多继承">四、单继承与多继承</a></h2>
+<h3 id="1-单继承"><a class="header" href="#1-单继承">1. 单继承</a></h3>
+<p>最常见的继承方式，一个派生类只有一个直接基类：</p>
+<pre><code class="language-cpp">class Animal {
+public:
+    void eat() { std::cout &lt;&lt; "Eating\n"; }
+};
+
+class Dog : public Animal {
+public:
+    void bark() { std::cout &lt;&lt; "Barking\n"; }
+};
+</code></pre>
+<p><code>Dog</code> 继承了 <code>Animal</code> 的所有非私有成员，因此：</p>
+<pre><code class="language-cpp">Dog d;
+d.eat();  // 继承自 Animal
+d.bark(); // 自身成员
+</code></pre>
+<h3 id="2-多继承"><a class="header" href="#2-多继承">2. 多继承</a></h3>
+<p>C++ 支持一个类继承自多个基类，从而组合多种功能：</p>
+<pre><code class="language-cpp">class A {
+public:
+    void funcA() { std::cout &lt;&lt; "A\n"; }
+};
+
+class B {
+public:
+    void funcB() { std::cout &lt;&lt; "B\n"; }
+};
+
+class C : public A, public B {
+public:
+    void funcC() { std::cout &lt;&lt; "C\n"; }
+};
+</code></pre>
+<p><code>C</code> 同时拥有 <code>A</code> 和 <code>B</code> 的成员：</p>
+<pre><code class="language-cpp">C obj;
+obj.funcA();
+obj.funcB();
+obj.funcC();
+</code></pre>
+<p>但多继承容易引入<strong>命名冲突</strong>：</p>
+<pre><code class="language-cpp">class A { public: void show() { std::cout &lt;&lt; "A\n"; } };
+class B { public: void show() { std::cout &lt;&lt; "B\n"; } };
+class C : public A, public B {};
+
+C c;
+c.show();  // 二义性错误：不知该调用 A::show 还是 B::show
+</code></pre>
+<p>需使用作用域限定符解决：</p>
+<pre><code class="language-cpp">c.A::show();
+</code></pre>
+<h2 id="五多重继承的菱形问题"><a class="header" href="#五多重继承的菱形问题">五、多重继承的菱形问题</a></h2>
+<p>多继承中最著名的问题是“菱形继承问题（Diamond Problem）”。</p>
+<p>示例：</p>
+<pre><code class="language-cpp">class A {
+public:
+    int value = 1;
+};
+
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};
+</code></pre>
+<p>继承关系如下：</p>
+<pre><code class="language-text">    A
+   / \
+  B   C
+   \ /
+    D
+</code></pre>
+<p>此时，<code>D</code> 同时继承了两份 <code>A</code>，因此 <code>value</code> 出现二义性：</p>
+<pre><code class="language-cpp">D d;
+d.value = 10;   // 二义性：B::A::value 与 C::A::value 冲突
+</code></pre>
+<h2 id="六虚继承virtual-inheritance"><a class="header" href="#六虚继承virtual-inheritance">六、虚继承（Virtual Inheritance）</a></h2>
+<p>为解决菱形问题，C++ 引入了 虚继承（Virtual Inheritance）。</p>
+<p>通过在继承声明前加上关键字 <code>virtual</code>，可以让共同的基类只保留一份共享副本。</p>
+<p>修改上例：</p>
+<pre><code class="language-cpp">class A {
+public:
+    int value = 1;
+};
+
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};
+</code></pre>
+<p>此时：</p>
+<pre><code class="language-cpp">D d;
+d.value = 10;   // 不再二义性，A仅保留一份
+</code></pre>
+<p>在对象布局上，编译器会通过额外的“虚基表指针（vbptr）”来实现共享基类的唯一性。
+因此，虚继承的对象模型更复杂，但解决了最棘手的多继承冲突问题。</p>
+<details id="admonition-虚基表指针vbptr如何实现共享基类的唯一性" class="admonition admonish-tip" role="note" aria-labelledby="admonition-虚基表指针vbptr如何实现共享基类的唯一性-title">
+<summary class="admonition-title">
+<div id="admonition-虚基表指针vbptr如何实现共享基类的唯一性-title">
+<p>虚基表指针(vbptr)如何实现共享基类的唯一性？</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-虚基表指针vbptr如何实现共享基类的唯一性"></a>
+</summary>
+<div>
+<p>在普通多继承中，如果一个基类被多个派生类重复继承（如“菱形继承”结构），最底层派生类对象中会包含多份相同的基类成员，造成 <strong>数据冗余</strong> 和 <strong>二义性</strong>。</p>
+<p>为了解决这一问题，C++ 提供了 <strong>虚继承（virtual inheritance）</strong>。编译器通过在对象中引入一套特殊的指针机制——<strong>虚基表指针（<code>vbptr</code>）</strong> 和 <strong>虚基表（<code>vbtable</code>）</strong>，来确保所有派生路径最终共享同一个虚基类实例。</p>
+<ul>
+<li>当一个类以 <code>virtual</code> 方式继承基类时，编译器会在该类的对象布局中添加一个隐藏成员：<code>vbptr</code>。</li>
+<li><code>vbptr</code> 指向一张由编译器生成的 <strong>虚基表（vbtable）</strong>。</li>
+<li><code>vbtable</code> 中记录了<strong>从当前对象地址到虚基类子对象地址的偏移量</strong>。</li>
+<li>当程序访问虚基类的成员时，编译器通过 <code>vbptr</code> 查表计算出正确的虚基类位置，确保所有继承路径共享同一个虚基类实例。</li>
+</ul>
+<pre><code class="language-cpp">class A { int x; };
+class B : virtual public A {};
+class C : virtual public A {};
+class D : public B, public C {};
+</code></pre>
+<p>在 <code>D</code> 的对象布局中：</p>
+<pre><code>D
+├── B 子对象（含 vbptr → 指向 B 的 vbtable）
+├── C 子对象（含 vbptr → 指向 C 的 vbtable）
+└── A 虚基类子对象（唯一一份）
+</code></pre>
+<p>访问 <code>A::x</code> 时：</p>
+<ul>
+<li>若通过 <code>B</code> 或 <code>C</code> 访问，编译器都会通过 <code>vbptr</code> 找到唯一的 <code>A</code> 子对象；</li>
+<li>从而避免了重复继承带来的“二义性”与“多份拷贝”问题。</li>
+</ul>
+</div>
+</details>
+<blockquote>
+<p>虚继承常用于框架或接口设计中，尤其当多个中间层类共享同一顶层基类时。</p>
+</blockquote>
 
                     </main>
 

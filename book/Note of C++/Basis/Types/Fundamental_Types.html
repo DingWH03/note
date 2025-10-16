@@ -600,8 +600,8 @@ constexpr int b = std::time(nullptr); // 错误，不能在编译期求值
 </li>
 </ol>
 <h3 id="extern"><a class="header" href="#extern"><code>extern</code></a></h3>
-<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。
-它通常出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
+<p><code>extern</code> 关键字用于<strong>声明</strong>而非定义变量或函数。被<code>extern</code>标识的变量或者函数声明其定义在别的文件中，提示编译器遇到此变量和函数时在其他模块寻找其定义。
+它出现在多文件项目中，用于在一个文件中访问另一个文件定义的全局变量或函数。</p>
 <ul>
 <li>
 <p>作用：</p>

@@ -282,11 +282,24 @@ PI = 3.14; // 错误：不能修改常量
 </code></pre>
 <h4 id="常量指针与指向常量的指针"><a class="header" href="#常量指针与指向常量的指针">常量指针与指向常量的指针</a></h4>
 <div class="table-wrapper"><table><thead><tr><th>形式</th><th>含义</th></tr></thead><tbody>
-<tr><td><code>const int* p</code></td><td>指针指向的值不能改</td></tr>
-<tr><td><code>int* const p</code></td><td>指针本身不能改</td></tr>
+<tr><td><code>const int* p</code> // 常量指针</td><td>指针指向的值不能改</td></tr>
+<tr><td><code>int* const p</code> // 指针常量</td><td>指针本身不能改</td></tr>
 <tr><td><code>const int* const p</code></td><td>值与指针均不可改</td></tr>
 </tbody></table>
+</div><details id="admonition-指针常量和常量指针各是什么有什么区别" class="admonition admonish-tip" role="note" aria-labelledby="admonition-指针常量和常量指针各是什么有什么区别-title">
+<summary class="admonition-title">
+<div id="admonition-指针常量和常量指针各是什么有什么区别-title">
+<p>指针常量和常量指针各是什么，有什么区别？</p>
 </div>
+<a class="admonition-anchor-link" href="#admonition-指针常量和常量指针各是什么有什么区别"></a>
+</summary>
+<div>
+<p>指针常量是指定义了一个指针，这个指针的值只能在定义时进行初始化，其他时候不能改变。</p>
+<p>常量指针是指定义了一个指针，这个指针指向了一个只读的对象，不能通过常量指针来修改这个对象的值。</p>
+<p>指针常量强调的是指针本身的不可改变性，而常量指针强调的是指针对其所指对象的不可改变性。</p>
+<p>无论是指针常量还是常量指针，其最大的用途就是作为函数的形式参数，保证实参在被调用函数中的不可改变特性。</p>
+</div>
+</details>
 <h3 id="3-constexpr-常量表达式c11-起"><a class="header" href="#3-constexpr-常量表达式c11-起">3. <code>constexpr</code> 常量表达式（C++11 起）</a></h3>
 <p><code>constexpr</code> 表示在<strong>编译期即可确定值</strong>的常量。它比 <code>const</code> 更严格：</p>
 <pre><code class="language-cpp">constexpr int max_size = 100;
