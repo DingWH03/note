@@ -30,6 +30,8 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="mdbook-admonish.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -182,25 +184,52 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>该文档记录部分(不太准确的)C++知识。</p>
+<p>该文档记录部分(不太准确的)C++知识，以及一些面试题。</p>
 <p>大部分知识均<strong>不完善</strong>，不是手册，仅仅作为笔记。</p>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="Introduction.html#admonition-tip"></a>
+</div>
+<div>
+<p>如果感兴趣的话，可以提交你自己的知识到仓库中。</p>
+</div>
+</div>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="c语言面试题汇总"><a class="header" href="#c语言面试题汇总">C++语言面试题汇总</a></h1>
 <ol>
 <li>
 <p><code>volatile</code>关键字有什么作用？</p>
-<p><a href="./Basis/Types/Fundamental_Types.html#volatile">数据类型-基本数据类型-修饰符</a></p>
+<ul>
+<li><a href="./Basis/Types/Fundamental_Types.html#volatile">数据类型-基本数据类型-修饰符</a></li>
+</ul>
 </li>
 <li>
 <p><code>const</code>和<code>constexpr</code>关键字有什么作用，有什么区别？</p>
-<p><a href="./Basis/Types/Fundamental_Types.html#const">数据类型-基本数据类型-修饰符</a></p>
+<ul>
+<li><a href="./Basis/Types/Fundamental_Types.html#const">数据类型-基本数据类型-修饰符</a></li>
+</ul>
 </li>
 <li>
 <p><code>static</code>关键字有什么作用？和C语言中的有什么区别？</p>
-<p><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></p>
+<ul>
+<li><a href="./Basis/Types/Fundamental_Types.html#static">数据类型-基本数据类型-修饰符</a></li>
+</ul>
 </li>
 <li>
 <p>面向对象的三大特征是什么？</p>
-<p><a href="./Basis/CLass&amp;Object.html#%E5%9B%9B%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E5%BE%81">类与对象-三大特征</a></p>
+<ul>
+<li><a href="./Basis/CLass&amp;Object.html#%E5%9B%9B%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E5%BE%81">类与对象-三大特征</a></li>
+</ul>
+</li>
+<li>
+<p>typedef和define有什么区别？</p>
+<ul>
+<li><a href="./Basis/Concept/Preprocessor.html#%E4%BA%8C%E5%AE%8F%E5%AE%9A%E4%B9%89-define">预处理器-define</a></li>
+<li><a href="./Basis/Types/Derived_Types.html#c%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D">派生数据类型-typedef</a></li>
+<li><a href="./Basis/Types/Derived_Types.html#admonition-typedef%E5%92%8Cdefine%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB">tips-typedef和define有什么区别</a></li>
+</ul>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
@@ -1854,6 +1883,40 @@ using ushort_t = unsigned short;
 using Vec = std::vector&lt;T&gt;;
 Vec&lt;int&gt; v = {1, 2, 3};
 </code></pre>
+<details id="admonition-typedef和define有什么区别" class="admonition admonish-tip" role="note" aria-labelledby="admonition-typedef和define有什么区别-title">
+<summary class="admonition-title">
+<div id="admonition-typedef和define有什么区别-title">
+<p><i>typedef</i>和<i>define</i>有什么区别？</p>
+</div>
+<a class="admonition-anchor-link" href="Basis/Types/Derived_Types.html#admonition-typedef和define有什么区别"></a>
+</summary>
+<div>
+<p><code>typedef</code> 和 <code>#define</code> 虽然在表面上都可以用于“简化代码书写”，但它们的本质、用途以及生效阶段存在明显区别。</p>
+<p>(1) <strong>用法不同：</strong>
+<code>typedef</code> 用于为已有的数据类型定义一个新的<strong>类型别名</strong>，从而增强程序的可读性和可维护性。例如，可以通过 <code>typedef unsigned int uint;</code> 为 <code>unsigned int</code> 定义一个更简洁的别名。
+而 <code>#define</code> 是一种<strong>宏定义指令</strong>，主要用于定义常量或书写复杂但使用频繁的宏表达式，如 <code>#define PI 3.14159</code> 或 <code>#define MAX(a, b) ((a) &gt; (b) ? (a) : (b))</code>。
+前者作用于类型层面，后者仅进行文本替换。</p>
+<p>(2) <strong>执行时间不同：</strong>
+<code>typedef</code> 属于编译阶段的一部分，编译器在处理类型定义时会进行<strong>语法与类型检查</strong>，确保类型合法。
+而 <code>#define</code> 是在编译前的<strong>预处理阶段</strong>执行的，它仅做<strong>简单的字符串替换</strong>，并不参与类型检查，因此如果使用不当，容易造成潜在的逻辑错误。</p>
+<p>(3) <strong>作用域不同：</strong>
+<code>typedef</code> 受 C/C++ 作用域规则限制，只在其定义的作用域内有效，例如在函数内定义的类型别名在函数外无法使用。
+相对地，<code>#define</code> 不受作用域约束，只要在定义之后且未被 <code>#undef</code> 取消，其宏名在整个文件（甚至被包含的其他文件）中都有效，因此若管理不当，可能造成命名冲突。</p>
+<p>(4) <strong>对指针的操作不同：</strong>
+<code>typedef</code> 和 <code>#define</code> 在定义指针类型时的行为存在显著区别。
+例如：</p>
+<pre><code class="language-cpp">#define PINT1 int*
+typedef int* PINT2;
+
+PINT1 a, b;  // 等价于 int* a, b; =&gt; b是int类型
+PINT2 c, d;  // 等价于 int* c, *d; =&gt; c和d都是int*类型
+</code></pre>
+<p>这表明：<code>#define</code> 仅仅进行文本替换，而 <code>typedef</code> 定义的是一种完整的类型。使用 <code>typedef</code> 可以避免宏替换带来的歧义。</p>
+<p>(5) <strong>语法要求不同：</strong>
+<code>typedef</code> 是一条语句，因此必须以分号结尾；
+<code>#define</code> 是预处理指令，不属于语句，不能加分号，否则分号也会被替换到目标文本中，引发错误。</p>
+</div>
+</details>
 <h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
 <tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>

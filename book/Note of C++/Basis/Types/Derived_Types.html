@@ -29,6 +29,8 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../mdbook-admonish.css">
+        <link rel="stylesheet" href="../.././mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -369,6 +371,40 @@ using ushort_t = unsigned short;
 using Vec = std::vector&lt;T&gt;;
 Vec&lt;int&gt; v = {1, 2, 3};
 </code></pre>
+<details id="admonition-typedef和define有什么区别" class="admonition admonish-tip" role="note" aria-labelledby="admonition-typedef和define有什么区别-title">
+<summary class="admonition-title">
+<div id="admonition-typedef和define有什么区别-title">
+<p><i>typedef</i>和<i>define</i>有什么区别？</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-typedef和define有什么区别"></a>
+</summary>
+<div>
+<p><code>typedef</code> 和 <code>#define</code> 虽然在表面上都可以用于“简化代码书写”，但它们的本质、用途以及生效阶段存在明显区别。</p>
+<p>(1) <strong>用法不同：</strong>
+<code>typedef</code> 用于为已有的数据类型定义一个新的<strong>类型别名</strong>，从而增强程序的可读性和可维护性。例如，可以通过 <code>typedef unsigned int uint;</code> 为 <code>unsigned int</code> 定义一个更简洁的别名。
+而 <code>#define</code> 是一种<strong>宏定义指令</strong>，主要用于定义常量或书写复杂但使用频繁的宏表达式，如 <code>#define PI 3.14159</code> 或 <code>#define MAX(a, b) ((a) &gt; (b) ? (a) : (b))</code>。
+前者作用于类型层面，后者仅进行文本替换。</p>
+<p>(2) <strong>执行时间不同：</strong>
+<code>typedef</code> 属于编译阶段的一部分，编译器在处理类型定义时会进行<strong>语法与类型检查</strong>，确保类型合法。
+而 <code>#define</code> 是在编译前的<strong>预处理阶段</strong>执行的，它仅做<strong>简单的字符串替换</strong>，并不参与类型检查，因此如果使用不当，容易造成潜在的逻辑错误。</p>
+<p>(3) <strong>作用域不同：</strong>
+<code>typedef</code> 受 C/C++ 作用域规则限制，只在其定义的作用域内有效，例如在函数内定义的类型别名在函数外无法使用。
+相对地，<code>#define</code> 不受作用域约束，只要在定义之后且未被 <code>#undef</code> 取消，其宏名在整个文件（甚至被包含的其他文件）中都有效，因此若管理不当，可能造成命名冲突。</p>
+<p>(4) <strong>对指针的操作不同：</strong>
+<code>typedef</code> 和 <code>#define</code> 在定义指针类型时的行为存在显著区别。
+例如：</p>
+<pre><code class="language-cpp">#define PINT1 int*
+typedef int* PINT2;
+
+PINT1 a, b;  // 等价于 int* a, b; =&gt; b是int类型
+PINT2 c, d;  // 等价于 int* c, *d; =&gt; c和d都是int*类型
+</code></pre>
+<p>这表明：<code>#define</code> 仅仅进行文本替换，而 <code>typedef</code> 定义的是一种完整的类型。使用 <code>typedef</code> 可以避免宏替换带来的歧义。</p>
+<p>(5) <strong>语法要求不同：</strong>
+<code>typedef</code> 是一条语句，因此必须以分号结尾；
+<code>#define</code> 是预处理指令，不属于语句，不能加分号，否则分号也会被替换到目标文本中，引发错误。</p>
+</div>
+</details>
 <h2 id="c标准库类型"><a class="header" href="#c标准库类型">C++标准库类型</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>数据类型</th><th>描述</th><th>示例</th></tr></thead><tbody>
 <tr><td><code>std::string</code></td><td>字符串类型</td><td><code>std::string s = "Hello";</code></td></tr>
