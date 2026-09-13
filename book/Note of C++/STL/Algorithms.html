@@ -12,24 +12,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../mdbook-admonish.css">
+        <link rel="stylesheet" href="../mdbook-admonish-306a1c37.css">
         <link rel="stylesheet" href=".././mdbook-admonish.css">
 
         <!-- MathJax -->
@@ -40,10 +39,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "../searchindex-cae90fa9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="../toc-54acc4e6.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -57,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div id="body-container">
+    <div id="mdbook-body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -86,12 +85,12 @@
             html.classList.add("js");
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             let sidebar = null;
-            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -106,39 +105,39 @@
             }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+        <div id="mdbook-page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
                         </button>
                     </div>
 
@@ -146,56 +145,62 @@
 
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
-                            <i id="git-repository-button" class="fa fa-github"></i>
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/STL/Algorithms.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
-                            <i id="git-edit-button" class="fa fa-edit"></i>
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
                         <div class="search-wrapper">
-                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
                             <div class="spinner-wrapper">
-                                <i class="fa fa-spinner fa-spin"></i>
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
                             </div>
                         </div>
                     </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
                         </ul>
                     </div>
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
                         link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
                     });
                 </script>
 
-                <div id="content" class="content">
+                <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="algorithms"><a class="header" href="#algorithms">Algorithms</a></h1>
 <p>C++ 标准库中的算法 (Algorithms) 是一组强大的函数模板，用于对容器或其他范围（<code>[first, last)</code>）内的元素进行搜索、排序、计数、修改等操作。自 C++20 以来，<strong>Ranges (约束算法)</strong> 的引入极大地简化了算法的使用，并增强了其通用性。C++17 则引入了<strong>执行策略</strong>，允许算法进行并行或乱序执行以提升性能。</p>
 <h2 id="c20-约束算法-constrained-algorithms--ranges"><a class="header" href="#c20-约束算法-constrained-algorithms--ranges">C++20 约束算法 (Constrained Algorithms / Ranges)</a></h2>
 <p><strong>Ranges</strong> 是 C++20 引入的一项革命性特性，它极大地简化了 STL 算法的使用，并增强了它们的组合性。</p>
 <h3 id="核心概念与优势"><a class="header" href="#核心概念与优势">核心概念与优势</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">特性</th><th style="text-align: left">优势和示例</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">优势和示例</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>单一 Range 参数</strong></td><td style="text-align: left">您不再需要手动传递 <code>begin()</code> 和 <code>end()</code> 迭代器。只需将整个容器（或 Range 视图）作为<strong>一个参数</strong>传递给算法即可。</td></tr>
 <tr><td style="text-align: left"><strong>Projections (投影)</strong></td><td style="text-align: left"><strong>简化复杂对象操作。</strong> 算法可以直接操作容器内元素的某个成员变量或计算结果，而无需使用复杂的 Lambda 表达式。例如，对一个 <code>vector&lt;Person&gt;</code> 按照 <code>Person::age</code> 成员进行排序。</td></tr>
 <tr><td style="text-align: left"><strong>返回类型增强</strong></td><td style="text-align: left"><strong>提供所有有用的信息。</strong> 大多数 <code>std::ranges::</code> 算法不再只返回一个迭代器，而是返回一个包含所有相关结果的<strong>结构体</strong>（如 <code>std::ranges::sort_result</code>）。例如，<code>ranges::copy</code> 会返回输入范围和输出范围的结束迭代器，方便后续操作。</td></tr>
 <tr><td style="text-align: left"><strong>更强的约束</strong></td><td style="text-align: left">它们是“约束算法”，这意味着它们使用 C++20 的 <strong>Concepts</strong> 确保传入的迭代器和 Range 满足算法所需的最低要求，从而提供<strong>更清晰的编译错误</strong>。</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <p><strong>示例:</strong></p>
 <pre><code class="language-cpp">std::vector&lt;int&gt; v{7, 1, 4, 0, -1};
@@ -206,16 +211,22 @@ std::sort(v.begin(), v.end());
 // C++20 Ranges 算法：更简洁
 std::ranges::sort(v);
 </code></pre>
-<hr />
+<hr>
 <h2 id="c17c20-执行策略-execution-policies"><a class="header" href="#c17c20-执行策略-execution-policies">C++17/C++20 执行策略 (Execution Policies)</a></h2>
 <p><strong>执行策略</strong> 是 C++17 引入的功能，它允许程序员通过向算法传递一个策略对象，来指示算法如何执行——是串行、并行还是乱序执行，从而在多核 CPU 上实现<strong>性能优化</strong>。</p>
 <h3 id="核心策略类型"><a class="header" href="#核心策略类型">核心策略类型</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">策略类型</th><th style="text-align: left">全局对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">描述</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">策略类型</th><th style="text-align: left">全局对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">描述</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong><code>sequenced_policy</code></strong></td><td style="text-align: left"><code>seq</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>序列化执行</strong>：算法按顺序执行，不会使用并行或乱序操作。这是所有算法的默认行为。</td></tr>
 <tr><td style="text-align: left"><strong><code>parallel_policy</code></strong></td><td style="text-align: left"><code>par</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>并行执行</strong>：算法可以在不同的线程中并发执行。它保证了并发性，但不保证指令的顺序。</td></tr>
 <tr><td style="text-align: left"><strong><code>parallel_unsequenced_policy</code></strong></td><td style="text-align: left"><code>par_unseq</code></td><td style="text-align: left">C++17</td><td style="text-align: left"><strong>并行且乱序执行</strong>：结合了并行和乱序执行，允许并发执行，同时允许编译器进行<strong>矢量化 (vectorization)</strong> 优化。</td></tr>
 <tr><td style="text-align: left"><strong><code>unsequenced_policy</code></strong></td><td style="text-align: left"><code>unseq</code></td><td style="text-align: left">C++20</td><td style="text-align: left"><strong>乱序执行</strong>：<strong>不保证并行</strong>，但允许编译器对单个线程中的操作进行乱序处理（矢量化），以提高性能。</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <p><strong>头文件：</strong> 所有执行策略都定义在 <code>&lt;execution&gt;</code> 头文件中，并位于 <code>std::execution</code> 命名空间下（尽管全局对象如 <code>std::par</code> 在 <code>std</code> 命名空间）。</p>
 <p><strong>示例:</strong></p>
@@ -245,13 +256,24 @@ std::ranges::sort(std::execution::par, data);
 <li><strong><code>&lt;ranges&gt;</code></strong>：包含所有 <code>ranges::</code> 版本的算法。</li>
 </ul>
 <h3 id="批处理操作-batch-operations"><a class="header" href="#批处理操作-batch-operations">批处理操作 (Batch operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">批处理操作 (Batch operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">批处理操作 (Batch operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>for_each</strong> / <strong>ranges::for_each</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对范围内的元素应用一个一元函数对象</td></tr>
 <tr><td style="text-align: left"><strong>for_each_n</strong> / <strong>ranges::for_each_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对序列的前 \( N \) 个元素应用一个函数对象</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="搜索操作-search-operations"><a class="header" href="#搜索操作-search-operations">搜索操作 (Search operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">搜索操作 (Search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">搜索操作 (Search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>all_of</strong> / <strong>ranges::all_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>所有</strong>元素是否为真</td></tr>
 <tr><td style="text-align: left"><strong>any_of</strong> / <strong>ranges::any_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>任一</strong>元素是否为真</td></tr>
 <tr><td style="text-align: left"><strong>none_of</strong> / <strong>ranges::none_of</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个谓词对范围内的<strong>所有</strong>元素是否为假</td></tr>
@@ -274,17 +296,24 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>search_n</strong> / <strong>ranges::search_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">搜索一个元素在范围中<strong>连续出现 \( N \) 次</strong>的第一次出现</td></tr>
 <tr><td style="text-align: left"><strong>ranges::starts_with</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否<strong>以另一个范围开始</strong></td></tr>
 <tr><td style="text-align: left"><strong>ranges::ends_with</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否<strong>以另一个范围结束</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="折叠操作-fold-operations"><a class="header" href="#折叠操作-fold-operations">折叠操作 (Fold operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">折叠操作 (Fold operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">折叠操作 (Fold operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>ranges::fold_left</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>左折叠</strong></td></tr>
 <tr><td style="text-align: left"><strong>ranges::fold_left_first</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>第一个元素</strong>作为初始值对一系列元素进行<strong>左折叠</strong></td></tr>
 <tr><td style="text-align: left"><strong>ranges::fold_right</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>右折叠</strong></td></tr>
 <tr><td style="text-align: left"><strong>ranges::fold_right_last</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>最后一个元素</strong>作为初始值对一系列元素进行<strong>右折叠</strong></td></tr>
 <tr><td style="text-align: left"><strong>ranges::fold_left_with_iter</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">对一系列元素进行<strong>左折叠</strong>，并返回 (迭代器, 值) 对</td></tr>
 <tr><td style="text-align: left"><strong>ranges::fold_left_first_with_iter</strong></td><td style="text-align: left">(C++23)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">使用<strong>第一个元素</strong>作为初始值对一系列元素进行<strong>左折叠</strong>，并返回 (迭代器, 可选值) 对</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h2 id="二修改序列操作-modifying-sequence-operations"><a class="header" href="#二修改序列操作-modifying-sequence-operations">二、修改序列操作 (Modifying sequence operations)</a></h2>
 <p><strong>主要头文件：</strong></p>
@@ -294,52 +323,87 @@ std::ranges::sort(std::execution::par, data);
 <li><strong><code>&lt;utility&gt;</code></strong>：包含 <code>std::swap</code> 和 <code>std::iter_swap</code>。</li>
 </ul>
 <h3 id="复制操作-copy-operations"><a class="header" href="#复制操作-copy-operations">复制操作 (Copy operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">复制操作 (Copy operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">复制操作 (Copy operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>copy</strong> / <strong>ranges::copy</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>复制</strong>到一个新位置</td></tr>
 <tr><td style="text-align: left"><strong>copy_if</strong> / <strong>ranges::copy_if</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>有条件地复制</strong>一个元素范围到新位置</td></tr>
 <tr><td style="text-align: left"><strong>copy_n</strong> / <strong>ranges::copy_n</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将<strong>指定数量</strong>的元素复制到一个新位置</td></tr>
 <tr><td style="text-align: left"><strong>copy_backward</strong> / <strong>ranges::copy_backward</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">以<strong>向后顺序复制</strong>一个元素范围</td></tr>
 <tr><td style="text-align: left"><strong>move</strong> / <strong>ranges::move</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>移动</strong>到一个新位置</td></tr>
 <tr><td style="text-align: left"><strong>move_backward</strong> / <strong>ranges::move_backward</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">以<strong>向后顺序移动</strong>一个元素范围</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="交换操作-swap-operations"><a class="header" href="#交换操作-swap-operations">交换操作 (Swap operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">交换操作 (Swap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">交换操作 (Swap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>swap</strong></td><td style="text-align: left">(C++11)</td><td style="text-align: left"><code>&lt;utility&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个对象的值</td></tr>
 <tr><td style="text-align: left"><strong>swap_ranges</strong> / <strong>ranges::swap_ranges</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个元素范围</td></tr>
 <tr><td style="text-align: left"><strong>iter_swap</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;utility&gt;</code></td><td style="text-align: left"><strong>交换</strong>两个迭代器所指向的元素</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="变换操作-transformation-operations"><a class="header" href="#变换操作-transformation-operations">变换操作 (Transformation operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">变换操作 (Transformation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">变换操作 (Transformation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>transform</strong> / <strong>ranges::transform</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">对一个元素范围<strong>应用一个函数</strong>，并将结果存储在目标范围中</td></tr>
 <tr><td style="text-align: left"><strong>replace</strong> / <strong>ranges::replace</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将所有满足特定条件的值<strong>替换</strong>为另一个值</td></tr>
 <tr><td style="text-align: left"><strong>replace_if</strong> / <strong>ranges::replace_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将所有满足<strong>谓词</strong>的值<strong>替换</strong>为另一个值</td></tr>
 <tr><td style="text-align: left"><strong>replace_copy</strong> / <strong>ranges::replace_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，并将满足特定条件的元素<strong>替换</strong>为另一个值</td></tr>
 <tr><td style="text-align: left"><strong>replace_copy_if</strong> / <strong>ranges::replace_copy_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，并将满足<strong>谓词</strong>的元素<strong>替换</strong>为另一个值</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="生成操作-generation-operations"><a class="header" href="#生成操作-generation-operations">生成操作 (Generation operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">生成操作 (Generation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">生成操作 (Generation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>fill</strong> / <strong>ranges::fill</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将给定值<strong>赋值</strong>给范围内的每个元素</td></tr>
 <tr><td style="text-align: left"><strong>fill_n</strong> / <strong>ranges::fill_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将给定值<strong>赋值</strong>给范围内的 \( N \) 个元素</td></tr>
 <tr><td style="text-align: left"><strong>generate</strong> / <strong>ranges::generate</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将连续函数调用的结果<strong>赋值</strong>给范围内的每个元素</td></tr>
 <tr><td style="text-align: left"><strong>generate_n</strong> / <strong>ranges::generate_n</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将连续 \( N \) 次函数调用的结果<strong>赋值</strong>给范围内的 \( N \) 个元素</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="移除操作-removing-operations"><a class="header" href="#移除操作-removing-operations">移除操作 (Removing operations)</a></h3>
 <p>这里的“移除”通常是<strong>逻辑移除</strong>，通过将未被移除的元素移动到范围的前部来实现，并返回新的逻辑尾部。</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">移除操作 (Removing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">移除操作 (Removing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>remove</strong> / <strong>ranges::remove</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>满足特定条件的元素（逻辑移除）</td></tr>
 <tr><td style="text-align: left"><strong>remove_if</strong> / <strong>ranges::remove_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>满足<strong>谓词</strong>的元素（逻辑移除）</td></tr>
 <tr><td style="text-align: left"><strong>remove_copy</strong> / <strong>ranges::remove_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，<strong>省略</strong>满足特定条件的元素</td></tr>
 <tr><td style="text-align: left"><strong>remove_copy_if</strong> / <strong>ranges::remove_copy_if</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，<strong>省略</strong>满足<strong>谓词</strong>的元素</td></tr>
 <tr><td style="text-align: left"><strong>unique</strong> / <strong>ranges::unique</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>移除</strong>范围内的<strong>连续重复</strong>元素（逻辑移除）</td></tr>
 <tr><td style="text-align: left"><strong>unique_copy</strong> / <strong>ranges::unique_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>创建</strong>一个不含<strong>连续重复</strong>元素的范围<strong>副本</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="顺序改变操作-order-changing-operations"><a class="header" href="#顺序改变操作-order-changing-operations">顺序改变操作 (Order-changing operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">顺序改变操作 (Order-changing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">顺序改变操作 (Order-changing operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>reverse</strong> / <strong>ranges::reverse</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>反转</strong>范围内的元素顺序</td></tr>
 <tr><td style="text-align: left"><strong>reverse_copy</strong> / <strong>ranges::reverse_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>创建</strong>一个<strong>反转</strong>后的范围<strong>副本</strong></td></tr>
 <tr><td style="text-align: left"><strong>rotate</strong> / <strong>ranges::rotate</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>旋转</strong>范围内的元素顺序</td></tr>
@@ -347,12 +411,19 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>shift_left</strong> / <strong>ranges::shift_left</strong></td><td style="text-align: left">(C++20) / (C++23)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>左移</strong>范围内的元素</td></tr>
 <tr><td style="text-align: left"><strong>shift_right</strong> / <strong>ranges::shift_right</strong></td><td style="text-align: left">(C++20) / (C++23)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>右移</strong>范围内的元素</td></tr>
 <tr><td style="text-align: left"><strong>shuffle</strong> / <strong>ranges::shuffle</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>随机重新排序</strong>范围内的元素</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="采样操作-sampling-operations"><a class="header" href="#采样操作-sampling-operations">采样操作 (Sampling operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">采样操作 (Sampling operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">采样操作 (Sampling operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>sample</strong> / <strong>ranges::sample</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">从序列中<strong>选择 \( N \) 个随机元素</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h2 id="三排序及相关操作-sorting-and-related-operations"><a class="header" href="#三排序及相关操作-sorting-and-related-operations">三、排序及相关操作 (Sorting and related operations)</a></h2>
 <p><strong>主要头文件：</strong></p>
@@ -361,16 +432,27 @@ std::ranges::sort(std::execution::par, data);
 <li><strong><code>&lt;ranges&gt;</code></strong>：包含所有 <code>ranges::</code> 版本的算法。</li>
 </ul>
 <h3 id="分区操作-partitioning-operations"><a class="header" href="#分区操作-partitioning-operations">分区操作 (Partitioning operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">分区操作 (Partitioning operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">分区操作 (Partitioning operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>is_partitioned</strong> / <strong>ranges::is_partitioned</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定范围是否被给定谓词<strong>分区</strong></td></tr>
 <tr><td style="text-align: left"><strong>partition</strong> / <strong>ranges::partition</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>划分</strong>为两组</td></tr>
 <tr><td style="text-align: left"><strong>partition_copy</strong> / <strong>ranges::partition_copy</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>复制</strong>一个范围，将元素<strong>划分</strong>为两组</td></tr>
 <tr><td style="text-align: left"><strong>stable_partition</strong> / <strong>ranges::stable_partition</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将元素<strong>划分</strong>为两组，同时<strong>保持</strong>它们的<strong>相对顺序</strong></td></tr>
 <tr><td style="text-align: left"><strong>partition_point</strong> / <strong>ranges::partition_point</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>定位</strong>一个已分区范围的<strong>分区点</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="排序操作-sorting-operations"><a class="header" href="#排序操作-sorting-operations">排序操作 (Sorting operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">排序操作 (Sorting operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">排序操作 (Sorting operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>sort</strong> / <strong>ranges::sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个范围<strong>排序</strong>为升序</td></tr>
 <tr><td style="text-align: left"><strong>stable_sort</strong> / <strong>ranges::stable_sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个元素范围，同时<strong>保持</strong>相等元素间的<strong>相对顺序</strong></td></tr>
 <tr><td style="text-align: left"><strong>partial_sort</strong> / <strong>ranges::partial_sort</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个范围的<strong>前 \( N \) 个</strong>元素</td></tr>
@@ -378,46 +460,76 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>is_sorted</strong> / <strong>ranges::is_sorted</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查一个范围是否已<strong>排序</strong>为升序</td></tr>
 <tr><td style="text-align: left"><strong>is_sorted_until</strong> / <strong>ranges::is_sorted_until</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找<strong>最大</strong>的<strong>已排序子范围</strong></td></tr>
 <tr><td style="text-align: left"><strong>nth_element</strong> / <strong>ranges::nth_element</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>部分排序</strong>给定范围，确保它被给定元素<strong>分区</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="二分搜索操作-binary-search-operations"><a class="header" href="#二分搜索操作-binary-search-operations">二分搜索操作 (Binary search operations)</a></h3>
 <p>这些操作要求输入范围<strong>必须是已排序</strong>的。</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">二分搜索操作 (Binary search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">二分搜索操作 (Binary search operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>lower_bound</strong> / <strong>ranges::lower_bound</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>第一个不小于</strong>给定值的元素的迭代器</td></tr>
 <tr><td style="text-align: left"><strong>upper_bound</strong> / <strong>ranges::upper_bound</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>第一个大于</strong>给定值的元素的迭代器</td></tr>
 <tr><td style="text-align: left"><strong>equal_range</strong> / <strong>ranges::equal_range</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回<strong>匹配</strong>特定键的元素的<strong>范围</strong></td></tr>
 <tr><td style="text-align: left"><strong>binary_search</strong> / <strong>ranges::binary_search</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定一个元素是否存在于一个<strong>部分有序</strong>的范围中</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="集合操作-set-operations"><a class="header" href="#集合操作-set-operations">集合操作 (Set operations)</a></h3>
 <p>这些操作要求输入范围<strong>必须是已排序</strong>的。</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">集合操作 (Set operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">集合操作 (Set operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>includes</strong> / <strong>ranges::includes</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">如果一个序列是另一个序列的<strong>子序列</strong>则返回 true</td></tr>
 <tr><td style="text-align: left"><strong>set_union</strong> / <strong>ranges::set_union</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>并集</strong></td></tr>
 <tr><td style="text-align: left"><strong>set_intersection</strong> / <strong>ranges::set_intersection</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>交集</strong></td></tr>
 <tr><td style="text-align: left"><strong>set_difference</strong> / <strong>ranges::set_difference</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>差集</strong></td></tr>
 <tr><td style="text-align: left"><strong>set_symmetric_difference</strong> / <strong>ranges::set_symmetric_difference</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">计算两个集合的<strong>对称差集</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="合并操作-merge-operations"><a class="header" href="#合并操作-merge-operations">合并操作 (Merge operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">合并操作 (Merge operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">合并操作 (Merge operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>merge</strong> / <strong>ranges::merge</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left"><strong>合并</strong>两个已排序的范围</td></tr>
 <tr><td style="text-align: left"><strong>inplace_merge</strong> / <strong>ranges::inplace_merge</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">在<strong>原地</strong>合并两个有序范围</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="堆操作-heap-operations"><a class="header" href="#堆操作-heap-operations">堆操作 (Heap operations)</a></h3>
 <p>这些操作用于维护最大堆 (max heap) 的属性。</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">堆操作 (Heap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">堆操作 (Heap operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>push_heap</strong> / <strong>ranges::push_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">向<strong>最大堆</strong>中添加一个元素</td></tr>
 <tr><td style="text-align: left"><strong>pop_heap</strong> / <strong>ranges::pop_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">从<strong>最大堆</strong>中移除最大的元素</td></tr>
 <tr><td style="text-align: left"><strong>make_heap</strong> / <strong>ranges::make_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个元素范围<strong>创建</strong>为<strong>最大堆</strong></td></tr>
 <tr><td style="text-align: left"><strong>sort_heap</strong> / <strong>ranges::sort_heap</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个<strong>最大堆</strong>转换为一个<strong>升序排序</strong>的元素范围</td></tr>
 <tr><td style="text-align: left"><strong>is_heap</strong> / <strong>ranges::is_heap</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">检查给定范围是否为<strong>最大堆</strong></td></tr>
 <tr><td style="text-align: left"><strong>is_heap_until</strong> / <strong>ranges::is_heap_until</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">查找作为<strong>最大堆</strong>的<strong>最大子范围</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="最小最大操作-minimummaximum-operations"><a class="header" href="#最小最大操作-minimummaximum-operations">最小/最大操作 (Minimum/maximum operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">最小/最大操作 (Minimum/maximum operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">最小/最大操作 (Minimum/maximum operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>max</strong> / <strong>ranges::max</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回给定值中的<strong>较大者</strong></td></tr>
 <tr><td style="text-align: left"><strong>max_element</strong> / <strong>ranges::max_element</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回范围中的<strong>最大元素</strong></td></tr>
 <tr><td style="text-align: left"><strong>min</strong> / <strong>ranges::min</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回给定值中的<strong>较小者</strong></td></tr>
@@ -425,20 +537,33 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>minmax</strong> / <strong>ranges::minmax</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回两个元素中的<strong>较小者</strong>和<strong>较大者</strong></td></tr>
 <tr><td style="text-align: left"><strong>minmax_element</strong> / <strong>ranges::minmax_element</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">返回范围中的<strong>最小</strong>和<strong>最大元素</strong></td></tr>
 <tr><td style="text-align: left"><strong>clamp</strong> / <strong>ranges::clamp</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">将一个值<strong>钳制</strong>在一对边界值之间</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="字典序比较操作-lexicographical-comparison-operations"><a class="header" href="#字典序比较操作-lexicographical-comparison-operations">字典序比较操作 (Lexicographical comparison operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">字典序比较操作 (Lexicographical comparison operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">字典序比较操作 (Lexicographical comparison operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>lexicographical_compare</strong> / <strong>ranges::lexicographical_compare</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">如果一个范围<strong>字典序上小于</strong>另一个，则返回 true</td></tr>
 <tr><td style="text-align: left"><strong>lexicographical_compare_three_way</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code></td><td style="text-align: left">使用<strong>三路比较</strong>比较两个范围</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="排列操作-permutation-operations"><a class="header" href="#排列操作-permutation-operations">排列操作 (Permutation operations)</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">排列操作 (Permutation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">排列操作 (Permutation operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>next_permutation</strong> / <strong>ranges::next_permutation</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">生成范围元素的<strong>下一个更大</strong>的字典序排列</td></tr>
 <tr><td style="text-align: left"><strong>prev_permutation</strong> / <strong>ranges::prev_permutation</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">生成范围元素的<strong>下一个更小</strong>的字典序排列</td></tr>
 <tr><td style="text-align: left"><strong>is_permutation</strong> / <strong>ranges::is_permutation</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;algorithm&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">确定一个序列是否是另一个序列的<strong>排列</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h2 id="四数值操作-numeric-operations"><a class="header" href="#四数值操作-numeric-operations">四、数值操作 (Numeric operations)</a></h2>
 <p><strong>主要头文件：</strong></p>
@@ -446,7 +571,12 @@ std::ranges::sort(std::execution::par, data);
 <li><strong><code>&lt;numeric&gt;</code></strong>：包含所有传统的数值算法和 C++17 的并行数值算法。</li>
 <li><strong><code>&lt;ranges&gt;</code></strong>：包含 <code>ranges::iota</code>。</li>
 </ul>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">数值操作 (Numeric operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">数值操作 (Numeric operations)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>iota</strong> / <strong>ranges::iota</strong></td><td style="text-align: left">(C++11) / (C++23)</td><td style="text-align: left"><code>&lt;numeric&gt;</code> / <code>&lt;ranges&gt;</code></td><td style="text-align: left">用<strong>递增</strong>的起始值填充一个范围</td></tr>
 <tr><td style="text-align: left"><strong>accumulate</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">对一个元素范围<strong>求和</strong>或<strong>折叠</strong></td></tr>
 <tr><td style="text-align: left"><strong>inner_product</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">计算两个元素范围的<strong>内积</strong></td></tr>
@@ -458,14 +588,20 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>transform_reduce</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后<strong>无序归约</strong></td></tr>
 <tr><td style="text-align: left"><strong>transform_exclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后计算<strong>独占扫描</strong></td></tr>
 <tr><td style="text-align: left"><strong>transform_inclusive_scan</strong></td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;numeric&gt;</code></td><td style="text-align: left">应用一个可调用对象，然后计算<strong>包含扫描</strong></td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h2 id="五未初始化内存操作-operations-on-uninitialized-memory"><a class="header" href="#五未初始化内存操作-operations-on-uninitialized-memory">五、未初始化内存操作 (Operations on uninitialized memory)</a></h2>
 <p><strong>主要头文件：</strong></p>
 <ul>
 <li><strong><code>&lt;memory&gt;</code></strong>：包含所有未初始化内存操作。</li>
 </ul>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">未初始化内存操作 (Operations on uninitialized memory)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">未初始化内存操作 (Operations on uninitialized memory)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>uninitialized_copy</strong> / <strong>ranges::uninitialized_copy</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一系列对象<strong>复制</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
 <tr><td style="text-align: left"><strong>uninitialized_copy_n</strong> / <strong>ranges::uninitialized_copy_n</strong></td><td style="text-align: left">(C++11) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将<strong>指定数量</strong>的对象<strong>复制</strong>到一块<strong>未初始化内存</strong>区域</td></tr>
 <tr><td style="text-align: left"><strong>uninitialized_fill</strong> / <strong>ranges::uninitialized_fill</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">将一个对象<strong>复制赋值</strong>给一块<strong>未初始化内存</strong>区域</td></tr>
@@ -480,7 +616,8 @@ std::ranges::sort(std::execution::par, data);
 <tr><td style="text-align: left"><strong>destroy_n</strong> / <strong>ranges::destroy_n</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left"><strong>销毁</strong>范围内的 \( N \) 个对象</td></tr>
 <tr><td style="text-align: left"><strong>destroy_at</strong> / <strong>ranges::destroy_at</strong></td><td style="text-align: left">(C++17) / (C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left"><strong>销毁</strong>给定地址处的对象</td></tr>
 <tr><td style="text-align: left"><strong>construct_at</strong> / <strong>ranges::construct_at</strong></td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">在给定地址处<strong>创建</strong>一个对象</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h2 id="六其他算法和工具"><a class="header" href="#六其他算法和工具">六、其他算法和工具</a></h2>
 <h3 id="随机数生成-random-number-generation"><a class="header" href="#随机数生成-random-number-generation">随机数生成 (Random number generation)</a></h3>
@@ -488,43 +625,62 @@ std::ranges::sort(std::execution::par, data);
 <ul>
 <li><strong><code>&lt;ranges&gt;</code></strong></li>
 </ul>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">随机数生成 (Random number generation)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">随机数生成 (Random number generation)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>ranges::generate_random</strong></td><td style="text-align: left">(C++26)</td><td style="text-align: left"><code>&lt;ranges&gt;</code></td><td style="text-align: left">用<strong>均匀随机位生成器</strong>填充一个随机数范围</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="c-库函数-c-library-functions"><a class="header" href="#c-库函数-c-library-functions">C 库函数 (C library functions)</a></h3>
 <p><strong>主要头文件：</strong></p>
 <ul>
 <li><strong><code>&lt;cstdlib&gt;</code></strong> (或 <code>&lt;stdlib.h&gt;</code>)</li>
 </ul>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">C 库函数 (C library functions)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">C 库函数 (C library functions)</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>qsort</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;cstdlib&gt;</code></td><td style="text-align: left"><strong>排序</strong>一个<strong>类型未指定</strong>的元素范围</td></tr>
 <tr><td style="text-align: left"><strong>bsearch</strong></td><td style="text-align: left"></td><td style="text-align: left"><code>&lt;cstdlib&gt;</code></td><td style="text-align: left"><strong>搜索</strong>一个<strong>类型未指定</strong>的数组中的元素</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
 <h3 id="附注执行策略-execution-policies"><a class="header" href="#附注执行策略-execution-policies">附注：执行策略 (Execution policies)</a></h3>
 <p><strong>主要头文件：</strong></p>
 <ul>
 <li><strong><code>&lt;execution&gt;</code></strong></li>
 </ul>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">执行策略类型 (Execution policy types)</th><th style="text-align: left">宏/类/对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr></thead><tbody>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">执行策略类型 (Execution policy types)</th><th style="text-align: left">宏/类/对象</th><th style="text-align: left">C++ 版本</th><th style="text-align: left">头文件</th><th style="text-align: left">描述 (功能)</th></tr>
+</thead>
+<tbody>
 <tr><td style="text-align: left"><strong>sequenced_policy</strong> (<code>seq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>序列化</strong>执行（无并行）</td></tr>
 <tr><td style="text-align: left"><strong>parallel_policy</strong> (<code>par</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>并行</strong>执行</td></tr>
 <tr><td style="text-align: left"><strong>parallel_unsequenced_policy</strong> (<code>par\_unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>并行</strong>且<strong>乱序</strong>执行</td></tr>
 <tr><td style="text-align: left"><strong>unsequenced_policy</strong> (<code>unseq</code>)</td><td style="text-align: left">类 / 全局对象</td><td style="text-align: left">(C++20)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left"><strong>乱序</strong>执行（允许编译器向量化）</td></tr>
 <tr><td style="text-align: left"><strong>is_execution_policy</strong></td><td style="text-align: left">类模板</td><td style="text-align: left">(C++17)</td><td style="text-align: left"><code>&lt;execution&gt;</code></td><td style="text-align: left">测试一个类是否表示一个执行策略</td></tr>
-</tbody></table>
+</tbody>
+</table>
 </div>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                             <a rel="prev" href="../STL/Containers/Priority_queue.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
                             <a rel="next prefetch" href="../Practice.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
                         <div style="clear: both"></div>
@@ -534,16 +690,21 @@ std::ranges::sort(std::execution::par, data);
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     <a rel="prev" href="../STL/Containers/Priority_queue.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
                     <a rel="next prefetch" href="../Practice.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
 
         </div>
 
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
 
 
@@ -552,13 +713,13 @@ std::ranges::sort(std::execution::par, data);
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-09f2665d.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 
