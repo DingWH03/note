@@ -39,10 +39,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-6d839863.js";
+            window.path_to_searchindex_js = "../../searchindex-dfaa6092.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-54acc4e6.js"></script>
+        <script src="../../toc-2e4e548b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -185,31 +185,38 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="stdvector"><a class="header" href="#stdvector">std::vector</a></h1>
-<p>向量（Vector）是一个封装了动态大小数组的顺序容器（Sequence Container）。跟任意其它类型容器一样，它能够存放各种类型的对象。可以简单的认为，向量是一个能够存放任意类型的动态数组。Vector支持<strong>快速随机访问</strong>。</p>
+<p><code>std::vector</code> 是一个封装了<strong>动态大小数组</strong>的顺序容器（Sequence Container）。与其它容器一样，它能够存放各种类型的对象，可以简单地认为它是一个能够存放任意类型的动态数组。</p>
+<p><code>std::vector</code> 支持<strong>快速随机访问</strong>，并且是 C++ 中最常用、最应该优先考虑的容器。在大多数场景下，如果你不确定该用哪个容器，<code>std::vector</code> 通常就是默认选择。</p>
 <h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
-<pre><code class="language-C++">#include &lt;vector&gt;
+<pre><code class="language-c++">#include &lt;vector&gt;
 </code></pre>
 <h2 id="2-存储方式"><a class="header" href="#2-存储方式">2. 存储方式</a></h2>
-<p>为了支持随机访问，vector将元素连续存储–每个元素紧挨着前一个元素存储。容器中元素是连续存储的，且容器的大小是可变的。</p>
-<p>在容器中增加元素时。vector根据存储元素的大小，在内存上申请一个空间，用于存储数据，空间的大小通常会大于所存储元素的实际大小，并且预留出一部分预留的空间，以便再次增加数据时，可以不用重新开辟空间。</p>
-<p>当容器再次增加新的元素后，首先判断预留的空间是否够用，如果够用直接在预留空间中存储。如果预留的空间不够，需要在内存中开辟一整块新的更大的空间，并将vector原来的存储的数据<strong>拷贝</strong>过来，存储到新的内存中，然后在新的内存中增加需要增加的元素，这样保证存储的空间是连续的。所开的空间会预留出一部分空间，以便后续增加数据。</p>
-<p>当 vector 增长时，容量通常会按一定比例（通常是1.5或2）增长。这有助于减少频繁的重新分配，提升性能。</p>
+<p>为了支持随机访问，<code>std::vector</code> 将元素<strong>连续存储</strong>——每个元素紧挨着前一个元素存储。容器中元素是连续存储的，且容器的大小是可变的。</p>
+<p>在容器中增加元素时，<code>std::vector</code> 会根据存储元素的大小，在内存上申请一块空间用于存储数据。空间的大小通常会大于所存储元素的实际大小，并且预留出一部分空间，以便再次增加数据时无需重新开辟空间。</p>
+<p>当容器再次增加新的元素时，首先判断预留的空间是否够用：够用就直接在预留空间中存储；不够用则要在内存中开辟一整块新的更大的空间，把原来的数据拷贝（或移动）过去，再在新内存中加入新元素，这样才能保证存储空间始终连续。新开辟的空间同样会预留一部分，以便后续继续增加数据。当 <code>std::vector</code> 增长时，容量通常会按一定比例增长（常见的实现是 1.5 倍或 2 倍），这有助于减少频繁的重新分配，提升性能。</p>
+<p>需要注意的是，扩容意味着元素被搬到了新的内存地址，扩容之前保存的迭代器、指针和引用都会失效，继续使用属于未定义行为。如果提前知道元素数量，可以用 <code>reserve()</code> 预留空间，避免中途扩容。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3};
+int* p = &amp;vec[0];
+vec.push_back(4);   // 可能触发扩容，p 可能已经失效
+// *p;              // 危险：未定义行为
+</code></pre>
+<p>上面说的“元素连续存储、可以取地址“，对 <code>std::vector&lt;bool&gt;</code> 并不成立。标准库对 <code>bool</code> 做了特化，把它实现成了一个按位存储的位容器，每个元素只占 1 个二进制位，8 个元素合起来才占 1 个字节，因此 <code>std::vector&lt;bool&gt;</code> 在省内存的同时也失去了普通 vector 的很多性质。需要说明的是，标准只要求实现“尽可能省空间“，具体怎么优化由实现决定，按位存储是最常见的做法。这一点在后面几节会陆续提到。</p>
 <h2 id="3-方法"><a class="header" href="#3-方法">3. 方法</a></h2>
-<h3 id="1构造方法"><a class="header" href="#1构造方法">(1)构造方法</a></h3>
+<h3 id="1-构造方法"><a class="header" href="#1-构造方法">(1) 构造方法</a></h3>
 <ol>
 <li>
-<p><code>vector()</code>: 创建一个空vector，创建时也可以使用迭代器进行初始化</p>
+<p><code>vector()</code>: 创建一个空 vector，创建时也可以使用初始化列表进行初始化</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec;
 std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
 </code></pre>
 </li>
 <li>
-<p><code>vector(size_t nSize)</code>: 创建一个vector,元素个数为nSize，默认构造函数会赋值与默认值</p>
+<p><code>vector(size_type count)</code>: 创建一个包含 <code>count</code> 个元素的 vector，元素为值初始化（内置类型为 0）</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec(10);
 </code></pre>
 </li>
 <li>
-<p><code>vector(size_t nSize,const t&amp; t)</code>: 创建一个vector，元素个数为nSize,且值均为t</p>
+<p><code>vector(size_type count, const T&amp; value)</code>: 创建一个包含 <code>count</code> 个元素的 vector，且每个元素的值均为 <code>value</code></p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec(10, 5);
 </code></pre>
 </li>
@@ -220,36 +227,38 @@ std::vector&lt;int&gt; vec2(vec1);  // vec2 是 vec1 的一个复制版本
 </code></pre>
 </li>
 <li>
-<p><code>vector(begin,end)</code>: 复制[begin,end)区间内另一个数组的元素到vector中</p>
+<p><code>vector(begin, end)</code>: 复制 [begin, end) 区间内另一个容器（或数组）的元素到 vector 中</p>
 <pre><code class="language-c++">std::array&lt;int, 5&gt; arr = {1, 2, 3, 4, 5}; // 创建一个 std::array 或 std::vector
 std::vector&lt;int&gt; vec(arr.begin(), arr.begin() + 3);  // 复制前3个元素
 </code></pre>
 </li>
 </ol>
-<h3 id="2大小函数"><a class="header" href="#2大小函数">(2)大小函数</a></h3>
+<h3 id="2-大小函数"><a class="header" href="#2-大小函数">(2) 大小函数</a></h3>
 <ol>
 <li>
-<p><code>size_t size() const</code>: 返回vector中存放元素的实际数量（实际存储元素的个数）</p>
+<p><code>size_type size() const</code>: 返回 vector 中存放元素的实际数量（实际存储元素的个数）</p>
 </li>
 <li>
-<p><code>size_t capacity() const</code>: 返回vector在内存中，开辟空间的容量（最多能放所少个元素不需要重新扩容）</p>
+<p><code>size_type capacity() const</code>: 返回 vector 在内存中开辟空间的容量（最多能放多少个元素而不需要重新扩容）</p>
 </li>
 <li>
-<p><code>size_t max_size() const</code>: 返回最大可允许的vector元素数量值</p>
+<p><code>size_type max_size() const</code>: 返回最大可允许的 vector 元素数量值</p>
 </li>
 <li>
 <p><code>bool empty() const</code>: 返回数组是否为空</p>
 </li>
 <li>
-<p><code>void shrink_to_fit()</code>: 调整数组大小(capacity)刚好适应当前的大小，节省内存</p>
+<p><code>void shrink_to_fit()</code>: 请求释放未使用的容量，把 capacity 降到接近 size。这是一个<strong>非强制性请求</strong>，是否生效由实现决定；如果发生了重新分配，所有迭代器、指针和引用都会失效</p>
 </li>
 <li>
-<p><code>void resize(size_t size)</code>: 修改 vector 的大小。如果新大小比当前大小大，则扩大数组容量，会导致控制帧。如果新大小比当前大小小，则不做处理</p>
+<p><code>void resize(size_type count)</code>: 修改 vector 的<strong>大小（size）</strong>。如果新大小比当前大小大，则用值初始化填充新增元素（可能触发扩容）；如果新大小比当前大小小，则删除多余的元素，但<strong>容量不会随之减小</strong></p>
 </li>
 <li>
-<p><code>void reserve(size_t n)</code>: 修改 vector 的capacity，为数组预留空间，不改变size。</p>
+<p><code>void reserve(size_type new_cap)</code>: 把 vector 的 <strong>capacity</strong> 提升到不小于 <code>new_cap</code>，不改变 size。<code>reserve()</code> 只能增大容量，不能用来缩小容量</p>
 </li>
 </ol>
+<p>这几个函数里，<code>size()</code>、<code>capacity()</code> 和 <code>reserve()</code> 是配合使用的重点。<code>size()</code> 是当前真正存了多少个元素，<code>capacity()</code> 是不扩容的前提下最多能放多少个，两者通常不相等，中间差的那部分就是预留空间。知道要装多少元素时，先 <code>reserve()</code> 一次性把容量要到够，可以避免边插入边扩容带来的反复拷贝。不过 <code>reserve()</code> 也不是越多越好，如果在每次 <code>push_back()</code> 之前都调用一次，容量就会线性增长而不是指数增长，反而会带来更多的重新分配。</p>
+<p>对 <code>std::vector&lt;bool&gt;</code> 来说，这几个函数同样可用，但要注意 <code>capacity()</code> 的单位是<strong>位</strong>而不是字节，返回值表示的是能容纳多少个布尔值，而不是分配了多少内存。</p>
 <h3 id="3-增加函数"><a class="header" href="#3-增加函数">(3) 增加函数</a></h3>
 <ol>
 <li>
@@ -259,68 +268,102 @@ vec.push_back(4);  // 向 vec 中添加元素 4，vec 变为 {1, 2, 3, 4}
 </code></pre>
 </li>
 <li>
-<p><code>emplace_back(Args&amp;&amp;... args)</code>: 在 vector 的末尾就地构造一个元素，使用提供的参数直接构造该元素，而不是首先创建元素再添加。这样可以减少不必要的拷贝或移动操作。</p>
+<p><code>reference emplace_back(Args&amp;&amp;... args)</code>: 在 vector 的末尾就地构造一个元素，使用提供的参数直接构造该元素，而不是首先创建元素再添加。这样可以减少不必要的拷贝或移动操作。C++17 起返回新插入元素的引用</p>
 <pre><code class="language-c++">std::vector&lt;std::pair&lt;int, int&gt;&gt; vec;
 vec.emplace_back(1, 2);  // 在末尾构造一个 pair&lt;int, int&gt;，值为 {1, 2}
 </code></pre>
 </li>
 <li>
-<p><code>insert(iterator pos, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入一个元素。元素会被插入到 <code>pos</code> 之前，<code>pos</code> 之后的元素会被向后移动。</p>
+<p><code>iterator insert(const_iterator pos, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入一个元素。元素会被插入到 <code>pos</code> 之前，<code>pos</code> 之后的元素会被向后移动，返回指向新插入元素的迭代器</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 4, 5};
 vec.insert(vec.begin() + 2, 3);  // 在位置2插入3，vec 变为 {1, 2, 3, 4, 5}
 </code></pre>
 </li>
 <li>
-<p><code>insert(iterator pos, size_t count, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入 <code>count</code> 个元素，所有的元素值为 <code>value</code>。</p>
+<p><code>iterator insert(const_iterator pos, size_type count, const T&amp; value)</code>: 在指定位置 <code>pos</code> 插入 <code>count</code> 个元素，所有的元素值为 <code>value</code>，返回指向第一个新插入元素的迭代器（<code>count == 0</code> 时返回 <code>pos</code>）</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 4, 5};
 vec.insert(vec.begin() + 2, 2, 3);  // 在位置2插入两个 3，vec 变为 {1, 2, 3, 3, 4, 5}
 </code></pre>
 </li>
 <li>
-<p><code>insert(iterator pos, InputIterator first, InputIterator last)</code>: 将 <code>[first, last)</code> 区间的元素插入到 <code>pos</code> 位置。</p>
+<p><code>iterator insert(const_iterator pos, InputIterator first, InputIterator last)</code>: 将 <code>[first, last)</code> 区间的元素插入到 <code>pos</code> 位置。<code>first</code> 和 <code>last</code> 不能是 <code>*this</code> 自己的迭代器，否则行为未定义</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec1 = {1, 2, 3};
 std::vector&lt;int&gt; vec2 = {4, 5};
 vec1.insert(vec1.begin() + 2, vec2.begin(), vec2.end());  // 在位置 2 插入 vec2 中的元素，vec1 变为 {1, 2, 4, 5, 3}
 </code></pre>
 </li>
 <li>
-<p><code>emplace(iterator pos, Args&amp;&amp;... args)</code>: 在指定位置 <code>pos</code> 就地构造一个元素，使用提供的参数直接构造该元素。</p>
+<p><code>iterator emplace(const_iterator pos, Args&amp;&amp;... args)</code>: 在指定位置 <code>pos</code> 就地构造一个元素，使用提供的参数直接构造该元素，返回指向新插入元素的迭代器</p>
 <pre><code class="language-c++">std::vector&lt;std::pair&lt;int, int&gt;&gt; vec;
 vec.emplace(vec.begin(), 1, 2);  // 在位置0处构造一个 pair&lt;int, int&gt;，值为 {1, 2}
 </code></pre>
 </li>
 </ol>
+<p>除了末尾的 <code>push_back</code> 和 <code>emplace_back</code>，其余插入操作都需要移动插入点之后的元素，代价是 <code>O(n)</code>，所以能往末尾加就不要往中间插。</p>
+<p><code>std::vector&lt;bool&gt;</code> 的这些函数用法基本一样，但 <code>operator[]</code>、<code>front()</code>、<code>back()</code> 返回的都不是 <code>bool&amp;</code>，而是一个代理对象（<code>std::vector&lt;bool&gt;::reference</code>），它内部记录了“哪一位“的信息，可以隐式转换成 <code>bool</code>，也可以赋值。用起来像引用，但它不是引用，所以 <code>&amp;vec[0]</code> 是无法编译的：</p>
+<pre><code class="language-c++">std::vector&lt;bool&gt; vec = {true, false, true};
+// bool* p = &amp;vec[0];  // 错误：无法对 vector&lt;bool&gt; 的元素取地址
+vec[0] = false;         // 可以，通过代理对象修改对应的位
+bool value = vec[0];    // 可以，隐式转换为 bool
+</code></pre>
+<p>这一点在写模板代码时尤其容易出问题。下面这段代码对 <code>std::vector&lt;int&gt;</code> 没问题，但对 <code>std::vector&lt;bool&gt;</code> 直接编译不过，因为 <code>vec[i]</code> 返回的是右值代理对象，没法绑定到 <code>auto&amp;</code>：</p>
+<pre><code class="language-c++">template &lt;typename T&gt;
+void doubleAll(std::vector&lt;T&gt;&amp; vec) {
+    for (auto&amp; x : vec) {  // vector&lt;bool&gt; 时无法绑定到 auto&amp;
+        x = x + x;
+    }
+}
+</code></pre>
+<p>另外，<code>auto a = vec[0];</code> 得到的也是代理对象而不是 <code>bool</code>。代理对象内部记录的是“哪一位“，如果它指向的 <code>std::vector&lt;bool&gt;</code> 被销毁或者重新分配了内存，再用它就是悬垂引用，属于未定义行为。想要真正的值，就显式写成 <code>bool b = vec[0];</code>。</p>
 <h3 id="4-删除函数"><a class="header" href="#4-删除函数">(4) 删除函数</a></h3>
 <ol>
 <li>
-<p><code>pop_back()</code>: 删除 vector 中的最后一个元素。该函数不会改变容器的容量，只是移除最后一个元素并缩小容器的大小。</p>
+<p><code>void pop_back()</code>: 删除 vector 中的最后一个元素。该函数不会改变容器的容量，只是移除最后一个元素并缩小容器的大小。指向最后一个元素的迭代器和引用会失效，<code>end()</code> 迭代器也会失效；容器为空时调用属于未定义行为</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
 vec.pop_back();  // 删除最后一个元素，vec 变为 {1, 2, 3}
 </code></pre>
 </li>
 <li>
-<p><code>erase(iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素。删除后，后面的元素会向前移动。</p>
+<p><code>iterator erase(const_iterator pos)</code>: 删除指定位置 <code>pos</code> 处的元素。删除后，后面的元素会向前移动，返回指向被删元素之后位置的迭代器（若删的是最后一个元素，则返回 <code>end()</code>）</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
 vec.erase(vec.begin() + 2);  // 删除索引为2的元素，vec 变为 {1, 2, 4}
 </code></pre>
 </li>
 <li>
-<p><code>erase(iterator first, iterator last)</code>: 删除 <code>[first, last)</code> 区间内的所有元素。此操作删除从 <code>first</code> 到 <code>last</code> 之间的元素（不包括 <code>last</code>）。</p>
+<p><code>iterator erase(const_iterator first, const_iterator last)</code>: 删除 <code>[first, last)</code> 区间内的所有元素，返回指向最后一个被删元素之后位置的迭代器</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
 vec.erase(vec.begin() + 1, vec.begin() + 4);  // 删除索引从 1 到 3 的元素，vec 变为 {1, 5}
 </code></pre>
 </li>
 <li>
-<p><code>clear()</code>: 删除 vector 中的所有元素，容器变为空，但容器的容量不会立即改变，直到发生重新分配。</p>
+<p><code>void clear()</code>: 删除 vector 中的所有元素，容器变为空。所有指向元素的迭代器、指针和引用（包括 <code>end()</code>）都会失效，但<strong>容量保持不变</strong></p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
 vec.clear();  // 删除所有元素，vec 变为空 { }
 </code></pre>
 </li>
 </ol>
-<h3 id="5遍历函数"><a class="header" href="#5遍历函数">(5)遍历函数</a></h3>
+<p>删除操作里需要特别留意的是 <code>erase</code>。它删除的是 <code>[first, last)</code> 区间，<strong>删除位置及之后</strong>的迭代器、指针和引用都会失效（C++11 之前甚至连 <code>erase</code> 位置本身的迭代器也要求失效），因此循环中删除元素时不能简单地 <code>++it</code>，而要接收 <code>erase</code> 返回的新迭代器：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5, 6};
+// 错误写法：it 在 erase 后失效，++it 是未定义行为
+// for (auto it = vec.begin(); it != vec.end(); ++it) {
+//     if (*it % 2 == 0) vec.erase(it);
+// }
+
+// 正确写法：用 erase 的返回值继续遍历
+for (auto it = vec.begin(); it != vec.end(); ) {
+    if (*it % 2 == 0) {
+        it = vec.erase(it);  // erase 返回下一个有效迭代器
+    } else {
+        ++it;
+    }
+}
+// vec 变为 {1, 3, 5}
+</code></pre>
+<p><code>std::vector&lt;bool&gt;</code> 的删除操作接口和普通 vector 一样，<code>erase</code> 同样返回后续迭代器，用法也相同。不过 <code>std::vector&lt;bool&gt;</code> 的迭代器是封装了位操作的类，并不是指针，所以不能把 <code>erase</code> 的返回值当作指针使用。</p>
+<h3 id="5-遍历函数"><a class="header" href="#5-遍历函数">(5) 遍历函数</a></h3>
 <ol>
 <li>
-<p><code>reference at(int pos)</code>: 返回 <code>pos</code> 位置元素的引用。与 <code>operator[]</code> 类似，但会检查边界，如果访问无效的位置会抛出 <code>std::out_of_range</code> 异常。</p>
+<p><code>reference at(size_type pos)</code>: 返回 <code>pos</code> 位置元素的引用。与 <code>operator[]</code> 类似，但会检查边界，如果 <code>pos &gt;= size()</code> 会抛出 <code>std::out_of_range</code> 异常</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5};
 int&amp; element = vec.at(2);  // 返回位置 2 处元素的引用，即值为 3
 element = 10;  // 修改元素为 10
@@ -390,29 +433,51 @@ for (size_t i = 0; i &lt; vec.size(); ++i) {
 </code></pre>
 </li>
 </ol>
-<h3 id="6其他函数"><a class="header" href="#6其他函数">(6)其他函数</a></h3>
+<p>这里要再提一次 <code>std::vector&lt;bool&gt;</code>：它的迭代器不是指针，而是封装了位操作的类，因此不能当指针用，<code>&amp;*it</code> 这类写法是非法的。前面提到的基于范围的 <code>for</code> 循环在它身上也要小心，<code>for (auto&amp; x : vec)</code> 绑定不上代理对象，只能写成 <code>for (bool x : vec)</code> 或 <code>for (auto&amp;&amp; x : vec)</code> 这样的形式。</p>
+<h3 id="6-其他函数"><a class="header" href="#6-其他函数">(6) 其他函数</a></h3>
 <ol>
 <li>
-<p><code>swap(vector&amp; other)</code>: 交换当前 vector 和另一个 vector 的内容。如果需要“删除”当前 vector 中的元素，可以通过交换将其与一个空的 vector 交换，从而达到清空的效果。</p>
+<p><code>void swap(vector&amp; other)</code>: 交换当前 vector 和另一个 vector 的内容（包括 capacity）。它不会对单个元素做拷贝、移动或交换，所以指向元素的迭代器和引用仍然有效，只是跟随元素“搬”到了对方容器里；<code>end()</code> 迭代器会失效。如果需要“删除”当前 vector 中的元素，可以通过交换将其与一个空的 vector 交换，从而达到清空的效果</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3, 4};
 std::vector&lt;int&gt; emptyVec;
 vec.swap(emptyVec);  // vec 变为空，emptyVec 变为 {1, 2, 3, 4}
 </code></pre>
 </li>
 <li>
-<p><code>assign(size_t count, const T&amp; value)</code>: 将 <code>count</code> 个 <code>value</code> 元素赋值给当前 vector，替换原有内容。</p>
+<p><code>void assign(size_type count, const T&amp; value)</code>: 将 <code>count</code> 个 <code>value</code> 元素赋值给当前 vector，替换原有内容，所有迭代器、指针和引用都会失效</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec;
 vec.assign(5, 10);  // 将 vec 赋值为 {10, 10, 10, 10, 10}
 </code></pre>
 </li>
 <li>
-<p><code>assign(InputIterator first, InputIterator last)</code>: 使用区间 <code>[first, last)</code> 的元素来填充当前 vector，替换原有内容。</p>
+<p><code>void assign(InputIterator first, InputIterator last)</code>: 使用区间 <code>[first, last)</code> 的元素来填充当前 vector，替换原有内容。<code>first</code> 和 <code>last</code> 不能是 <code>*this</code> 自己的迭代器，否则行为未定义</p>
 <pre><code class="language-c++">std::vector&lt;int&gt; vec1 = {1, 2, 3};
 std::vector&lt;int&gt; vec2;
 vec2.assign(vec1.begin(), vec1.end());  // vec2 变为 {1, 2, 3}
 </code></pre>
 </li>
+<li>
+<p><code>T* data()</code>: 返回指向底层数组中首元素的指针，便于与 C 风格接口交互。即使容器为空，<code>[data(), data() + size())</code> 也始终是一个合法区间，只是此时指针不可解引用</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; vec = {1, 2, 3};
+int* p = vec.data();  // 等价于 &amp;vec[0]
+std::cout &lt;&lt; p[0] &lt;&lt; std::endl;  // 输出: 1
+</code></pre>
+</li>
 </ol>
+<p><code>data()</code> 是普通 vector 与 C 接口打交道的主要方式，但 <code>std::vector&lt;bool&gt;</code> <strong>没有</strong> <code>data()</code> 成员，也没有 <code>bool*</code> 迭代器，所以 <code>std::memcpy(buffer, vec.data(), ...)</code> 这类写法以及任何要求 <code>bool*</code> 的 C 函数在它身上都用不了。另外，<code>emplace()</code> 和 <code>emplace_back()</code> 这两个函数在 C++11 刚引入时也没有提供给 <code>std::vector&lt;bool&gt;</code>，后来通过 LWG 2187 补上了，所以在较老的编译器上这两个函数可能不可用。<code>std::vector&lt;bool&gt;</code> 还提供了一个特有的成员函数 <code>flip()</code>，用于翻转容器中所有的布尔值（相当于按位取反），普通 <code>std::vector</code> 没有这个函数。</p>
+<pre><code class="language-c++">std::vector&lt;bool&gt; vec;
+vec.push_back(true);
+vec.push_back(false);
+vec.emplace_back(true);
+vec[0] = false;                        // 通过代理对象修改
+vec.flip();                            // 翻转所有位
+std::cout &lt;&lt; vec.size() &lt;&lt; std::endl;  // 输出: 3
+</code></pre>
+<p>另外要注意，多个线程同时写同一个字节内的不同位（也就是不同的 <code>std::vector&lt;bool&gt;</code> 元素）会产生数据竞争，而 <code>std::vector&lt;char&gt;</code> 里相邻元素是独立的字节，不会有这个问题。还有一点，按位存储省的是内存，代价是每次读写都要做掩码和移位，访问单个元素比普通 <code>bool</code> 数组更贵，编译器也很难做向量化优化，如果代码是随机访问密集型的，<code>std::vector&lt;bool&gt;</code> 反而可能更慢。</p>
+<p>总结一下，<code>std::vector&lt;bool&gt;</code> 适合的场景是只需要一个省内存的位集合，并且不需要取元素地址、不需要和 C 接口打交道。如果需要的是真正的 <code>bool</code> 数组语义，应该换成 <code>std::vector&lt;char&gt;</code>（每个元素占 1 字节，可以取地址），或者长度固定时用 <code>std::bitset</code>（按位存储，接口更丰富）。</p>
+<pre><code class="language-c++">std::vector&lt;char&gt; vec(10, 0);  // 每个元素占 1 字节，可以取地址
+std::bitset&lt;100&gt; bits;         // 长度固定，按位存储
+</code></pre>
 
                     </main>
 
