@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>字符串流 (sstream) - Note of C++</title>
+        <title>标准输入输出流 (iostream) - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -39,10 +39,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dfaa6092.js";
+            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-2e4e548b.js"></script>
+        <script src="../../toc-4694e643.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -150,7 +150,7 @@
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Practice/Stream/Sstream.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Library/Stream/Iostream.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -184,135 +184,196 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="字符串流sstream"><a class="header" href="#字符串流sstream">字符串流（sstream）</a></h1>
-<p>在 C++ 中，<strong>字符串流（String Streams）</strong> 是一种特殊的内存流，它将字符串抽象为输入输出流，从而允许程序像操作文件或控制台那样读写字符串。字符串流的核心头文件为 <code>&lt;sstream&gt;</code>，主要用于格式化文本、解析数据或在内存中临时缓存输出内容。相比直接操作字符串，字符串流提供了统一、可扩展且安全的接口。</p>
-<h2 id="一字符串流的分类"><a class="header" href="#一字符串流的分类">一、字符串流的分类</a></h2>
-<p>字符串流继承自标准流类体系，但其输入输出目标不是物理设备，而是内存中的字符串。C++ 提供三种主要类型的字符串流：</p>
+                        <h1 id="标准输入输出流iostream"><a class="header" href="#标准输入输出流iostream">标准输入输出流（iostream）</a></h1>
+<p>C++ 的输入输出体系以 <code>&lt;iostream&gt;</code> 头文件为核心。它定义了程序与外部设备（例如键盘与显示器）交互的最基本机制，是所有流操作的基础。标准输入输出流提供了一组通用接口，用于在内存与外部设备之间以流的形式进行数据传输。</p>
+<h2 id="一标准流对象"><a class="header" href="#一标准流对象">一、标准流对象</a></h2>
+<p>C++ 预定义了四个标准流对象，分别用于输入、输出与错误处理：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>对象名</th><th>所属类</th><th>方向</th><th>描述</th></tr>
+</thead>
+<tbody>
+<tr><td><code>cin</code></td><td><code>istream</code></td><td>输入</td><td>从标准输入（键盘）读取数据</td></tr>
+<tr><td><code>cout</code></td><td><code>ostream</code></td><td>输出</td><td>向标准输出（控制台）写入数据</td></tr>
+<tr><td><code>cerr</code></td><td><code>ostream</code></td><td>输出</td><td>向标准错误输出写入数据（不带缓冲）</td></tr>
+<tr><td><code>clog</code></td><td><code>ostream</code></td><td>输出</td><td>向标准错误输出写入数据（带缓冲）</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>cin</code> 和 <code>cout</code> 是最常用的两个流对象，它们对应于 C 语言中的 <code>stdin</code> 与 <code>stdout</code>。而 <code>cerr</code> 与 <code>clog</code> 则用于错误与日志输出：</p>
+<ul>
+<li><code>cerr</code> 立即输出，不经过缓冲，适合错误提示；</li>
+<li><code>clog</code> 使用缓冲区，适合记录日志或调试信息。</li>
+</ul>
+<h2 id="二输入与输出运算符"><a class="header" href="#二输入与输出运算符">二、输入与输出运算符</a></h2>
+<p>C++ 使用运算符重载机制，使输入与输出操作更自然直观：</p>
+<pre><code class="language-cpp">int a;
+std::cin &gt;&gt; a;       // 输入，将数据流入变量 a
+std::cout &lt;&lt; a &lt;&lt; '\n'; // 输出，将数据流出到控制台
+</code></pre>
+<p><code>&gt;&gt;</code> 是提取运算符（extraction operator），从输入流中提取数据；
+<code>&lt;&lt;</code> 是插入运算符（insertion operator），向输出流中插入数据。</p>
+<p>这两个运算符被广泛重载，可用于所有基本类型与标准容器（通过 <code>operator&lt;&lt;</code> 的重载），使得流式编程成为 C++ 的一大特色。例如：</p>
+<pre><code class="language-cpp">std::string name;
+int age;
+std::cin &gt;&gt; name &gt;&gt; age;
+std::cout &lt;&lt; "Name: " &lt;&lt; name &lt;&lt; ", Age: " &lt;&lt; age &lt;&lt; std::endl;
+</code></pre>
+<p>每个操作符都返回流对象自身的引用，从而允许<strong>链式调用</strong>。</p>
+<h2 id="三流缓冲与刷新机制"><a class="header" href="#三流缓冲与刷新机制">三、流缓冲与刷新机制</a></h2>
+<p>所有标准输出流都带有缓冲区。输出内容首先被写入缓冲区，当缓冲区满、遇到换行符、调用 <code>flush</code> 或程序结束时，缓冲内容才会真正输出到设备。</p>
+<p>常见的刷新方式有：</p>
+<ul>
+<li><code>std::endl</code>：输出换行并刷新缓冲区；</li>
+<li><code>std::flush</code>：仅刷新缓冲区；</li>
+<li><code>std::ends</code>：输出一个空字符并刷新缓冲区。</li>
+</ul>
+<pre><code class="language-cpp">std::cout &lt;&lt; "Hello, world!" &lt;&lt; std::endl;  // 换行并刷新
+</code></pre>
+<p>这种延迟输出机制提高了效率，但在交互程序中需要注意及时刷新，否则可能出现输出滞后。</p>
+<h2 id="四格式化输出"><a class="header" href="#四格式化输出">四、格式化输出</a></h2>
+<p>C++ 流提供了丰富的格式化控制机制，用于调整输出格式。最常见的控制包括：</p>
 <ol>
 <li>
-<p><strong><code>istringstream</code></strong>
-面向输入的字符串流，用于从字符串中提取数据。它将字符串当作数据源，实现类似于从文件读取的行为。</p>
-</li>
-<li>
-<p><strong><code>ostringstream</code></strong>
-面向输出的字符串流，用于向字符串写入数据。它提供了格式化输出的能力，将数据以文本形式存储在内存字符串中。</p>
-</li>
-<li>
-<p><strong><code>stringstream</code></strong>
-同时支持输入和输出，可以在同一个字符串流对象上进行读写操作。适合需要在内存中反复解析和构建字符串的场景。</p>
-</li>
-</ol>
-<p>这种设计与标准流对象保持一致，使得对内存字符串的操作与文件或控制台的操作具有统一的接口和方法。</p>
-<h2 id="二基本用法"><a class="header" href="#二基本用法">二、基本用法</a></h2>
-<p>使用字符串流时，通常的步骤包括创建流对象、向流中写入或从流中读取数据，然后获取最终字符串或解析结果。示例：</p>
-<pre><code class="language-cpp">#include &lt;sstream&gt;
-#include &lt;string&gt;
-#include &lt;iostream&gt;
-
-std::ostringstream oss;
-oss &lt;&lt; "Name: " &lt;&lt; "Alice" &lt;&lt; ", Age: " &lt;&lt; 30;
-std::string result = oss.str();
-std::cout &lt;&lt; result &lt;&lt; std::endl;  // 输出 "Name: Alice, Age: 30"
-</code></pre>
-<pre><code class="language-cpp">std::string data = "42 3.14 hello";
-std::istringstream iss(data); // 从已有的字符串中建立字符流
-
-int i;
-double d;
-std::string s;
-iss &gt;&gt; i &gt;&gt; d &gt;&gt; s;  // 从字符串中提取整数、浮点数和字符串
-</code></pre>
-<p>通过这种方式，程序可以像处理标准流那样操作字符串，利用 <code>&gt;&gt;</code> 和 <code>&lt;&lt;</code> 运算符进行格式化输入输出。</p>
-<h2 id="三流的格式化能力"><a class="header" href="#三流的格式化能力">三、流的格式化能力</a></h2>
-<p>字符串流继承自标准流类，因此支持所有流的格式化特性：</p>
-<ul>
-<li>可以使用操纵符（<code>setw</code>, <code>setprecision</code>, <code>fixed</code> 等）控制输出格式。</li>
-<li>可以通过 <code>setf()</code>、<code>unsetf()</code> 设置流的格式标志，实现对齐方式、数值进制或符号显示的控制。</li>
-<li>可以链式调用输入输出操作，使字符串构建或解析更加简洁。</li>
-</ul>
-<p>示例：</p>
+<p><strong>操纵符（Manipulators）</strong>
+通过 <code>&lt;iomanip&gt;</code> 头文件可以使用 <code>setw</code>, <code>setfill</code>, <code>setprecision</code>, <code>fixed</code>, <code>scientific</code> 等控制输出格式：</p>
 <pre><code class="language-cpp">#include &lt;iomanip&gt;
-std::ostringstream oss2;
 double pi = 3.14159265;
-oss2 &lt;&lt; std::fixed &lt;&lt; std::setprecision(2) &lt;&lt; pi;
-std::cout &lt;&lt; oss2.str();  // 输出 "3.14"
+std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(3) &lt;&lt; pi;  // 输出 3.142
 </code></pre>
-<h2 id="四常见操作方法"><a class="header" href="#四常见操作方法">四、常见操作方法</a></h2>
-<p>字符串流提供了丰富的成员函数，用于在内存字符串上实现精细控制：</p>
-<ol>
-<li>
-<p><strong>获取内容</strong></p>
-<ul>
-<li><code>str()</code>：返回当前流中的字符串内容。</li>
-<li><code>str(const std::string&amp;)</code>：设置或替换流的内容，为流重新赋值。</li>
-</ul>
 </li>
 <li>
-<p><strong>清空或重置流</strong></p>
-<ul>
-<li><code>clear()</code>：重置流的状态，使其可重新进行读写操作。</li>
-<li><code>seekg()</code> / <code>seekp()</code>：调整读写位置，实现从特定位置开始读取或写入。</li>
-</ul>
-</li>
-<li>
-<p><strong>读取与写入</strong></p>
-<ul>
-<li>使用 <code>&gt;&gt;</code> 从字符串中提取数据，使用 <code>&lt;&lt;</code> 向流中插入数据。</li>
-<li>可以使用 <code>getline()</code> 从字符串中逐行读取内容，与文件或控制台操作保持一致。</li>
-</ul>
+<p><strong>流格式标志</strong>
+可以通过 <code>setf()</code>、<code>unsetf()</code> 修改流的格式状态，例如控制对齐方式、进制表示、是否显示符号等：</p>
+<pre><code class="language-cpp">std::cout.setf(std::ios::showpos);
+std::cout &lt;&lt; 42;  // 输出 +42
+</code></pre>
 </li>
 </ol>
-<p>示例：</p>
-<pre><code class="language-cpp">std::stringstream ss("123 456");
-int a, b;
-ss &gt;&gt; a &gt;&gt; b;  // 提取两个整数
-ss.str("");    // 清空流内容
-ss.clear();    // 重置状态
-ss &lt;&lt; "New content";
+<h2 id="五ios-与-ios_base"><a class="header" href="#五ios-与-ios_base">五、<code>ios</code> 与 <code>ios_base</code></a></h2>
+<p><code>ios_base</code> 是所有流类的根基，提供全局的格式化与状态管理功能，如：</p>
+<ul>
+<li>格式标志（<code>fmtflags</code>）</li>
+<li>I/O 状态（<code>iostate</code>）</li>
+<li>用户自定义存储（<code>xalloc</code>, <code>iword</code>, <code>pword</code>）</li>
+</ul>
+<p>而 <code>ios</code> 则在此基础上增加了缓冲区管理与错误处理机制，是 <code>istream</code> 与 <code>ostream</code> 的共同父类。</p>
+<h2 id="六标准流的重定向"><a class="header" href="#六标准流的重定向">六、标准流的重定向</a></h2>
+<p>C++ 允许将标准输入输出流重定向到文件或其他流对象，实现灵活的数据通道。例如：</p>
+<pre><code class="language-cpp">std::ofstream fout("log.txt");
+std::streambuf* backup = std::cout.rdbuf(fout.rdbuf());  // 重定向 cout 到文件
+std::cout &lt;&lt; "This will be written to file." &lt;&lt; std::endl;
+std::cout.rdbuf(backup); // 恢复
 </code></pre>
-<h2 id="五应用实例"><a class="header" href="#五应用实例">五、应用实例</a></h2>
-<h3 id="1-解析数组"><a class="header" href="#1-解析数组">1. 解析数组</a></h3>
-<p>解析<code>"[2,-1,3,0,12]"</code>这样的字符串为数组：</p>
-<pre><code class="language-cpp">std::string s = "[2,-1,3,0,12]";
-std::stringstream ss(s);
-char ch;
-std::vector&lt;int&gt; nums;
-std::string temp;
+<p>这种技术常用于日志系统或单元测试环境，能够让程序在不修改逻辑的情况下改变输出目标。</p>
+<h2 id="七非格式化输入与其他高级输入方法"><a class="header" href="#七非格式化输入与其他高级输入方法">七、非格式化输入与其他高级输入方法</a></h2>
+<p>提取运算符 <code>&gt;&gt;</code>（格式化输入）在读取数据时会跳过开头的空白符，并且遇到空格、制表符或换行符时会停止，这不适用于读取包含空格的字符串或需要精确控制读取字节数的情况。C++ iostream 库提供了一系列<strong>非格式化输入函数</strong>来满足这些需求。</p>
+<h3 id="1-读取整行getline"><a class="header" href="#1-读取整行getline">1. 读取整行：<code>getline()</code></a></h3>
+<p><code>std::getline()</code> 是最常用的非格式化输入函数之一，用于读取一行文本，包括其中的空格。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::getline(istream&amp; is, std::string&amp; str, char delim)</code></td><td style="text-align: left">从输入流 <code>is</code> 中读取字符，直到遇到指定的分隔符 <code>delim</code>（默认为 <code>\n</code>），并将读取的内容存入 <code>str</code>。<strong>分隔符会被读取，但不会存入 <code>str</code>。</strong></td></tr>
+<tr><td style="text-align: left"><code>std::getline(istream&amp; is, std::string&amp; str)</code></td><td style="text-align: left">使用默认的分隔符 <code>\n</code> 读取一行。</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
 
-// 读取第一个字符，应该是 '['
-ss &gt;&gt; ch;
-if (ch != '[') {
-    std::cerr &lt;&lt; "Invalid input format!" &lt;&lt; std::endl;
-    return 1;
-}
+std::string fullName;
+std::cout &lt;&lt; "Enter your full name: ";
+// 读取整行输入，直到遇到换行符
+std::getline(std::cin, fullName);
+std::cout &lt;&lt; "Welcome, " &lt;&lt; fullName &lt;&lt; std::endl;
+</code></pre>
+<h3 id="2-读取单个字符get"><a class="header" href="#2-读取单个字符get">2. 读取单个字符：<code>get()</code></a></h3>
+<p><code>get()</code> 函数用于从流中读取单个字符，且<strong>不会跳过空白符</strong>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>is.get(char&amp; ch)</code></td><td style="text-align: left">将流中的下一个字符存入 <code>ch</code>。</td></tr>
+<tr><td style="text-align: left"><code>is.get()</code></td><td style="text-align: left">返回流中的下一个字符（作为 <code>int</code> 类型），或返回 <code>EOF</code>（文件结束）。</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-cpp">char c1, c2;
+std::cin.get(c1); // 读取第一个字符（可能是空格）
+std::cin.get(c2); // 读取第二个字符
+std::cout &lt;&lt; "c1: " &lt;&lt; c1 &lt;&lt; ", c2: " &lt;&lt; c2 &lt;&lt; std::endl;
+</code></pre>
+<h3 id="3-忽略流中字符ignore"><a class="header" href="#3-忽略流中字符ignore">3. 忽略流中字符：<code>ignore()</code></a></h3>
+<p><code>ignore()</code> 函数常用于清除输入缓冲区中残余的字符，特别是在混合使用格式化输入（<code>&gt;&gt;</code>）和 <code>getline()</code> 时。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>is.ignore(streamsize count, char delim)</code></td><td style="text-align: left">从输入流中丢弃最多 <code>count</code> 个字符，直到遇到指定的分隔符 <code>delim</code>。<strong>分隔符也会被丢弃</strong>。</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-cpp">int age;
+char gender;
 
-while (ss &gt;&gt; ch) {
-    if (ch == ',' || ch == ']') {
-        if (!temp.empty()) {
-            nums.push_back(std::stoi(temp)); // 转换字符串为整数
-            temp.clear();
-        }
-        if (ch == ']') break; // 数组结束
-    } else {
-        temp += ch; // 累积数字字符，包括负号
-    }
-}
+std::cin &gt;&gt; age;
+// 假设用户输入 "25\n"
+// `&gt;&gt; age` 读取了 25，但换行符 '\n' 仍留在缓冲区。
 
-// 输出结果
-std::cout &lt;&lt; "Numbers: ";
-for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
-std::cout &lt;&lt; std::endl;
+// 清除缓冲区中剩余的字符，直到遇到换行符
+std::cin.ignore(10000, '\n');
+
+std::cout &lt;&lt; "Enter gender (M/F): ";
+std::cin.get(gender);
+// 现在 `get()` 可以正确读取新的输入，而不是残留在缓冲区的 '\n'
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> <code>10000</code> 是一个较大的数字，确保能够处理大多数行长度。</p>
+</blockquote>
+<h3 id="4-窥视下一个字符peek"><a class="header" href="#4-窥视下一个字符peek">4. 窥视下一个字符：<code>peek()</code></a></h3>
+<p><code>peek()</code> 函数用于查看流中下一个可用的字符，但<strong>不会将其从流中移除</strong>。</p>
+<pre><code class="language-cpp">// 假设流中下一个字符是 'H'
+char nextChar = std::cin.peek();
+// nextChar 是 'H'
+// 'H' 仍然在输入流中，可供下次操作读取
+</code></pre>
+<h3 id="5-高级操作read-与-gcount"><a class="header" href="#5-高级操作read-与-gcount">5. 高级操作：<code>read()</code> 与 <code>gcount()</code></a></h3>
+<p><code>read()</code> 是一个底层的非格式化输入函数，用于读取指定数量的原始字节数据，常用于处理二进制文件。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数签名</th><th style="text-align: left">描述</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>is.read(char* s, streamsize n)</code></td><td style="text-align: left">从流中读取 <code>n</code> 个字节到内存地址 <code>s</code> 开始的缓冲区。</td></tr>
+</tbody>
+</table>
+</div>
+<p>在调用 <code>read()</code> 或任何非格式化输入函数后，可以使用 <code>gcount()</code> 来获取<strong>最近一次非格式化输入操作实际读取的字符数量</strong>。</p>
+<pre><code class="language-cpp">char buffer[10];
+// 尝试从流中读取 10 个字节
+std::cin.read(buffer, 10);
+// 报告实际读取的字节数（可能小于 10，例如遇到文件末尾）
+std::streamsize actualRead = std::cin.gcount();
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Practice/Stream/Fstream.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../Library/Stream.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../note.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Library/Stream/Fstream.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -322,11 +383,11 @@ std::cout &lt;&lt; std::endl;
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Practice/Stream/Fstream.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../Library/Stream.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../note.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Library/Stream/Fstream.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -40,10 +40,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-dfaa6092.js";
+            window.path_to_searchindex_js = "searchindex-b576ca81.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-2e4e548b.js"></script>
+        <script src="toc-4694e643.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -242,6 +242,25 @@
 <h1 id="c基础知识"><a class="header" href="#c基础知识">C++基础知识</a></h1>
 <p>C++基础部分包括语言的核心语法与程序结构，理解从“源代码到可执行程序”的基本过程。本部分将介绍变量与常量、数据类型、运算符、控制结构、函数、数组、指针、结构体、类与对象等基础概念。</p>
 <p>掌握这些内容后，就能编写出功能完整、逻辑清晰的小型程序，理解程序的输入输出、流程控制和内存中数据的基本表示方式。C++基础知识不仅是学习更复杂特性的起点，也是理解程序设计思想与计算机工作原理的重要桥梁。</p>
+<h2 id="本章内容"><a class="header" href="#本章内容">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#运行环境与基础概念">基础概念与环境</a></td><td style="text-align: left">程序结构、预处理器、命名空间、编译运行、编译与链接、注释与命名规则</td></tr>
+<tr><td style="text-align: left"><a href="#数据类型">数据类型</a></td><td style="text-align: left">基本类型、派生类型、字符串、类型转换与类型推导</td></tr>
+<tr><td style="text-align: left"><a href="#变量与常量">变量与常量</a></td><td style="text-align: left">变量的作用域与存储类型，<code>const</code>、<code>constexpr</code> 与枚举</td></tr>
+<tr><td style="text-align: left"><a href="#控制结构control-structures">控制结构</a></td><td style="text-align: left">循环、判断与条件运算符</td></tr>
+<tr><td style="text-align: left"><a href="#操作符operators">操作符</a></td><td style="text-align: left">各类运算符的语义、优先级与结合性</td></tr>
+<tr><td style="text-align: left"><a href="#函数-functions">函数</a></td><td style="text-align: left">声明与定义、参数传递、默认参数、重载与内联</td></tr>
+<tr><td style="text-align: left"><a href="#lambda-表达式">Lambda 表达式</a></td><td style="text-align: left">捕获列表、泛型 lambda、<code>mutable</code> 与闭包类型</td></tr>
+<tr><td style="text-align: left"><a href="#类与对象">类与对象</a></td><td style="text-align: left">类的组成、访问控制、构造与析构、对象生命周期</td></tr>
+<tr><td style="text-align: left"><a href="#模板-template">模板</a></td><td style="text-align: left">函数模板、类模板、特化与参数推导</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="运行环境与基础概念"><a class="header" href="#运行环境与基础概念">运行环境与基础概念</a></h1>
 <p>初识C++应知必会的基础概念。</p>
@@ -991,6 +1010,255 @@ return 返回值传递给操作系统
 <li>动态链接 (<code>.so</code> / <code>.dll</code>)：运行时动态加载库。</li>
 </ul>
 </li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="编译与链接"><a class="header" href="#编译与链接">编译与链接</a></h1>
+<p>C++ 程序从源代码到可执行文件要经过<strong>预处理、编译、汇编、链接</strong>四个阶段。理解这个过程，才能解释许多看似奇怪的现象：为什么头文件要加 include guard、为什么模板定义要放在头文件里、为什么会出现「未定义引用」错误。</p>
+<h2 id="一编译流程"><a class="header" href="#一编译流程">一、编译流程</a></h2>
+<pre><code>源文件 (.cpp)
+    ↓ 预处理（Preprocessing）
+预处理后的源文件 (.i)
+    ↓ 编译（Compilation）
+汇编代码 (.s)
+    ↓ 汇编（Assembly）
+目标文件 (.o / .obj)
+    ↓ 链接（Linking）
+可执行文件
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">阶段</th><th style="text-align: left">工具</th><th style="text-align: left">主要工作</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>预处理</strong></td><td style="text-align: left"><code>cpp</code></td><td style="text-align: left">展开 <code>#include</code>、替换宏、处理条件编译</td></tr>
+<tr><td style="text-align: left"><strong>编译</strong></td><td style="text-align: left"><code>cc1plus</code></td><td style="text-align: left">语法分析、语义检查、生成汇编代码</td></tr>
+<tr><td style="text-align: left"><strong>汇编</strong></td><td style="text-align: left"><code>as</code></td><td style="text-align: left">把汇编代码翻译成机器码</td></tr>
+<tr><td style="text-align: left"><strong>链接</strong></td><td style="text-align: left"><code>ld</code></td><td style="text-align: left">合并目标文件，解析符号引用，生成可执行文件</td></tr>
+</tbody>
+</table>
+</div>
+<p>用 GCC 可以分步执行：</p>
+<pre><code class="language-bash">g++ -E main.cpp -o main.i      # 只做预处理
+g++ -S main.i -o main.s        # 编译为汇编
+g++ -c main.s -o main.o        # 汇编为目标文件
+g++ main.o -o main             # 链接
+</code></pre>
+<p>日常使用的 <code>g++ main.cpp -o main</code> 会依次完成全部四步。</p>
+<h2 id="二声明与定义"><a class="header" href="#二声明与定义">二、声明与定义</a></h2>
+<p>这是 C++ 中最基本也最重要的区分：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left"></th><th style="text-align: left">声明 (Declaration)</th><th style="text-align: left">定义 (Definition)</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">作用</td><td style="text-align: left">告诉编译器「有这么个东西」</td><td style="text-align: left">告诉编译器「它是什么」</td></tr>
+<tr><td style="text-align: left">是否分配内存</td><td style="text-align: left">否</td><td style="text-align: left">是（函数则是提供函数体）</td></tr>
+<tr><td style="text-align: left">能否重复</td><td style="text-align: left">可以多次</td><td style="text-align: left">只能一次（ODR）</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// 声明
+extern int global_var;        // 变量声明
+int add(int a, int b);        // 函数声明
+
+// 定义
+int global_var = 42;          // 变量定义
+int add(int a, int b) {       // 函数定义
+    return a + b;
+}
+</code></pre>
+<p>类定义、<code>inline</code> 函数、模板定义是例外——它们可以出现在多个翻译单元中。</p>
+<h2 id="三单一定义规则odr"><a class="header" href="#三单一定义规则odr">三、单一定义规则（ODR）</a></h2>
+<p><strong>ODR（One Definition Rule）</strong> 规定：</p>
+<ul>
+<li>任何变量、函数、类类型、枚举在<strong>整个程序中只能有一个定义</strong></li>
+<li>同一个翻译单元内不能有重复定义</li>
+<li>不同翻译单元中的定义必须<strong>完全相同</strong>（对于类、<code>inline</code> 函数、模板）</li>
+</ul>
+<p>违反 ODR 属于<strong>未定义行为</strong>——编译器可能不报错，但链接时或运行时出现奇怪问题。</p>
+<p>常见的 ODR 违规：</p>
+<pre><code class="language-c++">// header.h
+int global_value = 42;   // 错误：这是定义，被多个 .cpp 包含会重复定义
+</code></pre>
+<p>正确做法是加 <code>extern</code> 声明，在一个 <code>.cpp</code> 中定义：</p>
+<pre><code class="language-c++">// header.h
+extern int global_value;   // 声明
+
+// one.cpp
+int global_value = 42;     // 定义（只此一处）
+</code></pre>
+<h2 id="四头文件"><a class="header" href="#四头文件">四、头文件</a></h2>
+<h3 id="1-为什么要用头文件"><a class="header" href="#1-为什么要用头文件">1. 为什么要用头文件</a></h3>
+<p>C++ 采用<strong>分离编译</strong>模型：每个 <code>.cpp</code> 独立编译成目标文件。如果多个文件都要用同一个函数，就需要一种机制共享声明——这就是头文件。</p>
+<pre><code class="language-c++">// math_utils.h —— 声明
+#pragma once
+int add(int a, int b);
+int multiply(int a, int b);
+
+// math_utils.cpp —— 定义
+#include "math_utils.h"
+int add(int a, int b) { return a + b; }
+int multiply(int a, int b) { return a * b; }
+
+// main.cpp —— 使用
+#include "math_utils.h"
+int main() {
+    return add(1, 2);
+}
+</code></pre>
+<h3 id="2-include-guard"><a class="header" href="#2-include-guard">2. Include Guard</a></h3>
+<p>头文件可能被间接包含多次，导致重复定义。两种防护方式：</p>
+<pre><code class="language-c++">// 方式一：include guard（标准做法）
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+// 内容
+
+#endif
+</code></pre>
+<pre><code class="language-c++">// 方式二：#pragma once（非标准但广泛支持）
+#pragma once
+
+// 内容
+</code></pre>
+<p><code>#pragma once</code> 更简洁，且能避免宏名冲突；include guard 是标准做法，可移植性更好。两者都可以用，但<strong>不要混用</strong>。</p>
+<h3 id="3-头文件里应该放什么"><a class="header" href="#3-头文件里应该放什么">3. 头文件里应该放什么</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">可以放</th><th style="text-align: left">不应放</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">函数声明</td><td style="text-align: left">函数的普通定义（会重复定义）</td></tr>
+<tr><td style="text-align: left">类定义</td><td style="text-align: left">非 <code>inline</code> 的全局变量定义</td></tr>
+<tr><td style="text-align: left"><code>inline</code> 函数定义</td><td style="text-align: left">—</td></tr>
+<tr><td style="text-align: left">模板定义</td><td style="text-align: left">—</td></tr>
+<tr><td style="text-align: left"><code>constexpr</code> 变量</td><td style="text-align: left">—</td></tr>
+<tr><td style="text-align: left">宏定义、类型别名</td><td style="text-align: left">—</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>模板和 <code>inline</code> 函数必须放在头文件</strong>，因为编译器在实例化时需要看到完整定义。</p>
+<h2 id="五链接"><a class="header" href="#五链接">五、链接</a></h2>
+<p>链接器的工作是<strong>解析符号引用</strong>：把每个目标文件中「引用了但未定义」的符号，与其它目标文件中「定义了」的符号对应起来。</p>
+<h3 id="1-静态库与动态库"><a class="header" href="#1-静态库与动态库">1. 静态库与动态库</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left"></th><th style="text-align: left">静态库</th><th style="text-align: left">动态库</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">Linux 后缀</td><td style="text-align: left"><code>.a</code></td><td style="text-align: left"><code>.so</code></td></tr>
+<tr><td style="text-align: left">Windows 后缀</td><td style="text-align: left"><code>.lib</code></td><td style="text-align: left"><code>.dll</code></td></tr>
+<tr><td style="text-align: left">链接时机</td><td style="text-align: left">编译期，代码被复制进可执行文件</td><td style="text-align: left">运行期，动态加载</td></tr>
+<tr><td style="text-align: left">可执行文件大小</td><td style="text-align: left">较大</td><td style="text-align: left">较小</td></tr>
+<tr><td style="text-align: left">更新库</td><td style="text-align: left">需重新编译程序</td><td style="text-align: left">替换库文件即可</td></tr>
+<tr><td style="text-align: left">部署</td><td style="text-align: left">简单，单文件</td><td style="text-align: left">需附带库文件</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-bash"># 创建静态库
+g++ -c lib.cpp -o lib.o
+ar rcs libmylib.a lib.o
+g++ main.cpp -L. -lmylib -o main
+
+# 创建动态库
+g++ -fPIC -c lib.cpp -o lib.o
+g++ -shared lib.o -o libmylib.so
+g++ main.cpp -L. -lmylib -o main
+</code></pre>
+<h3 id="2-常见链接错误"><a class="header" href="#2-常见链接错误">2. 常见链接错误</a></h3>
+<p><strong>「未定义引用」（undefined reference）</strong>：声明了但没定义。</p>
+<pre><code>undefined reference to `add(int, int)'
+</code></pre>
+<p>原因通常是：忘记链接某个源文件或库、函数签名不匹配、模板定义没放在头文件。</p>
+<p><strong>「重复定义」（multiple definition）</strong>：同一个符号在多个目标文件中都有定义。</p>
+<pre><code>multiple definition of `global_value'
+</code></pre>
+<p>原因通常是：在头文件中定义了变量或非 <code>inline</code> 函数。</p>
+<h2 id="六inline-与-static-的链接语义"><a class="header" href="#六inline-与-static-的链接语义">六、inline 与 static 的链接语义</a></h2>
+<p>这两个关键字都影响链接行为，但方式不同。</p>
+<h3 id="1-inline"><a class="header" href="#1-inline">1. inline</a></h3>
+<p><code>inline</code> 最初用于建议编译器内联展开，现代 C++ 中它的主要作用是<strong>允许在多个翻译单元中重复定义</strong>：</p>
+<pre><code class="language-c++">// header.h
+inline int square(int x) { return x * x; }   // 多个 .cpp 包含也没问题
+</code></pre>
+<p>编译器会保证最终只保留一份。因此 <strong><code>inline</code> 函数可以放在头文件中</strong>。</p>
+<p>C++17 起还支持 <code>inline</code> 变量：</p>
+<pre><code class="language-c++">// header.h
+inline int global_counter = 0;   // 头文件中定义变量，C++17 起可行
+</code></pre>
+<h3 id="2-static"><a class="header" href="#2-static">2. static</a></h3>
+<p><code>static</code> 在 C++ 中有多重含义，取决于使用位置：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">位置</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">全局变量/函数前</td><td style="text-align: left"><strong>内部链接</strong>：只在当前翻译单元可见</td></tr>
+<tr><td style="text-align: left">局部变量前</td><td style="text-align: left">静态存储期：函数退出后仍存在</td></tr>
+<tr><td style="text-align: left">类成员前</td><td style="text-align: left">属于类而非对象</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>内部链接</strong>意味着同名符号在不同 <code>.cpp</code> 中互不冲突：</p>
+<pre><code class="language-c++">// a.cpp
+static int counter = 0;   // 只在本文件可见
+
+// b.cpp
+static int counter = 0;   // 另一个独立的变量，不冲突
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>头文件中的 <code>static</code> 是陷阱</strong></p>
+<p>在头文件中定义 <code>static</code> 函数或变量，每个包含它的 <code>.cpp</code> 都会得到<strong>独立的一份副本</strong>：</p>
+<pre><code class="language-c++">// header.h
+static int counter = 0;   // 每个 .cpp 各有一份！
+</code></pre>
+<p>这会导致内存浪费，且修改一个副本不会影响其它。应该用 <code>inline</code>（C++17）或 <code>extern</code> 声明。</p>
+</blockquote>
+<h2 id="七条件编译"><a class="header" href="#七条件编译">七、条件编译</a></h2>
+<p>预处理指令可以根据条件选择性地编译代码：</p>
+<pre><code class="language-c++">// 平台判断
+#ifdef _WIN32
+    #include &lt;windows.h&gt;
+#elif defined(__linux__)
+    #include &lt;unistd.h&gt;
+#endif
+
+// 调试开关
+#ifdef DEBUG
+    #define LOG(msg) std::cout &lt;&lt; msg &lt;&lt; '\n'
+#else
+    #define LOG(msg)
+#endif
+
+// 版本判断
+#if __cplusplus &gt;= 202002L
+    // C++20 及以上
+#endif
+</code></pre>
+<p>标准库提供了 <code>__cplusplus</code> 宏表示语言版本（C++17 为 <code>201703L</code>，C++20 为 <code>202002L</code>）。</p>
+<h2 id="八注意事项"><a class="header" href="#八注意事项">八、注意事项</a></h2>
+<ul>
+<li><strong>头文件必须加 include guard</strong>。否则重复包含会导致重复定义。</li>
+<li><strong>变量定义不要放在头文件</strong>。应使用 <code>extern</code> 声明 + 单处定义，或 C++17 的 <code>inline</code> 变量。</li>
+<li><strong>模板和 <code>inline</code> 函数必须放头文件</strong>。编译器实例化时需要看到完整定义。</li>
+<li><strong><code>static</code> 在头文件中会复制</strong>。每个翻译单元各一份，通常不是想要的效果。</li>
+<li><strong><code>c_str()</code> 和 <code>data()</code> 的指针会失效</strong>。容器修改后指针可能悬垂。</li>
+<li><strong>ODR 违规是未定义行为</strong>。编译器可能不报错，问题在链接期或运行期才暴露。</li>
+<li><strong><code>#pragma once</code> 非标准</strong>。虽然广泛支持，但严格可移植的代码应用 include guard。</li>
+<li><strong>编译单元是独立编译的</strong>。修改一个 <code>.cpp</code> 只需重新编译它，这是增量编译的基础。</li>
+</ul>
+<h2 id="九相关章节"><a class="header" href="#九相关章节">九、相关章节</a></h2>
+<ul>
+<li><a href="#c-程序的编译与运行compilation-and-execution">编译运行</a>：编译器与基本编译命令</li>
+<li><a href="#预处理器-preprocessor">预处理器</a>：宏定义与预处理指令</li>
+<li><a href="#命名空间namespace">命名空间</a>：符号的组织与查找</li>
+<li><a href="#模板-template">模板</a>：为什么模板定义要放在头文件</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="c-注释comments"><a class="header" href="#c-注释comments">C++ 注释（Comments）</a></h1>
@@ -3232,7 +3500,7 @@ delete[] arr;
 </div>
 <p>建议使用<strong>括号明确运算顺序</strong>，尤其在混合表达式中。</p>
 <h2 id="十五运算符重载operator-overloading"><a class="header" href="#十五运算符重载operator-overloading">十五、运算符重载（Operator Overloading）</a></h2>
-<p>C++ 允许为自定义类型定义运算符行为。例如：</p>
+<p>C++ 允许为自定义类型定义运算符行为，让类的对象也能像内置类型一样使用 <code>+</code>、<code>==</code>、<code>&lt;&lt;</code> 等符号：</p>
 <pre><code class="language-cpp">class Vector {
 public:
     int x, y;
@@ -3252,6 +3520,7 @@ Vector c = a + b; // 等价于 a.operator+(b)
 <li>运算符重载不会改变操作符优先级；</li>
 <li>应保证语义一致性（例如重载 <code>==</code> 时应与 <code>!=</code> 保持逻辑对称）。</li>
 </ul>
+<p>运算符重载的完整规则——成员函数与友元函数的选择、各类运算符的重载方式、返回值设计以及常见陷阱——属于面向对象进阶内容，详见 <a href="#运算符重载operator-overloading">运算符重载</a>。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="函数-functions"><a class="header" href="#函数-functions">函数 (Functions)</a></h1>
 <p>函数是 C++ 程序的基本组成部分，它们用于将程序分解为可管理、可重复使用的代码块。</p>
@@ -3467,6 +3736,235 @@ void greet(std::string name, std::string greeting)
     std::cout &lt;&lt; greeting &lt;&lt; " " &lt;&lt; name &lt;&lt; std::endl;
 }
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="lambda-表达式"><a class="header" href="#lambda-表达式">Lambda 表达式</a></h1>
+<p><strong>Lambda 表达式</strong>（C++11 引入）用于在调用点就地定义一个匿名函数对象。它让「把函数作为参数传递」变得极为简洁，是标准库算法、回调、异步任务中最常用的语法之一。</p>
+<p>Lambda 的本质是编译器生成的一个<strong>闭包类型</strong>（closure type）——一个重载了 <code>operator()</code> 的匿名类。因此它和手写的函数对象在行为上完全等价，只是写法更紧凑。</p>
+<h2 id="一基本语法"><a class="header" href="#一基本语法">一、基本语法</a></h2>
+<pre><code class="language-c++">[capture](parameters) -&gt; return_type { body }
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">部分</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>[capture]</code></td><td style="text-align: left">捕获列表，决定如何访问外部变量（不可省略）</td></tr>
+<tr><td style="text-align: left"><code>(parameters)</code></td><td style="text-align: left">参数列表，无参数时可省略</td></tr>
+<tr><td style="text-align: left"><code>-&gt; return_type</code></td><td style="text-align: left">返回类型，可省略（编译器自动推导）</td></tr>
+<tr><td style="text-align: left"><code>{ body }</code></td><td style="text-align: left">函数体</td></tr>
+</tbody>
+</table>
+</div>
+<p>最简单的形式：</p>
+<pre><code class="language-c++">auto add = [](int a, int b) { return a + b; };
+std::cout &lt;&lt; add(3, 4);   // 7
+</code></pre>
+<p>返回类型通常可以省略。但如果函数体中有多个 <code>return</code> 语句且类型不一致，就必须显式指定：</p>
+<pre><code class="language-c++">auto f = [](int x) -&gt; double {
+    if (x &gt; 0) return x * 1.0;
+    return 0.0;
+};
+</code></pre>
+<h2 id="二捕获列表"><a class="header" href="#二捕获列表">二、捕获列表</a></h2>
+<p>捕获列表决定 lambda 内部能访问哪些外部变量，以及访问方式。</p>
+<h3 id="1-按值捕获与按引用捕获"><a class="header" href="#1-按值捕获与按引用捕获">1. 按值捕获与按引用捕获</a></h3>
+<pre><code class="language-c++">int a = 10, b = 20;
+
+auto byValue = [a] { return a; };        // 拷贝 a
+auto byRef   = [&amp;b] { return b; };       // 引用 b
+
+a = 100;
+b = 200;
+
+std::cout &lt;&lt; byValue();   // 10（捕获时的副本）
+std::cout &lt;&lt; byRef();     // 200（引用的是原变量）
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">捕获方式</th><th style="text-align: left">写法</th><th style="text-align: left">特点</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">按值</td><td style="text-align: left"><code>[x]</code></td><td style="text-align: left">拷贝一份，lambda 内默认只读</td></tr>
+<tr><td style="text-align: left">按引用</td><td style="text-align: left"><code>[&amp;x]</code></td><td style="text-align: left">引用原变量，lambda 内可修改</td></tr>
+<tr><td style="text-align: left">全部按值</td><td style="text-align: left"><code>[=]</code></td><td style="text-align: left">隐式按值捕获所有用到的变量</td></tr>
+<tr><td style="text-align: left">全部按引用</td><td style="text-align: left"><code>[&amp;]</code></td><td style="text-align: left">隐式按引用捕获所有用到的变量</td></tr>
+<tr><td style="text-align: left">混合</td><td style="text-align: left"><code>[=, &amp;x]</code></td><td style="text-align: left">默认按值，<code>x</code> 按引用</td></tr>
+<tr><td style="text-align: left">混合</td><td style="text-align: left"><code>[&amp;, x]</code></td><td style="text-align: left">默认按引用，<code>x</code> 按值</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-mutable"><a class="header" href="#2-mutable">2. mutable</a></h3>
+<p>按值捕获的变量在 lambda 内默认是 <code>const</code> 的，要修改副本必须加 <code>mutable</code>：</p>
+<pre><code class="language-c++">int count = 0;
+
+auto counter = [count]() mutable {
+    return ++count;   // 修改的是副本
+};
+
+std::cout &lt;&lt; counter();   // 1
+std::cout &lt;&lt; counter();   // 2
+std::cout &lt;&lt; count;       // 0（原变量未变）
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>按引用捕获的生命周期陷阱</strong></p>
+<p>lambda 不会延长被引用对象的生命周期。如果 lambda 的生命周期超过了被引用变量，就会产生悬垂引用：</p>
+<pre><code class="language-c++">auto makeLambda()
+{
+    int local = 42;
+    return [&amp;local] { return local; };   // 错误：local 已销毁
+}
+
+auto f = makeLambda();
+f();   // 未定义行为
+</code></pre>
+<p>需要返回 lambda 时，应改为按值捕获。</p>
+</blockquote>
+<h3 id="3-初始化捕获c14"><a class="header" href="#3-初始化捕获c14">3. 初始化捕获（C++14）</a></h3>
+<p>初始化捕获（init-capture）允许在捕获时执行表达式，并给捕获的变量起新名字：</p>
+<pre><code class="language-c++">// 移动捕获：把 move-only 对象移入 lambda
+auto ptr = std::make_unique&lt;int&gt;(42);
+auto f = [p = std::move(ptr)] { return *p; };   // ptr 被移入 lambda
+
+// 捕获时计算
+int x = 10;
+auto g = [y = x * 2] { return y; };   // y = 20
+</code></pre>
+<p>这是<strong>唯一能把 move-only 类型（如 <code>unique_ptr</code>）放进 lambda</strong> 的方式。</p>
+<h3 id="4-捕获-this"><a class="header" href="#4-捕获-this">4. 捕获 this</a></h3>
+<p>在成员函数中，<code>[this]</code> 捕获的是指针，<code>[*this]</code>（C++17）捕获的是对象副本：</p>
+<pre><code class="language-c++">class Widget
+{
+    int value_ = 42;
+
+public:
+    auto byPointer()
+    {
+        return [this] { return value_; };   // 引用当前对象
+    }
+
+    auto byCopy()
+    {
+        return [*this] { return value_; };  // 拷贝整个对象（C++17）
+    }
+};
+</code></pre>
+<p><code>[this]</code> 的 lambda 在对象销毁后调用会悬垂；<code>[*this]</code> 则安全。</p>
+<h2 id="三泛型-lambda"><a class="header" href="#三泛型-lambda">三、泛型 Lambda</a></h2>
+<p>C++14 起，参数可以用 <code>auto</code>，此时 lambda 的 <code>operator()</code> 变成一个模板：</p>
+<pre><code class="language-c++">auto print = [](auto x) { std::cout &lt;&lt; x &lt;&lt; '\n'; };
+
+print(42);        // int
+print("hello");   // const char*
+print(3.14);      // double
+</code></pre>
+<p>C++20 起可以显式写模板参数列表，从而使用 Concepts 约束：</p>
+<pre><code class="language-c++">auto add = []&lt;typename T&gt;(T a, T b) { return a + b; };
+
+// 带约束
+auto integralAdd = []&lt;std::integral T&gt;(T a, T b) { return a + b; };
+</code></pre>
+<p>显式模板参数还能解决一个常见问题——对 <code>vector</code> 的 <code>size()</code> 求值：</p>
+<pre><code class="language-c++">// C++20 前：需要额外处理
+auto before = [](auto&amp;&amp; v) { return v.size(); };
+
+// C++20：可以正确推导
+auto after = []&lt;typename T&gt;(std::vector&lt;T&gt; const&amp; v) { return v.size(); };
+</code></pre>
+<h2 id="四其它特性"><a class="header" href="#四其它特性">四、其它特性</a></h2>
+<h3 id="1-constexpr-lambdac17"><a class="header" href="#1-constexpr-lambdac17">1. constexpr Lambda（C++17）</a></h3>
+<p>如果 lambda 满足 <code>constexpr</code> 函数的要求，<code>operator()</code> 自动是 <code>constexpr</code>：</p>
+<pre><code class="language-c++">constexpr auto square = [](int x) { return x * x; };
+static_assert(square(5) == 25);
+</code></pre>
+<h3 id="2-无捕获-lambda-转换为函数指针"><a class="header" href="#2-无捕获-lambda-转换为函数指针">2. 无捕获 Lambda 转换为函数指针</a></h3>
+<p>无捕获的 lambda 可以隐式转换为函数指针，因此能传给 C 风格 API：</p>
+<pre><code class="language-c++">void c_function(int (*callback)(int));
+
+c_function([](int x) { return x * 2; });   // OK：无捕获
+</code></pre>
+<p>有捕获的 lambda <strong>不能</strong>这样转换，因为需要携带状态。</p>
+<h3 id="3-立即调用"><a class="header" href="#3-立即调用">3. 立即调用</a></h3>
+<p>lambda 定义后可以立刻调用，常用于初始化复杂常量：</p>
+<pre><code class="language-c++">const int value = [] {
+    // 复杂的计算过程
+    return 42;
+}();
+</code></pre>
+<h3 id="4-递归-lambda"><a class="header" href="#4-递归-lambda">4. 递归 Lambda</a></h3>
+<p>lambda 无法直接调用自己（因为名字还没定义完）。常见做法是把自己作为参数传入：</p>
+<pre><code class="language-c++">auto factorial = [](auto self, int n) -&gt; int {
+    return n &lt;= 1 ? 1 : n * self(self, n - 1);
+};
+
+std::cout &lt;&lt; factorial(factorial, 5);   // 120
+</code></pre>
+<p>C++23 起可以用 <code>this auto self</code> 显式对象参数，写法更自然：</p>
+<pre><code class="language-c++">auto factorial = [](this auto self, int n) -&gt; int {
+    return n &lt;= 1 ? 1 : n * self(n - 1);
+};
+</code></pre>
+<h2 id="五与函数对象的关系"><a class="header" href="#五与函数对象的关系">五、与函数对象的关系</a></h2>
+<p>lambda 在编译期被展开成一个匿名类：</p>
+<pre><code class="language-c++">int threshold = 10;
+auto pred = [threshold](int x) { return x &gt; threshold; };
+
+// 大致等价于：
+class __Lambda
+{
+    int threshold_;
+public:
+    __Lambda(int t) : threshold_(t) {}
+    bool operator()(int x) const { return x &gt; threshold_; }
+};
+</code></pre>
+<p>这解释了 lambda 的几个特性：</p>
+<ul>
+<li><strong>每个 lambda 都有独一无二的类型</strong>，因此不能用 <code>decltype</code> 之外的方式声明，通常用 <code>auto</code> 接收。</li>
+<li>两个写法相同的 lambda 也是<strong>不同类型</strong>。</li>
+<li>需要存储 lambda 时，如果类型必须统一，可以用 <code>std::function</code>（有类型擦除开销）。</li>
+</ul>
+<h2 id="六常见用法"><a class="header" href="#六常见用法">六、常见用法</a></h2>
+<p>配合标准库算法是最典型的场景：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{5, 2, 8, 1, 9};
+
+// 排序：按绝对值降序
+std::sort(v.begin(), v.end(), [](int a, int b) {
+    return std::abs(a) &gt; std::abs(b);
+});
+
+// 查找：第一个大于 5 的元素
+auto it = std::find_if(v.begin(), v.end(), [](int x) { return x &gt; 5; });
+
+// 统计：偶数个数
+int evens = std::count_if(v.begin(), v.end(), [](int x) { return x % 2 == 0; });
+
+// 变换：每个元素平方
+std::transform(v.begin(), v.end(), v.begin(), [](int x) { return x * x; });
+
+// 移除：删除所有小于 3 的元素
+v.erase(std::remove_if(v.begin(), v.end(), [](int x) { return x &lt; 3; }), v.end());
+</code></pre>
+<h2 id="七注意事项"><a class="header" href="#七注意事项">七、注意事项</a></h2>
+<ul>
+<li><strong>按引用捕获有生命周期风险</strong>。lambda 不会延长被引用对象的生命周期，返回 lambda 时应按值捕获。</li>
+<li><strong><code>[=]</code> 捕获 <code>this</code> 是陷阱</strong>。在成员函数中，<code>[=]</code> 捕获的是 <code>this</code> 指针而非对象副本，对象销毁后调用会悬垂。C++20 起这种隐式捕获已被弃用，应显式写 <code>[this]</code> 或 <code>[*this]</code>。</li>
+<li><strong><code>mutable</code> 只影响副本</strong>。加了 <code>mutable</code> 后修改的是 lambda 内部的副本，原变量不变。</li>
+<li><strong>每个 lambda 类型唯一</strong>。不要试图写出 lambda 的类型，用 <code>auto</code> 或 <code>std::function</code>。</li>
+<li><strong><code>std::function</code> 有开销</strong>。它涉及类型擦除和可能的堆分配，性能敏感处应直接用 <code>auto</code> 或模板参数。</li>
+<li><strong>捕获列表不能捕获类成员</strong>。<code>[x]</code> 中的 <code>x</code> 必须是变量，类成员需要用 <code>[x = x]</code> 或 <code>[this]</code>。</li>
+<li><strong>无捕获 lambda 才能转函数指针</strong>。有捕获的 lambda 携带状态，无法转换。</li>
+</ul>
+<h2 id="八相关章节"><a class="header" href="#八相关章节">八、相关章节</a></h2>
+<ul>
+<li><a href="#函数-functions">函数</a>：函数对象与函数指针</li>
+<li><a href="#模板-template">模板</a>：泛型 lambda 与模板的关系</li>
+<li><a href="#utility">Utility</a>：<code>std::function</code> 与 <code>std::bind</code></li>
+<li><a href="#algorithms">Algorithms</a>：算法中 lambda 的典型用法</li>
+<li><a href="#多线程与并发">多线程与并发</a>：lambda 作为线程函数</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="类与对象"><a class="header" href="#类与对象">类与对象</a></h1>
 <p>C++ 是一种支持面向对象编程（Object-Oriented Programming, OOP）的语言。
@@ -4002,22 +4500,20 @@ public:
 <p>在上例中，<code>name</code> 和 <code>age</code> 仅能通过 <code>setInfo</code> 和 <code>display</code> 访问和修改，这就是封装的典型应用。</p>
 <p>封装就是把客观事物封装成抽象类，并控制外部访问权限，保护数据安全并提高代码可维护性。</p>
 <h3 id="2-继承inheritance"><a class="header" href="#2-继承inheritance">2. 继承（Inheritance）</a></h3>
-<p>继承是面向对象中的第二大特征，它允许新建的类<strong>复用</strong>已有类的属性和行为，并在此基础上进行扩展或修改。</p>
-<p>被继承的类称为基类（Base Class）或父类，从基类继承的类称为派生类（Derived Class）或子类。</p>
-<p><strong>作用</strong>：</p>
-<ol>
-<li>代码复用：无需重复编写已有功能；</li>
-<li>构建类层次：形成“父类-子类”的组织结构；</li>
-<li>支持多态：继承是实现运行时多态的前提。</li>
-</ol>
-<p><strong>实现方式</strong>：</p>
-<ul>
-<li>公有继承（public inheritance）：基类公有成员在派生类中仍为公有</li>
-<li>保护继承（protected inheritance）：基类公有/保护成员在派生类中变为保护</li>
-<li>私有继承（private inheritance）：基类公有/保护成员在派生类中变为私有</li>
-<li>组合（Composition）：在类中包含另一个类对象作为成员，用于实现“has-a”关系</li>
-</ul>
-<p>示例：</p>
+<p>继承允许新建的类<strong>复用</strong>已有类的属性和行为，并在此基础上扩展。被继承的类称为基类（Base Class）或父类，从基类继承的类称为派生类（Derived Class）或子类。</p>
+<p>按继承方式不同，基类成员在派生类中的访问级别会发生变化：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">继承方式</th><th style="text-align: left">基类 public 成员</th><th style="text-align: left">基类 protected 成员</th><th style="text-align: left">基类 private 成员</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>public</code> 继承</td><td style="text-align: left">public</td><td style="text-align: left">protected</td><td style="text-align: left">不可访问</td></tr>
+<tr><td style="text-align: left"><code>protected</code> 继承</td><td style="text-align: left">protected</td><td style="text-align: left">protected</td><td style="text-align: left">不可访问</td></tr>
+<tr><td style="text-align: left"><code>private</code> 继承</td><td style="text-align: left">private</td><td style="text-align: left">private</td><td style="text-align: left">不可访问</td></tr>
+</tbody>
+</table>
+</div>
 <pre><code class="language-cpp">class Person {
 protected:
     std::string name;
@@ -4025,7 +4521,7 @@ public:
     void setName(const std::string&amp; n) { name = n; }
 };
 
-class Student : public Person { // Student 继承 Person
+class Student : public Person {   // Student 继承 Person
 private:
     int grade;
 public:
@@ -4035,40 +4531,25 @@ public:
     }
 };
 </code></pre>
+<p><code>Student</code> 复用了 <code>Person</code> 的 <code>name</code>，同时扩展了 <code>grade</code>。继承的主要作用是<strong>代码复用</strong>和<strong>构建类层次结构</strong>，它也是实现运行时多态的前提。</p>
 <blockquote>
-<p><code>Student</code> 继承了 <code>Person</code> 的 <code>name</code>，同时扩展了 <code>grade</code>，这就是继承的典型应用。
-如果需要类间关系更紧密，还可以通过组合在类中嵌套其他类。</p>
+<p>继承的完整规则——构造与析构顺序、多重继承、菱形继承与虚继承、<code>using</code> 声明改变访问级别等——见 <a href="#继承">继承</a>。</p>
 </blockquote>
-<p>继承是在无需重写已有类功能的前提下扩展功能，实现类复用与层次化管理。</p>
+<p>需要说明的是，继承并非复用的唯一手段。当类之间是「has-a」（拥有）关系而非「is-a」（是）关系时，应当使用<strong>组合</strong>：在类中包含另一个类的对象作为成员。设计原则是<strong>优先使用组合，而非继承</strong>。</p>
 <h3 id="3-多态polymorphism"><a class="header" href="#3-多态polymorphism">3. 多态（Polymorphism）</a></h3>
-<p>多态是面向对象的第三大特征，允许同一个操作作用于不同对象表现出不同的行为。</p>
-<p>多态允许父类指针或引用指向子类对象，并根据对象实际类型执行不同操作。</p>
-<blockquote>
-<p>英文 polymorphism 来自“多形性”，意为“一个接口，多种形态”。</p>
-</blockquote>
-<p><strong>类型</strong>：</p>
-<ol>
-<li>
-<p>编译时多态（静态多态）：</p>
-<ul>
-<li>通过函数重载、运算符重载实现</li>
-<li>在编译阶段就确定调用哪个函数</li>
-</ul>
-</li>
-<li>
-<p>运行时多态（动态多态）：</p>
-<ul>
-<li>通过虚函数（virtual）实现</li>
-<li>在程序运行时根据实际对象类型决定调用哪个函数</li>
-</ul>
-</li>
-</ol>
-<p>实现方式：</p>
-<ul>
-<li>覆盖（Override）：派生类重新定义基类的虚函数，运行时根据实际对象调用</li>
-<li>重载（Overload）：同名函数参数不同，编译时决定调用哪个函数</li>
-</ul>
-<p>示例（运行时多态）：</p>
+<p>多态指同一个操作作用于不同对象时表现出不同的行为。C++ 中的多态分为两类：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">实现方式</th><th style="text-align: left">决定时机</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>编译时多态</strong>（静态多态）</td><td style="text-align: left">函数重载、运算符重载、模板</td><td style="text-align: left">编译期</td></tr>
+<tr><td style="text-align: left"><strong>运行时多态</strong>（动态多态）</td><td style="text-align: left">虚函数</td><td style="text-align: left">运行期</td></tr>
+</tbody>
+</table>
+</div>
+<p>运行时多态通过基类指针或引用调用虚函数实现：</p>
 <pre><code class="language-cpp">class Animal {
 public:
     virtual void speak() const { std::cout &lt;&lt; "Animal sound" &lt;&lt; std::endl; }
@@ -4081,14 +4562,22 @@ public:
 
 int main() {
     Animal* a = new Dog();
-    a-&gt;speak(); // 输出 "Woof!"，根据实际对象类型调用
+    a-&gt;speak();   // 输出 "Woof!"，根据实际对象类型调用
     delete a;
 }
 </code></pre>
+<p>关键在于 <code>speak</code> 被声明为 <code>virtual</code>：通过基类指针调用时，实际执行的是派生类的版本。多态使<strong>统一接口处理不同对象</strong>成为可能，提高了程序的灵活性和可扩展性。</p>
 <blockquote>
-<p><code>speak</code> 被声明为虚函数，父类指针调用时根据子类实际类型执行函数，这就是运行时多态。</p>
+<p>虚函数的工作机制（虚函数表、动态绑定）、虚析构函数的必要性、纯虚函数与抽象类、<code>override</code> 与 <code>final</code> 等，见 <a href="#虚函数与多态">虚函数与多态</a>。</p>
 </blockquote>
-<p>多态使得<strong>统一接口处理不同对象成为可能</strong>，提高了程序的灵活性和可扩展性。</p>
+<h2 id="五小结"><a class="header" href="#五小结">五、小结</a></h2>
+<p>封装、继承、多态构成了面向对象设计的基础：</p>
+<ul>
+<li><strong>封装</strong>把数据和操作数据的方法组织在一起，并通过访问控制保护内部状态，本章已完整介绍；</li>
+<li><strong>继承</strong>实现代码复用和类层次结构，深入内容见 <a href="#继承">继承</a>；</li>
+<li><strong>多态</strong>让统一接口能够处理不同对象，深入内容见 <a href="#虚函数与多态">虚函数与多态</a>。</li>
+</ul>
+<p>关于运算符重载、友元、拷贝控制、模板高级应用等面向对象的进阶主题，见 <a href="#面向对象进阶">面向对象进阶</a>。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="模板-template"><a class="header" href="#模板-template">模板 (Template)</a></h1>
 <p><strong>模板</strong>是C++中实现<strong>泛型编程</strong>的基础工具，泛型编程即以一种独立于任何特定类型的方式编写代码。模板是创建泛型类或函数的蓝图或公式。库容器，比如迭代器和算法，都是泛型编程的例子，它们都使用了模板的概念。它允许我们编写与类型无关的代码（如类或函数），从而提高代码的重用性。编译器在编译时会根据用户提供的类型参数，从模板生成具体的类型或函数，这个过程称为<strong>模板实例化（Template Instantiation）</strong>。</p>
@@ -4222,11 +4711,29 @@ Pair&lt;int, double&gt; p1(1, 2.3);
 // C++17 之后:
 Pair p2(1, 2.3); // 编译器推导为 Pair&lt;int, double&gt;
 </code></pre>
+<h2 id="六后续内容"><a class="header" href="#六后续内容">六、后续内容</a></h2>
+<p>本章介绍的是模板的基础语法：函数模板与类模板的定义、模板参数、特化以及类型推导。</p>
+<p>模板的进阶应用——SFINAE、可变参数模板、模板元编程、Concepts（C++20）、模板与继承的结合，以及如何用模板替代虚函数获得更高性能——见 <a href="#类模板与函数模板高级应用">类模板与函数模板高级应用</a>。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="c进阶知识"><a class="header" href="#c进阶知识">C++进阶知识</a></h1>
 <p>C++进阶部分将深入语言内部机制与底层实现，理解编译器如何处理对象模型、内存布局、虚函数表、模板实例化以及异常机制等。</p>
 <p>本部分不再局限于语法层面的使用，而是关注性能、抽象与控制力。内容包括高级内存管理、面向对象、多线程与并发、智能指针等内容。</p>
 <p>只有理解语言设计背后的思想，真正做到“以C++思考”，才能具备面向底层系统优化与大型工程开发的能力。</p>
+<h2 id="本章内容-1"><a class="header" href="#本章内容-1">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#c-内存管理">内存管理</a></td><td style="text-align: left">内存布局、动态分配、智能指针、RAII、自定义分配器与内存模型</td></tr>
+<tr><td style="text-align: left"><a href="#面向对象进阶">面向对象（进阶）</a></td><td style="text-align: left">运算符重载、继承、虚函数、友元、模板高级应用、拷贝控制</td></tr>
+<tr><td style="text-align: left"><a href="#异常处理">异常处理</a></td><td style="text-align: left">异常语法、栈展开、异常安全保证、<code>noexcept</code> 与标准异常体系</td></tr>
+<tr><td style="text-align: left"><a href="#多线程与并发">多线程与并发</a></td><td style="text-align: left">线程、互斥量与锁、条件变量、原子操作、异步任务与 C++20 同步原语</td></tr>
+<tr><td style="text-align: left"><a href="#现代-c-演进">现代 C++ 演进</a></td><td style="text-align: left">C++11 至 C++26 各版本特性时间线与速查</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="c-内存管理"><a class="header" href="#c-内存管理">C++ 内存管理</a></h1>
 <p>内存管理是 C++ 编程中的核心概念之一，它直接影响程序的性能、可靠性和稳定性。C++ 提供了灵活且高效的内存管理机制，这也使得开发者能够更精细地控制程序的内存使用。C++ 中的内存管理分为两大类：<strong>静态内存管理</strong>和<strong>动态内存管理</strong>。</p>
@@ -5171,9 +5678,1390 @@ delete p;  // 1. 动态绑定调用 Derived::~Derived() 2. 调用 Base::~Base()
 Rule of Three / Five / Zero</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="c新特性"><a class="header" href="#c新特性">C++新特性</a></h1>
-<p>移动语义与移动构造函数
-右值引用与 <code>std::move</code>
-<code>constexpr</code>、<code>noexcept</code> 与类设计</p>
+<p>C++11 是语言历史上最大的一次修订。它引入的<strong>移动语义</strong>、<strong>右值引用</strong>、<code>constexpr</code>、<code>noexcept</code> 等特性，彻底改变了 C++ 的类设计方式——从「如何正确管理资源」转向「如何让编译器自动帮你管理资源」。</p>
+<p>本节聚焦这些特性在<strong>面向对象设计</strong>中的应用。关于拷贝构造、赋值运算符、析构函数的完整语义，见 <a href="#拷贝控制">拷贝控制</a>。</p>
+<h2 id="一值类别左值与右值"><a class="header" href="#一值类别左值与右值">一、值类别：左值与右值</a></h2>
+<p>理解移动语义的前提是理解<strong>值类别（value category）</strong>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类别</th><th style="text-align: left">含义</th><th style="text-align: left">例子</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>左值</strong> (lvalue)</td><td style="text-align: left">有名字、有确定地址、可取址</td><td style="text-align: left">变量名、<code>*p</code>、<code>arr[0]</code></td></tr>
+<tr><td style="text-align: left"><strong>纯右值</strong> (prvalue)</td><td style="text-align: left">临时对象、字面量，无名字</td><td style="text-align: left"><code>42</code>、<code>a + b</code>、<code>func()</code> 的返回值</td></tr>
+<tr><td style="text-align: left"><strong>将亡值</strong> (xvalue)</td><td style="text-align: left">即将被销毁的对象，可被移动</td><td style="text-align: left"><code>std::move(x)</code> 的结果</td></tr>
+</tbody>
+</table>
+</div>
+<p>左值和将亡值合称<strong>泛左值</strong>（glvalue），纯右值和将亡值合称<strong>右值</strong>（rvalue）。</p>
+<p>关键区别：<strong>左值持久，右值短暂</strong>。右值通常是即将销毁的临时对象，因此可以安全地「窃取」它的资源。</p>
+<pre><code class="language-c++">int a = 10;          // a 是左值
+int&amp;&amp; r = 10;        // r 是右值引用，绑定到临时值
+int&amp;&amp; r2 = std::move(a);   // 把左值 a 转成右值引用
+</code></pre>
+<h2 id="二右值引用"><a class="header" href="#二右值引用">二、右值引用</a></h2>
+<p>右值引用用 <code>T&amp;&amp;</code> 表示，它只能绑定到右值：</p>
+<pre><code class="language-c++">int x = 1;
+int&amp; lref = x;        // 左值引用，绑定左值
+int&amp;&amp; rref = 42;      // 右值引用，绑定右值
+// int&amp;&amp; bad = x;     // 错误：右值引用不能绑定左值
+</code></pre>
+<p>右值引用的意义在于：<strong>让函数能够区分「参数是临时对象」还是「参数是持久对象」</strong>，从而对临时对象采取更高效的操作。</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><strong>引用折叠与完美转发</strong></p>
+<p>在模板中，<code>T&amp;&amp;</code> 的含义取决于 <code>T</code> 的推导结果，这被称为<strong>转发引用</strong>（forwarding reference）：</p>
+<ul>
+<li>传入左值 → <code>T</code> 推导为 <code>T&amp;</code>，经引用折叠后 <code>T&amp;&amp;</code> 变成 <code>T&amp;</code></li>
+<li>传入右值 → <code>T</code> 推导为 <code>T</code>，<code>T&amp;&amp;</code> 保持为 <code>T&amp;&amp;</code></li>
+</ul>
+<p>引用折叠规则：<code>&amp; + &amp; = &amp;</code>，<code>&amp; + &amp;&amp; = &amp;</code>，<code>&amp;&amp; + &amp;&amp; = &amp;&amp;</code>。</p>
+<p>配合 <code>std::forward&lt;T&gt;(x)</code> 即可把参数原样转发，保持其值类别不变。</p>
+</blockquote>
+<h2 id="三移动语义"><a class="header" href="#三移动语义">三、移动语义</a></h2>
+<h3 id="1-移动构造函数与移动赋值"><a class="header" href="#1-移动构造函数与移动赋值">1. 移动构造函数与移动赋值</a></h3>
+<p>移动构造函数接受右值引用，直接<strong>接管</strong>源对象的资源，而不是复制一份：</p>
+<pre><code class="language-c++">class Buffer
+{
+public:
+    explicit Buffer(std::size_t n)
+        : data_(new int[n]), size_(n) {}
+
+    ~Buffer() { delete[] data_; }
+
+    // 拷贝构造：深拷贝
+    Buffer(const Buffer&amp; other)
+        : data_(new int[other.size_]), size_(other.size_)
+    {
+        std::copy(other.data_, other.data_ + size_, data_);
+    }
+
+    // 移动构造：接管资源，不分配内存
+    Buffer(Buffer&amp;&amp; other) noexcept
+        : data_(other.data_), size_(other.size_)
+    {
+        other.data_ = nullptr;   // 关键：源对象置空，避免析构时重复释放
+        other.size_ = 0;
+    }
+
+    Buffer&amp; operator=(Buffer&amp;&amp; other) noexcept
+    {
+        if (this != &amp;other)
+        {
+            delete[] data_;          // 释放自己的资源
+            data_ = other.data_;     // 接管对方的资源
+            size_ = other.size_;
+            other.data_ = nullptr;
+            other.size_ = 0;
+        }
+        return *this;
+    }
+
+private:
+    int* data_;
+    std::size_t size_;
+};
+</code></pre>
+<p><strong>移动的本质是「指针交换」</strong>：把源对象的内部指针直接赋给目标对象，再把源对象的指针置空。这样既避免了深拷贝的开销，又保证了源对象析构时不会重复释放。</p>
+<h3 id="2-源对象的状态"><a class="header" href="#2-源对象的状态">2. 源对象的状态</a></h3>
+<p>被移动后的对象处于<strong>有效但未指定</strong>（valid but unspecified）的状态：</p>
+<ul>
+<li>可以安全地析构</li>
+<li>可以重新赋值</li>
+<li><strong>不应该</strong>假设它的值是什么（比如假设它一定为空）</li>
+</ul>
+<h3 id="3-何时触发移动"><a class="header" href="#3-何时触发移动">3. 何时触发移动</a></h3>
+<p>移动在以下情况自动发生：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">用临时对象初始化</td><td style="text-align: left"><code>Buffer b = makeBuffer();</code></td></tr>
+<tr><td style="text-align: left">用 <code>std::move</code> 显式转换</td><td style="text-align: left"><code>Buffer b2 = std::move(b1);</code></td></tr>
+<tr><td style="text-align: left">容器扩容时搬移元素</td><td style="text-align: left"><code>vector</code> 重新分配内存</td></tr>
+<tr><td style="text-align: left">返回局部对象</td><td style="text-align: left">NRVO 未生效时</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::vector&lt;std::string&gt; v;
+std::string s = "hello";
+v.push_back(s);              // 拷贝：s 是左值
+v.push_back(std::move(s));   // 移动：s 被移空
+v.push_back("world");        // 移动：临时对象
+</code></pre>
+<h2 id="四stdmove-与-stdforward"><a class="header" href="#四stdmove-与-stdforward">四、std::move 与 std::forward</a></h2>
+<h3 id="1-stdmove"><a class="header" href="#1-stdmove">1. std::move</a></h3>
+<p><code>std::move</code> <strong>不移动任何东西</strong>，它只是一个类型转换，把左值转成右值引用：</p>
+<pre><code class="language-c++">// 大致实现
+template &lt;typename T&gt;
+constexpr std::remove_reference_t&lt;T&gt;&amp;&amp; move(T&amp;&amp; x) noexcept
+{
+    return static_cast&lt;std::remove_reference_t&lt;T&gt;&amp;&amp;&gt;(x);
+}
+</code></pre>
+<p>它相当于告诉编译器：「这个对象我不再需要了，可以当作临时对象处理」。</p>
+<pre><code class="language-c++">std::string a = "hello";
+std::string b = std::move(a);   // 触发移动构造
+// a 现在是空字符串（有效但未指定）
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong><code>std::move</code> 之后不要再使用源对象</strong></p>
+<p><code>std::move</code> 只是转换，真正的移动发生在构造/赋值时。但一旦移动完成，源对象的内容就不可依赖了。</p>
+<p>常见错误：</p>
+<pre><code class="language-c++">std::string s = "hello";
+use(std::move(s));   // s 被移空
+log(s);              // 错误：s 的内容已不可依赖
+</code></pre>
+</blockquote>
+<h3 id="2-stdforward"><a class="header" href="#2-stdforward">2. std::forward</a></h3>
+<p><code>std::forward</code> 用于<strong>完美转发</strong>：在模板中把参数原样传递给下一层函数，保持其值类别不变。</p>
+<pre><code class="language-c++">template &lt;typename T&gt;
+void wrapper(T&amp;&amp; x)
+{
+    // 如果传入左值，x 以左值传递；传入右值，以右值传递
+    process(std::forward&lt;T&gt;(x));
+}
+</code></pre>
+<p>如果写成 <code>process(x)</code>，右值参数会被当作左值，退化为拷贝；如果写成 <code>process(std::move(x))</code>，左值参数会被错误地移动。</p>
+<h3 id="3-对比"><a class="header" href="#3-对比">3. 对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left"></th><th style="text-align: left"><code>std::move</code></th><th style="text-align: left"><code>std::forward</code></th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">作用</td><td style="text-align: left">无条件转为右值</td><td style="text-align: left">有条件保持原值类别</td></tr>
+<tr><td style="text-align: left">使用场景</td><td style="text-align: left">明确不再需要该对象</td><td style="text-align: left">模板中的参数转发</td></tr>
+<tr><td style="text-align: left">参数</td><td style="text-align: left">普通对象</td><td style="text-align: left">转发引用 <code>T&amp;&amp;</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="五constexpr"><a class="header" href="#五constexpr">五、constexpr</a></h2>
+<p><code>constexpr</code> 表示「可在编译期求值」。它比 <code>const</code> 更强：<code>const</code> 只保证运行期不可修改，<code>constexpr</code> 则要求编译期就能算出结果。</p>
+<pre><code class="language-c++">const int a = 10;              // 运行期常量
+constexpr int b = 10;          // 编译期常量
+
+constexpr int square(int x) { return x * x; }
+constexpr int c = square(5);   // 编译期算出 25
+
+int arr[square(3)];            // 合法：数组大小是编译期常量
+</code></pre>
+<h3 id="在类设计中的应用"><a class="header" href="#在类设计中的应用">在类设计中的应用</a></h3>
+<pre><code class="language-c++">class Circle
+{
+public:
+    constexpr Circle(double r) : radius_(r) {}
+
+    constexpr double area() const
+    {
+        return 3.141592653589793 * radius_ * radius_;
+    }
+
+private:
+    double radius_;
+};
+
+constexpr Circle c(2.0);
+constexpr double a = c.area();   // 编译期计算
+</code></pre>
+<p><strong>要点</strong>：</p>
+<ul>
+<li><code>constexpr</code> 函数在 C++11 中只能有一条 <code>return</code> 语句，C++14 起放宽为允许循环和分支</li>
+<li><code>constexpr</code> 隐含 <code>inline</code>，定义需放在头文件中</li>
+<li><code>constexpr</code> 构造函数使对象可以成为编译期常量</li>
+<li>C++20 起还有 <code>consteval</code>（强制编译期求值）和 <code>constinit</code>（强制编译期初始化）</li>
+</ul>
+<h2 id="六noexcept-与类设计"><a class="header" href="#六noexcept-与类设计">六、noexcept 与类设计</a></h2>
+<p><code>noexcept</code> 不只是文档说明，它会<strong>直接影响容器的行为</strong>。</p>
+<p><code>std::vector</code> 扩容时需要把旧元素搬到新内存。如果元素的移动构造函数<strong>可能抛异常</strong>，一旦搬运途中抛异常，旧内存已被破坏、新内存尚未完成，无法回滚——强异常安全保证就会被破坏。因此：</p>
+<ul>
+<li>移动构造函数标记 <code>noexcept</code> → <code>vector</code> <strong>移动</strong>元素</li>
+<li>移动构造函数未标记 <code>noexcept</code> → <code>vector</code> 退化为<strong>拷贝</strong>元素</li>
+</ul>
+<pre><code class="language-c++">class Good
+{
+public:
+    Good(Good&amp;&amp;) noexcept = default;   // vector 会移动
+};
+
+class Bad
+{
+public:
+    Bad(Bad&amp;&amp;) { /* 未标记 noexcept */ }   // vector 会选择拷贝
+};
+</code></pre>
+<p><strong>实践建议</strong>：</p>
+<ul>
+<li>移动构造函数和移动赋值运算符<strong>应尽可能标记 <code>noexcept</code></strong></li>
+<li>析构函数默认就是 <code>noexcept</code>（C++11 起），不要在其中抛异常</li>
+<li><code>swap</code> 通常也应标记 <code>noexcept</code>，许多算法依赖这一点</li>
+</ul>
+<h2 id="七其它现代特性"><a class="header" href="#七其它现代特性">七、其它现代特性</a></h2>
+<h3 id="1-override-与-final"><a class="header" href="#1-override-与-final">1. override 与 final</a></h3>
+<pre><code class="language-c++">class Base
+{
+public:
+    virtual void f();
+    virtual void g();
+};
+
+class Derived : public Base
+{
+public:
+    void f() override;        // 明确表示覆盖基类虚函数，签名不匹配会报错
+    void g() final;           // 禁止派生类继续覆盖
+};
+</code></pre>
+<p><code>override</code> 能在编译期发现「本想覆盖却写错签名」的问题，应始终使用。</p>
+<h3 id="2--default-与--delete"><a class="header" href="#2--default-与--delete">2. = default 与 = delete</a></h3>
+<pre><code class="language-c++">class NonCopyable
+{
+public:
+    NonCopyable() = default;
+    NonCopyable(const NonCopyable&amp;) = delete;             // 禁止拷贝
+    NonCopyable&amp; operator=(const NonCopyable&amp;) = delete;
+};
+</code></pre>
+<p><code>= default</code> 让编译器生成默认实现，<code>= delete</code> 明确禁用某个函数。</p>
+<h3 id="3-委托构造与继承构造"><a class="header" href="#3-委托构造与继承构造">3. 委托构造与继承构造</a></h3>
+<pre><code class="language-c++">class Widget
+{
+public:
+    Widget() : Widget(0, 0) {}          // 委托构造：调用另一个构造函数
+    Widget(int w, int h) : w_(w), h_(h) {}
+
+private:
+    int w_, h_;
+};
+
+class Derived : public Base
+{
+public:
+    using Base::Base;   // 继承基类的构造函数
+};
+</code></pre>
+<h3 id="4-类内成员初始化"><a class="header" href="#4-类内成员初始化">4. 类内成员初始化</a></h3>
+<pre><code class="language-c++">class Config
+{
+    int timeout_ = 30;               // 类内默认值
+    std::string name_ = "default";
+};
+</code></pre>
+<p>这样多个构造函数不必重复写相同的初始化。</p>
+<h3 id="5-结构化绑定c17"><a class="header" href="#5-结构化绑定c17">5. 结构化绑定（C++17）</a></h3>
+<pre><code class="language-c++">std::map&lt;std::string, int&gt; m{{"a", 1}};
+for (const auto&amp; [key, value] : m)
+    std::cout &lt;&lt; key &lt;&lt; ": " &lt;&lt; value &lt;&lt; '\n';
+</code></pre>
+<h3 id="6-三路比较运算符-c20"><a class="header" href="#6-三路比较运算符-c20">6. 三路比较运算符 <code>&lt;=&gt;</code>（C++20）</a></h3>
+<pre><code class="language-c++">struct Point
+{
+    int x, y;
+    auto operator&lt;=&gt;(const Point&amp;) const = default;   // 自动生成全部比较运算符
+};
+</code></pre>
+<p>一行代码即可获得 <code>==</code>、<code>!=</code>、<code>&lt;</code>、<code>&lt;=</code>、<code>&gt;</code>、<code>&gt;=</code>。</p>
+<h2 id="八注意事项-1"><a class="header" href="#八注意事项-1">八、注意事项</a></h2>
+<ul>
+<li><strong><code>std::move</code> 不是移动，只是转换</strong>。它不会改变对象，真正的移动发生在构造或赋值时。</li>
+<li><strong>移动后不要再使用源对象</strong>。它的状态是「有效但未指定」，只能析构或重新赋值。</li>
+<li><strong>移动构造函数要置空源对象的指针</strong>。否则源对象析构时会重复释放资源。</li>
+<li><strong><code>noexcept</code> 影响容器性能</strong>。未标记 <code>noexcept</code> 的移动构造会让 <code>vector</code> 退化为拷贝。</li>
+<li><strong>不要对 <code>const</code> 对象用 <code>std::move</code></strong>。<code>const T&amp;&amp;</code> 无法绑定到移动构造的 <code>T&amp;&amp;</code>，结果仍是拷贝。</li>
+<li><strong>返回局部对象不需要 <code>std::move</code></strong>。编译器会做 NRVO（返回值优化），写 <code>std::move</code> 反而可能阻止优化。</li>
+<li><strong><code>constexpr</code> 函数要放在头文件</strong>。它隐含 <code>inline</code>，否则会违反 ODR。</li>
+</ul>
+<h2 id="九相关章节-1"><a class="header" href="#九相关章节-1">九、相关章节</a></h2>
+<ul>
+<li><a href="#拷贝控制">拷贝控制</a>：拷贝构造、赋值运算符与 Rule of Three/Five/Zero</li>
+<li><a href="#异常处理">异常处理</a>：<code>noexcept</code> 说明符与异常安全保证</li>
+<li><a href="#smart-pointer">智能指针</a>：移动语义在资源管理中的应用</li>
+<li><a href="#raii与资源管理">RAII与资源管理</a>：资源所有权的转移</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="异常处理"><a class="header" href="#异常处理">异常处理</a></h1>
+<p><strong>异常（Exception）</strong> 是 C++ 报告错误的主要机制。当函数无法完成它承诺的任务时，可以<strong>抛出</strong>一个异常对象，控制权会沿着调用栈向上传递，直到遇到能处理它的 <code>catch</code> 块。</p>
+<p>相比返回错误码，异常的优势在于：错误无法被忽略，且不需要在每一层函数中都写检查代码。代价是运行时有一定开销，且必须小心处理资源释放问题。</p>
+<h2 id="一基本语法-1"><a class="header" href="#一基本语法-1">一、基本语法</a></h2>
+<p>异常处理由三个关键字组成：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">关键字</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>throw</code></td><td style="text-align: left">抛出一个异常对象</td></tr>
+<tr><td style="text-align: left"><code>try</code></td><td style="text-align: left">标记一段可能抛出异常的代码</td></tr>
+<tr><td style="text-align: left"><code>catch</code></td><td style="text-align: left">捕获并处理特定类型的异常</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;stdexcept&gt;
+
+double divide(double a, double b)
+{
+    if (b == 0)
+        throw std::invalid_argument("除数不能为 0");
+    return a / b;
+}
+
+int main()
+{
+    try
+    {
+        std::cout &lt;&lt; divide(10, 2) &lt;&lt; '\n';   // 5
+        std::cout &lt;&lt; divide(10, 0) &lt;&lt; '\n';   // 抛出异常
+    }
+    catch (const std::invalid_argument&amp; e)
+    {
+        std::cerr &lt;&lt; "错误: " &lt;&lt; e.what() &lt;&lt; '\n';
+    }
+
+    return 0;
+}
+</code></pre>
+<p><code>throw</code> 之后的代码不会执行，控制权立即转移。</p>
+<h2 id="二栈展开stack-unwinding"><a class="header" href="#二栈展开stack-unwinding">二、栈展开（Stack Unwinding）</a></h2>
+<p>异常抛出后，程序会沿着调用栈逐层退出，直到找到匹配的 <code>catch</code>。这个过程中，每一层作用域内的<strong>局部对象都会被析构</strong>，这一机制称为<strong>栈展开</strong>。</p>
+<pre><code class="language-c++">void inner()
+{
+    std::string s = "局部对象";
+    throw std::runtime_error("出错了");
+    // s 会在这里被析构
+}
+
+void outer()
+{
+    std::vector&lt;int&gt; v{1, 2, 3};
+    inner();
+    // v 也会被析构
+}
+</code></pre>
+<p>栈展开是 <strong>RAII</strong>（Resource Acquisition Is Initialization）能够工作的基础：只要资源由对象持有，异常发生时析构函数就会自动释放它，不需要手写 <code>catch</code> 来清理。</p>
+<pre><code class="language-c++">void safe()
+{
+    std::ifstream file("data.txt");   // 构造时打开文件
+    // ... 即使这里抛出异常
+}   // file 的析构函数仍会被调用，文件自动关闭
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>析构函数中不要抛出异常</strong></p>
+<p>如果栈展开过程中某个析构函数又抛出异常，而此时已经有一个异常正在传播，程序会直接调用 <code>std::terminate</code> 终止。</p>
+<p>C++11 起，析构函数默认是 <code>noexcept</code> 的，在其中抛出异常会直接导致终止。</p>
+</blockquote>
+<h2 id="三捕获异常"><a class="header" href="#三捕获异常">三、捕获异常</a></h2>
+<h3 id="1-按引用捕获"><a class="header" href="#1-按引用捕获">1. 按引用捕获</a></h3>
+<p>标准库抛出的都是<strong>匿名对象</strong>，应该<strong>按引用捕获</strong>：</p>
+<pre><code class="language-c++">try
+{
+    throw std::runtime_error("错误");
+}
+catch (const std::exception&amp; e)   // 推荐：按 const 引用
+{
+    std::cerr &lt;&lt; e.what() &lt;&lt; '\n';
+}
+</code></pre>
+<p>如果按值捕获，会发生<strong>对象切片（object slicing）</strong>——派生类异常被截断成基类，丢失派生部分的信息：</p>
+<pre><code class="language-c++">catch (std::exception e)   // 错误：切片，e 只是基类部分
+{
+    // e.what() 可能丢失派生类的信息
+}
+</code></pre>
+<h3 id="2-捕获顺序"><a class="header" href="#2-捕获顺序">2. 捕获顺序</a></h3>
+<p><code>catch</code> 块按<strong>从上到下</strong>的顺序匹配，第一个匹配的类型生效。因此<strong>派生类必须写在基类之前</strong>：</p>
+<pre><code class="language-c++">try
+{
+    // ...
+}
+catch (const std::out_of_range&amp; e)     // 派生类在前
+{
+    // ...
+}
+catch (const std::exception&amp; e)        // 基类在后
+{
+    // ...
+}
+</code></pre>
+<p>顺序写反的话，基类的 <code>catch</code> 会先捕获所有派生类异常，后面的块永远不会执行。</p>
+<h3 id="3-捕获所有异常"><a class="header" href="#3-捕获所有异常">3. 捕获所有异常</a></h3>
+<p><code>catch (...)</code> 可以捕获任何类型的异常：</p>
+<pre><code class="language-c++">try
+{
+    // ...
+}
+catch (const std::exception&amp; e)
+{
+    // 处理标准异常
+}
+catch (...)                            // 兜底
+{
+    // 处理其它未知异常
+    throw;                             // 通常应该重新抛出
+}
+</code></pre>
+<h3 id="4-重新抛出"><a class="header" href="#4-重新抛出">4. 重新抛出</a></h3>
+<p>在 <code>catch</code> 块内使用不带操作数的 <code>throw;</code> 可以把当前异常继续向上传播，同时保留原始类型：</p>
+<pre><code class="language-c++">try
+{
+    // ...
+}
+catch (const std::exception&amp; e)
+{
+    log(e.what());   // 记录日志
+    throw;           // 原样重新抛出，而不是 throw e;（后者会切片）
+}
+</code></pre>
+<h2 id="四异常安全保证"><a class="header" href="#四异常安全保证">四、异常安全保证</a></h2>
+<p>标准库对每个操作都规定了异常安全等级。这四个等级是逐层包含的关系：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">等级</th><th style="text-align: left">含义</th><th style="text-align: left">典型例子</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>Nothrow（不抛异常）</strong></td><td style="text-align: left">函数承诺不抛出异常</td><td style="text-align: left">析构函数、<code>swap</code>、移动构造函数</td></tr>
+<tr><td style="text-align: left"><strong>Strong（强保证）</strong></td><td style="text-align: left">抛出异常时，状态<strong>回滚</strong>到调用前的样子</td><td style="text-align: left"><code>std::vector::push_back</code></td></tr>
+<tr><td style="text-align: left"><strong>Basic（基本保证）</strong></td><td style="text-align: left">抛出异常时，程序仍处于<strong>有效状态</strong>，不泄漏资源</td><td style="text-align: left">大多数标准库操作</td></tr>
+<tr><td style="text-align: left"><strong>No guarantee（无保证）</strong></td><td style="text-align: left">可能泄漏资源或破坏不变量</td><td style="text-align: left">—</td></tr>
+</tbody>
+</table>
+</div>
+<p>此外还有 <strong>exception-neutral（异常中立）</strong>：函数自身不处理异常，但保证异常原样传播给调用者，且不破坏自身状态。模板库通常提供这种保证。</p>
+<p>理解这几个等级有助于判断：调用某个操作失败后，对象还能不能继续使用。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{1, 2, 3};
+try
+{
+    v.push_back(4);   // 强保证：失败时 v 仍为 {1,2,3}
+}
+catch (const std::bad_alloc&amp;)
+{
+    // v 未被修改
+}
+</code></pre>
+<h2 id="五noexcept"><a class="header" href="#五noexcept">五、noexcept</a></h2>
+<p>C++11 引入 <code>noexcept</code> 说明符，用于声明函数是否会抛出异常。</p>
+<h3 id="1-说明符"><a class="header" href="#1-说明符">1. 说明符</a></h3>
+<pre><code class="language-c++">void f() noexcept;              // 承诺不抛异常
+void g() noexcept(true);        // 同上
+void h() noexcept(false);       // 可能抛异常（默认行为）
+</code></pre>
+<p>如果声明为 <code>noexcept</code> 的函数真的抛出了异常，程序会直接调用 <code>std::terminate</code>：</p>
+<pre><code class="language-c++">void bad() noexcept
+{
+    throw std::runtime_error("糟糕");   // 编译通过，但运行时终止程序
+}
+</code></pre>
+<h3 id="2-noexcept-运算符"><a class="header" href="#2-noexcept-运算符">2. <code>noexcept</code> 运算符</a></h3>
+<p><code>noexcept(expr)</code> 是<strong>运算符</strong>，在编译期判断表达式是否会抛出异常，返回 <code>bool</code>：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v;
+std::cout &lt;&lt; std::boolalpha &lt;&lt; noexcept(v.push_back(1));   // false（可能抛 bad_alloc）
+</code></pre>
+<p>它常用于编写条件性的 <code>noexcept</code> 模板：</p>
+<pre><code class="language-c++">template &lt;typename T&gt;
+void wrapper(T&amp;&amp; x) noexcept(noexcept(process(std::forward&lt;T&gt;(x))))
+{
+    process(std::forward&lt;T&gt;(x));
+}
+</code></pre>
+<h3 id="3-为什么重要"><a class="header" href="#3-为什么重要">3. 为什么重要</a></h3>
+<p><code>noexcept</code> 不只是文档说明，它会<strong>影响容器的行为</strong>。以 <code>std::vector</code> 扩容为例：</p>
+<ul>
+<li>如果元素的<strong>移动构造函数是 <code>noexcept</code></strong>，<code>vector</code> 会选择移动元素</li>
+<li>否则，为了保持强异常安全保证，<code>vector</code> 只能选择<strong>拷贝</strong>元素</li>
+</ul>
+<pre><code class="language-c++">struct Good
+{
+    Good(Good&amp;&amp;) noexcept = default;   // vector 会移动
+};
+
+struct Bad
+{
+    Bad(Bad&amp;&amp;) { }                     // 未标记 noexcept，vector 会选择拷贝
+};
+</code></pre>
+<p>因此，<strong>自定义类型的移动构造函数应当尽可能标记为 <code>noexcept</code></strong>，否则会带来不必要的性能损失。</p>
+<h2 id="六标准异常体系"><a class="header" href="#六标准异常体系">六、标准异常体系</a></h2>
+<p>标准库的所有异常都直接或间接继承自 <code>std::exception</code>，定义在 <code>&lt;exception&gt;</code> 中。它提供了虚函数 <code>what()</code> 返回错误描述：</p>
+<pre><code class="language-c++">namespace std
+{
+class exception
+{
+public:
+    virtual const char* what() const noexcept;
+    virtual ~exception();
+};
+}
+</code></pre>
+<p>主要派生类分两大类：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">基类</th><th style="text-align: left">含义</th><th style="text-align: left">主要派生类</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::logic_error</code></td><td style="text-align: left">程序逻辑错误，理论上可在运行前发现</td><td style="text-align: left"><code>invalid_argument</code>、<code>domain_error</code>、<code>length_error</code>、<code>out_of_range</code></td></tr>
+<tr><td style="text-align: left"><code>std::runtime_error</code></td><td style="text-align: left">运行时才能发现的错误</td><td style="text-align: left"><code>range_error</code>、<code>overflow_error</code>、<code>underflow_error</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>此外还有一些独立的异常类型：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">异常</th><th style="text-align: left">头文件</th><th style="text-align: left">触发场景</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::bad_alloc</code></td><td style="text-align: left"><code>&lt;new&gt;</code></td><td style="text-align: left"><code>new</code> 分配内存失败</td></tr>
+<tr><td style="text-align: left"><code>std::bad_cast</code></td><td style="text-align: left"><code>&lt;typeinfo&gt;</code></td><td style="text-align: left"><code>dynamic_cast</code> 引用转换失败</td></tr>
+<tr><td style="text-align: left"><code>std::bad_typeid</code></td><td style="text-align: left"><code>&lt;typeinfo&gt;</code></td><td style="text-align: left">对空指针解引用后取 <code>typeid</code></td></tr>
+<tr><td style="text-align: left"><code>std::bad_weak_ptr</code></td><td style="text-align: left"><code>&lt;memory&gt;</code></td><td style="text-align: left">用空的 <code>weak_ptr</code> 构造 <code>shared_ptr</code></td></tr>
+<tr><td style="text-align: left"><code>std::bad_function_call</code></td><td style="text-align: left"><code>&lt;functional&gt;</code></td><td style="text-align: left">调用空的 <code>std::function</code></td></tr>
+<tr><td style="text-align: left"><code>std::bad_optional_access</code></td><td style="text-align: left"><code>&lt;optional&gt;</code></td><td style="text-align: left">访问空的 <code>optional</code>（C++17）</td></tr>
+<tr><td style="text-align: left"><code>std::bad_variant_access</code></td><td style="text-align: left"><code>&lt;variant&gt;</code></td><td style="text-align: left">访问 <code>variant</code> 中非当前类型（C++17）</td></tr>
+<tr><td style="text-align: left"><code>std::bad_any_cast</code></td><td style="text-align: left"><code>&lt;any&gt;</code></td><td style="text-align: left"><code>any_cast</code> 类型不匹配（C++17）</td></tr>
+<tr><td style="text-align: left"><code>std::system_error</code></td><td style="text-align: left"><code>&lt;system_error&gt;</code></td><td style="text-align: left">操作系统或底层库错误（C++11）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="七自定义异常"><a class="header" href="#七自定义异常">七、自定义异常</a></h2>
+<p>自定义异常通常继承自 <code>std::runtime_error</code> 或 <code>std::logic_error</code>，这样可以直接复用 <code>what()</code>：</p>
+<pre><code class="language-c++">#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+
+class NetworkError : public std::runtime_error
+{
+public:
+    explicit NetworkError(const std::string&amp; msg, int code)
+        : std::runtime_error(msg), code_(code) {}
+
+    int code() const noexcept { return code_; }
+
+private:
+    int code_;
+};
+</code></pre>
+<p>使用时按引用捕获基类即可统一处理，需要时再 <code>dynamic_cast</code> 取回具体类型。</p>
+<h2 id="八注意事项-2"><a class="header" href="#八注意事项-2">八、注意事项</a></h2>
+<ul>
+<li><strong>按值抛出，按引用捕获</strong>。抛出时构造的是异常对象的副本，捕获时必须用引用以避免切片。</li>
+<li><strong>不要在析构函数中抛异常</strong>。栈展开期间的二次异常会导致 <code>std::terminate</code>。</li>
+<li><strong><code>catch (...)</code> 不要吞掉异常</strong>。至少要记录日志，否则问题会被掩盖。</li>
+<li><strong><code>throw;</code> 与 <code>throw e;</code> 不同</strong>。前者原样重抛，后者会拷贝并切片。</li>
+<li><strong>异常不是控制流</strong>。不要用异常实现正常的跳转逻辑，它的开销远高于普通的条件判断。</li>
+<li><strong>构造函数的失败必须用异常报告</strong>。构造函数没有返回值，无法用错误码表示失败。</li>
+<li><strong><code>noexcept</code> 是承诺而非检查</strong>。编译器不会验证函数体是否真的不抛异常，违背承诺只在运行时报错。</li>
+<li><strong>性能考量</strong>。异常在<strong>不抛出</strong>时几乎没有开销（零成本异常模型），但抛出时的栈展开代价较高。因此热路径上的正常情况不应依赖异常。</li>
+</ul>
+<h2 id="九相关章节-2"><a class="header" href="#九相关章节-2">九、相关章节</a></h2>
+<ul>
+<li><a href="#raii与资源管理">RAII与资源管理</a>：栈展开与资源自动释放</li>
+<li><a href="#拷贝控制">拷贝控制</a>：移动构造函数与 <code>noexcept</code> 的关系</li>
+<li><a href="#smart-pointer">智能指针</a>：异常安全的资源管理</li>
+<li><a href="#c新特性">C++ 新特性</a>：<code>noexcept</code> 在类设计中的应用</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="多线程与并发"><a class="header" href="#多线程与并发">多线程与并发</a></h1>
+<p>C++11 起，标准库提供了完整的并发支持：线程、互斥量、条件变量、原子操作和异步任务。这些设施定义在 <code>&lt;thread&gt;</code>、<code>&lt;mutex&gt;</code>、<code>&lt;condition_variable&gt;</code>、<code>&lt;atomic&gt;</code>、<code>&lt;future&gt;</code> 等头文件中，让并发程序不再依赖平台特定的 API。</p>
+<p>并发编程的困难不在于 API，而在于<strong>正确性</strong>：数据竞争、死锁、虚假唤醒、内存序等问题往往在测试中难以复现，却会在生产中造成严重后果。</p>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>并发问题的本质</strong></p>
+<p>只要多个线程同时访问同一块内存，且其中至少一个是写操作，且没有同步措施，就构成<strong>数据竞争（data race）</strong>——这是未定义行为，编译器可以做任何假设，结果完全不可预测。</p>
+<p>加锁或使用原子操作是消除数据竞争的唯一途径。</p>
+</blockquote>
+<h2 id="一线程"><a class="header" href="#一线程">一、线程</a></h2>
+<h3 id="1-stdthread"><a class="header" href="#1-stdthread">1. std::thread</a></h3>
+<p><code>std::thread</code> 在构造时立即启动线程，顶层函数的返回值被忽略：</p>
+<pre><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;thread&gt;
+
+void hello(int id)
+{
+    std::cout &lt;&lt; "线程 " &lt;&lt; id &lt;&lt; " 运行中\n";
+}
+
+int main()
+{
+    std::thread t1(hello, 1);              // 启动线程
+    std::thread t2([] { hello(2); });      // 用 lambda
+
+    t1.join();   // 等待 t1 结束
+    t2.join();   // 等待 t2 结束
+}
+</code></pre>
+<p><strong>必须显式 <code>join()</code> 或 <code>detach()</code></strong>。如果 <code>thread</code> 对象在析构时仍处于 joinable 状态，程序会直接调用 <code>std::terminate</code>：</p>
+<pre><code class="language-c++">{
+    std::thread t(hello, 1);
+}   // 错误：t 析构时未 join/detach，程序终止
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">操作</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>join()</code></td><td style="text-align: left">阻塞等待线程结束</td></tr>
+<tr><td style="text-align: left"><code>detach()</code></td><td style="text-align: left">让线程独立运行，不再与 <code>thread</code> 对象关联</td></tr>
+<tr><td style="text-align: left"><code>joinable()</code></td><td style="text-align: left">是否关联着一个线程</td></tr>
+<tr><td style="text-align: left"><code>get_id()</code></td><td style="text-align: left">返回线程 ID</td></tr>
+<tr><td style="text-align: left"><code>hardware_concurrency()</code></td><td style="text-align: left">返回硬件支持的并发线程数（静态函数）</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-stdjthreadc20"><a class="header" href="#2-stdjthreadc20">2. std::jthread（C++20）</a></h3>
+<p><code>std::jthread</code> 解决了 <code>thread</code> 的两大痛点：<strong>析构时自动 join</strong>，以及<strong>支持协作式取消</strong>：</p>
+<pre><code class="language-c++">#include &lt;thread&gt;
+
+int main()
+{
+    std::jthread t([](std::stop_token st) {
+        while (!st.stop_requested())
+        {
+            // 执行任务
+        }
+    });
+}   // 离开作用域时自动请求停止并 join
+</code></pre>
+<p><code>jthread</code> 内部持有一个 <code>std::stop_source</code>，构造时会把它对应的 <code>std::stop_token</code> 作为第一个参数传给线程函数。线程通过 <code>stop_requested()</code> 检查是否收到停止请求。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">成员函数</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>request_stop()</code></td><td style="text-align: left">请求停止</td></tr>
+<tr><td style="text-align: left"><code>get_stop_token()</code></td><td style="text-align: left">获取停止令牌</td></tr>
+<tr><td style="text-align: left"><code>get_stop_source()</code></td><td style="text-align: left">获取停止源</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>优先使用 <code>jthread</code></strong>：它不会因为忘记 <code>join</code> 而终止程序，且提供了标准的取消机制。</p>
+<h3 id="3-当前线程操作"><a class="header" href="#3-当前线程操作">3. 当前线程操作</a></h3>
+<pre><code class="language-c++">#include &lt;thread&gt;
+#include &lt;chrono&gt;
+
+std::this_thread::get_id();                          // 当前线程 ID
+std::this_thread::sleep_for(std::chrono::seconds(1)); // 睡眠 1 秒
+std::this_thread::sleep_until(tp);                   // 睡眠到指定时间点
+std::this_thread::yield();                           // 让出 CPU
+</code></pre>
+<h2 id="二互斥量与锁"><a class="header" href="#二互斥量与锁">二、互斥量与锁</a></h2>
+<h3 id="1-互斥量类型"><a class="header" href="#1-互斥量类型">1. 互斥量类型</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">头文件</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">基本互斥量</td></tr>
+<tr><td style="text-align: left"><code>std::recursive_mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">同一线程可重复加锁</td></tr>
+<tr><td style="text-align: left"><code>std::timed_mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">支持超时加锁</td></tr>
+<tr><td style="text-align: left"><code>std::shared_mutex</code></td><td style="text-align: left"><code>&lt;shared_mutex&gt;</code></td><td style="text-align: left">读写锁，支持多个读者或一个写者（C++17）</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-raii-锁包装器"><a class="header" href="#2-raii-锁包装器">2. RAII 锁包装器</a></h3>
+<p><strong>不要手动调用 <code>lock()</code> / <code>unlock()</code></strong>，应使用 RAII 包装器，保证异常安全：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">包装器</th><th style="text-align: left">版本</th><th style="text-align: left">特点</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::lock_guard</code></td><td style="text-align: left">C++11</td><td style="text-align: left">最简单，构造时加锁，析构时解锁，不可移动</td></tr>
+<tr><td style="text-align: left"><code>std::unique_lock</code></td><td style="text-align: left">C++11</td><td style="text-align: left">可移动、可延迟加锁、可手动解锁，配合条件变量使用</td></tr>
+<tr><td style="text-align: left"><code>std::scoped_lock</code></td><td style="text-align: left">C++17</td><td style="text-align: left">可同时锁定<strong>多个</strong>互斥量，且避免死锁</td></tr>
+<tr><td style="text-align: left"><code>std::shared_lock</code></td><td style="text-align: left">C++14</td><td style="text-align: left">配合 <code>shared_mutex</code> 实现共享锁定</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">#include &lt;mutex&gt;
+
+std::mutex mtx;
+int counter = 0;
+
+void increment()
+{
+    std::lock_guard&lt;std::mutex&gt; lock(mtx);   // 自动加锁
+    ++counter;
+}   // 自动解锁，即使中途抛异常
+</code></pre>
+<h3 id="3-同时锁定多个互斥量"><a class="header" href="#3-同时锁定多个互斥量">3. 同时锁定多个互斥量</a></h3>
+<p>需要锁定多个互斥量时，用 <code>std::scoped_lock</code>（C++17）可以避免死锁：</p>
+<pre><code class="language-c++">std::mutex m1, m2;
+
+void transfer()
+{
+    // 同时锁定两个，内部使用死锁避免算法
+    std::scoped_lock lock(m1, m2);
+    // 操作共享数据
+}
+</code></pre>
+<p>如果手动按不同顺序加锁，两个线程可能互相等待对方释放，形成<strong>死锁</strong>：</p>
+<pre><code class="language-c++">// 线程 A：lock(m1) 然后 lock(m2)
+// 线程 B：lock(m2) 然后 lock(m1)
+// 可能死锁
+</code></pre>
+<h3 id="4-延迟加锁"><a class="header" href="#4-延迟加锁">4. 延迟加锁</a></h3>
+<p><code>std::unique_lock</code> 支持延迟加锁，这在配合条件变量时是必需的：</p>
+<pre><code class="language-c++">std::unique_lock&lt;std::mutex&gt; lock(mtx, std::defer_lock);   // 暂不加锁
+// ... 做一些准备工作
+lock.lock();   // 手动加锁
+</code></pre>
+<p>可用的标签：<code>std::defer_lock</code>、<code>std::try_to_lock</code>、<code>std::adopt_lock</code>。</p>
+<h3 id="5-call_once"><a class="header" href="#5-call_once">5. call_once</a></h3>
+<p><code>std::call_once</code> 保证某个函数在多线程环境下<strong>只被执行一次</strong>，常用于单例模式初始化：</p>
+<pre><code class="language-c++">std::once_flag flag;
+
+void init()
+{
+    std::call_once(flag, [] {
+        // 只会执行一次
+    });
+}
+</code></pre>
+<h2 id="三条件变量"><a class="header" href="#三条件变量">三、条件变量</a></h2>
+<p>条件变量用于让线程<strong>等待某个条件成立</strong>，需要配合互斥量和谓词使用：</p>
+<pre><code class="language-c++">#include &lt;condition_variable&gt;
+#include &lt;mutex&gt;
+#include &lt;queue&gt;
+
+std::mutex mtx;
+std::condition_variable cv;
+std::queue&lt;int&gt; q;
+
+void producer()
+{
+    {
+        std::lock_guard&lt;std::mutex&gt; lock(mtx);
+        q.push(42);
+    }
+    cv.notify_one();   // 通知等待的线程
+}
+
+void consumer()
+{
+    std::unique_lock&lt;std::mutex&gt; lock(mtx);
+
+    // 必须用谓词循环，防止虚假唤醒
+    cv.wait(lock, [] { return !q.empty(); });
+
+    int value = q.front();
+    q.pop();
+}
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>必须使用带谓词的 <code>wait</code></strong></p>
+<p>条件变量可能发生<strong>虚假唤醒（spurious wakeup）</strong>——即使没有 <code>notify</code>，<code>wait</code> 也可能返回。因此必须用循环重新检查条件：</p>
+<pre><code class="language-c++">// 错误：可能被虚假唤醒
+cv.wait(lock);
+if (q.empty()) { /* 条件其实不成立 */ }
+
+// 正确：带谓词的版本内部就是循环
+cv.wait(lock, [] { return !q.empty(); });
+</code></pre>
+</blockquote>
+<p><code>condition_variable</code> 只能配合 <code>std::unique_lock&lt;std::mutex&gt;</code>；如果需要配合其它锁类型，使用 <code>std::condition_variable_any</code>。</p>
+<h2 id="四原子操作"><a class="header" href="#四原子操作">四、原子操作</a></h2>
+<h3 id="1-stdatomic"><a class="header" href="#1-stdatomic">1. std::atomic</a></h3>
+<p>对于简单的共享变量，原子操作比加锁更轻量：</p>
+<pre><code class="language-c++">#include &lt;atomic&gt;
+
+std::atomic&lt;int&gt; counter{0};
+
+void increment()
+{
+    ++counter;   // 原子操作，无需加锁
+}
+</code></pre>
+<p><code>std::atomic</code> 支持的类型包括整型、指针、布尔型，C++20 起还包括浮点型。对于自定义类型，可以用 <code>std::atomic&lt;T&gt;</code> 但要求 <code>T</code> 是可平凡复制的，且实现可能使用内部锁。</p>
+<pre><code class="language-c++">std::atomic&lt;bool&gt; flag{false};
+flag.store(true);              // 写
+bool v = flag.load();          // 读
+bool old = flag.exchange(false);  // 交换并返回旧值
+</code></pre>
+<h3 id="2-比较并交换cas"><a class="header" href="#2-比较并交换cas">2. 比较并交换（CAS）</a></h3>
+<p><code>compare_exchange_weak</code> / <code>compare_exchange_strong</code> 是无锁编程的基础，用于实现「读取-修改-写回」的原子版本：</p>
+<pre><code class="language-c++">std::atomic&lt;int&gt; value{0};
+
+void update(int expected, int desired)
+{
+    // 如果 value == expected，则设为 desired，返回 true
+    // 否则把 value 的当前值写入 expected，返回 false
+    value.compare_exchange_strong(expected, desired);
+}
+</code></pre>
+<p><code>weak</code> 版本可能<strong>虚假失败</strong>（即使值相等也返回 false），因此在循环中使用；<code>strong</code> 版本不会虚假失败。</p>
+<h3 id="3-内存序"><a class="header" href="#3-内存序">3. 内存序</a></h3>
+<p>原子操作默认使用 <code>std::memory_order_seq_cst</code>（顺序一致性），这是最严格也最慢的选项。其它选项包括：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">内存序</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>memory_order_seq_cst</code></td><td style="text-align: left">顺序一致，所有线程看到相同的操作顺序（默认）</td></tr>
+<tr><td style="text-align: left"><code>memory_order_acquire</code></td><td style="text-align: left">用于读，保证之后的读写不会被重排到它之前</td></tr>
+<tr><td style="text-align: left"><code>memory_order_release</code></td><td style="text-align: left">用于写，保证之前的读写不会被重排到它之后</td></tr>
+<tr><td style="text-align: left"><code>memory_order_acq_rel</code></td><td style="text-align: left">同时具备 acquire 和 release 语义</td></tr>
+<tr><td style="text-align: left"><code>memory_order_relaxed</code></td><td style="text-align: left">只保证操作的原子性，不提供同步</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::atomic&lt;bool&gt; ready{false};
+int data = 0;
+
+// 线程 A
+data = 42;
+ready.store(true, std::memory_order_release);   // 之前的写入对读者可见
+
+// 线程 B
+while (!ready.load(std::memory_order_acquire)) { }   // 之后的读取能看到 data = 42
+std::cout &lt;&lt; data;
+</code></pre>
+<p>内存序的细节见 <a href="#c内存模型并发">C++内存模型（并发）</a>。</p>
+<h3 id="4-原子操作的局限"><a class="header" href="#4-原子操作的局限">4. 原子操作的局限</a></h3>
+<ul>
+<li><strong>复合操作不是原子的</strong>。<code>counter++</code> 是原子的，但 <code>if (counter &gt; 0) counter--;</code> 不是——两步之间可能被其它线程插入。</li>
+<li><strong>无法保护多个变量</strong>。需要同时修改多个相关变量时，仍应使用互斥量。</li>
+<li><strong><code>std::atomic</code> 不可拷贝</strong>。它没有拷贝构造和拷贝赋值（因为拷贝本身无法原子完成）。</li>
+</ul>
+<h2 id="五异步任务"><a class="header" href="#五异步任务">五、异步任务</a></h2>
+<p><code>&lt;future&gt;</code> 提供了更高层的并发抽象，让调用者可以「稍后取回结果」，而不必手动管理线程。</p>
+<h3 id="1-stdasync"><a class="header" href="#1-stdasync">1. std::async</a></h3>
+<p>最简单的异步执行方式：</p>
+<pre><code class="language-c++">#include &lt;future&gt;
+#include &lt;iostream&gt;
+
+int compute(int x)
+{
+    return x * x;
+}
+
+int main()
+{
+    // 异步执行，返回 future
+    std::future&lt;int&gt; f = std::async(std::launch::async, compute, 5);
+
+    // ... 做其它事情
+
+    int result = f.get();   // 阻塞等待结果
+    std::cout &lt;&lt; result &lt;&lt; '\n';   // 25
+}
+</code></pre>
+<p>启动策略：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">策略</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::launch::async</code></td><td style="text-align: left">强制在新线程中执行</td></tr>
+<tr><td style="text-align: left"><code>std::launch::deferred</code></td><td style="text-align: left">延迟到调用 <code>get()</code> 时才执行（同步）</td></tr>
+<tr><td style="text-align: left"><code>std::launch::async | std::launch::deferred</code></td><td style="text-align: left">由实现决定（默认）</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong>默认策略可能不启动新线程</strong></p>
+<p>不指定策略时，实现可能选择 <code>deferred</code>，导致任务在 <code>get()</code> 时才同步执行。如果需要真正的并发，必须显式指定 <code>std::launch::async</code>。</p>
+</blockquote>
+<h3 id="2-promise-与-future"><a class="header" href="#2-promise-与-future">2. promise 与 future</a></h3>
+<p><code>std::promise</code> 是写入端，<code>std::future</code> 是读取端，通过共享状态传递值或异常：</p>
+<pre><code class="language-c++">#include &lt;future&gt;
+#include &lt;thread&gt;
+
+void worker(std::promise&lt;int&gt; p)
+{
+    try
+    {
+        p.set_value(42);                              // 设置值
+        // p.set_exception(std::make_exception_ptr(e));  // 或设置异常
+    }
+    catch (...)
+    {
+        p.set_exception(std::current_exception());
+    }
+}
+
+int main()
+{
+    std::promise&lt;int&gt; p;
+    std::future&lt;int&gt; f = p.get_future();
+
+    std::thread t(worker, std::move(p));
+
+    std::cout &lt;&lt; f.get() &lt;&lt; '\n';   // 42，异常会在这里重新抛出
+    t.join();
+}
+</code></pre>
+<h3 id="3-packaged_task"><a class="header" href="#3-packaged_task">3. packaged_task</a></h3>
+<p><code>std::packaged_task</code> 把一个可调用对象包装起来，调用它时结果会自动存入关联的 future：</p>
+<pre><code class="language-c++">#include &lt;future&gt;
+
+int add(int a, int b) { return a + b; }
+
+int main()
+{
+    std::packaged_task&lt;int(int, int)&gt; task(add);
+    std::future&lt;int&gt; f = task.get_future();
+
+    std::thread t(std::move(task), 3, 4);
+    std::cout &lt;&lt; f.get() &lt;&lt; '\n';   // 7
+    t.join();
+}
+</code></pre>
+<h3 id="4-三种方式对比"><a class="header" href="#4-三种方式对比">4. 三种方式对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">方式</th><th style="text-align: left">适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::async</code></td><td style="text-align: left">简单的「发射后取结果」，最易用</td></tr>
+<tr><td style="text-align: left"><code>std::promise</code> / <code>future</code></td><td style="text-align: left">需要手动控制何时设置结果</td></tr>
+<tr><td style="text-align: left"><code>std::packaged_task</code></td><td style="text-align: left">把已有函数包装成任务，可放入队列由线程池执行</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="六c20-的同步原语"><a class="header" href="#六c20-的同步原语">六、C++20 的同步原语</a></h2>
+<h3 id="1-latch单次闩锁"><a class="header" href="#1-latch单次闩锁">1. latch（单次闩锁）</a></h3>
+<p><code>std::latch</code> 是一个<strong>一次性</strong>的倒计数器，用于等待多个线程完成：</p>
+<pre><code class="language-c++">#include &lt;latch&gt;
+#include &lt;thread&gt;
+#include &lt;vector&gt;
+
+int main()
+{
+    std::latch done(3);   // 计数为 3
+
+    auto worker = [&amp;done] {
+        // 执行任务
+        done.count_down();   // 计数减 1
+    };
+
+    std::vector&lt;std::thread&gt; threads;
+    for (int i = 0; i &lt; 3; ++i)
+        threads.emplace_back(worker);
+
+    done.wait();   // 等待计数归零
+
+    for (auto&amp; t : threads) t.join();
+}
+</code></pre>
+<h3 id="2-barrier可重用屏障"><a class="header" href="#2-barrier可重用屏障">2. barrier（可重用屏障）</a></h3>
+<p><code>std::barrier</code> 与 <code>latch</code> 类似，但<strong>可以重复使用</strong>，适合多轮迭代的并行算法：</p>
+<pre><code class="language-c++">#include &lt;barrier&gt;
+
+std::barrier sync(4);   // 每 4 个线程同步一次
+
+void phase_worker()
+{
+    for (int i = 0; i &lt; 10; ++i)
+    {
+        // 第一阶段工作
+        sync.arrive_and_wait();   // 等待所有线程到达
+
+        // 第二阶段工作
+        sync.arrive_and_wait();
+    }
+}
+</code></pre>
+<h3 id="3-semaphore信号量"><a class="header" href="#3-semaphore信号量">3. semaphore（信号量）</a></h3>
+<p><code>std::counting_semaphore</code> 用于限制对资源的并发访问数量：</p>
+<pre><code class="language-c++">#include &lt;semaphore&gt;
+
+// 最多允许 3 个线程同时访问
+std::counting_semaphore&lt;3&gt; sem(3);
+
+void limited_access()
+{
+    sem.acquire();     // 获取许可，计数为 0 时阻塞
+    // 访问受限资源
+    sem.release();     // 释放许可
+}
+</code></pre>
+<p><code>std::binary_semaphore</code> 是计数为 1 的特例，可用于线程间的信号通知。</p>
+<h2 id="七常见并发问题"><a class="header" href="#七常见并发问题">七、常见并发问题</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">原因</th><th style="text-align: left">避免方式</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>数据竞争</strong></td><td style="text-align: left">多线程无同步地访问同一内存</td><td style="text-align: left">加锁或使用原子操作</td></tr>
+<tr><td style="text-align: left"><strong>死锁</strong></td><td style="text-align: left">多个线程循环等待对方持有的锁</td><td style="text-align: left">用 <code>scoped_lock</code> 同时加锁；统一加锁顺序</td></tr>
+<tr><td style="text-align: left"><strong>活锁</strong></td><td style="text-align: left">线程不断重试但无法推进</td><td style="text-align: left">引入随机退避</td></tr>
+<tr><td style="text-align: left"><strong>虚假唤醒</strong></td><td style="text-align: left">条件变量无故返回</td><td style="text-align: left">使用带谓词的 <code>wait</code></td></tr>
+<tr><td style="text-align: left"><strong>ABA 问题</strong></td><td style="text-align: left">值从 A 改为 B 又改回 A，CAS 无法察觉</td><td style="text-align: left">使用带版本号的原子类型</td></tr>
+<tr><td style="text-align: left"><strong>迭代器失效</strong></td><td style="text-align: left">一个线程修改容器，另一个在遍历</td><td style="text-align: left">遍历时加锁，或使用不可变数据结构</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="八注意事项-3"><a class="header" href="#八注意事项-3">八、注意事项</a></h2>
+<ul>
+<li><strong><code>std::thread</code> 必须 join 或 detach</strong>。否则析构时程序终止。优先用 <code>std::jthread</code>。</li>
+<li><strong>不要手动 lock/unlock</strong>。始终使用 RAII 包装器，异常安全才有保障。</li>
+<li><strong>条件变量必须用带谓词的 <code>wait</code></strong>。否则虚假唤醒会导致逻辑错误。</li>
+<li><strong><code>std::async</code> 默认策略不确定</strong>。需要真并发时必须显式指定 <code>std::launch::async</code>。</li>
+<li><strong><code>future</code> 的析构会阻塞</strong>。<code>std::async</code> 返回的 <code>future</code> 如果未调用 <code>get()</code> 就析构，会等待任务完成。</li>
+<li><strong>原子操作不等于无锁</strong>。<code>std::atomic&lt;T&gt;</code> 对某些类型可能内部使用锁，可用 <code>is_lock_free()</code> 检查。</li>
+<li><strong>内存序默认最严格</strong>。<code>seq_cst</code> 最慢但最安全，优化前应先确认正确性。</li>
+<li><strong>并发 bug 难以复现</strong>。应借助 ThreadSanitizer（<code>-fsanitize=thread</code>）等工具检测。</li>
+</ul>
+<h2 id="九相关章节-3"><a class="header" href="#九相关章节-3">九、相关章节</a></h2>
+<ul>
+<li><a href="#c内存模型并发">C++内存模型（并发）</a>：内存序与 happens-before 关系</li>
+<li><a href="#异常处理">异常处理</a>：线程函数中异常的传播</li>
+<li><a href="#smart-pointer">智能指针</a>：<code>shared_ptr</code> 的线程安全性</li>
+<li><a href="#c实践">C++实践 · 多线程</a>：工程中的并发模式</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="现代-c-演进"><a class="header" href="#现代-c-演进">现代 C++ 演进</a></h1>
+<p>C++ 从 2011 年起进入三年一版的快速演进节奏。理解各版本引入了什么，有助于判断手头的代码库能用哪些特性，也有助于理解为什么某些写法会成为「现代 C++」的推荐风格。</p>
+<p>本节按版本梳理主要特性。具体用法见各专题章节，本节只做脉络梳理与速查。</p>
+<h2 id="一版本时间线"><a class="header" href="#一版本时间线">一、版本时间线</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">标准</th><th style="text-align: left">俗称</th><th style="text-align: left">发布时间</th><th style="text-align: left">核心主题</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">C++98</td><td style="text-align: left">C++98</td><td style="text-align: left">1998</td><td style="text-align: left">第一个 ISO 标准，STL 正式纳入</td></tr>
+<tr><td style="text-align: left">C++03</td><td style="text-align: left">C++03</td><td style="text-align: left">2003</td><td style="text-align: left">修订版，主要是缺陷修复</td></tr>
+<tr><td style="text-align: left"><strong>C++11</strong></td><td style="text-align: left"><strong>C++0x</strong></td><td style="text-align: left">2011</td><td style="text-align: left"><strong>现代 C++ 起点</strong>：移动语义、lambda、并发、智能指针</td></tr>
+<tr><td style="text-align: left">C++14</td><td style="text-align: left">C++1y</td><td style="text-align: left">2014</td><td style="text-align: left">对 C++11 的完善与放宽</td></tr>
+<tr><td style="text-align: left">C++17</td><td style="text-align: left">C++1z</td><td style="text-align: left">2017</td><td style="text-align: left">结构化绑定、<code>if constexpr</code>、<code>optional</code>/<code>variant</code>、并行算法</td></tr>
+<tr><td style="text-align: left"><strong>C++20</strong></td><td style="text-align: left"><strong>C++2a</strong></td><td style="text-align: left">2020</td><td style="text-align: left"><strong>第二次大修订</strong>：Concepts、Ranges、协程、模块、三路比较</td></tr>
+<tr><td style="text-align: left">C++23</td><td style="text-align: left">C++2b</td><td style="text-align: left">2023</td><td style="text-align: left"><code>expected</code>、<code>print</code>、<code>mdspan</code>、Ranges 扩展</td></tr>
+<tr><td style="text-align: left">C++26</td><td style="text-align: left">C++2c</td><td style="text-align: left">2026</td><td style="text-align: left">反射、契约、并行 Ranges、<code>std::execution</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="二c11现代-c-的起点"><a class="header" href="#二c11现代-c-的起点">二、C++11：现代 C++ 的起点</a></h2>
+<p>C++11 是语言历史上最大的一次修订，它改变了 C++ 的编程范式。</p>
+<h3 id="语言特性"><a class="header" href="#语言特性">语言特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong><code>auto</code></strong></td><td style="text-align: left">类型自动推导</td></tr>
+<tr><td style="text-align: left"><strong>范围 <code>for</code></strong></td><td style="text-align: left"><code>for (auto&amp; x : container)</code></td></tr>
+<tr><td style="text-align: left"><strong>右值引用 <code>&amp;&amp;</code></strong></td><td style="text-align: left">移动语义的基础</td></tr>
+<tr><td style="text-align: left"><strong>移动构造/赋值</strong></td><td style="text-align: left">避免不必要的深拷贝</td></tr>
+<tr><td style="text-align: left"><strong>Lambda 表达式</strong></td><td style="text-align: left">就地定义匿名函数对象</td></tr>
+<tr><td style="text-align: left"><strong><code>nullptr</code></strong></td><td style="text-align: left">类型安全的空指针</td></tr>
+<tr><td style="text-align: left"><strong><code>enum class</code></strong></td><td style="text-align: left">强类型枚举，不隐式转换</td></tr>
+<tr><td style="text-align: left"><strong><code>override</code> / <code>final</code></strong></td><td style="text-align: left">显式标注虚函数覆盖</td></tr>
+<tr><td style="text-align: left"><strong><code>= default</code> / <code>= delete</code></strong></td><td style="text-align: left">显式控制特殊成员函数</td></tr>
+<tr><td style="text-align: left"><strong>变参模板</strong></td><td style="text-align: left"><code>template&lt;typename... Args&gt;</code></td></tr>
+<tr><td style="text-align: left"><strong><code>constexpr</code></strong></td><td style="text-align: left">编译期求值</td></tr>
+<tr><td style="text-align: left"><strong><code>noexcept</code></strong></td><td style="text-align: left">声明不抛异常</td></tr>
+<tr><td style="text-align: left"><strong><code>static_assert</code></strong></td><td style="text-align: left">编译期断言</td></tr>
+<tr><td style="text-align: left"><strong>委托构造 / 继承构造</strong></td><td style="text-align: left">构造函数复用</td></tr>
+<tr><td style="text-align: left"><strong>初始化列表 <code>{}</code></strong></td><td style="text-align: left">统一的初始化语法</td></tr>
+<tr><td style="text-align: left"><strong><code>using</code> 别名</strong></td><td style="text-align: left"><code>using IntVec = std::vector&lt;int&gt;;</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="标准库特性"><a class="header" href="#标准库特性">标准库特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>智能指针</strong></td><td style="text-align: left"><code>unique_ptr</code>、<code>shared_ptr</code>、<code>weak_ptr</code></td></tr>
+<tr><td style="text-align: left"><strong><code>std::thread</code></strong></td><td style="text-align: left">线程支持</td></tr>
+<tr><td style="text-align: left"><strong><code>std::mutex</code></strong></td><td style="text-align: left">互斥量</td></tr>
+<tr><td style="text-align: left"><strong><code>std::atomic</code></strong></td><td style="text-align: left">原子操作</td></tr>
+<tr><td style="text-align: left"><strong><code>std::chrono</code></strong></td><td style="text-align: left">时间库</td></tr>
+<tr><td style="text-align: left"><strong><code>std::random</code></strong></td><td style="text-align: left">随机数库</td></tr>
+<tr><td style="text-align: left"><strong><code>std::unordered_*</code></strong></td><td style="text-align: left">哈希容器</td></tr>
+<tr><td style="text-align: left"><strong><code>std::array</code></strong></td><td style="text-align: left">固定大小数组</td></tr>
+<tr><td style="text-align: left"><strong><code>std::tuple</code></strong></td><td style="text-align: left">异质容器</td></tr>
+<tr><td style="text-align: left"><strong><code>std::function</code></strong></td><td style="text-align: left">通用函数包装器</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// C++11 的典型现代写法
+auto v = std::vector&lt;int&gt;{1, 2, 3, 4, 5};
+
+auto sum = 0;
+for (const auto&amp; x : v)
+    sum += x;
+
+auto even_count = std::count_if(v.begin(), v.end(),
+                                [](int x) { return x % 2 == 0; });
+
+auto ptr = std::make_unique&lt;int&gt;(42);
+</code></pre>
+<h2 id="三c14完善与放宽"><a class="header" href="#三c14完善与放宽">三、C++14：完善与放宽</a></h2>
+<p>C++14 是一个小版本，主要是对 C++11 的补全。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>泛型 lambda</strong></td><td style="text-align: left"><code>[](auto x) { return x; }</code></td></tr>
+<tr><td style="text-align: left"><strong>初始化捕获</strong></td><td style="text-align: left"><code>[x = std::move(y)] {}</code></td></tr>
+<tr><td style="text-align: left"><strong><code>constexpr</code> 放宽</strong></td><td style="text-align: left">允许循环、分支、多语句</td></tr>
+<tr><td style="text-align: left"><strong>函数返回类型推导</strong></td><td style="text-align: left"><code>auto f() { return 42; }</code></td></tr>
+<tr><td style="text-align: left"><strong>变量模板</strong></td><td style="text-align: left"><code>template&lt;typename T&gt; constexpr T pi = ...;</code></td></tr>
+<tr><td style="text-align: left"><strong><code>std::make_unique</code></strong></td><td style="text-align: left">C++11 遗漏的补全</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// 泛型 lambda
+auto print = [](const auto&amp; x) { std::cout &lt;&lt; x &lt;&lt; '\n'; };
+
+// 初始化捕获（移动捕获）
+auto ptr = std::make_unique&lt;int&gt;(42);
+auto f = [p = std::move(ptr)] { return *p; };
+</code></pre>
+<h2 id="四c17实用主义"><a class="header" href="#四c17实用主义">四、C++17：实用主义</a></h2>
+<p>C++17 引入了大量实用特性，是日常开发中最常用的一版。</p>
+<h3 id="语言特性-1"><a class="header" href="#语言特性-1">语言特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>结构化绑定</strong></td><td style="text-align: left"><code>auto [a, b] = pair;</code></td></tr>
+<tr><td style="text-align: left"><strong><code>if</code> 初始化语句</strong></td><td style="text-align: left"><code>if (auto it = m.find(k); it != m.end())</code></td></tr>
+<tr><td style="text-align: left"><strong><code>if constexpr</code></strong></td><td style="text-align: left">编译期分支，替代 SFINAE</td></tr>
+<tr><td style="text-align: left"><strong>折叠表达式</strong></td><td style="text-align: left"><code>(args + ...)</code></td></tr>
+<tr><td style="text-align: left"><strong>内联变量</strong></td><td style="text-align: left">头文件中定义变量</td></tr>
+<tr><td style="text-align: left"><strong><code>[[nodiscard]]</code></strong></td><td style="text-align: left">警告忽略返回值</td></tr>
+<tr><td style="text-align: left"><strong><code>[[maybe_unused]]</code></strong></td><td style="text-align: left">抑制未使用警告</td></tr>
+<tr><td style="text-align: left"><strong>类模板参数推导</strong></td><td style="text-align: left"><code>std::pair p(1, 2);</code></td></tr>
+<tr><td style="text-align: left"><strong><code>*this</code> 捕获</strong></td><td style="text-align: left"><code>[*this] {}</code></td></tr>
+<tr><td style="text-align: left"><strong><code>constexpr</code> lambda</strong></td><td style="text-align: left">lambda 可用于编译期</td></tr>
+<tr><td style="text-align: left"><strong>嵌套命名空间</strong></td><td style="text-align: left"><code>namespace a::b::c {}</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="标准库特性-1"><a class="header" href="#标准库特性-1">标准库特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong><code>std::optional</code></strong></td><td style="text-align: left">可选值</td></tr>
+<tr><td style="text-align: left"><strong><code>std::variant</code></strong></td><td style="text-align: left">类型安全联合体</td></tr>
+<tr><td style="text-align: left"><strong><code>std::any</code></strong></td><td style="text-align: left">任意类型容器</td></tr>
+<tr><td style="text-align: left"><strong><code>std::string_view</code></strong></td><td style="text-align: left">字符串视图</td></tr>
+<tr><td style="text-align: left"><strong><code>std::filesystem</code></strong></td><td style="text-align: left">文件系统操作</td></tr>
+<tr><td style="text-align: left"><strong><code>std::byte</code></strong></td><td style="text-align: left">字节类型</td></tr>
+<tr><td style="text-align: left"><strong>并行算法</strong></td><td style="text-align: left"><code>std::execution::par</code></td></tr>
+<tr><td style="text-align: left"><strong><code>std::scoped_lock</code></strong></td><td style="text-align: left">多互斥量锁定</td></tr>
+<tr><td style="text-align: left"><strong><code>std::apply</code></strong></td><td style="text-align: left">展开 tuple 调用函数</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// 结构化绑定 + if 初始化
+if (auto [it, inserted] = map.try_emplace(key, value); inserted)
+    std::cout &lt;&lt; "插入成功\n";
+
+// if constexpr
+template &lt;typename T&gt;
+auto stringify(T value)
+{
+    if constexpr (std::is_arithmetic_v&lt;T&gt;)
+        return std::to_string(value);
+    else
+        return std::string(value);
+}
+
+// optional
+std::optional&lt;int&gt; find_value(const std::string&amp; key);
+if (auto v = find_value("key"))
+    std::cout &lt;&lt; *v &lt;&lt; '\n';
+</code></pre>
+<h2 id="五c20第二次大修订"><a class="header" href="#五c20第二次大修订">五、C++20：第二次大修订</a></h2>
+<p>C++20 引入了四大特性（Concepts、Ranges、协程、模块），是继 C++11 之后最重要的版本。</p>
+<h3 id="语言特性-2"><a class="header" href="#语言特性-2">语言特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>Concepts</strong></td><td style="text-align: left">对模板参数的显式约束</td></tr>
+<tr><td style="text-align: left"><strong>Ranges</strong></td><td style="text-align: left">可组合的范围算法与视图</td></tr>
+<tr><td style="text-align: left"><strong>协程</strong></td><td style="text-align: left"><code>co_await</code> / <code>co_yield</code> / <code>co_return</code></td></tr>
+<tr><td style="text-align: left"><strong>模块</strong></td><td style="text-align: left"><code>import</code> 取代 <code>#include</code></td></tr>
+<tr><td style="text-align: left"><strong>三路比较 <code>&lt;=&gt;</code></strong></td><td style="text-align: left">一行定义全部比较运算符</td></tr>
+<tr><td style="text-align: left"><strong>指定初始化</strong></td><td style="text-align: left"><code>Point{.x = 1, .y = 2}</code></td></tr>
+<tr><td style="text-align: left"><strong><code>consteval</code></strong></td><td style="text-align: left">强制编译期求值</td></tr>
+<tr><td style="text-align: left"><strong><code>constinit</code></strong></td><td style="text-align: left">强制编译期初始化</td></tr>
+<tr><td style="text-align: left"><strong><code>using enum</code></strong></td><td style="text-align: left">引入枚举成员到作用域</td></tr>
+<tr><td style="text-align: left"><strong>lambda 模板参数</strong></td><td style="text-align: left"><code>[]&lt;typename T&gt;(T x) {}</code></td></tr>
+<tr><td style="text-align: left"><strong><code>[[likely]]</code> / <code>[[unlikely]]</code></strong></td><td style="text-align: left">分支预测提示</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="标准库特性-2"><a class="header" href="#标准库特性-2">标准库特性</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong><code>std::span</code></strong></td><td style="text-align: left">连续序列的非拥有视图</td></tr>
+<tr><td style="text-align: left"><strong><code>std::format</code></strong></td><td style="text-align: left">格式化输出</td></tr>
+<tr><td style="text-align: left"><strong><code>std::jthread</code></strong></td><td style="text-align: left">自动 join 的线程</td></tr>
+<tr><td style="text-align: left"><strong><code>std::latch</code> / <code>barrier</code></strong></td><td style="text-align: left">线程同步原语</td></tr>
+<tr><td style="text-align: left"><strong><code>std::semaphore</code></strong></td><td style="text-align: left">信号量</td></tr>
+<tr><td style="text-align: left"><strong><code>std::bit_cast</code></strong></td><td style="text-align: left">类型安全的位转换</td></tr>
+<tr><td style="text-align: left"><strong><code>std::midpoint</code></strong></td><td style="text-align: left">中点计算（避免溢出）</td></tr>
+<tr><td style="text-align: left"><strong><code>std::numbers</code></strong></td><td style="text-align: left">数学常量</td></tr>
+<tr><td style="text-align: left"><strong><code>contains</code></strong></td><td style="text-align: left">关联容器的成员函数</td></tr>
+<tr><td style="text-align: left"><strong><code>std::source_location</code></strong></td><td style="text-align: left">源码位置信息</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// Concepts
+template &lt;std::integral T&gt;
+T add(T a, T b) { return a + b; }
+
+// Ranges
+auto result = data
+    | std::views::filter([](int x) { return x &gt; 0; })
+    | std::views::transform([](int x) { return x * 2; })
+    | std::views::take(5);
+
+// 三路比较
+struct Point {
+    int x, y;
+    auto operator&lt;=&gt;(const Point&amp;) const = default;
+};
+
+// span
+void process(std::span&lt;const int&gt; data);
+
+// format
+std::string s = std::format("x = {}, y = {}", 1, 2);
+</code></pre>
+<h2 id="六c23稳步推进"><a class="header" href="#六c23稳步推进">六、C++23：稳步推进</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong><code>std::expected</code></strong></td><td style="text-align: left">错误值或结果值</td></tr>
+<tr><td style="text-align: left"><strong><code>std::print</code></strong></td><td style="text-align: left">直接打印，取代 <code>cout</code></td></tr>
+<tr><td style="text-align: left"><strong><code>std::mdspan</code></strong></td><td style="text-align: left">多维数组视图</td></tr>
+<tr><td style="text-align: left"><strong><code>std::flat_map</code> / <code>flat_set</code></strong></td><td style="text-align: left">基于有序 vector 的容器</td></tr>
+<tr><td style="text-align: left"><strong>Ranges 扩展</strong></td><td style="text-align: left"><code>zip</code>、<code>enumerate</code>、<code>chunk</code>、<code>slide</code>、<code>stride</code></td></tr>
+<tr><td style="text-align: left"><strong><code>std::ranges::to</code></strong></td><td style="text-align: left">视图转容器</td></tr>
+<tr><td style="text-align: left"><strong><code>std::stacktrace</code></strong></td><td style="text-align: left">调用栈信息</td></tr>
+<tr><td style="text-align: left"><strong><code>if consteval</code></strong></td><td style="text-align: left">区分编译期与运行期</td></tr>
+<tr><td style="text-align: left"><strong>多维下标 <code>[]</code></strong></td><td style="text-align: left"><code>arr[i, j]</code> 语法</td></tr>
+<tr><td style="text-align: left"><strong><code>std::byteswap</code></strong></td><td style="text-align: left">字节序转换</td></tr>
+<tr><td style="text-align: left"><strong><code>import std;</code></strong></td><td style="text-align: left">标准库模块</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// expected
+std::expected&lt;int, std::string&gt; parse(const std::string&amp; s)
+{
+    try {
+        return std::stoi(s);
+    } catch (...) {
+        return std::unexpected("解析失败");
+    }
+}
+
+// print
+std::print("Hello, {}!\n", "World");
+
+// Ranges 扩展
+for (auto [i, x] : std::views::enumerate(data))
+    std::cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; x &lt;&lt; '\n';
+</code></pre>
+<h2 id="七c26即将到来"><a class="header" href="#七c26即将到来">七、C++26：即将到来</a></h2>
+<p>C++26 已于 2026 年发布，主要特性包括：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">特性</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>反射（静态）</strong></td><td style="text-align: left">编译期检查与生成代码</td></tr>
+<tr><td style="text-align: left"><strong>契约</strong></td><td style="text-align: left"><code>pre</code> / <code>post</code> / <code>contract_assert</code></td></tr>
+<tr><td style="text-align: left"><strong>并行 Ranges</strong></td><td style="text-align: left"><code>ranges::</code> 算法接受执行策略</td></tr>
+<tr><td style="text-align: left"><strong><code>std::execution</code></strong></td><td style="text-align: left">发送者/接收者异步模型</td></tr>
+<tr><td style="text-align: left"><strong><code>std::hive</code></strong></td><td style="text-align: left">新容器类型</td></tr>
+<tr><td style="text-align: left"><strong><code>std::inplace_vector</code></strong></td><td style="text-align: left">固定容量、栈上存储的动态数组</td></tr>
+<tr><td style="text-align: left"><strong><code>std::linalg</code></strong></td><td style="text-align: left">线性代数算法</td></tr>
+<tr><td style="text-align: left"><strong><code>std::simd</code></strong></td><td style="text-align: left">数据并行类型</td></tr>
+<tr><td style="text-align: left"><strong><code>std::rcu</code> / 危险指针</strong></td><td style="text-align: left">安全内存回收</td></tr>
+<tr><td style="text-align: left"><strong><code>=)</code> 占位符</strong></td><td style="text-align: left">结构化绑定的未使用标记</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="八如何选择特性版本"><a class="header" href="#八如何选择特性版本">八、如何选择特性版本</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">建议</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">新项目、工具链可控</td><td style="text-align: left">直接用 C++20 或 C++23</td></tr>
+<tr><td style="text-align: left">需要广泛兼容</td><td style="text-align: left">C++17 是当前最稳妥的选择</td></tr>
+<tr><td style="text-align: left">嵌入式、老编译器</td><td style="text-align: left">可能只能用到 C++11/14</td></tr>
+<tr><td style="text-align: left">学习</td><td style="text-align: left">从 C++11 基础特性入手，逐步掌握 C++17/20</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>判断编译器支持情况</strong>：</p>
+<pre><code class="language-c++">#include &lt;version&gt;   // C++20
+
+#if __cpp_lib_optional &gt;= 201603L
+    // 支持 std::optional
+#endif
+
+#if __cpp_concepts &gt;= 201907L
+    // 支持 Concepts
+#endif
+</code></pre>
+<p>也可以用 <code>__cplusplus</code> 宏判断语言版本：</p>
+<pre><code class="language-c++">#if __cplusplus &gt;= 202002L
+    // C++20 或更高
+#endif
+</code></pre>
+<h2 id="九注意事项"><a class="header" href="#九注意事项">九、注意事项</a></h2>
+<ul>
+<li><strong>不要为了用而用</strong>。新特性应服务于可读性和正确性，而非炫技。</li>
+<li><strong>注意编译器支持</strong>。不同编译器对同一特性的支持进度不同，尤其是 C++20/23 的部分特性。</li>
+<li><strong>模块尚未普及</strong>。虽然 C++20 就引入了模块，但工具链支持仍在完善中，实际项目大多仍用头文件。</li>
+<li><strong>协程需要库支持</strong>。标准库只提供了语言机制，实际使用需要第三方库（如 cppcoro）或自行封装。</li>
+<li><strong>ABI 兼容性</strong>。升级标准可能影响二进制兼容，尤其是涉及标准库类型的接口。</li>
+<li><strong><code>constexpr</code> 能力持续增强</strong>。C++14 允许循环，C++17 允许 lambda，C++20 允许 <code>try</code>（C++26 起允许抛异常），编译器支持度需确认。</li>
+</ul>
+<h2 id="十相关章节"><a class="header" href="#十相关章节">十、相关章节</a></h2>
+<ul>
+<li><a href="#c新特性">C++ 新特性</a>：移动语义、右值引用、<code>constexpr</code>、<code>noexcept</code> 的详细用法</li>
+<li><a href="#ranges">Ranges</a>：Ranges 视图与管道语法</li>
+<li><a href="#iterators">Iterators</a>：C++20 迭代器概念</li>
+<li><a href="#algorithms">Algorithms</a>：C++20 Ranges 算法与 C++26 并行范围算法</li>
+<li><a href="#异常处理">异常处理</a>：<code>noexcept</code> 与异常安全</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="stl"><a class="header" href="#stl">STL</a></h1>
 <p>C++ 标准模板库（Standard Template Library，STL）是一套功能强大的 C++ 模板类和函数的集合，基于泛型编程，因此适合各种数据结构，它提供了一系列通用的、可复用的算法和数据结构。将STL结合到程序中可以更方便地编写出更简洁且优质的代码。</p>
@@ -5188,6 +7076,21 @@ Rule of Three / Five / Zero</p>
 <tr><td><strong>迭代器 (Iterators)</strong></td><td>迭代器用于遍历容器中的元素，允许以统一的方式访问容器中的元素，而不用关心容器的内部实现细节。STL 提供了多种类型的迭代器，包括随机访问迭代器、双向迭代器、前向迭代器和输入输出迭代器等。</td></tr>
 <tr><td><strong>函数对象 (Function Objects)</strong></td><td>函数对象是可以像函数一样调用的对象，可以用于算法中的各种操作。STL 提供了多种函数对象，包括一元函数对象、二元函数对象、谓词等，可以满足不同的需求。</td></tr>
 <tr><td><strong>适配器 (Adapters)</strong></td><td>适配器用于将一种容器或迭代器适配成另一种容器或迭代器，以满足特定的需求。STL 提供了多种适配器，包括栈适配器（stack adapter）、队列适配器（queue adapter）和优先队列适配器（priority queue adapter）等。</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="本章内容-2"><a class="header" href="#本章内容-2">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#utility">Utility</a></td><td style="text-align: left"><code>pair</code>、<code>tuple</code>、<code>optional</code>、<code>variant</code>、<code>any</code> 等工具类型</td></tr>
+<tr><td style="text-align: left"><a href="#containers">Containers</a></td><td style="text-align: left">序列容器、关联容器、无序容器与容器适配器</td></tr>
+<tr><td style="text-align: left"><a href="#iterators">Iterators</a></td><td style="text-align: left">迭代器分类、适配器、失效规则与 C++20 概念</td></tr>
+<tr><td style="text-align: left"><a href="#ranges">Ranges</a></td><td style="text-align: left">C++20 视图、管道语法与惰性求值</td></tr>
+<tr><td style="text-align: left"><a href="#algorithms">Algorithms</a></td><td style="text-align: left">非修改序列操作、修改序列操作、排序、数值与未初始化内存操作</td></tr>
 </tbody>
 </table>
 </div>
@@ -9376,6 +11279,458 @@ pq.push({1, 10});
 pq.push({2, 5});
 cout &lt;&lt; pq.top().first &lt;&lt; endl; // 输出 2，因为 (2,5) 的 second 更小
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="iterators"><a class="header" href="#iterators">Iterators</a></h1>
+<p><strong>迭代器（Iterator）</strong> 是 STL 的核心组件之一。它是对指针的泛化，提供了一套统一的接口来遍历不同的数据结构——无论底层是连续数组、链表还是红黑树，算法都通过迭代器访问元素，无需关心容器的内部实现。</p>
+<p>正因如此，STL 的算法才能独立于容器存在：<code>std::sort</code> 不关心你传的是 <code>vector</code> 还是 <code>deque</code>，它只要求迭代器满足随机访问的要求。</p>
+<h2 id="一迭代器与指针的关系"><a class="header" href="#一迭代器与指针的关系">一、迭代器与指针的关系</a></h2>
+<p>迭代器的语义是<strong>指针语义的推广</strong>。指针本身就是一个合法的迭代器：</p>
+<pre><code class="language-c++">int arr[] = {1, 2, 3, 4, 5};
+
+// 用指针作为迭代器
+std::sort(arr, arr + 5);
+auto it = std::find(arr, arr + 5, 3);
+</code></pre>
+<p>标准库保证：任何接受迭代器的函数模板，也能接受普通指针。</p>
+<p>迭代器的基本操作包括：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">操作</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>*it</code></td><td style="text-align: left">解引用，访问所指元素</td></tr>
+<tr><td style="text-align: left"><code>++it</code> / <code>it++</code></td><td style="text-align: left">移动到下一个元素</td></tr>
+<tr><td style="text-align: left"><code>--it</code> / <code>it--</code></td><td style="text-align: left">移动到上一个元素（部分迭代器支持）</td></tr>
+<tr><td style="text-align: left"><code>it1 == it2</code></td><td style="text-align: left">判断是否指向同一位置</td></tr>
+<tr><td style="text-align: left"><code>it + n</code> / <code>it - n</code></td><td style="text-align: left">移动 n 个位置（部分迭代器支持）</td></tr>
+<tr><td style="text-align: left"><code>it1 - it2</code></td><td style="text-align: left">计算距离（部分迭代器支持）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="二迭代器分类"><a class="header" href="#二迭代器分类">二、迭代器分类</a></h2>
+<p>C++17 起共有<strong>六类</strong>迭代器，按能力从弱到强排列。每一类都包含前一类的能力：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">分类</th><th style="text-align: left">读写能力</th><th style="text-align: center">可递增</th><th style="text-align: center">可递减</th><th style="text-align: center">随机访问</th><th style="text-align: center">连续存储</th><th style="text-align: left">典型例子</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>输入迭代器</strong> (Input)</td><td style="text-align: left">只读，单遍</td><td style="text-align: center">✓</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: left"><code>istream_iterator</code></td></tr>
+<tr><td style="text-align: left"><strong>输出迭代器</strong> (Output)</td><td style="text-align: left">只写，单遍</td><td style="text-align: center">✓</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: left"><code>ostream_iterator</code></td></tr>
+<tr><td style="text-align: left"><strong>前向迭代器</strong> (Forward)</td><td style="text-align: left">读写，多遍</td><td style="text-align: center">✓</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: left"><code>forward_list</code></td></tr>
+<tr><td style="text-align: left"><strong>双向迭代器</strong> (Bidirectional)</td><td style="text-align: left">读写</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: left"><code>list</code>、<code>set</code>、<code>map</code></td></tr>
+<tr><td style="text-align: left"><strong>随机访问迭代器</strong> (Random Access)</td><td style="text-align: left">读写</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: center"></td><td style="text-align: left"><code>deque</code></td></tr>
+<tr><td style="text-align: left"><strong>连续迭代器</strong> (Contiguous)</td><td style="text-align: left">读写</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td><td style="text-align: left"><code>vector</code>、<code>array</code>、<code>string</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>几点说明：</p>
+<ul>
+<li><strong>输入与输出迭代器</strong>是单遍的（single-pass）：只能遍历一次，<code>it1 == it2</code> 不保证有意义。它们主要用于流操作。</li>
+<li><strong>前向迭代器</strong>支持多遍遍历，可以保存副本后分别遍历。</li>
+<li><strong>连续迭代器</strong>是 C++17 正式加入的分类（此前 <code>vector</code>、<code>string</code>、<code>array</code> 的迭代器在实际使用中被当作独立类别）。它保证元素在内存中连续，因此 <code>&amp;*it</code> 得到的地址可以像数组指针一样使用。</li>
+</ul>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><strong>为什么分类重要？</strong></p>
+<p>每个算法都要求特定类别的迭代器。例如 <code>std::sort</code> 要求随机访问迭代器，因此<strong>不能用于 <code>std::list</code></strong>（<code>list</code> 只提供双向迭代器）。这也是 <code>std::list</code> 自带成员函数 <code>sort</code> 的原因。</p>
+<p>选错容器时，编译器报错通常就是「迭代器类别不满足要求」。</p>
+</blockquote>
+<h2 id="三迭代器与容器对照"><a class="header" href="#三迭代器与容器对照">三、迭代器与容器对照</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">容器</th><th style="text-align: left">迭代器类别</th><th style="text-align: center">是否支持 <code>--it</code></th><th style="text-align: center">是否支持 <code>it + n</code></th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>vector</code></td><td style="text-align: left">连续</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td></tr>
+<tr><td style="text-align: left"><code>array</code></td><td style="text-align: left">连续</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td></tr>
+<tr><td style="text-align: left"><code>string</code></td><td style="text-align: left">连续</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td></tr>
+<tr><td style="text-align: left"><code>deque</code></td><td style="text-align: left">随机访问</td><td style="text-align: center">✓</td><td style="text-align: center">✓</td></tr>
+<tr><td style="text-align: left"><code>list</code></td><td style="text-align: left">双向</td><td style="text-align: center">✓</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: left"><code>forward_list</code></td><td style="text-align: left">前向</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: left"><code>set</code> / <code>map</code></td><td style="text-align: left">双向</td><td style="text-align: center">✓</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: left"><code>unordered_set</code> / <code>unordered_map</code></td><td style="text-align: left">前向</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="四迭代器适配器"><a class="header" href="#四迭代器适配器">四、迭代器适配器</a></h2>
+<p>适配器在已有迭代器基础上改变行为，定义在 <code>&lt;iterator&gt;</code> 中。</p>
+<h3 id="1-插入迭代器"><a class="header" href="#1-插入迭代器">1. 插入迭代器</a></h3>
+<p>插入迭代器把「赋值」变成「插入」，常用于向空容器写入：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">适配器</th><th style="text-align: left">创建函数</th><th style="text-align: left">插入位置</th><th style="text-align: left">适用容器</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>back_insert_iterator</code></td><td style="text-align: left"><code>back_inserter(c)</code></td><td style="text-align: left">尾部</td><td style="text-align: left"><code>vector</code>、<code>deque</code>、<code>list</code>、<code>string</code></td></tr>
+<tr><td style="text-align: left"><code>front_insert_iterator</code></td><td style="text-align: left"><code>front_inserter(c)</code></td><td style="text-align: left">头部</td><td style="text-align: left"><code>deque</code>、<code>list</code>、<code>forward_list</code></td></tr>
+<tr><td style="text-align: left"><code>insert_iterator</code></td><td style="text-align: left"><code>inserter(c, it)</code></td><td style="text-align: left">指定位置之前</td><td style="text-align: left">所有容器</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::vector&lt;int&gt; src{1, 2, 3};
+std::vector&lt;int&gt; dst;
+
+// 不用预先分配空间
+std::copy(src.begin(), src.end(), std::back_inserter(dst));
+// dst = {1,2,3}
+
+std::list&lt;int&gt; lst;
+std::copy(src.begin(), src.end(), std::front_inserter(lst));
+// lst = {3,2,1}（每次插入头部，顺序反转）
+
+std::vector&lt;int&gt; v{1, 5};
+std::copy(src.begin(), src.end(), std::inserter(v, v.begin() + 1));
+// v = {1,1,2,3,5}
+</code></pre>
+<h3 id="2-反向迭代器"><a class="header" href="#2-反向迭代器">2. 反向迭代器</a></h3>
+<p><code>reverse_iterator</code> 把递增变成递减，用于从后往前遍历：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{1, 2, 3, 4, 5};
+
+for (auto it = v.rbegin(); it != v.rend(); ++it)
+    std::cout &lt;&lt; *it &lt;&lt; ' ';   // 输出: 5 4 3 2 1
+</code></pre>
+<p><code>rbegin()</code> 对应最后一个元素，<code>rend()</code> 对应第一个元素之前的位置。注意 <code>*rbegin()</code> 是最后一个元素，而解引用 <code>rend()</code> 是未定义行为。</p>
+<h3 id="3-移动迭代器"><a class="header" href="#3-移动迭代器">3. 移动迭代器</a></h3>
+<p><code>move_iterator</code> 解引用时返回右值引用，使算法执行移动而非拷贝：</p>
+<pre><code class="language-c++">std::vector&lt;std::string&gt; src{"hello", "world"};
+std::vector&lt;std::string&gt; dst;
+
+std::copy(std::make_move_iterator(src.begin()),
+          std::make_move_iterator(src.end()),
+          std::back_inserter(dst));
+// dst 获得元素，src 中的字符串被移空
+</code></pre>
+<h3 id="4-流迭代器"><a class="header" href="#4-流迭代器">4. 流迭代器</a></h3>
+<p>流迭代器把输入输出流接入算法：</p>
+<pre><code class="language-c++">#include &lt;iterator&gt;
+
+// 从 cin 读取整数，直到输入失败
+std::vector&lt;int&gt; v;
+std::copy(std::istream_iterator&lt;int&gt;(std::cin),
+          std::istream_iterator&lt;int&gt;(),
+          std::back_inserter(v));
+
+// 输出到 cout，用空格分隔
+std::copy(v.begin(), v.end(),
+          std::ostream_iterator&lt;int&gt;(std::cout, " "));
+</code></pre>
+<h2 id="五迭代器操作函数"><a class="header" href="#五迭代器操作函数">五、迭代器操作函数</a></h2>
+<p><code>&lt;iterator&gt;</code> 提供了几个通用的迭代器操作，它们会根据迭代器类别自动选择高效实现：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数</th><th style="text-align: left">作用</th><th style="text-align: left">复杂度</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::advance(it, n)</code></td><td style="text-align: left">将 <code>it</code> 前进 <code>n</code> 步（<code>n</code> 可为负）</td><td style="text-align: left">随机访问为 \(O(1)\)，否则 \(O(n)\)</td></tr>
+<tr><td style="text-align: left"><code>std::next(it, n)</code></td><td style="text-align: left">返回前进 <code>n</code> 步后的迭代器（默认 <code>n=1</code>）</td><td style="text-align: left">同上</td></tr>
+<tr><td style="text-align: left"><code>std::prev(it, n)</code></td><td style="text-align: left">返回后退 <code>n</code> 步后的迭代器（默认 <code>n=1</code>）</td><td style="text-align: left">双向以上</td></tr>
+<tr><td style="text-align: left"><code>std::distance(first, last)</code></td><td style="text-align: left">返回两个迭代器之间的距离</td><td style="text-align: left">随机访问为 \(O(1)\)，否则 \(O(n)\)</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::list&lt;int&gt; lst{1, 2, 3, 4, 5};
+
+auto it = lst.begin();
+std::advance(it, 3);                    // it 指向 4
+auto it2 = std::next(lst.begin(), 2);   // it2 指向 3
+auto n = std::distance(lst.begin(), it);  // 3
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><strong>优先用 <code>std::next</code> 而非 <code>it + n</code></strong></p>
+<p><code>it + n</code> 只对随机访问迭代器有效，而 <code>std::next</code> 对所有前向以上迭代器都可用。在模板代码中应使用 <code>std::next</code>。</p>
+</blockquote>
+<h2 id="六迭代器失效"><a class="header" href="#六迭代器失效">六、迭代器失效</a></h2>
+<p>迭代器失效是指容器修改后，原有的迭代器不再指向有效元素。这是使用 STL 时最容易出错的地方，规则因容器而异：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">容器</th><th style="text-align: left">插入</th><th style="text-align: left">删除</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>vector</code></td><td style="text-align: left">扩容时<strong>全部失效</strong>；否则插入点之后的失效</td><td style="text-align: left">删除点及之后全部失效</td></tr>
+<tr><td style="text-align: left"><code>deque</code></td><td style="text-align: left">头尾插入仅迭代器失效；中间插入全部失效</td><td style="text-align: left">头尾删除仅被删元素失效；中间删除全部失效</td></tr>
+<tr><td style="text-align: left"><code>list</code> / <code>forward_list</code></td><td style="text-align: left"><strong>不失效</strong></td><td style="text-align: left">仅被删元素失效</td></tr>
+<tr><td style="text-align: left"><code>set</code> / <code>map</code></td><td style="text-align: left"><strong>不失效</strong></td><td style="text-align: left">仅被删元素失效</td></tr>
+<tr><td style="text-align: left"><code>unordered_*</code></td><td style="text-align: left">rehash 时全部失效</td><td style="text-align: left">仅被删元素失效</td></tr>
+</tbody>
+</table>
+</div>
+<p>详细规则见各容器章节，例如 <a href="#stdvector">Vector · 迭代器失效</a>。</p>
+<h2 id="七c20-的迭代器概念"><a class="header" href="#七c20-的迭代器概念">七、C++20 的迭代器概念</a></h2>
+<p>C++20 用 Concepts 重新定义了迭代器体系，与 C++17 的「具名要求」相比，约束更精确、报错更清晰：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">C++17 分类</th><th style="text-align: left">C++20 概念</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>InputIterator</code></td><td style="text-align: left"><code>std::input_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>OutputIterator</code></td><td style="text-align: left"><code>std::output_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ForwardIterator</code></td><td style="text-align: left"><code>std::forward_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>BidirectionalIterator</code></td><td style="text-align: left"><code>std::bidirectional_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>RandomAccessIterator</code></td><td style="text-align: left"><code>std::random_access_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ContiguousIterator</code></td><td style="text-align: left"><code>std::contiguous_iterator</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>此外还有更基础的概念：<code>indirectly_readable</code>、<code>indirectly_writable</code>、<code>weakly_incrementable</code>、<code>sentinel_for</code>、<code>sized_sentinel_for</code> 等。</p>
+<p>C++20 还引入了<strong>哨兵（sentinel）<strong>的概念：范围的起点和终点可以是</strong>不同类型</strong>，只要它们可以比较。这使 <code>[begin, sentinel)</code> 形式的范围更灵活。</p>
+<p>关联类型也改用了新的别名模板：</p>
+<pre><code class="language-c++">std::iter_value_t&lt;It&gt;          // 迭代器的值类型
+std::iter_reference_t&lt;It&gt;      // 解引用返回的引用类型
+std::iter_difference_t&lt;It&gt;     // 距离类型
+</code></pre>
+<h2 id="八注意事项-4"><a class="header" href="#八注意事项-4">八、注意事项</a></h2>
+<ul>
+<li><strong>不要把 <code>end()</code> 缓存起来跨修改使用</strong>。容器修改后 <code>end()</code> 可能失效，应在循环条件中实时获取。</li>
+<li><strong>删除元素时用 <code>erase</code> 的返回值</strong>。<code>erase</code> 返回下一个有效迭代器，直接 <code>++it</code> 是未定义行为。</li>
+<li><strong>反向迭代器的 <code>base()</code> 有偏移</strong>。<code>rit.base()</code> 指向的是 <code>rit</code> 所指元素的<strong>下一个</strong>位置。</li>
+<li><strong><code>std::distance</code> 对非随机访问迭代器是 \(O(n)\)</strong>。在大链表上频繁调用会成为性能瓶颈。</li>
+<li><strong><code>auto&amp;&amp;</code> 与代理迭代器</strong>。<code>vector&lt;bool&gt;</code> 的迭代器返回代理对象而非 <code>bool&amp;</code>，<code>for (auto&amp; x : vec)</code> 无法编译，详见 <a href="#stdvector">Vector</a>。</li>
+<li><strong>警惕悬垂迭代器</strong>。容器销毁或元素被删除后，指向它的迭代器立即失效。</li>
+</ul>
+<h2 id="九相关章节-4"><a class="header" href="#九相关章节-4">九、相关章节</a></h2>
+<ul>
+<li><a href="#containers">Containers</a>：各容器的迭代器类别与失效规则</li>
+<li><a href="#algorithms">Algorithms</a>：算法对迭代器的要求</li>
+<li><a href="#stdvector">Vector</a>：迭代器失效的典型案例</li>
+<li><a href="#stdlist">List</a>：双向迭代器与成员函数 <code>sort</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ranges"><a class="header" href="#ranges">Ranges</a></h1>
+<p>C++20 引入的 <strong>Ranges 库</strong>（<code>&lt;ranges&gt;</code>）是对算法与迭代器库的扩展，它让操作序列的代码更<strong>可组合</strong>、更<strong>不易出错</strong>。</p>
+<p>它的核心思想是：把「对序列的变换」抽象成一个个<strong>视图（view）</strong>，视图之间可以用管道符 <code>|</code> 串联成流水线，且整个过程是<strong>惰性求值</strong>的——只有在真正遍历时才执行计算。</p>
+<p>关于 Ranges 版本的算法（<code>ranges::sort</code> 等），见 <a href="#algorithms">Algorithms</a>；关于迭代器分类与概念，见 <a href="#iterators">Iterators</a>。</p>
+<h2 id="一为什么需要-ranges"><a class="header" href="#一为什么需要-ranges">一、为什么需要 Ranges</a></h2>
+<p>传统写法需要显式传递 <code>begin()</code> / <code>end()</code>，且中间结果往往要落到临时容器：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{1, 2, 3, 4, 5, 6};
+
+// 传统写法：取出偶数并平方
+std::vector&lt;int&gt; temp;
+std::copy_if(v.begin(), v.end(), std::back_inserter(temp),
+             [](int x) { return x % 2 == 0; });
+
+std::vector&lt;int&gt; result;
+std::transform(temp.begin(), temp.end(), std::back_inserter(result),
+               [](int x) { return x * x; });
+</code></pre>
+<p>Ranges 写法把两步连成一条流水线，且<strong>不产生中间容器</strong>：</p>
+<pre><code class="language-c++">auto result = v | std::views::filter([](int x) { return x % 2 == 0; })
+                | std::views::transform([](int x) { return x * x; });
+
+for (int x : result)
+    std::cout &lt;&lt; x &lt;&lt; ' ';   // 4 16 36
+</code></pre>
+<h2 id="二视图与惰性求值"><a class="header" href="#二视图与惰性求值">二、视图与惰性求值</a></h2>
+<p><strong>视图（view）</strong> 是一个轻量的、不拥有数据的范围。它只记录「如何从底层序列计算元素」，而不实际存储结果。</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{1, 2, 3, 4, 5};
+
+auto view = v | std::views::transform([](int x) {
+    std::cout &lt;&lt; "计算 " &lt;&lt; x &lt;&lt; '\n';
+    return x * x;
+});
+
+std::cout &lt;&lt; "视图已创建\n";
+// 此时没有任何输出——变换尚未执行
+
+for (int x : view)
+    ;   // 此时才逐个计算
+</code></pre>
+<p>输出顺序说明了一切：</p>
+<pre><code>视图已创建
+计算 1
+计算 2
+...
+</code></pre>
+<p><strong>惰性求值带来两个好处</strong>：</p>
+<ol>
+<li><strong>不产生中间容器</strong>，节省内存与拷贝开销</li>
+<li><strong>可以表示无限序列</strong>，如 <code>views::iota(0)</code> 配合 <code>views::take(10)</code></li>
+</ol>
+<p>代价是：每次遍历都会重新计算，如果同一视图被多次遍历，计算会重复执行。</p>
+<h2 id="三管道语法"><a class="header" href="#三管道语法">三、管道语法</a></h2>
+<p><code>|</code> 运算符把左操作数（范围）传给右操作数（视图适配器）：</p>
+<pre><code class="language-c++">// 以下两种写法等价
+auto a = v | std::views::filter(pred);
+auto b = std::views::filter(v, pred);
+</code></pre>
+<p>管道形式更符合阅读顺序，多个适配器串联时尤其清晰：</p>
+<pre><code class="language-c++">auto result = data
+    | std::views::filter([](int x) { return x &gt; 0; })
+    | std::views::transform([](int x) { return x * 2; })
+    | std::views::take(5);
+</code></pre>
+<h2 id="四常用视图适配器"><a class="header" href="#四常用视图适配器">四、常用视图适配器</a></h2>
+<h3 id="1-筛选与变换"><a class="header" href="#1-筛选与变换">1. 筛选与变换</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">适配器</th><th style="text-align: left">作用</th><th style="text-align: left">版本</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>views::filter(pred)</code></td><td style="text-align: left">只保留满足谓词的元素</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::transform(f)</code></td><td style="text-align: left">对每个元素应用函数</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::take(n)</code></td><td style="text-align: left">取前 \( n \) 个元素</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::take_while(pred)</code></td><td style="text-align: left">取开头满足谓词的连续元素</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::drop(n)</code></td><td style="text-align: left">跳过前 \( n \) 个元素</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::drop_while(pred)</code></td><td style="text-align: left">跳过开头满足谓词的连续元素</td><td style="text-align: left">C++20</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::vector&lt;int&gt; v{1, 2, 3, 4, 5, 6, 7, 8};
+
+// 取大于 3 的前 3 个
+auto r = v | std::views::filter([](int x) { return x &gt; 3; })
+           | std::views::take(3);   // 4 5 6
+</code></pre>
+<h3 id="2-结构变换"><a class="header" href="#2-结构变换">2. 结构变换</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">适配器</th><th style="text-align: left">作用</th><th style="text-align: left">版本</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>views::reverse</code></td><td style="text-align: left">反向遍历</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::join</code></td><td style="text-align: left">展平嵌套范围</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::split(delim)</code></td><td style="text-align: left">按分隔符切分</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::keys</code></td><td style="text-align: left">取 <code>pair</code> 的 first</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::values</code></td><td style="text-align: left">取 <code>pair</code> 的 second</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::elements&lt;N&gt;</code></td><td style="text-align: left">取 tuple-like 的第 N 个元素</td><td style="text-align: left">C++20</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::map&lt;std::string, int&gt; m{{"a", 1}, {"b", 2}};
+
+for (const auto&amp; key : m | std::views::keys)
+    std::cout &lt;&lt; key &lt;&lt; ' ';   // a b
+</code></pre>
+<h3 id="3-生成器"><a class="header" href="#3-生成器">3. 生成器</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">适配器</th><th style="text-align: left">作用</th><th style="text-align: left">版本</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>views::iota(start)</code></td><td style="text-align: left">从 <code>start</code> 开始的无限递增序列</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::iota(start, end)</code></td><td style="text-align: left">从 <code>start</code> 到 <code>end</code> 的序列</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::single(x)</code></td><td style="text-align: left">只含一个元素</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::empty&lt;T&gt;</code></td><td style="text-align: left">空序列</td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left"><code>views::repeat(x, n)</code></td><td style="text-align: left">重复 \( n \) 次</td><td style="text-align: left">C++23</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">// 0 到 9
+for (int i : std::views::iota(0, 10))
+    std::cout &lt;&lt; i &lt;&lt; ' ';
+
+// 无限序列配合 take
+for (int i : std::views::iota(0) | std::views::take(5))
+    std::cout &lt;&lt; i &lt;&lt; ' ';   // 0 1 2 3 4
+</code></pre>
+<h3 id="4-组合与切分c23"><a class="header" href="#4-组合与切分c23">4. 组合与切分（C++23）</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">适配器</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>views::zip(a, b)</code></td><td style="text-align: left">把多个范围按位置配对</td></tr>
+<tr><td style="text-align: left"><code>views::enumerate</code></td><td style="text-align: left">给每个元素附上索引</td></tr>
+<tr><td style="text-align: left"><code>views::chunk(n)</code></td><td style="text-align: left">每 \( n \) 个元素分为一组</td></tr>
+<tr><td style="text-align: left"><code>views::slide(n)</code></td><td style="text-align: left">滑动窗口</td></tr>
+<tr><td style="text-align: left"><code>views::stride(n)</code></td><td style="text-align: left">每隔 \( n \) 个元素取一个</td></tr>
+<tr><td style="text-align: left"><code>views::adjacent&lt;N&gt;</code></td><td style="text-align: left">相邻 \( N \) 个元素组成 tuple</td></tr>
+<tr><td style="text-align: left"><code>views::cartesian_product</code></td><td style="text-align: left">笛卡尔积</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::vector&lt;std::string&gt; names{"Alice", "Bob"};
+std::vector&lt;int&gt; ages{30, 25};
+
+for (auto [name, age] : std::views::zip(names, ages))
+    std::cout &lt;&lt; name &lt;&lt; ": " &lt;&lt; age &lt;&lt; '\n';
+
+// 带索引遍历（C++23）
+for (auto [i, x] : std::views::enumerate(names))
+    std::cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; x &lt;&lt; '\n';
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><strong><code>views::enumerate</code> 是 C++23 最实用的适配器之一</strong></p>
+<p>在此之前，带索引遍历需要手动维护计数器，或使用 <code>views::iota</code> 配合 <code>views::zip</code>：</p>
+<pre><code class="language-c++">// C++20 的替代写法
+for (auto [i, x] : std::views::zip(std::views::iota(0), names))
+    std::cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; x &lt;&lt; '\n';
+</code></pre>
+</blockquote>
+<h2 id="五转换为容器"><a class="header" href="#五转换为容器">五、转换为容器</a></h2>
+<p>视图本身不拥有数据，需要具体容器时用 <code>std::ranges::to</code>（C++23）：</p>
+<pre><code class="language-c++">#include &lt;ranges&gt;
+#include &lt;vector&gt;
+
+std::vector&lt;int&gt; v{1, 2, 3, 4, 5, 6};
+
+// 视图转 vector
+auto result = v | std::views::filter([](int x) { return x % 2 == 0; })
+                | std::ranges::to&lt;std::vector&gt;();
+
+// 也可以指定容器类型
+auto set = v | std::views::transform([](int x) { return x % 3; })
+             | std::ranges::to&lt;std::set&gt;();
+</code></pre>
+<p>C++23 之前需要手动构造：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; result;
+auto view = v | std::views::filter([](int x) { return x % 2 == 0; });
+std::ranges::copy(view, std::back_inserter(result));
+</code></pre>
+<h2 id="六范围概念"><a class="header" href="#六范围概念">六、范围概念</a></h2>
+<p>Ranges 用 Concepts 描述范围的能力，与迭代器概念一一对应：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">概念</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>ranges::range</code></td><td style="text-align: left">有 <code>begin</code> 和 <code>end</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::input_range</code></td><td style="text-align: left">迭代器满足 <code>input_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::forward_range</code></td><td style="text-align: left">迭代器满足 <code>forward_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::bidirectional_range</code></td><td style="text-align: left">迭代器满足 <code>bidirectional_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::random_access_range</code></td><td style="text-align: left">迭代器满足 <code>random_access_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::contiguous_range</code></td><td style="text-align: left">迭代器满足 <code>contiguous_iterator</code></td></tr>
+<tr><td style="text-align: left"><code>ranges::sized_range</code></td><td style="text-align: left">能在常数时间内得到大小</td></tr>
+<tr><td style="text-align: left"><code>ranges::view</code></td><td style="text-align: left">满足视图要求（拷贝/移动/析构为常数时间）</td></tr>
+</tbody>
+</table>
+</div>
+<p>此外还有几个重要概念：</p>
+<ul>
+<li><strong><code>ranges::borrowed_range</code></strong>：从该范围取得的迭代器可以安全地脱离范围使用</li>
+<li><strong><code>ranges::common_range</code></strong>：<code>begin()</code> 和 <code>end()</code> 类型相同</li>
+<li><strong><code>ranges::viewable_range</code></strong>：可以安全转换为视图的范围</li>
+</ul>
+<h2 id="七注意事项-1"><a class="header" href="#七注意事项-1">七、注意事项</a></h2>
+<ul>
+<li><strong>视图不拥有数据</strong>。如果底层容器被销毁或修改，视图会悬垂。不要返回指向局部容器的视图。</li>
+<li><strong>惰性求值会重复计算</strong>。同一视图遍历两次，变换会执行两次。需要缓存时先转成容器。</li>
+<li><strong>注意迭代器类别</strong>。<code>views::reverse</code> 要求双向范围，<code>views::filter</code> 的结果不是连续范围，因此不能再传给要求连续迭代器的代码。</li>
+<li><strong><code>views::filter</code> 的结果不能直接传给 <code>std::sort</code></strong>。因为 <code>filter_view</code> 不提供随机访问迭代器，需要先转成容器。</li>
+<li><strong><code>std::views</code> 是 <code>std::ranges::views</code> 的别名</strong>。两者等价，<code>std::views::filter</code> 更常用。</li>
+<li><strong>C++23 的适配器需要编译器支持</strong>。<code>views::zip</code>、<code>views::enumerate</code> 等在 GCC 13+、Clang 17+ 才可用。</li>
+<li><strong><code>views::join</code> 与 <code>views::split</code> 性能有差异</strong>。<code>lazy_split</code> 比 <code>split</code> 更省内存，但某些操作受限。</li>
+</ul>
+<h2 id="八相关章节-1"><a class="header" href="#八相关章节-1">八、相关章节</a></h2>
+<ul>
+<li><a href="#algorithms">Algorithms</a>：Ranges 版本的算法</li>
+<li><a href="#iterators">Iterators</a>：迭代器分类与 C++20 概念</li>
+<li><a href="#containers">Containers</a>：容器与范围的关系</li>
+<li><a href="#lambda-表达式">Lambda 表达式</a>：视图中大量使用 lambda</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="algorithms"><a class="header" href="#algorithms">Algorithms</a></h1>
 <p>C++ 标准库中的算法 (Algorithms) 是一组强大的函数模板，用于对容器或其他范围（<code>[first, last)</code>）内的元素进行搜索、排序、计数、修改等操作。自 C++20 以来，<strong>Ranges (约束算法)</strong> 的引入极大地简化了算法的使用，并增强了其通用性。C++17 则引入了<strong>执行策略</strong>，允许算法进行并行或乱序执行以提升性能。</p>
@@ -15049,7 +17404,49 @@ static_assert(f() == 42);
 <li><a href="#stduninitialized_fill--uninitialized_fill_n">uninitialized_fill</a>：填充构造</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="c实践"><a href="#c实践" class="header">C++实践</a></h1>
+<h1 id="标准库"><a class="header" href="#标准库">标准库</a></h1>
+<p>C++ 标准库（Standard Library）是随语言一起发布的庞大组件集合，涵盖字符串、容器、算法、时间、随机数、文件系统、并发等各个方面。</p>
+<p>STL（Standard Template Library）最初是一个独立的库，后来被纳入标准库。今天所说的 STL 通常指其中的<strong>容器、迭代器、算法、函数对象</strong>这几部分，而标准库的范围要更广。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">组件</th><th style="text-align: left">头文件</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>STL</strong></td><td style="text-align: left">多个</td><td style="text-align: left">容器、迭代器、算法、函数对象，见 <a href="#stl">STL</a></td></tr>
+<tr><td style="text-align: left"><strong>字符串</strong></td><td style="text-align: left"><code>&lt;string&gt;</code>、<code>&lt;string_view&gt;</code></td><td style="text-align: left"><code>std::string</code> 与字符串视图</td></tr>
+<tr><td style="text-align: left"><strong>输入输出</strong></td><td style="text-align: left"><code>&lt;iostream&gt;</code>、<code>&lt;fstream&gt;</code>、<code>&lt;sstream&gt;</code></td><td style="text-align: left">控制台、文件与内存字符串流</td></tr>
+<tr><td style="text-align: left"><strong>格式化</strong></td><td style="text-align: left"><code>&lt;format&gt;</code>、<code>&lt;print&gt;</code></td><td style="text-align: left">C++20/23 的格式化输出</td></tr>
+<tr><td style="text-align: left"><strong>时间</strong></td><td style="text-align: left"><code>&lt;chrono&gt;</code></td><td style="text-align: left">时间点、时长与时钟</td></tr>
+<tr><td style="text-align: left"><strong>随机数</strong></td><td style="text-align: left"><code>&lt;random&gt;</code></td><td style="text-align: left">随机数引擎与分布</td></tr>
+<tr><td style="text-align: left"><strong>正则表达式</strong></td><td style="text-align: left"><code>&lt;regex&gt;</code></td><td style="text-align: left">正则匹配与替换</td></tr>
+<tr><td style="text-align: left"><strong>文件系统</strong></td><td style="text-align: left"><code>&lt;filesystem&gt;</code></td><td style="text-align: left">路径操作与目录遍历</td></tr>
+<tr><td style="text-align: left"><strong>数值</strong></td><td style="text-align: left"><code>&lt;cmath&gt;</code>、<code>&lt;complex&gt;</code>、<code>&lt;numbers&gt;</code></td><td style="text-align: left">数学函数、复数与数学常量</td></tr>
+<tr><td style="text-align: left"><strong>位操作</strong></td><td style="text-align: left"><code>&lt;bitset&gt;</code>、<code>&lt;bit&gt;</code></td><td style="text-align: left">位集合与位运算</td></tr>
+<tr><td style="text-align: left"><strong>并发</strong></td><td style="text-align: left"><code>&lt;thread&gt;</code> 等</td><td style="text-align: left">见 <a href="#多线程与并发">多线程与并发</a></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="本章内容-3"><a class="header" href="#本章内容-3">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#文件与流files-and-streams">文件与流</a></td><td style="text-align: left">流模型与类层次结构总览</td></tr>
+<tr><td style="text-align: left"><a href="#标准输入输出流iostream">标准输入输出流 (iostream)</a></td><td style="text-align: left"><code>cin</code> / <code>cout</code> / <code>cerr</code> / <code>clog</code> 与格式化控制</td></tr>
+<tr><td style="text-align: left"><a href="#文件流-fstream">文件流 (fstream)</a></td><td style="text-align: left">文件读写、打开模式与错误处理</td></tr>
+<tr><td style="text-align: left"><a href="#字符串流sstream">字符串流 (sstream)</a></td><td style="text-align: left">内存字符串的解析与拼接</td></tr>
+<tr><td style="text-align: left"><a href="#时间库-chrono">时间库 (chrono)</a></td><td style="text-align: left">待补充：时长、时间点与时钟</td></tr>
+<tr><td style="text-align: left"><a href="#随机数-random">随机数 (random)</a></td><td style="text-align: left">待补充：随机数引擎与分布</td></tr>
+<tr><td style="text-align: left"><a href="#正则表达式-regex">正则表达式 (regex)</a></td><td style="text-align: left">待补充：正则匹配、搜索与替换</td></tr>
+<tr><td style="text-align: left"><a href="#文件系统-filesystem">文件系统 (filesystem)</a></td><td style="text-align: left">待补充：路径操作与目录遍历</td></tr>
+<tr><td style="text-align: left"><a href="#字符串-string">字符串 (string)</a></td><td style="text-align: left"><code>std::string</code> 接口、SSO 与 <code>std::string_view</code></td></tr>
+<tr><td style="text-align: left"><a href="#格式化输出-format">格式化输出 (format)</a></td><td style="text-align: left">待补充：<code>std::format</code> 与 <code>std::print</code></td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="文件与流files-and-streams"><a class="header" href="#文件与流files-and-streams">文件与流（Files and Streams）</a></h1>
 <p>在 C++ 中，<strong>流（Stream）</strong> 是输入输出系统的核心概念。所有数据的读写操作——无论来自键盘、内存、文件还是网络——都被统一抽象为“流”的形式。
@@ -15507,6 +17904,290 @@ std::cout &lt;&lt; "Numbers: ";
 for (int n : nums) std::cout &lt;&lt; n &lt;&lt; " ";
 std::cout &lt;&lt; std::endl;
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="字符串-string"><a class="header" href="#字符串-string">字符串 (string)</a></h1>
+<p><code>std::string</code> 是标准库的字符串类型，封装了动态字符数组，自动管理内存。相比 C 风格的 <code>char*</code>，它无需手动分配释放，也不会因为忘记 <code>\0</code> 而出错。</p>
+<p>C++17 引入的 <code>std::string_view</code> 则提供了<strong>不拥有数据</strong>的字符串视图，用于只读场景，避免不必要的拷贝。</p>
+<h2 id="1-引入-81"><a class="header" href="#1-引入-81">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;string&gt;       // std::string
+#include &lt;string_view&gt;  // std::string_view
+</code></pre>
+<h2 id="2-核心概念"><a class="header" href="#2-核心概念">2. 核心概念</a></h2>
+<h3 id="1-构造与赋值"><a class="header" href="#1-构造与赋值">1. 构造与赋值</a></h3>
+<pre><code class="language-c++">std::string s1;                    // 空字符串
+std::string s2 = "hello";          // 从字面量
+std::string s3("hello", 3);        // "hel"（前 3 个字符）
+std::string s4(5, 'x');            // "xxxxx"
+std::string s5(s2);                // 拷贝构造
+std::string s6(std::move(s2));     // 移动构造
+
+s1 = "world";                      // 赋值
+</code></pre>
+<h3 id="2-常用操作"><a class="header" href="#2-常用操作">2. 常用操作</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">操作</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>size()</code> / <code>length()</code></td><td style="text-align: left">字符数（两者等价）</td></tr>
+<tr><td style="text-align: left"><code>empty()</code></td><td style="text-align: left">是否为空</td></tr>
+<tr><td style="text-align: left"><code>clear()</code></td><td style="text-align: left">清空</td></tr>
+<tr><td style="text-align: left"><code>c_str()</code></td><td style="text-align: left">返回 C 风格字符串（保证以 <code>\0</code> 结尾）</td></tr>
+<tr><td style="text-align: left"><code>data()</code></td><td style="text-align: left">返回底层字符数组指针</td></tr>
+<tr><td style="text-align: left"><code>substr(pos, n)</code></td><td style="text-align: left">取子串</td></tr>
+<tr><td style="text-align: left"><code>find(str)</code></td><td style="text-align: left">查找子串，返回位置或 <code>npos</code></td></tr>
+<tr><td style="text-align: left"><code>rfind(str)</code></td><td style="text-align: left">从后往前查找</td></tr>
+<tr><td style="text-align: left"><code>find_first_of(chars)</code></td><td style="text-align: left">查找任意一个字符首次出现</td></tr>
+<tr><td style="text-align: left"><code>replace(pos, n, str)</code></td><td style="text-align: left">替换</td></tr>
+<tr><td style="text-align: left"><code>insert(pos, str)</code></td><td style="text-align: left">插入</td></tr>
+<tr><td style="text-align: left"><code>erase(pos, n)</code></td><td style="text-align: left">删除</td></tr>
+<tr><td style="text-align: left"><code>append(str)</code> / <code>+=</code></td><td style="text-align: left">追加</td></tr>
+<tr><td style="text-align: left"><code>compare(str)</code></td><td style="text-align: left">比较，返回负数/0/正数</td></tr>
+<tr><td style="text-align: left"><code>starts_with(str)</code></td><td style="text-align: left">是否以某串开头（C++20）</td></tr>
+<tr><td style="text-align: left"><code>ends_with(str)</code></td><td style="text-align: left">是否以某串结尾（C++20）</td></tr>
+<tr><td style="text-align: left"><code>contains(str)</code></td><td style="text-align: left">是否包含子串（C++23）</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::string s = "Hello World";
+
+std::cout &lt;&lt; s.size() &lt;&lt; '\n';              // 11
+std::cout &lt;&lt; s.substr(6, 5) &lt;&lt; '\n';        // World
+std::cout &lt;&lt; s.find("World") &lt;&lt; '\n';       // 6
+
+if (s.find("xyz") == std::string::npos)
+    std::cout &lt;&lt; "未找到\n";
+
+s.replace(0, 5, "Goodbye");                 // "Goodbye World"
+s += "!";                                   // "Goodbye World!"
+</code></pre>
+<h3 id="3-遍历与转换"><a class="header" href="#3-遍历与转换">3. 遍历与转换</a></h3>
+<pre><code class="language-c++">std::string s = "hello";
+
+// 遍历
+for (char c : s)
+    std::cout &lt;&lt; c;
+
+// 转数字
+int n = std::stoi("42");
+double d = std::stod("3.14");
+
+// 数字转字符串
+std::string a = std::to_string(42);
+std::string b = std::to_string(3.14);
+</code></pre>
+<p><code>std::stoi</code> 等函数在转换失败时会抛出 <code>std::invalid_argument</code> 或 <code>std::out_of_range</code>。</p>
+<h3 id="4-小字符串优化sso"><a class="header" href="#4-小字符串优化sso">4. 小字符串优化（SSO）</a></h3>
+<p>大多数实现采用<strong>小字符串优化</strong>：短字符串（通常 15~22 字节以内）直接存储在 <code>string</code> 对象内部的缓冲区中，<strong>不进行堆分配</strong>。</p>
+<pre><code class="language-c++">std::string short_str = "hi";        // 无堆分配
+std::string long_str(1000, 'x');     // 堆分配
+</code></pre>
+<p>这意味着短字符串的拷贝成本很低，但 <code>sizeof(std::string)</code> 通常比想象中大（约 32 字节）。</p>
+<h2 id="3-用法-61"><a class="header" href="#3-用法-61">3. 用法</a></h2>
+<h3 id="string_view"><a class="header" href="#string_view">string_view</a></h3>
+<p><code>std::string_view</code> 是对字符序列的<strong>非拥有视图</strong>，只保存指针和长度：</p>
+<pre><code class="language-c++">void process(std::string_view sv)   // 不拷贝
+{
+    std::cout &lt;&lt; sv.size() &lt;&lt; '\n';
+}
+
+std::string s = "hello";
+process(s);              // 从 string 构造，无拷贝
+process("world");        // 从字面量构造，无拷贝
+process(s.substr(0, 3)); // 注意：substr 返回临时 string，此处有拷贝
+</code></pre>
+<p><strong>优势</strong>：</p>
+<ul>
+<li>传参时避免拷贝，尤其适合只读的字符串参数</li>
+<li>可以接受 <code>std::string</code>、字符串字面量、<code>char*</code> 等多种来源</li>
+<li>取子串是 \(O(1)\)（只调整指针和长度）</li>
+</ul>
+<p><strong>局限</strong>：</p>
+<ul>
+<li><strong>不拥有数据</strong>，底层字符串销毁后视图会悬垂</li>
+<li><strong>不保证以 <code>\0</code> 结尾</strong>，不能直接传给需要 C 字符串的接口</li>
+<li><strong>没有 <code>c_str()</code></strong>，需要转换时用 <code>std::string(sv)</code></li>
+</ul>
+<pre><code class="language-c++">// 危险：返回指向临时对象的视图
+std::string_view bad()
+{
+    std::string local = "temporary";
+    return local;   // 错误：local 已销毁
+}
+
+// 安全：返回 string
+std::string good()
+{
+    return "safe";
+}
+</code></pre>
+<h3 id="何时用哪个"><a class="header" href="#何时用哪个">何时用哪个</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">推荐</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">需要拥有数据、修改内容</td><td style="text-align: left"><code>std::string</code></td></tr>
+<tr><td style="text-align: left">只读参数、临时查看</td><td style="text-align: left"><code>std::string_view</code></td></tr>
+<tr><td style="text-align: left">需要以 <code>\0</code> 结尾传给 C API</td><td style="text-align: left"><code>std::string</code>（<code>c_str()</code>）</td></tr>
+<tr><td style="text-align: left">成员变量长期持有</td><td style="text-align: left"><code>std::string</code>（视图易悬垂）</td></tr>
+<tr><td style="text-align: left">返回字符串</td><td style="text-align: left"><code>std::string</code>（视图可能悬垂）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="4-注意事项-61"><a class="header" href="#4-注意事项-61">4. 注意事项</a></h2>
+<ul>
+<li><strong><code>npos</code> 是 <code>size_t</code> 的最大值</strong>。用 <code>find</code> 判断时要写 <code>== std::string::npos</code>，不要写成 <code>-1</code>。</li>
+<li><strong><code>c_str()</code> 的指针可能失效</strong>。任何修改字符串的操作都可能触发重新分配，使之前取得的指针悬垂。</li>
+<li><strong><code>string_view</code> 不拥有数据</strong>。绝不要返回指向局部变量的 <code>string_view</code>，也不要把 <code>string_view</code> 作为长期成员。</li>
+<li><strong><code>string_view</code> 不保证 <code>\0</code> 结尾</strong>。传给 <code>printf</code> 等 C 函数会越界。</li>
+<li><strong><code>s + "a"</code> 与 <code>"a" + s</code> 不同</strong>。前者合法，后者中 <code>"a"</code> 是 <code>const char*</code>，指针加法是未定义行为。应写 <code>std::string("a") + s</code>。</li>
+<li><strong><code>substr</code> 返回新字符串</strong>。<code>string_view::substr</code> 返回视图（\(O(1)\)），<code>string::substr</code> 返回新字符串（\(O(n)\)），注意区分。</li>
+<li><strong>字符串拼接的性能</strong>。循环中反复 <code>s += x</code> 可能多次重新分配，预先 <code>reserve()</code> 可避免。</li>
+</ul>
+<h2 id="5-相关章节"><a class="header" href="#5-相关章节">5. 相关章节</a></h2>
+<ul>
+<li><a href="#c-字符串类型">字符类型</a>：C 风格字符串与字符类型</li>
+<li><a href="#文件与流files-and-streams">文件与流</a>：字符串流 <code>std::stringstream</code></li>
+<li><a href="#格式化输出-format">格式化输出</a>：<code>std::format</code> 格式化字符串</li>
+<li><a href="#正则表达式-regex">正则表达式</a>：字符串的正则匹配</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="时间库-chrono"><a class="header" href="#时间库-chrono">时间库 (chrono)</a></h1>
+<p>C++11 引入的时间库，提供时长（duration）、时间点（time_point）与时钟（clock）三个核心概念，取代了 C 风格的 <code>&lt;ctime&gt;</code>。</p>
+<h2 id="1-引入-82"><a class="header" href="#1-引入-82">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;chrono&gt;
+</code></pre>
+<h2 id="2-核心概念-1"><a class="header" href="#2-核心概念-1">2. 核心概念</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="3-用法-62"><a class="header" href="#3-用法-62">3. 用法</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="4-注意事项-62"><a class="header" href="#4-注意事项-62">4. 注意事项</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="5-相关章节-1"><a class="header" href="#5-相关章节-1">5. 相关章节</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="随机数-random"><a class="header" href="#随机数-random">随机数 (random)</a></h1>
+<p>C++11 引入的随机数库，把随机数生成拆分为<strong>引擎</strong>（engine）和<strong>分布</strong>（distribution）两部分，质量远高于 C 的 <code>rand()</code>。</p>
+<h2 id="1-引入-83"><a class="header" href="#1-引入-83">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;random&gt;
+</code></pre>
+<h2 id="2-核心概念-2"><a class="header" href="#2-核心概念-2">2. 核心概念</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="3-用法-63"><a class="header" href="#3-用法-63">3. 用法</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="4-注意事项-63"><a class="header" href="#4-注意事项-63">4. 注意事项</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="5-相关章节-2"><a class="header" href="#5-相关章节-2">5. 相关章节</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="正则表达式-regex"><a class="header" href="#正则表达式-regex">正则表达式 (regex)</a></h1>
+<p>C++11 引入的正则表达式库，支持匹配、搜索、替换和迭代遍历。</p>
+<h2 id="1-引入-84"><a class="header" href="#1-引入-84">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;regex&gt;
+</code></pre>
+<h2 id="2-核心概念-3"><a class="header" href="#2-核心概念-3">2. 核心概念</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="3-用法-64"><a class="header" href="#3-用法-64">3. 用法</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="4-注意事项-64"><a class="header" href="#4-注意事项-64">4. 注意事项</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="5-相关章节-3"><a class="header" href="#5-相关章节-3">5. 相关章节</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="文件系统-filesystem"><a class="header" href="#文件系统-filesystem">文件系统 (filesystem)</a></h1>
+<p>C++17 引入的文件系统库，提供跨平台的路径操作、目录遍历与文件属性查询。</p>
+<h2 id="1-引入-85"><a class="header" href="#1-引入-85">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;filesystem&gt;
+</code></pre>
+<h2 id="2-核心概念-4"><a class="header" href="#2-核心概念-4">2. 核心概念</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="3-用法-65"><a class="header" href="#3-用法-65">3. 用法</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="4-注意事项-65"><a class="header" href="#4-注意事项-65">4. 注意事项</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="5-相关章节-4"><a class="header" href="#5-相关章节-4">5. 相关章节</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="格式化输出-format"><a class="header" href="#格式化输出-format">格式化输出 (format)</a></h1>
+<p>C++20 引入的格式化库，用 <code>std::format</code> 取代 <code>printf</code> 风格与流风格的输出；C++23 增加了 <code>std::print</code>。</p>
+<h2 id="1-引入-86"><a class="header" href="#1-引入-86">1. 引入</a></h2>
+<pre><code class="language-c++">#include &lt;format&gt;
+</code></pre>
+<h2 id="2-核心概念-5"><a class="header" href="#2-核心概念-5">2. 核心概念</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="3-用法-66"><a class="header" href="#3-用法-66">3. 用法</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="4-注意事项-66"><a class="header" href="#4-注意事项-66">4. 注意事项</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<h2 id="5-相关章节-5"><a class="header" href="#5-相关章节-5">5. 相关章节</a></h2>
+<blockquote>
+<p>待补充。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="c实践"><a class="header" href="#c实践">C++实践</a></h1>
+<p>语言语法只是起点，真正把 C++ 用起来还需要面对工程层面的问题：并发程序怎么写、网络怎么通信、服务之间怎么调用。</p>
+<p>本章收录这些偏工程实践的内容。与语言特性和标准库章节不同，这里的主题往往涉及操作系统接口、第三方库或平台差异，因此在可移植性和使用方式上需要额外留意。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">主题</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>多线程</strong></td><td style="text-align: left">待补充：线程池、任务队列、生产者消费者模式等工程实践。语言层面的并发设施见 <a href="#多线程与并发">多线程与并发</a></td></tr>
+<tr><td style="text-align: left"><strong>网络</strong></td><td style="text-align: left">待补充：Socket 编程、TCP/UDP、IO 多路复用</td></tr>
+<tr><td style="text-align: left"><strong>gRPC</strong></td><td style="text-align: left">待补充：Protobuf 定义服务、C++ 客户端与服务端实现</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="说明-1"><a class="header" href="#说明-1">说明</a></h2>
+<p>标准库层面的内容（文件与流、时间、随机数、正则、文件系统等）已归入 <a href="#标准库">标准库</a> 一章。本章只收录需要依赖操作系统接口或第三方库的工程实践主题。</p>
+<p>三个主题目前均未展开：</p>
+<ul>
+<li><strong>多线程</strong>：语言设施（<code>std::thread</code>、互斥量、原子操作、异步任务）见 <a href="#多线程与并发">C++进阶 · 多线程与并发</a>，本章侧重线程池、任务队列等更高层的并发模式。</li>
+<li><strong>网络</strong>：涉及 Socket API 与 IO 多路复用（<code>select</code>/<code>poll</code>/<code>epoll</code>），以及 asio 等第三方库。</li>
+<li><strong>gRPC</strong>：涉及 Protobuf 的接口定义语言、代码生成流程，以及 C++ 客户端与服务端的实现方式。</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="全部笔记"><a href="#全部笔记" class="header">全部笔记</a></h1>
 <script type="text/javascript">

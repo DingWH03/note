@@ -39,10 +39,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-dfaa6092.js";
+            window.path_to_searchindex_js = "../searchindex-b576ca81.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-2e4e548b.js"></script>
+        <script src="../toc-4694e643.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -508,7 +508,7 @@ delete[] arr;
 </div>
 <p>建议使用<strong>括号明确运算顺序</strong>，尤其在混合表达式中。</p>
 <h2 id="十五运算符重载operator-overloading"><a class="header" href="#十五运算符重载operator-overloading">十五、运算符重载（Operator Overloading）</a></h2>
-<p>C++ 允许为自定义类型定义运算符行为。例如：</p>
+<p>C++ 允许为自定义类型定义运算符行为，让类的对象也能像内置类型一样使用 <code>+</code>、<code>==</code>、<code>&lt;&lt;</code> 等符号：</p>
 <pre><code class="language-cpp">class Vector {
 public:
     int x, y;
@@ -528,6 +528,7 @@ Vector c = a + b; // 等价于 a.operator+(b)
 <li>运算符重载不会改变操作符优先级；</li>
 <li>应保证语义一致性（例如重载 <code>==</code> 时应与 <code>!=</code> 保持逻辑对称）。</li>
 </ul>
+<p>运算符重载的完整规则——成员函数与友元函数的选择、各类运算符的重载方式、返回值设计以及常见陷阱——属于面向对象进阶内容，详见 <a href="../Advance/Object/Operator_Overloading.html">运算符重载</a>。</p>
 
                     </main>
 

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>C++程序结构 - Note of C++</title>
+        <title>标准库 - Note of C++</title>
 
 
         <!-- Custom HTML head -->
@@ -12,37 +12,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-e96d0476.css">
-        <link rel="stylesheet" href="../../css/chrome-d279d366.css">
-        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../mdbook-admonish-306a1c37.css">
-        <link rel="stylesheet" href="../.././mdbook-admonish.css">
+        <link rel="stylesheet" href="mdbook-admonish-306a1c37.css">
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dfaa6092.js";
+            window.path_to_searchindex_js = "searchindex-b576ca81.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-2e4e548b.js"></script>
+        <script src="toc-4694e643.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -109,7 +109,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -144,13 +144,13 @@
                     <h1 class="menu-title">Note of C++</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
                         <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
                             <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
                         </a>
-                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Basis/Concept/Structure.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Library.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
                             <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
                         </a>
 
@@ -184,178 +184,59 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="c-程序结构program-structure"><a class="header" href="#c-程序结构program-structure">C++ 程序结构（Program Structure）</a></h1>
-<h2 id="引言"><a class="header" href="#引言">引言</a></h2>
-<p>C++ 程序的结构决定了它的组织方式、执行流程和可维护性。
-从最小的“Hello, World!”程序开始，我们可以认识一个 C++ 程序通常包含的<strong>头文件、命名空间、函数定义、语句块</strong>等组成部分。</p>
-<h2 id="一个最小可运行的-c-程序"><a class="header" href="#一个最小可运行的-c-程序">一个最小可运行的 C++ 程序</a></h2>
-<pre><code class="language-cpp">#include &lt;iostream&gt;   // 头文件：引入输入输出库
-using namespace std;  // 使用标准命名空间
-
-int main() {          // 主函数：程序执行入口
-    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;  // 输出语句
-    return 0;         // 返回值：表示程序是否成功结束
-}
-</code></pre>
-<h3 id="程序执行流程说明"><a class="header" href="#程序执行流程说明">程序执行流程说明</a></h3>
+                        <h1 id="标准库"><a class="header" href="#标准库">标准库</a></h1>
+<p>C++ 标准库（Standard Library）是随语言一起发布的庞大组件集合，涵盖字符串、容器、算法、时间、随机数、文件系统、并发等各个方面。</p>
+<p>STL（Standard Template Library）最初是一个独立的库，后来被纳入标准库。今天所说的 STL 通常指其中的<strong>容器、迭代器、算法、函数对象</strong>这几部分，而标准库的范围要更广。</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>行号</th><th>内容</th><th>说明</th></tr>
+<tr><th style="text-align: left">组件</th><th style="text-align: left">头文件</th><th style="text-align: left">说明</th></tr>
 </thead>
 <tbody>
-<tr><td>1</td><td><code>#include &lt;iostream&gt;</code></td><td>预处理指令，引入标准输入输出库</td></tr>
-<tr><td>2</td><td><code>using namespace std;</code></td><td>告诉编译器默认使用 <code>std</code> 命名空间</td></tr>
-<tr><td>3</td><td><code>int main() {</code></td><td>主函数是程序的入口点（返回类型必须是 <code>int</code>）</td></tr>
-<tr><td>4</td><td><code>cout &lt;&lt; "Hello, World!" &lt;&lt; endl;</code></td><td>使用 <code>cout</code> 输出字符串并换行</td></tr>
-<tr><td>5</td><td><code>return 0;</code></td><td>返回 <code>0</code> 表示程序正常结束</td></tr>
+<tr><td style="text-align: left"><strong>STL</strong></td><td style="text-align: left">多个</td><td style="text-align: left">容器、迭代器、算法、函数对象，见 <a href="./STL.html">STL</a></td></tr>
+<tr><td style="text-align: left"><strong>字符串</strong></td><td style="text-align: left"><code>&lt;string&gt;</code>、<code>&lt;string_view&gt;</code></td><td style="text-align: left"><code>std::string</code> 与字符串视图</td></tr>
+<tr><td style="text-align: left"><strong>输入输出</strong></td><td style="text-align: left"><code>&lt;iostream&gt;</code>、<code>&lt;fstream&gt;</code>、<code>&lt;sstream&gt;</code></td><td style="text-align: left">控制台、文件与内存字符串流</td></tr>
+<tr><td style="text-align: left"><strong>格式化</strong></td><td style="text-align: left"><code>&lt;format&gt;</code>、<code>&lt;print&gt;</code></td><td style="text-align: left">C++20/23 的格式化输出</td></tr>
+<tr><td style="text-align: left"><strong>时间</strong></td><td style="text-align: left"><code>&lt;chrono&gt;</code></td><td style="text-align: left">时间点、时长与时钟</td></tr>
+<tr><td style="text-align: left"><strong>随机数</strong></td><td style="text-align: left"><code>&lt;random&gt;</code></td><td style="text-align: left">随机数引擎与分布</td></tr>
+<tr><td style="text-align: left"><strong>正则表达式</strong></td><td style="text-align: left"><code>&lt;regex&gt;</code></td><td style="text-align: left">正则匹配与替换</td></tr>
+<tr><td style="text-align: left"><strong>文件系统</strong></td><td style="text-align: left"><code>&lt;filesystem&gt;</code></td><td style="text-align: left">路径操作与目录遍历</td></tr>
+<tr><td style="text-align: left"><strong>数值</strong></td><td style="text-align: left"><code>&lt;cmath&gt;</code>、<code>&lt;complex&gt;</code>、<code>&lt;numbers&gt;</code></td><td style="text-align: left">数学函数、复数与数学常量</td></tr>
+<tr><td style="text-align: left"><strong>位操作</strong></td><td style="text-align: left"><code>&lt;bitset&gt;</code>、<code>&lt;bit&gt;</code></td><td style="text-align: left">位集合与位运算</td></tr>
+<tr><td style="text-align: left"><strong>并发</strong></td><td style="text-align: left"><code>&lt;thread&gt;</code> 等</td><td style="text-align: left">见 <a href="./Advance/Concurrency.html">多线程与并发</a></td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="程序的基本组成部分"><a class="header" href="#程序的基本组成部分">程序的基本组成部分</a></h2>
-<p>一个完整的 C++ 程序通常由以下几个部分组成：</p>
-<ol>
-<li>
-<p><strong>预处理指令（Preprocessor Directives）</strong>
-在编译前由预处理器执行，例如：</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#define PI 3.14159
-</code></pre>
-</li>
-<li>
-<p><strong>命名空间（Namespace）</strong>
-命名空间用于避免名称冲突：</p>
-<pre><code class="language-cpp">namespace myspace {
-    int x = 10;
-}
-</code></pre>
-</li>
-<li>
-<p><strong>主函数 <code>main()</code></strong>
-所有可执行 C++ 程序都必须有且仅有一个 <code>main()</code> 函数。</p>
-</li>
-<li>
-<p><strong>函数定义（Functions）</strong>
-函数是代码逻辑的基本单元，示例：</p>
-<pre><code class="language-cpp">int add(int a, int b) {
-    return a + b;
-}
-</code></pre>
-</li>
-<li>
-<p><strong>变量与语句（Variables &amp; Statements）</strong>
-程序的逻辑通过语句执行，通过变量存储数据。</p>
-<pre><code class="language-cpp">int sum = add(2, 3);
-cout &lt;&lt; sum &lt;&lt; endl;
-</code></pre>
-</li>
-</ol>
-<h2 id="c-程序的执行入口"><a class="header" href="#c-程序的执行入口">C++ 程序的执行入口</a></h2>
-<ul>
-<li>
-<p>程序从 <code>main()</code> 函数开始执行。</p>
-</li>
-<li>
-<p><code>main()</code> 的返回值会传递给操作系统。</p>
-</li>
-<li>
-<p>常见的两种形式：</p>
-<pre><code class="language-cpp">int main() {
-    // 无参数版本
-    return 0;
-}
-
-int main(int argc, char* argv[]) {
-    // 带命令行参数的版本
-    // argc 表示参数数量
-    // argv 表示参数数组
-    return 0;
-}
-</code></pre>
-</li>
-</ul>
-<h2 id="程序的语句块与作用域"><a class="header" href="#程序的语句块与作用域">程序的语句块与作用域</a></h2>
-<p>语句块使用花括号 <code>{}</code> 表示，定义一个新的作用域（scope）：</p>
-<pre><code class="language-cpp">int x = 10;
-{
-    int x = 20;   // 内层作用域的 x 隐藏外层变量
-    cout &lt;&lt; x;    // 输出 20
-}
-cout &lt;&lt; x;        // 输出 10
-</code></pre>
-<p>作用域是 C++ 的重要概念，影响变量的可见性与生命周期。</p>
-<h2 id="程序结构的逻辑层次层级模型"><a class="header" href="#程序结构的逻辑层次层级模型">程序结构的逻辑层次（层级模型）</a></h2>
+<h2 id="本章内容"><a class="header" href="#本章内容">本章内容</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>层级</th><th>名称</th><th>说明</th></tr>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
 </thead>
 <tbody>
-<tr><td>顶层</td><td>预处理部分</td><td>定义宏、引入头文件</td></tr>
-<tr><td>全局层</td><td>命名空间、全局变量、函数声明</td><td></td></tr>
-<tr><td>主函数层</td><td>程序入口、主流程</td><td></td></tr>
-<tr><td>函数层</td><td>逻辑实现与局部变量</td><td></td></tr>
-<tr><td>语句层</td><td>执行单元（表达式、控制语句等）</td><td></td></tr>
+<tr><td style="text-align: left"><a href="./Library/Stream.html">文件与流</a></td><td style="text-align: left">流模型与类层次结构总览</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Stream/Iostream.html">标准输入输出流 (iostream)</a></td><td style="text-align: left"><code>cin</code> / <code>cout</code> / <code>cerr</code> / <code>clog</code> 与格式化控制</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Stream/Fstream.html">文件流 (fstream)</a></td><td style="text-align: left">文件读写、打开模式与错误处理</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Stream/Sstream.html">字符串流 (sstream)</a></td><td style="text-align: left">内存字符串的解析与拼接</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Chrono.html">时间库 (chrono)</a></td><td style="text-align: left">待补充：时长、时间点与时钟</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Random.html">随机数 (random)</a></td><td style="text-align: left">待补充：随机数引擎与分布</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Regex.html">正则表达式 (regex)</a></td><td style="text-align: left">待补充：正则匹配、搜索与替换</td></tr>
+<tr><td style="text-align: left"><a href="./Library/Filesystem.html">文件系统 (filesystem)</a></td><td style="text-align: left">待补充：路径操作与目录遍历</td></tr>
+<tr><td style="text-align: left"><a href="./Library/String.html">字符串 (string)</a></td><td style="text-align: left"><code>std::string</code> 接口、SSO 与 <code>std::string_view</code></td></tr>
+<tr><td style="text-align: left"><a href="./Library/Format.html">格式化输出 (format)</a></td><td style="text-align: left">待补充：<code>std::format</code> 与 <code>std::print</code></td></tr>
 </tbody>
 </table>
 </div>
-<p>这是一种从外到内的逻辑组织结构。良好的层级划分有助于程序的模块化。</p>
-<h2 id="程序文件结构大型项目"><a class="header" href="#程序文件结构大型项目">程序文件结构（大型项目）</a></h2>
-<p>在真实项目中，一个 C++ 程序通常被拆分为多个文件：</p>
-<pre><code class="language-text">project/
-├── main.cpp        // 程序入口
-├── math/
-│   ├── add.cpp
-│   └── add.h
-└── utils/
-    ├── log.cpp
-    └── log.h
-</code></pre>
-<p>通过 <strong>头文件 (.h/.hpp)</strong> 声明接口，<strong>源文件 (.cpp)</strong> 实现功能：</p>
-<ul>
-<li>
-<p>add.h</p>
-<pre><code class="language-cpp">#ifndef ADD_H
-#define ADD_H
-
-int add(int a, int b);
-
-#endif
-</code></pre>
-</li>
-<li>
-<p>add.cpp</p>
-<pre><code class="language-cpp">#include "add.h"
-int add(int a, int b) {
-    return a + b;
-}
-</code></pre>
-</li>
-<li>
-<p>main.cpp</p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include "add.h"
-
-int main() {
-    std::cout &lt;&lt; add(3, 4) &lt;&lt; std::endl;
-    return 0;
-}
-</code></pre>
-</li>
-</ul>
-<blockquote>
-<p>大型工程中，通常直接或间接地使用<code>Cmake</code>或<code>make</code>进行编译和项目管理。</p>
-</blockquote>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../Basis/Concept.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="STL/Algorithms/Memory/Construct_at.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../Basis/Concept/Preprocessor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="Library/Stream.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -365,11 +246,11 @@ int main() {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../Basis/Concept.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="STL/Algorithms/Memory/Construct_at.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../Basis/Concept/Preprocessor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="Library/Stream.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -389,13 +270,13 @@ int main() {
         </script>
 
 
-        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../mark-09e88c2c.min.js"></script>
-        <script src="../../searcher-09f2665d.js"></script>
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
 
-        <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-abc7f01d.js"></script>
-        <script src="../../book-609e4cb8.js"></script>
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 

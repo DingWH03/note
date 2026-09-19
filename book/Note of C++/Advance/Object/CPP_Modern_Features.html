@@ -39,10 +39,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-dfaa6092.js";
+            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-2e4e548b.js"></script>
+        <script src="../../toc-4694e643.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -185,9 +185,310 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="c新特性"><a class="header" href="#c新特性">C++新特性</a></h1>
-<p>移动语义与移动构造函数
-右值引用与 <code>std::move</code>
-<code>constexpr</code>、<code>noexcept</code> 与类设计</p>
+<p>C++11 是语言历史上最大的一次修订。它引入的<strong>移动语义</strong>、<strong>右值引用</strong>、<code>constexpr</code>、<code>noexcept</code> 等特性，彻底改变了 C++ 的类设计方式——从「如何正确管理资源」转向「如何让编译器自动帮你管理资源」。</p>
+<p>本节聚焦这些特性在<strong>面向对象设计</strong>中的应用。关于拷贝构造、赋值运算符、析构函数的完整语义，见 <a href="./Copy_Control.html">拷贝控制</a>。</p>
+<h2 id="一值类别左值与右值"><a class="header" href="#一值类别左值与右值">一、值类别：左值与右值</a></h2>
+<p>理解移动语义的前提是理解<strong>值类别（value category）</strong>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类别</th><th style="text-align: left">含义</th><th style="text-align: left">例子</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>左值</strong> (lvalue)</td><td style="text-align: left">有名字、有确定地址、可取址</td><td style="text-align: left">变量名、<code>*p</code>、<code>arr[0]</code></td></tr>
+<tr><td style="text-align: left"><strong>纯右值</strong> (prvalue)</td><td style="text-align: left">临时对象、字面量，无名字</td><td style="text-align: left"><code>42</code>、<code>a + b</code>、<code>func()</code> 的返回值</td></tr>
+<tr><td style="text-align: left"><strong>将亡值</strong> (xvalue)</td><td style="text-align: left">即将被销毁的对象，可被移动</td><td style="text-align: left"><code>std::move(x)</code> 的结果</td></tr>
+</tbody>
+</table>
+</div>
+<p>左值和将亡值合称<strong>泛左值</strong>（glvalue），纯右值和将亡值合称<strong>右值</strong>（rvalue）。</p>
+<p>关键区别：<strong>左值持久，右值短暂</strong>。右值通常是即将销毁的临时对象，因此可以安全地「窃取」它的资源。</p>
+<pre><code class="language-c++">int a = 10;          // a 是左值
+int&amp;&amp; r = 10;        // r 是右值引用，绑定到临时值
+int&amp;&amp; r2 = std::move(a);   // 把左值 a 转成右值引用
+</code></pre>
+<h2 id="二右值引用"><a class="header" href="#二右值引用">二、右值引用</a></h2>
+<p>右值引用用 <code>T&amp;&amp;</code> 表示，它只能绑定到右值：</p>
+<pre><code class="language-c++">int x = 1;
+int&amp; lref = x;        // 左值引用，绑定左值
+int&amp;&amp; rref = 42;      // 右值引用，绑定右值
+// int&amp;&amp; bad = x;     // 错误：右值引用不能绑定左值
+</code></pre>
+<p>右值引用的意义在于：<strong>让函数能够区分「参数是临时对象」还是「参数是持久对象」</strong>，从而对临时对象采取更高效的操作。</p>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p><strong>引用折叠与完美转发</strong></p>
+<p>在模板中，<code>T&amp;&amp;</code> 的含义取决于 <code>T</code> 的推导结果，这被称为<strong>转发引用</strong>（forwarding reference）：</p>
+<ul>
+<li>传入左值 → <code>T</code> 推导为 <code>T&amp;</code>，经引用折叠后 <code>T&amp;&amp;</code> 变成 <code>T&amp;</code></li>
+<li>传入右值 → <code>T</code> 推导为 <code>T</code>，<code>T&amp;&amp;</code> 保持为 <code>T&amp;&amp;</code></li>
+</ul>
+<p>引用折叠规则：<code>&amp; + &amp; = &amp;</code>，<code>&amp; + &amp;&amp; = &amp;</code>，<code>&amp;&amp; + &amp;&amp; = &amp;&amp;</code>。</p>
+<p>配合 <code>std::forward&lt;T&gt;(x)</code> 即可把参数原样转发，保持其值类别不变。</p>
+</blockquote>
+<h2 id="三移动语义"><a class="header" href="#三移动语义">三、移动语义</a></h2>
+<h3 id="1-移动构造函数与移动赋值"><a class="header" href="#1-移动构造函数与移动赋值">1. 移动构造函数与移动赋值</a></h3>
+<p>移动构造函数接受右值引用，直接<strong>接管</strong>源对象的资源，而不是复制一份：</p>
+<pre><code class="language-c++">class Buffer
+{
+public:
+    explicit Buffer(std::size_t n)
+        : data_(new int[n]), size_(n) {}
+
+    ~Buffer() { delete[] data_; }
+
+    // 拷贝构造：深拷贝
+    Buffer(const Buffer&amp; other)
+        : data_(new int[other.size_]), size_(other.size_)
+    {
+        std::copy(other.data_, other.data_ + size_, data_);
+    }
+
+    // 移动构造：接管资源，不分配内存
+    Buffer(Buffer&amp;&amp; other) noexcept
+        : data_(other.data_), size_(other.size_)
+    {
+        other.data_ = nullptr;   // 关键：源对象置空，避免析构时重复释放
+        other.size_ = 0;
+    }
+
+    Buffer&amp; operator=(Buffer&amp;&amp; other) noexcept
+    {
+        if (this != &amp;other)
+        {
+            delete[] data_;          // 释放自己的资源
+            data_ = other.data_;     // 接管对方的资源
+            size_ = other.size_;
+            other.data_ = nullptr;
+            other.size_ = 0;
+        }
+        return *this;
+    }
+
+private:
+    int* data_;
+    std::size_t size_;
+};
+</code></pre>
+<p><strong>移动的本质是「指针交换」</strong>：把源对象的内部指针直接赋给目标对象，再把源对象的指针置空。这样既避免了深拷贝的开销，又保证了源对象析构时不会重复释放。</p>
+<h3 id="2-源对象的状态"><a class="header" href="#2-源对象的状态">2. 源对象的状态</a></h3>
+<p>被移动后的对象处于<strong>有效但未指定</strong>（valid but unspecified）的状态：</p>
+<ul>
+<li>可以安全地析构</li>
+<li>可以重新赋值</li>
+<li><strong>不应该</strong>假设它的值是什么（比如假设它一定为空）</li>
+</ul>
+<h3 id="3-何时触发移动"><a class="header" href="#3-何时触发移动">3. 何时触发移动</a></h3>
+<p>移动在以下情况自动发生：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">用临时对象初始化</td><td style="text-align: left"><code>Buffer b = makeBuffer();</code></td></tr>
+<tr><td style="text-align: left">用 <code>std::move</code> 显式转换</td><td style="text-align: left"><code>Buffer b2 = std::move(b1);</code></td></tr>
+<tr><td style="text-align: left">容器扩容时搬移元素</td><td style="text-align: left"><code>vector</code> 重新分配内存</td></tr>
+<tr><td style="text-align: left">返回局部对象</td><td style="text-align: left">NRVO 未生效时</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::vector&lt;std::string&gt; v;
+std::string s = "hello";
+v.push_back(s);              // 拷贝：s 是左值
+v.push_back(std::move(s));   // 移动：s 被移空
+v.push_back("world");        // 移动：临时对象
+</code></pre>
+<h2 id="四stdmove-与-stdforward"><a class="header" href="#四stdmove-与-stdforward">四、std::move 与 std::forward</a></h2>
+<h3 id="1-stdmove"><a class="header" href="#1-stdmove">1. std::move</a></h3>
+<p><code>std::move</code> <strong>不移动任何东西</strong>，它只是一个类型转换，把左值转成右值引用：</p>
+<pre><code class="language-c++">// 大致实现
+template &lt;typename T&gt;
+constexpr std::remove_reference_t&lt;T&gt;&amp;&amp; move(T&amp;&amp; x) noexcept
+{
+    return static_cast&lt;std::remove_reference_t&lt;T&gt;&amp;&amp;&gt;(x);
+}
+</code></pre>
+<p>它相当于告诉编译器：「这个对象我不再需要了，可以当作临时对象处理」。</p>
+<pre><code class="language-c++">std::string a = "hello";
+std::string b = std::move(a);   // 触发移动构造
+// a 现在是空字符串（有效但未指定）
+</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><strong><code>std::move</code> 之后不要再使用源对象</strong></p>
+<p><code>std::move</code> 只是转换，真正的移动发生在构造/赋值时。但一旦移动完成，源对象的内容就不可依赖了。</p>
+<p>常见错误：</p>
+<pre><code class="language-c++">std::string s = "hello";
+use(std::move(s));   // s 被移空
+log(s);              // 错误：s 的内容已不可依赖
+</code></pre>
+</blockquote>
+<h3 id="2-stdforward"><a class="header" href="#2-stdforward">2. std::forward</a></h3>
+<p><code>std::forward</code> 用于<strong>完美转发</strong>：在模板中把参数原样传递给下一层函数，保持其值类别不变。</p>
+<pre><code class="language-c++">template &lt;typename T&gt;
+void wrapper(T&amp;&amp; x)
+{
+    // 如果传入左值，x 以左值传递；传入右值，以右值传递
+    process(std::forward&lt;T&gt;(x));
+}
+</code></pre>
+<p>如果写成 <code>process(x)</code>，右值参数会被当作左值，退化为拷贝；如果写成 <code>process(std::move(x))</code>，左值参数会被错误地移动。</p>
+<h3 id="3-对比"><a class="header" href="#3-对比">3. 对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left"></th><th style="text-align: left"><code>std::move</code></th><th style="text-align: left"><code>std::forward</code></th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">作用</td><td style="text-align: left">无条件转为右值</td><td style="text-align: left">有条件保持原值类别</td></tr>
+<tr><td style="text-align: left">使用场景</td><td style="text-align: left">明确不再需要该对象</td><td style="text-align: left">模板中的参数转发</td></tr>
+<tr><td style="text-align: left">参数</td><td style="text-align: left">普通对象</td><td style="text-align: left">转发引用 <code>T&amp;&amp;</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="五constexpr"><a class="header" href="#五constexpr">五、constexpr</a></h2>
+<p><code>constexpr</code> 表示「可在编译期求值」。它比 <code>const</code> 更强：<code>const</code> 只保证运行期不可修改，<code>constexpr</code> 则要求编译期就能算出结果。</p>
+<pre><code class="language-c++">const int a = 10;              // 运行期常量
+constexpr int b = 10;          // 编译期常量
+
+constexpr int square(int x) { return x * x; }
+constexpr int c = square(5);   // 编译期算出 25
+
+int arr[square(3)];            // 合法：数组大小是编译期常量
+</code></pre>
+<h3 id="在类设计中的应用"><a class="header" href="#在类设计中的应用">在类设计中的应用</a></h3>
+<pre><code class="language-c++">class Circle
+{
+public:
+    constexpr Circle(double r) : radius_(r) {}
+
+    constexpr double area() const
+    {
+        return 3.141592653589793 * radius_ * radius_;
+    }
+
+private:
+    double radius_;
+};
+
+constexpr Circle c(2.0);
+constexpr double a = c.area();   // 编译期计算
+</code></pre>
+<p><strong>要点</strong>：</p>
+<ul>
+<li><code>constexpr</code> 函数在 C++11 中只能有一条 <code>return</code> 语句，C++14 起放宽为允许循环和分支</li>
+<li><code>constexpr</code> 隐含 <code>inline</code>，定义需放在头文件中</li>
+<li><code>constexpr</code> 构造函数使对象可以成为编译期常量</li>
+<li>C++20 起还有 <code>consteval</code>（强制编译期求值）和 <code>constinit</code>（强制编译期初始化）</li>
+</ul>
+<h2 id="六noexcept-与类设计"><a class="header" href="#六noexcept-与类设计">六、noexcept 与类设计</a></h2>
+<p><code>noexcept</code> 不只是文档说明，它会<strong>直接影响容器的行为</strong>。</p>
+<p><code>std::vector</code> 扩容时需要把旧元素搬到新内存。如果元素的移动构造函数<strong>可能抛异常</strong>，一旦搬运途中抛异常，旧内存已被破坏、新内存尚未完成，无法回滚——强异常安全保证就会被破坏。因此：</p>
+<ul>
+<li>移动构造函数标记 <code>noexcept</code> → <code>vector</code> <strong>移动</strong>元素</li>
+<li>移动构造函数未标记 <code>noexcept</code> → <code>vector</code> 退化为<strong>拷贝</strong>元素</li>
+</ul>
+<pre><code class="language-c++">class Good
+{
+public:
+    Good(Good&amp;&amp;) noexcept = default;   // vector 会移动
+};
+
+class Bad
+{
+public:
+    Bad(Bad&amp;&amp;) { /* 未标记 noexcept */ }   // vector 会选择拷贝
+};
+</code></pre>
+<p><strong>实践建议</strong>：</p>
+<ul>
+<li>移动构造函数和移动赋值运算符<strong>应尽可能标记 <code>noexcept</code></strong></li>
+<li>析构函数默认就是 <code>noexcept</code>（C++11 起），不要在其中抛异常</li>
+<li><code>swap</code> 通常也应标记 <code>noexcept</code>，许多算法依赖这一点</li>
+</ul>
+<h2 id="七其它现代特性"><a class="header" href="#七其它现代特性">七、其它现代特性</a></h2>
+<h3 id="1-override-与-final"><a class="header" href="#1-override-与-final">1. override 与 final</a></h3>
+<pre><code class="language-c++">class Base
+{
+public:
+    virtual void f();
+    virtual void g();
+};
+
+class Derived : public Base
+{
+public:
+    void f() override;        // 明确表示覆盖基类虚函数，签名不匹配会报错
+    void g() final;           // 禁止派生类继续覆盖
+};
+</code></pre>
+<p><code>override</code> 能在编译期发现「本想覆盖却写错签名」的问题，应始终使用。</p>
+<h3 id="2--default-与--delete"><a class="header" href="#2--default-与--delete">2. = default 与 = delete</a></h3>
+<pre><code class="language-c++">class NonCopyable
+{
+public:
+    NonCopyable() = default;
+    NonCopyable(const NonCopyable&amp;) = delete;             // 禁止拷贝
+    NonCopyable&amp; operator=(const NonCopyable&amp;) = delete;
+};
+</code></pre>
+<p><code>= default</code> 让编译器生成默认实现，<code>= delete</code> 明确禁用某个函数。</p>
+<h3 id="3-委托构造与继承构造"><a class="header" href="#3-委托构造与继承构造">3. 委托构造与继承构造</a></h3>
+<pre><code class="language-c++">class Widget
+{
+public:
+    Widget() : Widget(0, 0) {}          // 委托构造：调用另一个构造函数
+    Widget(int w, int h) : w_(w), h_(h) {}
+
+private:
+    int w_, h_;
+};
+
+class Derived : public Base
+{
+public:
+    using Base::Base;   // 继承基类的构造函数
+};
+</code></pre>
+<h3 id="4-类内成员初始化"><a class="header" href="#4-类内成员初始化">4. 类内成员初始化</a></h3>
+<pre><code class="language-c++">class Config
+{
+    int timeout_ = 30;               // 类内默认值
+    std::string name_ = "default";
+};
+</code></pre>
+<p>这样多个构造函数不必重复写相同的初始化。</p>
+<h3 id="5-结构化绑定c17"><a class="header" href="#5-结构化绑定c17">5. 结构化绑定（C++17）</a></h3>
+<pre><code class="language-c++">std::map&lt;std::string, int&gt; m{{"a", 1}};
+for (const auto&amp; [key, value] : m)
+    std::cout &lt;&lt; key &lt;&lt; ": " &lt;&lt; value &lt;&lt; '\n';
+</code></pre>
+<h3 id="6-三路比较运算符-c20"><a class="header" href="#6-三路比较运算符-c20">6. 三路比较运算符 <code>&lt;=&gt;</code>（C++20）</a></h3>
+<pre><code class="language-c++">struct Point
+{
+    int x, y;
+    auto operator&lt;=&gt;(const Point&amp;) const = default;   // 自动生成全部比较运算符
+};
+</code></pre>
+<p>一行代码即可获得 <code>==</code>、<code>!=</code>、<code>&lt;</code>、<code>&lt;=</code>、<code>&gt;</code>、<code>&gt;=</code>。</p>
+<h2 id="八注意事项"><a class="header" href="#八注意事项">八、注意事项</a></h2>
+<ul>
+<li><strong><code>std::move</code> 不是移动，只是转换</strong>。它不会改变对象，真正的移动发生在构造或赋值时。</li>
+<li><strong>移动后不要再使用源对象</strong>。它的状态是「有效但未指定」，只能析构或重新赋值。</li>
+<li><strong>移动构造函数要置空源对象的指针</strong>。否则源对象析构时会重复释放资源。</li>
+<li><strong><code>noexcept</code> 影响容器性能</strong>。未标记 <code>noexcept</code> 的移动构造会让 <code>vector</code> 退化为拷贝。</li>
+<li><strong>不要对 <code>const</code> 对象用 <code>std::move</code></strong>。<code>const T&amp;&amp;</code> 无法绑定到移动构造的 <code>T&amp;&amp;</code>，结果仍是拷贝。</li>
+<li><strong>返回局部对象不需要 <code>std::move</code></strong>。编译器会做 NRVO（返回值优化），写 <code>std::move</code> 反而可能阻止优化。</li>
+<li><strong><code>constexpr</code> 函数要放在头文件</strong>。它隐含 <code>inline</code>，否则会违反 ODR。</li>
+</ul>
+<h2 id="九相关章节"><a class="header" href="#九相关章节">九、相关章节</a></h2>
+<ul>
+<li><a href="./Copy_Control.html">拷贝控制</a>：拷贝构造、赋值运算符与 Rule of Three/Five/Zero</li>
+<li><a href="../Exception.html">异常处理</a>：<code>noexcept</code> 说明符与异常安全保证</li>
+<li><a href="../Memory/Smart_Pointer.html">智能指针</a>：移动语义在资源管理中的应用</li>
+<li><a href="../Memory/RAII.html">RAII与资源管理</a>：资源所有权的转移</li>
+</ul>
 
                     </main>
 
@@ -197,7 +498,7 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../STL.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../Advance/Exception.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -211,7 +512,7 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../STL.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../Advance/Exception.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
