@@ -39,7 +39,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8b9f2bf4.js";
+            window.path_to_searchindex_js = "../searchindex-051a48f6.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-4694e643.js"></script>
@@ -186,25 +186,193 @@
                     <main>
                         <h1 id="时间库-chrono"><a class="header" href="#时间库-chrono">时间库 (chrono)</a></h1>
 <p>C++11 引入的时间库，提供时长（duration）、时间点（time_point）与时钟（clock）三个核心概念，取代了 C 风格的 <code>&lt;ctime&gt;</code>。</p>
+<p>它的设计有个重要特点：<strong>类型安全</strong>。秒和毫秒是不同的类型，编译器会阻止你把它们混用；时间点和时长也是不同的类型，不能相加两个时间点。这让很多时间相关的 bug 在编译期就被拦住了。</p>
 <h2 id="1-引入"><a class="header" href="#1-引入">1. 引入</a></h2>
 <pre><code class="language-c++">#include &lt;chrono&gt;
+
+// C++20 起，字面量后缀在 std::chrono_literals 中
+using namespace std::chrono_literals;
 </code></pre>
 <h2 id="2-核心概念"><a class="header" href="#2-核心概念">2. 核心概念</a></h2>
-<blockquote>
-<p>待补充。</p>
-</blockquote>
+<p>时间库由三个概念组成，它们的关系是：</p>
+<pre><code>时钟 (clock) ──产生──→ 时间点 (time_point)
+                          │
+                          │ 相减
+                          ↓
+                       时长 (duration)
+</code></pre>
+<h3 id="1-duration时长"><a class="header" href="#1-duration时长">1. duration：时长</a></h3>
+<p><code>duration</code> 表示一段时间间隔，由<strong>数值</strong>和<strong>单位</strong>两部分组成：</p>
+<pre><code class="language-c++">template&lt;class Rep, class Period = std::ratio&lt;1&gt;&gt;
+class duration;
+</code></pre>
+<ul>
+<li><code>Rep</code>：用什么类型存储数值（<code>int</code>、<code>long</code>、<code>double</code>）</li>
+<li><code>Period</code>：单位，用 <code>std::ratio</code> 表示一个周期是多少秒</li>
+</ul>
+<p>标准库预定义了一批常用单位：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">含义</th><th style="text-align: left">与秒的比值</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::chrono::nanoseconds</code></td><td style="text-align: left">纳秒</td><td style="text-align: left">1/1’000’000’000</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::microseconds</code></td><td style="text-align: left">微秒</td><td style="text-align: left">1/1’000’000</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::milliseconds</code></td><td style="text-align: left">毫秒</td><td style="text-align: left">1/1000</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::seconds</code></td><td style="text-align: left">秒</td><td style="text-align: left">1</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::minutes</code></td><td style="text-align: left">分</td><td style="text-align: left">60</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::hours</code></td><td style="text-align: left">小时</td><td style="text-align: left">3600</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::days</code></td><td style="text-align: left">天</td><td style="text-align: left">86400（C++20）</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::weeks</code></td><td style="text-align: left">周</td><td style="text-align: left">604800（C++20）</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::months</code></td><td style="text-align: left">月</td><td style="text-align: left">约 30.44 天（C++20）</td></tr>
+<tr><td style="text-align: left"><code>std::chrono::years</code></td><td style="text-align: left">年</td><td style="text-align: left">约 365.24 天（C++20）</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">std::chrono::seconds s(10);           // 10 秒
+std::chrono::milliseconds ms(500);    // 500 毫秒
+
+// C++14 起可以用字面量
+auto s2 = 10s;
+auto ms2 = 500ms;
+auto us = 100us;
+auto ns = 50ns;
+</code></pre>
+<h3 id="2-time_point时间点"><a class="header" href="#2-time_point时间点">2. time_point：时间点</a></h3>
+<p>时间点是「某个时钟的纪元加上一个时长」：</p>
+<pre><code class="language-c++">template&lt;class Clock, class Duration = typename Clock::duration&gt;
+class time_point;
+</code></pre>
+<pre><code class="language-c++">auto now = std::chrono::system_clock::now();   // 当前时间点
+auto epoch = std::chrono::system_clock::time_point{};   // 纪元（1970-01-01）
+</code></pre>
+<p>两个时间点相减得到时长：</p>
+<pre><code class="language-c++">auto start = std::chrono::steady_clock::now();
+doWork();
+auto end = std::chrono::steady_clock::now();
+
+auto elapsed = end - start;   // duration
+</code></pre>
+<h3 id="3-clock时钟"><a class="header" href="#3-clock时钟">3. clock：时钟</a></h3>
+<p>时钟提供「当前时间点」和「时长单位」：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">时钟</th><th style="text-align: left">特点</th><th style="text-align: left">用途</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>system_clock</code></td><td style="text-align: left">系统时间，<strong>可被调整</strong>（NTP、用户改时间）</td><td style="text-align: left">获取日历时间、与外部时间戳交互</td></tr>
+<tr><td style="text-align: left"><code>steady_clock</code></td><td style="text-align: left">单调递增，<strong>不可调整</strong></td><td style="text-align: left"><strong>测量耗时</strong></td></tr>
+<tr><td style="text-align: left"><code>high_resolution_clock</code></td><td style="text-align: left">通常是前两者的别名</td><td style="text-align: left">取决于实现，不推荐直接用</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>测耗时必须用 <code>steady_clock</code></strong>。<code>system_clock</code> 可能因为对时或用户操作而跳变，导致测出负数或异常大的值。</p>
 <h2 id="3-用法"><a class="header" href="#3-用法">3. 用法</a></h2>
-<blockquote>
-<p>待补充。</p>
-</blockquote>
+<h3 id="1-测量耗时"><a class="header" href="#1-测量耗时">1. 测量耗时</a></h3>
+<p>这是最常见的场景：</p>
+<pre><code class="language-c++">#include &lt;chrono&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    auto start = std::chrono::steady_clock::now();
+
+    // ... 执行一些工作
+
+    auto end = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(end - start);
+
+    std::cout &lt;&lt; "耗时 " &lt;&lt; elapsed.count() &lt;&lt; " ms\n";
+}
+</code></pre>
+<p><code>duration_cast</code> 用于在不同精度之间转换。<strong>注意它会截断</strong>，不是四舍五入：</p>
+<pre><code class="language-c++">std::chrono::milliseconds ms(1500);
+auto s = std::chrono::duration_cast&lt;std::chrono::seconds&gt;(ms);
+std::cout &lt;&lt; s.count();   // 1，不是 2
+</code></pre>
+<p>C++17 起可以用 <code>std::chrono::round</code>、<code>floor</code>、<code>ceil</code> 精确控制：</p>
+<pre><code class="language-c++">auto s = std::chrono::round&lt;std::chrono::seconds&gt;(ms);   // 2
+</code></pre>
+<h3 id="2-隐式转换"><a class="header" href="#2-隐式转换">2. 隐式转换</a></h3>
+<p>低精度到高精度可以隐式转换，反之必须显式：</p>
+<pre><code class="language-c++">std::chrono::seconds s(1);
+std::chrono::milliseconds ms = s;              // OK：隐式，1 秒 = 1000 毫秒
+
+// std::chrono::seconds s2 = ms;               // 错误：可能丢失精度
+auto s2 = std::chrono::duration_cast&lt;std::chrono::seconds&gt;(ms);   // 显式
+</code></pre>
+<p>这个规则是刻意的——它让「精度损失」这件事在代码里显式可见。</p>
+<h3 id="3-时间运算"><a class="header" href="#3-时间运算">3. 时间运算</a></h3>
+<p>时长之间可以自由加减：</p>
+<pre><code class="language-c++">auto total = 1s + 500ms;      // 结果是 milliseconds(1500)
+auto diff = 2s - 500ms;       // milliseconds(1500)
+
+auto doubled = 2 * 100ms;     // milliseconds(200)
+auto halved = 100ms / 2;      // milliseconds(50)
+
+// 求余
+auto rem = 1500ms % 1s;       // milliseconds(500)
+</code></pre>
+<p>时间点可以加减时长：</p>
+<pre><code class="language-c++">auto now = std::chrono::system_clock::now();
+auto later = now + 1h;
+auto earlier = now - 30min;
+</code></pre>
+<p>但<strong>两个时间点不能相加</strong>——这在语义上没有意义，编译器会阻止。</p>
+<h3 id="4-与-c-风格时间互转"><a class="header" href="#4-与-c-风格时间互转">4. 与 C 风格时间互转</a></h3>
+<p><code>system_clock</code> 可以与 <code>time_t</code> 互转：</p>
+<pre><code class="language-c++">// time_point → time_t
+auto now = std::chrono::system_clock::now();
+std::time_t t = std::chrono::system_clock::to_time_t(now);
+
+// time_t → time_point
+auto tp = std::chrono::system_clock::from_time_t(t);
+</code></pre>
+<p>C++20 起还可以直接与 <code>std::tm</code> 互转：</p>
+<pre><code class="language-c++">std::tm tm = std::chrono::system_clock::to_time_t(now);   // 旧写法需要 localtime
+</code></pre>
+<h3 id="5-c20-的日历功能"><a class="header" href="#5-c20-的日历功能">5. C++20 的日历功能</a></h3>
+<p>C++20 大幅扩展了时间库，加入了日历类型：</p>
+<pre><code class="language-c++">using namespace std::chrono;
+
+// 年月日
+year_month_day ymd{2026y, January/15d};
+std::cout &lt;&lt; int(ymd.year()) &lt;&lt; "-" &lt;&lt; unsigned(ymd.month()) &lt;&lt; "-" &lt;&lt; unsigned(ymd.day());
+
+// 星期
+weekday wd = 2026y/January/15d;
+if (wd == Thursday) { /* ... */ }
+
+// 时区
+auto local = zoned_time{current_zone(), system_clock::now()};
+std::cout &lt;&lt; local;
+</code></pre>
+<p>还支持格式化输出：</p>
+<pre><code class="language-c++">std::cout &lt;&lt; std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::system_clock::now());
+</code></pre>
 <h2 id="4-注意事项"><a class="header" href="#4-注意事项">4. 注意事项</a></h2>
-<blockquote>
-<p>待补充。</p>
-</blockquote>
+<p><strong>测耗时用 <code>steady_clock</code>，不要用 <code>system_clock</code></strong>。后者可能跳变，测出的结果不可信。</p>
+<p><strong><code>duration_cast</code> 会截断</strong>。1500 毫秒转成秒是 1 而不是 2。需要四舍五入时用 <code>round</code>。</p>
+<p><strong><code>.count()</code> 返回的是裸数值</strong>。它丢掉了单位信息，不要把它存成 <code>int</code> 变量再传出去。</p>
+<pre><code class="language-c++">// 不好：单位信息丢失
+int ms = elapsed.count();
+
+// 好：保留类型
+auto ms = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(elapsed);
+</code></pre>
+<p><strong><code>high_resolution_clock</code> 不保证是 steady 的</strong>。标准允许它别名到 <code>system_clock</code>，因此不适合测耗时。</p>
+<p><strong>字面量后缀需要 <code>using namespace std::chrono_literals</code></strong>。否则 <code>1s</code>、<code>100ms</code> 这些无法使用。</p>
+<p><strong><code>ratio</code> 的精度</strong>。<code>std::chrono::months</code> 和 <code>years</code> 是平均值（月约 30.44 天），不是精确的日历单位。做日期计算时要注意这一点。</p>
+<p><strong>C++20 的日历功能需要编译器支持</strong>。GCC 11+、Clang 17+ 才比较完整。</p>
 <h2 id="5-相关章节"><a class="header" href="#5-相关章节">5. 相关章节</a></h2>
-<blockquote>
-<p>待补充。</p>
-</blockquote>
+<ul>
+<li><a href="./Stream.html">文件与流</a>：流式输入输出</li>
+<li><a href="./Format.html">格式化输出</a>：<code>std::format</code> 格式化时间</li>
+<li><a href="./Random.html">随机数</a>：用时间做随机种子</li>
+<li><a href="../Advance/Concurrency.html">多线程与并发</a>：<code>sleep_for</code> 与 <code>sleep_until</code></li>
+</ul>
 
                     </main>
 

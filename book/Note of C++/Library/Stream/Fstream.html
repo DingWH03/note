@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
+            window.path_to_searchindex_js = "../../searchindex-051a48f6.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -184,7 +184,242 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        
+                        <h1 id="文件流fstream"><a class="header" href="#文件流fstream">文件流（fstream）</a></h1>
+<p><code>&lt;fstream&gt;</code> 把文件抽象成流，让文件读写和 <code>cin</code> / <code>cout</code> 用同一套 <code>&lt;&lt;</code> / <code>&gt;&gt;</code> 接口。这样从控制台改成从文件读，往往只需要换掉流对象的类型。</p>
+<p>三个核心类分工明确：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类</th><th style="text-align: left">方向</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::ifstream</code></td><td style="text-align: left">输入</td><td style="text-align: left">从文件读取</td></tr>
+<tr><td style="text-align: left"><code>std::ofstream</code></td><td style="text-align: left">输出</td><td style="text-align: left">写入文件</td></tr>
+<tr><td style="text-align: left"><code>std::fstream</code></td><td style="text-align: left">双向</td><td style="text-align: left">既可读也可写</td></tr>
+</tbody>
+</table>
+</div>
+<p>它们都继承自 <code>iostream</code> 体系，因此 <code>getline</code>、<code>seekg</code>、<code>tellp</code> 这些通用接口都能用。</p>
+<h2 id="一打开文件"><a class="header" href="#一打开文件">一、打开文件</a></h2>
+<h3 id="1-构造时打开"><a class="header" href="#1-构造时打开">1. 构造时打开</a></h3>
+<pre><code class="language-c++">#include &lt;fstream&gt;
+
+std::ifstream in("input.txt");          // 默认以文本模式读取
+std::ofstream out("output.txt");        // 默认截断文件（内容清空）
+std::fstream io("data.bin", std::ios::in | std::ios::out | std::ios::binary);
+</code></pre>
+<h3 id="2-打开模式"><a class="header" href="#2-打开模式">2. 打开模式</a></h3>
+<p>模式通过位或组合：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">模式</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::ios::in</code></td><td style="text-align: left">读取</td></tr>
+<tr><td style="text-align: left"><code>std::ios::out</code></td><td style="text-align: left">写入</td></tr>
+<tr><td style="text-align: left"><code>std::ios::app</code></td><td style="text-align: left">追加，每次写都在末尾</td></tr>
+<tr><td style="text-align: left"><code>std::ios::ate</code></td><td style="text-align: left">打开后定位到末尾</td></tr>
+<tr><td style="text-align: left"><code>std::ios::trunc</code></td><td style="text-align: left">截断文件（默认用于 <code>out</code>）</td></tr>
+<tr><td style="text-align: left"><code>std::ios::binary</code></td><td style="text-align: left">二进制模式</td></tr>
+</tbody>
+</table>
+</div>
+<p>几个容易混淆的点：</p>
+<ul>
+<li><code>out</code> 默认隐含 <code>trunc</code>，会<strong>清空文件</strong>。想保留原内容要加 <code>app</code> 或 <code>ate</code>。</li>
+<li><code>app</code> 和 <code>ate</code> 不同：<code>app</code> 强制每次写入都在末尾，<code>ate</code> 只是打开时定位到末尾，之后可以 <code>seekp</code> 到别处。</li>
+<li><code>in | out</code> 打开的文件必须已存在，不会自动创建。</li>
+</ul>
+<pre><code class="language-c++">// 追加写入
+std::ofstream log("app.log", std::ios::app);
+
+// 读写已有文件，不清空
+std::fstream db("data.db", std::ios::in | std::ios::out | std::ios::binary);
+</code></pre>
+<h3 id="3-检查是否成功"><a class="header" href="#3-检查是否成功">3. 检查是否成功</a></h3>
+<p>打开失败不会抛异常，必须显式检查：</p>
+<pre><code class="language-c++">std::ifstream in("maybe_missing.txt");
+if (!in)
+{
+    std::cerr &lt;&lt; "打开失败\n";
+    return;
+}
+
+// 或者用 is_open()
+if (!in.is_open()) { /* ... */ }
+</code></pre>
+<p><strong>这是最常见的坑</strong>——忘记检查，后面所有读取都静默失败，得到一堆空数据。</p>
+<h2 id="二读取文件"><a class="header" href="#二读取文件">二、读取文件</a></h2>
+<h3 id="1-逐词读取"><a class="header" href="#1-逐词读取">1. 逐词读取</a></h3>
+<p><code>&gt;&gt;</code> 按空白字符（空格、制表符、换行）分割：</p>
+<pre><code class="language-c++">std::ifstream in("numbers.txt");
+int n;
+while (in &gt;&gt; n)
+{
+    std::cout &lt;&lt; n &lt;&lt; '\n';
+}
+</code></pre>
+<p><code>in &gt;&gt; n</code> 返回流对象，在布尔上下文中表示「读取是否成功」。读到文件末尾或格式不匹配时返回 <code>false</code>，循环自然结束。</p>
+<h3 id="2-逐行读取"><a class="header" href="#2-逐行读取">2. 逐行读取</a></h3>
+<p><code>std::getline</code> 读取整行（不含换行符）：</p>
+<pre><code class="language-c++">std::ifstream in("data.txt");
+std::string line;
+while (std::getline(in, line))
+{
+    std::cout &lt;&lt; line &lt;&lt; '\n';
+}
+</code></pre>
+<p><strong>不要用 <code>while (!in.eof())</code></strong>，这是经典错误：</p>
+<pre><code class="language-c++">// 错误：最后一行会被处理两次
+while (!in.eof())
+{
+    std::getline(in, line);
+    process(line);   // 读到 EOF 后 line 还是上一行的内容
+}
+
+// 正确
+while (std::getline(in, line))
+    process(line);
+</code></pre>
+<p>原因是 <code>eof()</code> 只有在<strong>尝试读取并失败后</strong>才为真。用 <code>!eof()</code> 判断时，最后一次读取已经失败了，但循环体还是会执行一遍。</p>
+<h3 id="3-混合使用--和-getline"><a class="header" href="#3-混合使用--和-getline">3. 混合使用 &gt;&gt; 和 getline</a></h3>
+<p><code>&gt;&gt;</code> 会留下换行符在缓冲区里，紧接着的 <code>getline</code> 会读到空行：</p>
+<pre><code class="language-c++">int id;
+std::string name;
+
+in &gt;&gt; id;                    // 读完数字，换行符还在缓冲区
+std::getline(in, name);      // 读到空字符串！
+
+// 正确：先吃掉换行符
+in &gt;&gt; id;
+in.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), '\n');
+std::getline(in, name);
+</code></pre>
+<h3 id="4-读取整个文件"><a class="header" href="#4-读取整个文件">4. 读取整个文件</a></h3>
+<pre><code class="language-c++">// 方法一：用迭代器
+std::ifstream in("data.txt");
+std::string content((std::istreambuf_iterator&lt;char&gt;(in)),
+                     std::istreambuf_iterator&lt;char&gt;());
+
+// 方法二：先求大小再读（适合二进制）
+in.seekg(0, std::ios::end);
+std::size_t size = in.tellg();
+in.seekg(0, std::ios::beg);
+
+std::string buffer(size, '\0');
+in.read(buffer.data(), size);
+</code></pre>
+<p>方法二更快（一次读取），但要求文件大小可求——管道、标准输入这类流不支持。</p>
+<h2 id="三写入文件"><a class="header" href="#三写入文件">三、写入文件</a></h2>
+<pre><code class="language-c++">std::ofstream out("output.txt");
+
+out &lt;&lt; "Hello\n";
+out &lt;&lt; 42 &lt;&lt; ' ' &lt;&lt; 3.14 &lt;&lt; '\n';
+
+// 检查写入是否成功
+if (!out)
+    std::cerr &lt;&lt; "写入失败\n";
+</code></pre>
+<h3 id="1-缓冲区与刷新"><a class="header" href="#1-缓冲区与刷新">1. 缓冲区与刷新</a></h3>
+<p>写入先进入缓冲区，以下情况才真正落盘：</p>
+<ul>
+<li>缓冲区满</li>
+<li>显式调用 <code>flush()</code></li>
+<li>流对象析构</li>
+<li>程序正常结束</li>
+</ul>
+<pre><code class="language-c++">out &lt;&lt; "important data";
+out.flush();          // 立即写入
+out &lt;&lt; std::endl;     // 换行并刷新（等价于 '\n' &lt;&lt; flush）
+</code></pre>
+<p><strong>程序崩溃时缓冲区内容会丢失</strong>。关键数据要主动 <code>flush</code>。</p>
+<h3 id="2-检查写入错误"><a class="header" href="#2-检查写入错误">2. 检查写入错误</a></h3>
+<p>写入错误（磁盘满、权限问题）不会立即抛出，需要检查：</p>
+<pre><code class="language-c++">out &lt;&lt; data;
+if (!out)
+{
+    std::cerr &lt;&lt; "写入失败\n";
+    // 处理错误
+}
+</code></pre>
+<h2 id="四二进制读写"><a class="header" href="#四二进制读写">四、二进制读写</a></h2>
+<p>文本模式会做换行符转换（Windows 上 <code>\n</code> ↔ <code>\r\n</code>），二进制模式不做任何转换。</p>
+<pre><code class="language-c++">// 写入
+struct Record { int id; double value; };
+
+Record r{1, 3.14};
+std::ofstream out("data.bin", std::ios::binary);
+out.write(reinterpret_cast&lt;const char*&gt;(&amp;r), sizeof(r));
+
+// 读取
+Record r2;
+std::ifstream in("data.bin", std::ios::binary);
+in.read(reinterpret_cast&lt;char*&gt;(&amp;r2), sizeof(r2));
+</code></pre>
+<p><strong>注意</strong>：直接读写结构体内存在跨平台问题——字节序、对齐、<code>sizeof</code> 都可能不同。可移植的格式需要逐字段序列化。</p>
+<h2 id="五定位"><a class="header" href="#五定位">五、定位</a></h2>
+<p>文件流支持随机访问：</p>
+<pre><code class="language-c++">std::fstream file("data.bin", std::ios::in | std::ios::out | std::ios::binary);
+
+// 定位到第 100 字节
+file.seekg(100, std::ios::beg);    // 读指针
+file.seekp(100, std::ios::beg);    // 写指针
+
+// 获取当前位置
+auto pos = file.tellg();
+
+// 定位到末尾
+file.seekg(0, std::ios::end);
+auto size = file.tellg();
+</code></pre>
+<p>三个参考位置：<code>std::ios::beg</code>（开头）、<code>std::ios::cur</code>（当前位置）、<code>std::ios::end</code>（末尾）。</p>
+<p><code>g</code> 后缀是 get（读），<code>p</code> 后缀是 put（写）。<code>fstream</code> 有两个独立的指针。</p>
+<h2 id="六关闭与作用域"><a class="header" href="#六关闭与作用域">六、关闭与作用域</a></h2>
+<p><code>close()</code> 可以手动关闭，但通常不需要——析构函数会自动关闭：</p>
+<pre><code class="language-c++">{
+    std::ofstream out("file.txt");
+    out &lt;&lt; "data";
+}   // 离开作用域，自动关闭并刷新
+</code></pre>
+<p><strong>关闭后流的错误状态会保留</strong>。如果之前写入失败，析构时不会抛异常，错误被静默吞掉。所以关键写入要显式检查：</p>
+<pre><code class="language-c++">out &lt;&lt; data;
+if (!out) { /* 处理错误 */ }
+out.close();   // 此时可以检查 close 是否成功
+</code></pre>
+<h2 id="七异常处理"><a class="header" href="#七异常处理">七、异常处理</a></h2>
+<p>默认情况下文件流<strong>不抛异常</strong>，通过状态位报告错误。可以开启异常：</p>
+<pre><code class="language-c++">std::ifstream in;
+in.exceptions(std::ios::failbit | std::ios::badbit);   // 打开这些状态时抛异常
+try
+{
+    in.open("missing.txt");
+}
+catch (const std::ios_base::failure&amp; e)
+{
+    std::cerr &lt;&lt; "打开失败: " &lt;&lt; e.what() &lt;&lt; '\n';
+}
+</code></pre>
+<p>但要注意：开启 <code>failbit</code> 后，<strong>读到文件末尾也会抛异常</strong>，因为 EOF 会设置 <code>failbit</code>。这通常不是想要的，所以很多项目选择不开异常。</p>
+<h2 id="八注意事项"><a class="header" href="#八注意事项">八、注意事项</a></h2>
+<p><strong>必须检查打开是否成功</strong>。这是文件操作最常见的错误来源。</p>
+<p><strong>不要用 <code>while (!in.eof())</code></strong>。用 <code>while (in &gt;&gt; x)</code> 或 <code>while (getline(in, line))</code>。</p>
+<p><strong><code>ofstream</code> 默认截断文件</strong>。想追加必须显式指定 <code>std::ios::app</code>。</p>
+<p><strong><code>&gt;&gt;</code> 和 <code>getline</code> 混用要清缓冲区</strong>。用 <code>ignore()</code> 吃掉残留的换行符。</p>
+<p><strong>文本模式会转换换行符</strong>。跨平台处理二进制数据时记得加 <code>std::ios::binary</code>。</p>
+<p><strong>缓冲区内容可能丢失</strong>。程序崩溃时未刷新的数据会丢，关键数据主动 <code>flush()</code>。</p>
+<p><strong>不要直接读写结构体二进制</strong>。字节序和对齐差异会导致跨平台不兼容。</p>
+<p><strong><code>std::endl</code> 有性能开销</strong>。它每次都刷新缓冲区，循环里输出大量数据时用 <code>'\n'</code> 更快。</p>
+<p><strong>文件句柄是有限资源</strong>。打开大量文件而不关闭会耗尽句柄，用 RAII 让析构自动处理。</p>
+<h2 id="九相关章节"><a class="header" href="#九相关章节">九、相关章节</a></h2>
+<ul>
+<li><a href="../Stream.html">文件与流</a>：流模型与类层次结构</li>
+<li><a href="./Iostream.html">标准输入输出流</a>：<code>cin</code> / <code>cout</code> 与格式化控制</li>
+<li><a href="./Sstream.html">字符串流</a>：内存字符串的读写</li>
+<li><a href="../Filesystem.html">文件系统</a>：路径操作与目录遍历</li>
+<li><a href="../Format.html">格式化输出</a>：<code>std::format</code> 格式化写入内容</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
