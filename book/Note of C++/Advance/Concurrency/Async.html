@@ -1,0 +1,749 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>异步任务 - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../mdbook-admonish-306a1c37.css">
+        <link rel="stylesheet" href="../.././mdbook-admonish.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-3862d85f.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-580a2eac.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Advance/Concurrency/Async.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="异步任务"><a class="header" href="#异步任务">异步任务</a></h1>
+<p>前面几节讲的都是「多个线程同时干活」。这一节换个角度：<strong>把一件事交给别处去做，自己继续往下走，需要结果时再取回来</strong>。</p>
+<p>这就是异步。它和「多线程」不是一回事——异步是关于<strong>任务的组织方式</strong>，多线程只是实现它的手段之一。一个异步任务可能跑在另一个线程上，也可能跑在线程池里，甚至可能根本不并发（延迟执行）。</p>
+<h2 id="一三种异步风格"><a class="header" href="#一三种异步风格">一、三种异步风格</a></h2>
+<p>「异步」不是一个具体的 API，而是一类<strong>代码组织方式</strong>。按「怎么拿到结果」来分，主流有三种风格：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">风格</th><th style="text-align: left">怎么拿结果</th><th style="text-align: left">典型代表</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>回调式</strong></td><td style="text-align: left">传一个函数进去，完成时被调用</td><td style="text-align: left"><code>readAsync(cb)</code>、<code>epoll</code>、Node.js</td></tr>
+<tr><td style="text-align: left"><strong>Future/Promise 式</strong></td><td style="text-align: left">拿到一个「未来会有值」的凭证，<code>get()</code> 取回</td><td style="text-align: left"><code>std::future</code>、<code>std::async</code></td></tr>
+<tr><td style="text-align: left"><strong>协程式</strong></td><td style="text-align: left">用 <code>co_await</code> 挂起，看起来像同步代码</td><td style="text-align: left">C++20 协程、<code>std::generator</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>这三种风格解决的是同一件事，但<strong>控制流的写法完全不同</strong>。下面先讲标准库提供的 Future/Promise 风格（这是 C++ 里最常用的），再讲回调，最后讲协程。</p>
+<h3 id="1-stdasync最省事的写法"><a class="header" href="#1-stdasync最省事的写法">1. std::async：最省事的写法</a></h3>
+<pre><code class="language-c++">#include &lt;future&gt;
+
+int compute(int x)
+{
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return x * x;
+}
+
+int main()
+{
+    std::future&lt;int&gt; fut = std::async(std::launch::async, compute, 10);
+
+    // 主线程继续做别的事
+    std::cout &lt;&lt; "doing other work\n";
+
+    int result = fut.get();   // 需要结果时取回，会阻塞直到完成
+    std::cout &lt;&lt; result &lt;&lt; '\n';   // 100
+}
+</code></pre>
+<p><code>std::async</code> 返回一个 <code>std::future&lt;T&gt;</code>，<code>get()</code> 会阻塞直到结果就绪。如果任务抛了异常，<code>get()</code> 会重新抛出。</p>
+<p><strong>启动策略</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">策略</th><th style="text-align: left">行为</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::launch::async</code></td><td style="text-align: left">立即在新线程上启动</td></tr>
+<tr><td style="text-align: left"><code>std::launch::deferred</code></td><td style="text-align: left">延迟到 <code>get()</code> / <code>wait()</code> 时才在当前线程执行</td></tr>
+<tr><td style="text-align: left">默认（两者都不指定）</td><td style="text-align: left">由实现选择</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>默认策略是个陷阱</strong>。如果实现选择了 <code>deferred</code>，任务根本不会异步执行——<code>get()</code> 时才同步跑一遍。这会悄悄破坏你的并发假设：</p>
+<pre><code class="language-c++">// 危险：可能根本没并发
+auto f1 = std::async(task1);
+auto f2 = std::async(task2);
+f1.get();
+f2.get();
+</code></pre>
+<p>如果两个任务都是 <code>deferred</code>，它们会串行执行。<strong>要并发就显式写 <code>std::launch::async</code></strong>。</p>
+<h3 id="2-stdpromise--stdfuture手动传递结果"><a class="header" href="#2-stdpromise--stdfuture手动传递结果">2. std::promise / std::future：手动传递结果</a></h3>
+<p><code>std::promise</code> 是「结果的写端」，<code>std::future</code> 是「结果的读端」。它们通过一个共享状态连接。</p>
+<pre><code class="language-c++">#include &lt;future&gt;
+#include &lt;thread&gt;
+
+void worker(std::promise&lt;int&gt; prom)
+{
+    try
+    {
+        int result = doSomething();
+        prom.set_value(result);        // 设置结果
+    }
+    catch (...)
+    {
+        prom.set_exception(std::current_exception());   // 传递异常
+    }
+}
+
+int main()
+{
+    std::promise&lt;int&gt; prom;
+    std::future&lt;int&gt; fut = prom.get_future();
+
+    std::thread t(worker, std::move(prom));
+
+    int result = fut.get();   // 等待并取回
+    t.join();
+}
+</code></pre>
+<p><strong>promise 必须被移动</strong>（不可拷贝），因为结果只能被设置一次。</p>
+<p>适合的场景：任务的结果不是由「函数返回值」自然产生的，比如回调式 API 里在回调中设置结果：</p>
+<pre><code class="language-c++">std::future&lt;int&gt; asyncRead(Connection&amp; conn)
+{
+    auto prom = std::make_shared&lt;std::promise&lt;int&gt;&gt;();
+    auto fut = prom-&gt;get_future();
+
+    conn.readAsync([prom](int value) {
+        prom-&gt;set_value(value);   // 回调里设置结果
+    });
+
+    return fut;
+}
+</code></pre>
+<h3 id="3-stdpackaged_task把任务包装成可调用对象"><a class="header" href="#3-stdpackaged_task把任务包装成可调用对象">3. std::packaged_task：把任务包装成可调用对象</a></h3>
+<p><code>std::packaged_task</code> 把「一个可调用对象 + 一个 future」绑在一起，任务执行时自动把返回值（或异常）送进 future。</p>
+<pre><code class="language-c++">#include &lt;future&gt;
+
+std::packaged_task&lt;int(int)&gt; task([](int x) {
+    return x * x;
+});
+
+std::future&lt;int&gt; fut = task.get_future();
+
+// 可以在任意线程、任意时机执行
+std::thread t(std::move(task), 10);
+t.join();
+
+std::cout &lt;&lt; fut.get();   // 100
+</code></pre>
+<p>它的价值在于<strong>任务可以被存储、传递、排队</strong>——这正是线程池需要的：</p>
+<pre><code class="language-c++">class ThreadPool
+{
+    std::queue&lt;std::packaged_task&lt;void()&gt;&gt; tasks_;
+    // ...
+
+public:
+    template&lt;class F&gt;
+    auto submit(F&amp;&amp; f) -&gt; std::future&lt;decltype(f())&gt;
+    {
+        using ReturnType = decltype(f());
+
+        std::packaged_task&lt;ReturnType()&gt; task(std::forward&lt;F&gt;(f));
+        std::future&lt;ReturnType&gt; fut = task.get_future();
+
+        {
+            std::lock_guard lock(mtx_);
+            tasks_.emplace(std::move(task));
+        }
+        cv_.notify_one();
+
+        return fut;   // 调用者拿到 future，稍后取结果
+    }
+};
+</code></pre>
+<h3 id="4-三种-future-工具对比"><a class="header" href="#4-三种-future-工具对比">4. 三种 Future 工具对比</a></h3>
+<p><code>std::async</code>、<code>std::promise</code>、<code>std::packaged_task</code> 都属于 Future/Promise 风格，区别在于「结果是怎么产生的」：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">方式</th><th style="text-align: left">抽象层次</th><th style="text-align: left">结果从哪来</th><th style="text-align: left">适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::async</code></td><td style="text-align: left">最高</td><td style="text-align: left">函数返回值，库自动处理</td><td style="text-align: left">一次性任务，不关心线程管理</td></tr>
+<tr><td style="text-align: left"><code>std::promise</code></td><td style="text-align: left">最低</td><td style="text-align: left">手动 <code>set_value</code></td><td style="text-align: left">结果来自回调、需要手动控制时机</td></tr>
+<tr><td style="text-align: left"><code>std::packaged_task</code></td><td style="text-align: left">中等</td><td style="text-align: left">执行时自动填入</td><td style="text-align: left">任务需要排队、存储、传递</td></tr>
+</tbody>
+</table>
+</div>
+<p>三者最终都产生 <code>std::future</code>，取结果的方式一致。选哪个取决于<strong>结果是怎么产生的</strong>。</p>
+<blockquote>
+<p>注意区分两个维度：这里是「Future/Promise 风格内部的三种工具」，而本节开头讲的是「回调 / Future / 协程三种风格」。前者是同一风格下的不同工具，后者是根本不同的代码组织方式。</p>
+</blockquote>
+<h2 id="二future-的细节"><a class="header" href="#二future-的细节">二、future 的细节</a></h2>
+<h3 id="1-shared_future"><a class="header" href="#1-shared_future">1. shared_future</a></h3>
+<p><code>std::future</code> 的 <code>get()</code> 只能调用一次，且会移动结果。多个线程需要读同一结果时用 <code>std::shared_future</code>：</p>
+<pre><code class="language-c++">std::promise&lt;int&gt; prom;
+std::shared_future&lt;int&gt; sfut = prom.get_future().share();
+
+auto reader = [sfut] {
+    std::cout &lt;&lt; sfut.get() &lt;&lt; '\n';   // 可以多次调用
+};
+
+std::thread t1(reader), t2(reader);
+prom.set_value(42);
+t1.join();
+t2.join();
+</code></pre>
+<h3 id="2-超时等待"><a class="header" href="#2-超时等待">2. 超时等待</a></h3>
+<pre><code class="language-c++">std::future&lt;int&gt; fut = std::async(std::launch::async, slowTask);
+
+// 等待最多 100ms
+if (fut.wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
+{
+    std::cout &lt;&lt; fut.get() &lt;&lt; '\n';
+}
+else
+{
+    std::cout &lt;&lt; "还没完成\n";
+}
+</code></pre>
+<p>三种状态：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">状态</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::future_status::ready</code></td><td style="text-align: left">结果就绪</td></tr>
+<tr><td style="text-align: left"><code>std::future_status::timeout</code></td><td style="text-align: left">超时</td></tr>
+<tr><td style="text-align: left"><code>std::future_status::deferred</code></td><td style="text-align: left">任务是延迟执行的</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-future-的局限"><a class="header" href="#3-future-的局限">3. future 的局限</a></h3>
+<p>标准库的 <code>future</code> 有几个明显的短板：</p>
+<p><strong>没有 <code>then()</code></strong>。无法链式组合：</p>
+<pre><code class="language-c++">// 标准库做不到这样
+fut.then([](int x) { return x * 2; })
+   .then([](int x) { std::cout &lt;&lt; x; });
+</code></pre>
+<p>C++ 标准委员会曾推动 <code>std::future</code> 的扩展（<code>.then()</code>、<code>when_all</code>、<code>when_any</code>），但最终没有进入标准。需要这些功能得用第三方库（如 folly::Future、boost::future）。</p>
+<p><strong>析构可能阻塞</strong>。<code>std::async</code> 返回的 future，如果从未调用 <code>get()</code> 或 <code>wait()</code>，析构时会<strong>同步等待任务完成</strong>：</p>
+<pre><code class="language-c++">{
+    auto fut = std::async(std::launch::async, longTask);
+    // 忘记 get()
+}   // 这里会阻塞，直到 longTask 完成
+</code></pre>
+<p>这常常出乎意料。要么确保调用 <code>get()</code>，要么用线程池自己管理。</p>
+<p><strong>无法取消</strong>。<code>future</code> 没有取消机制。任务一旦启动就必须跑完。</p>
+<h2 id="三回调函数"><a class="header" href="#三回调函数">三、回调函数</a></h2>
+<p>回调是另一种组织异步的方式：不返回 future，而是<strong>传入一个函数，任务完成时调用它</strong>。</p>
+<h3 id="1-基本形式"><a class="header" href="#1-基本形式">1. 基本形式</a></h3>
+<pre><code class="language-c++">void readAsync(const std::string&amp; path, std::function&lt;void(std::string)&gt; callback)
+{
+    std::thread([path, callback] {
+        std::string content = readFile(path);
+        callback(content);   // 完成后调用
+    }).detach();
+}
+
+// 使用
+readAsync("data.txt", [](std::string content) {
+    std::cout &lt;&lt; "读到 " &lt;&lt; content.size() &lt;&lt; " 字节\n";
+});
+</code></pre>
+<p>回调比 future 更灵活——可以多次调用（流式数据）、可以在任意时机调用。但代价是<strong>控制流被打散</strong>。</p>
+<h3 id="2-生命周期问题"><a class="header" href="#2-生命周期问题">2. 生命周期问题</a></h3>
+<p>回调最大的坑是<strong>捕获对象的生命周期</strong>。如果回调持有 <code>this</code>，而对象在回调触发前被销毁了：</p>
+<pre><code class="language-c++">class Downloader
+{
+public:
+    void start()
+    {
+        // 危险：this 可能在回调前失效
+        asyncFetch([this](Data d) {
+            this-&gt;onData(d);   // 悬空指针
+        });
+    }
+
+    void onData(Data d) { /* ... */ }
+};
+
+// 使用
+{
+    Downloader d;
+    d.start();
+}   // d 析构，但异步任务还在跑
+</code></pre>
+<p><strong>解决办法一：<code>enable_shared_from_this</code></strong></p>
+<pre><code class="language-c++">class Downloader : public std::enable_shared_from_this&lt;Downloader&gt;
+{
+public:
+    void start()
+    {
+        auto self = shared_from_this();   // 延长生命周期
+        asyncFetch([self](Data d) {
+            self-&gt;onData(d);   // 只要回调存在，对象就活着
+        });
+    }
+};
+</code></pre>
+<p><strong>解决办法二：弱引用 + 检查</strong></p>
+<pre><code class="language-c++">class Downloader : public std::enable_shared_from_this&lt;Downloader&gt;
+{
+public:
+    void start()
+    {
+        std::weak_ptr&lt;Downloader&gt; weak = shared_from_this();
+        asyncFetch([weak](Data d) {
+            if (auto self = weak.lock())   // 对象还活着吗？
+                self-&gt;onData(d);
+        });
+    }
+};
+</code></pre>
+<p>弱引用不会延长生命周期，适合「对象没了就放弃回调」的语义。</p>
+<p><strong>解决办法三：取消机制</strong></p>
+<p>让异步操作支持取消，对象析构时先取消：</p>
+<pre><code class="language-c++">class Downloader
+{
+    std::stop_source stopSrc_;
+public:
+    ~Downloader() { stopSrc_.request_stop(); }
+
+    void start()
+    {
+        auto token = stopSrc_.get_token();
+        asyncFetch([this, token](Data d) {
+            if (token.stop_requested()) return;
+            onData(d);
+        });
+    }
+};
+</code></pre>
+<h3 id="3-回调地狱"><a class="header" href="#3-回调地狱">3. 回调地狱</a></h3>
+<p>回调嵌套多了会变成这样：</p>
+<pre><code class="language-c++">login(user, [](Result r1) {
+    fetchProfile(r1.id, [](Profile p) {
+        loadSettings(p.settingsId, [](Settings s) {
+            applyTheme(s.theme, [](bool ok) {
+                // 越来越深……
+            });
+        });
+    });
+});
+</code></pre>
+<p>这就是「回调地狱」。协程的动机之一就是解决它。</p>
+<h3 id="4-回调与-future-的桥接"><a class="header" href="#4-回调与-future-的桥接">4. 回调与 future 的桥接</a></h3>
+<p>两种风格可以互相转换。前面见过回调 → future（用 <code>promise</code>）。反过来，future → 回调：</p>
+<pre><code class="language-c++">template&lt;class T, class F&gt;
+void then(std::future&lt;T&gt; fut, F callback)
+{
+    std::thread([fut = std::move(fut), callback]() mutable {
+        callback(fut.get());
+    }).detach();
+}
+
+// 使用
+then(std::async(std::launch::async, compute, 10), [](int x) {
+    std::cout &lt;&lt; x &lt;&lt; '\n';
+});
+</code></pre>
+<h3 id="5-异步回调里的-toctou"><a class="header" href="#5-异步回调里的-toctou">5. 异步回调里的 TOCTOU</a></h3>
+<p>异步代码天然存在「检查」和「使用」之间的时间差，这正是 TOCTOU（检查时刻到使用时刻）的温床。</p>
+<p>看这个例子——检查时对象还活着，回调触发时已经没了：</p>
+<pre><code class="language-c++">class Connection
+{
+public:
+    void send(const std::string&amp; data)
+    {
+        if (!connected_)          // 检查：连接还在吗
+            return;
+
+        // ... 中间可能有 await / 回调 / 线程切换 ...
+
+        socket_.write(data);      // 使用：连接可能已经断开！
+    }
+};
+</code></pre>
+<p><strong>在异步代码里，这个窗口可能非常长</strong>——一次网络往返、一次磁盘 I/O，都是毫秒级甚至秒级。相比之下，多线程里的 TOCTOU 窗口通常只有几条指令。</p>
+<p>回调场景的典型形态：</p>
+<pre><code class="language-c++">// 危险：回调触发时，检查的结论可能已经过期
+void onData(Data d)
+{
+    if (buffer_.size() &lt; MAX)     // 检查
+    {
+        process(d);                // 使用 —— 但 buffer_ 可能已被其它回调填满
+        buffer_.push_back(d);
+    }
+}
+</code></pre>
+<p><strong>解决办法和同步代码一样：把检查和使用合并成一次原子操作。</strong></p>
+<pre><code class="language-c++">void onData(Data d)
+{
+    std::lock_guard lock(mtx_);
+    if (buffer_.size() &gt;= MAX)    // 检查和使用在同一临界区
+        return;
+    buffer_.push_back(d);
+    process(d);
+}
+</code></pre>
+<p>或者用「一次操作 + 错误处理」的 EAFP 风格：</p>
+<pre><code class="language-c++">void onData(Data d)
+{
+    if (!tryPush(d))              // 一次操作，失败就放弃
+        return;
+    process(d);
+}
+</code></pre>
+<p><strong>异步代码里还要特别注意</strong>：<code>co_await</code>、回调、<code>future.get()</code> 都是潜在的「检查点」。任何跨越这些点的「先判断、后操作」都需要重新审视。详见<a href="./Mutex.html">互斥量与锁</a>中的 TOCTOU 一节。</p>
+<h2 id="四协程"><a class="header" href="#四协程">四、协程</a></h2>
+<p>协程（coroutine）是 C++20 引入的语言特性。它让函数可以<strong>暂停和恢复</strong>，而不阻塞线程。</p>
+<h3 id="1-三个关键字"><a class="header" href="#1-三个关键字">1. 三个关键字</a></h3>
+<pre><code class="language-c++">#include &lt;coroutine&gt;
+
+// co_await：等待一个异步操作完成
+Task fetchAsync()
+{
+    auto data = co_await fetch("url");   // 暂停，让出线程
+    co_return process(data);             // 返回结果
+}
+
+// co_yield：产生一个值并暂停
+Generator&lt;int&gt; range(int n)
+{
+    for (int i = 0; i &lt; n; ++i)
+        co_yield i;      // 每次产生一个值
+}
+
+// co_return：结束协程并返回
+</code></pre>
+<p>只要函数体里出现这三个关键字之一，它就是协程。</p>
+<h3 id="2-为什么协程能解决回调地狱"><a class="header" href="#2-为什么协程能解决回调地狱">2. 为什么协程能解决回调地狱</a></h3>
+<p>用协程重写前面的嵌套回调：</p>
+<pre><code class="language-c++">Task applyThemeForUser(User user)
+{
+    Result r1 = co_await login(user);
+    Profile p = co_await fetchProfile(r1.id);
+    Settings s = co_await loadSettings(p.settingsId);
+    bool ok = co_await applyTheme(s.theme);
+}
+</code></pre>
+<p><strong>看起来是同步代码，实际是异步执行</strong>。每个 <code>co_await</code> 会暂停当前协程、把控制权还给调用者，等操作完成后再恢复。没有嵌套，没有回调地狱。</p>
+<h3 id="3-标准库只给了机制"><a class="header" href="#3-标准库只给了机制">3. 标准库只给了机制</a></h3>
+<p>这是最容易误解的地方：<strong>C++20 的协程是纯粹的编译器机制，标准库几乎没有提供可用的协程类型</strong>。</p>
+<p>编译器负责把协程函数转换成状态机，但「<code>Task</code> 是什么」「<code>Generator</code> 怎么实现」「<code>co_await</code> 一个网络请求意味着什么」——这些都要你自己定义，或者用库。</p>
+<p>标准库唯一提供的协程类型是 C++23 的 <code>std::generator</code>：</p>
+<pre><code class="language-c++">#include &lt;generator&gt;
+
+std::generator&lt;int&gt; fibonacci()
+{
+    int a = 0, b = 1;
+    while (true)
+    {
+        co_yield a;
+        std::tie(a, b) = std::pair{b, a + b};
+    }
+}
+
+int main()
+{
+    for (int x : fibonacci())
+    {
+        if (x &gt; 100) break;
+        std::cout &lt;&lt; x &lt;&lt; ' ';
+    }
+}
+</code></pre>
+<h3 id="4-自己实现需要什么"><a class="header" href="#4-自己实现需要什么">4. 自己实现需要什么</a></h3>
+<p>一个最小的协程类型需要定义 <code>promise_type</code>：</p>
+<pre><code class="language-c++">struct Task
+{
+    struct promise_type
+    {
+        Task get_return_object() { return {}; }
+        std::suspend_never initial_suspend() { return {}; }
+        std::suspend_never final_suspend() noexcept { return {}; }
+        void return_void() {}
+        void unhandled_exception() { std::terminate(); }
+    };
+};
+</code></pre>
+<p><code>promise_type</code> 是编译器与协程交互的接口——它决定协程何时挂起、结果如何传递、异常如何处理。</p>
+<p>真正可用的协程库（如 cppcoro、libunifex）需要实现调度、内存分配、<code>co_await</code> 的 awaiter 协议等，工作量很大。</p>
+<h3 id="5-协程与线程的关系"><a class="header" href="#5-协程与线程的关系">5. 协程与线程的关系</a></h3>
+<p><strong>协程不是线程</strong>。协程在哪个线程上恢复，取决于调度器。同一个线程可以跑成千上万个协程，因为挂起时不占用栈。</p>
+<p>这让协程非常适合<strong>高并发 I/O 密集</strong>场景：等待网络响应时挂起，线程去跑别的协程，而不是阻塞在 <code>read()</code> 上。</p>
+<p>但协程<strong>不解决 CPU 密集问题</strong>——计算任务仍然需要多线程。</p>
+<h2 id="五选择哪种方式"><a class="header" href="#五选择哪种方式">五、选择哪种方式</a></h2>
+<p>先选风格，再选工具：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">风格</th><th style="text-align: left">适合什么情况</th><th style="text-align: left">不适合什么情况</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>回调</strong></td><td style="text-align: left">事件驱动、流式数据、需要多次通知</td><td style="text-align: left">复杂的顺序流程（会变成回调地狱）</td></tr>
+<tr><td style="text-align: left"><strong>Future</strong></td><td style="text-align: left">一次性任务、需要取一次结果</td><td style="text-align: left">需要链式组合、需要取消</td></tr>
+<tr><td style="text-align: left"><strong>协程</strong></td><td style="text-align: left">复杂的异步流程、大量并发 I/O</td><td style="text-align: left">简单场景（引入的复杂度不划算）</td></tr>
+</tbody>
+</table>
+</div>
+<p>具体到工具：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">需求</th><th style="text-align: left">推荐</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">一次性并行计算</td><td style="text-align: left"><code>std::async</code> + <code>launch::async</code></td></tr>
+<tr><td style="text-align: left">结果来自回调式 API</td><td style="text-align: left"><code>std::promise</code></td></tr>
+<tr><td style="text-align: left">任务需要排队</td><td style="text-align: left"><code>std::packaged_task</code> + 线程池</td></tr>
+<tr><td style="text-align: left">简单的完成通知</td><td style="text-align: left">回调函数</td></tr>
+<tr><td style="text-align: left">复杂的异步流程</td><td style="text-align: left">协程（配合库）</td></tr>
+<tr><td style="text-align: left">需要 <code>.then()</code> 链式组合</td><td style="text-align: left">第三方 future 库</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="六常见误区"><a class="header" href="#六常见误区">六、常见误区</a></h2>
+<p><strong>「<code>std::async</code> 一定异步执行」</strong> —— 默认策略可能是 <code>deferred</code>，任务会延迟到 <code>get()</code> 时同步执行。要并发就显式指定 <code>launch::async</code>。</p>
+<p><strong>「<code>std::async</code> 返回的 future 析构不会阻塞」</strong> —— 会。如果没调用 <code>get()</code>，析构时会等待任务完成。</p>
+<p><strong>「<code>future::get()</code> 可以调用多次」</strong> —— 只能一次。需要多次读用 <code>shared_future</code>。</p>
+<p><strong>「回调比 future 好」</strong> —— 各有场景。回调灵活但容易写出回调地狱和生命周期 bug；future 简单但缺少组合能力。</p>
+<p><strong>「协程是并发的」</strong> —— 协程是<strong>并发模型</strong>，不是并行。它在单线程上也能跑，靠挂起切换而非线程切换。</p>
+<p><strong>「C++20 有协程就能直接写异步代码了」</strong> —— 标准库只提供了语言机制，可用的协程类型要自己写或用库。</p>
+<p><strong>「<code>co_await</code> 会阻塞线程」</strong> —— 不会。它挂起协程、让出线程，这正是协程的价值。</p>
+<p><strong>「异步代码里检查过就没问题了」</strong> —— 检查和使用之间隔着 <code>co_await</code>、回调或 I/O，状态可能已经改变，这就是 TOCTOU。</p>
+<h2 id="七相关章节"><a class="header" href="#七相关章节">七、相关章节</a></h2>
+<ul>
+<li><a href="./Thread.html">线程基础</a>：异步任务背后的线程</li>
+<li><a href="./Mutex.html">互斥量与锁</a>：TOCTOU 与加锁的正确姿势</li>
+<li><a href="./Condition_Variable.html">条件变量</a>：future 内部的等待机制</li>
+<li><a href="./Patterns.html">并发模式与陷阱</a>：线程池与任务队列</li>
+<li><a href="../Modern_Cpp.html">现代 C++ 特性</a>：协程的语言机制</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../Advance/Concurrency/Atomic.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../Advance/Concurrency/Patterns.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../Advance/Concurrency/Atomic.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../Advance/Concurrency/Patterns.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-09f2665d.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

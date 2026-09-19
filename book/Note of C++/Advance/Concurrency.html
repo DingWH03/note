@@ -39,10 +39,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-051a48f6.js";
+            window.path_to_searchindex_js = "../searchindex-3862d85f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-4694e643.js"></script>
+        <script src="../toc-580a2eac.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -186,462 +186,66 @@
                     <main>
                         <h1 id="多线程与并发"><a class="header" href="#多线程与并发">多线程与并发</a></h1>
 <p>C++11 起，标准库提供了完整的并发支持：线程、互斥量、条件变量、原子操作和异步任务。这些设施定义在 <code>&lt;thread&gt;</code>、<code>&lt;mutex&gt;</code>、<code>&lt;condition_variable&gt;</code>、<code>&lt;atomic&gt;</code>、<code>&lt;future&gt;</code> 等头文件中，让并发程序不再依赖平台特定的 API。</p>
-<p>并发编程的困难不在于 API，而在于<strong>正确性</strong>：数据竞争、死锁、虚假唤醒、内存序等问题往往在测试中难以复现，却会在生产中造成严重后果。</p>
+<p>但并发编程的困难不在于 API，而在于<strong>正确性</strong>。数据竞争、死锁、虚假唤醒、内存序错误这些问题往往在测试中难以复现，却会在生产环境造成严重后果。更麻烦的是，很多错误不会立即崩溃，而是表现为「偶尔算错一个数」——这种 bug 的排查成本极高。</p>
 <blockquote class="blockquote-tag blockquote-tag-warning">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
 <p><strong>并发问题的本质</strong></p>
 <p>只要多个线程同时访问同一块内存，且其中至少一个是写操作，且没有同步措施，就构成<strong>数据竞争（data race）</strong>——这是未定义行为，编译器可以做任何假设，结果完全不可预测。</p>
 <p>加锁或使用原子操作是消除数据竞争的唯一途径。</p>
 </blockquote>
-<h2 id="一线程"><a class="header" href="#一线程">一、线程</a></h2>
-<h3 id="1-stdthread"><a class="header" href="#1-stdthread">1. std::thread</a></h3>
-<p><code>std::thread</code> 在构造时立即启动线程，顶层函数的返回值被忽略：</p>
-<pre><code class="language-c++">#include &lt;iostream&gt;
-#include &lt;thread&gt;
-
-void hello(int id)
-{
-    std::cout &lt;&lt; "线程 " &lt;&lt; id &lt;&lt; " 运行中\n";
-}
-
-int main()
-{
-    std::thread t1(hello, 1);              // 启动线程
-    std::thread t2([] { hello(2); });      // 用 lambda
-
-    t1.join();   // 等待 t1 结束
-    t2.join();   // 等待 t2 结束
-}
-</code></pre>
-<p><strong>必须显式 <code>join()</code> 或 <code>detach()</code></strong>。如果 <code>thread</code> 对象在析构时仍处于 joinable 状态，程序会直接调用 <code>std::terminate</code>：</p>
-<pre><code class="language-c++">{
-    std::thread t(hello, 1);
-}   // 错误：t 析构时未 join/detach，程序终止
-</code></pre>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">操作</th><th style="text-align: left">含义</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>join()</code></td><td style="text-align: left">阻塞等待线程结束</td></tr>
-<tr><td style="text-align: left"><code>detach()</code></td><td style="text-align: left">让线程独立运行，不再与 <code>thread</code> 对象关联</td></tr>
-<tr><td style="text-align: left"><code>joinable()</code></td><td style="text-align: left">是否关联着一个线程</td></tr>
-<tr><td style="text-align: left"><code>get_id()</code></td><td style="text-align: left">返回线程 ID</td></tr>
-<tr><td style="text-align: left"><code>hardware_concurrency()</code></td><td style="text-align: left">返回硬件支持的并发线程数（静态函数）</td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="2-stdjthreadc20"><a class="header" href="#2-stdjthreadc20">2. std::jthread（C++20）</a></h3>
-<p><code>std::jthread</code> 解决了 <code>thread</code> 的两大痛点：<strong>析构时自动 join</strong>，以及<strong>支持协作式取消</strong>：</p>
-<pre><code class="language-c++">#include &lt;thread&gt;
-
-int main()
-{
-    std::jthread t([](std::stop_token st) {
-        while (!st.stop_requested())
-        {
-            // 执行任务
-        }
-    });
-}   // 离开作用域时自动请求停止并 join
-</code></pre>
-<p><code>jthread</code> 内部持有一个 <code>std::stop_source</code>，构造时会把它对应的 <code>std::stop_token</code> 作为第一个参数传给线程函数。线程通过 <code>stop_requested()</code> 检查是否收到停止请求。</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">成员函数</th><th style="text-align: left">作用</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>request_stop()</code></td><td style="text-align: left">请求停止</td></tr>
-<tr><td style="text-align: left"><code>get_stop_token()</code></td><td style="text-align: left">获取停止令牌</td></tr>
-<tr><td style="text-align: left"><code>get_stop_source()</code></td><td style="text-align: left">获取停止源</td></tr>
-</tbody>
-</table>
-</div>
-<p><strong>优先使用 <code>jthread</code></strong>：它不会因为忘记 <code>join</code> 而终止程序，且提供了标准的取消机制。</p>
-<h3 id="3-当前线程操作"><a class="header" href="#3-当前线程操作">3. 当前线程操作</a></h3>
-<pre><code class="language-c++">#include &lt;thread&gt;
-#include &lt;chrono&gt;
-
-std::this_thread::get_id();                          // 当前线程 ID
-std::this_thread::sleep_for(std::chrono::seconds(1)); // 睡眠 1 秒
-std::this_thread::sleep_until(tp);                   // 睡眠到指定时间点
-std::this_thread::yield();                           // 让出 CPU
-</code></pre>
-<h2 id="二互斥量与锁"><a class="header" href="#二互斥量与锁">二、互斥量与锁</a></h2>
-<h3 id="1-互斥量类型"><a class="header" href="#1-互斥量类型">1. 互斥量类型</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">类型</th><th style="text-align: left">头文件</th><th style="text-align: left">说明</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>std::mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">基本互斥量</td></tr>
-<tr><td style="text-align: left"><code>std::recursive_mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">同一线程可重复加锁</td></tr>
-<tr><td style="text-align: left"><code>std::timed_mutex</code></td><td style="text-align: left"><code>&lt;mutex&gt;</code></td><td style="text-align: left">支持超时加锁</td></tr>
-<tr><td style="text-align: left"><code>std::shared_mutex</code></td><td style="text-align: left"><code>&lt;shared_mutex&gt;</code></td><td style="text-align: left">读写锁，支持多个读者或一个写者（C++17）</td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="2-raii-锁包装器"><a class="header" href="#2-raii-锁包装器">2. RAII 锁包装器</a></h3>
-<p><strong>不要手动调用 <code>lock()</code> / <code>unlock()</code></strong>，应使用 RAII 包装器，保证异常安全：</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">包装器</th><th style="text-align: left">版本</th><th style="text-align: left">特点</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>std::lock_guard</code></td><td style="text-align: left">C++11</td><td style="text-align: left">最简单，构造时加锁，析构时解锁，不可移动</td></tr>
-<tr><td style="text-align: left"><code>std::unique_lock</code></td><td style="text-align: left">C++11</td><td style="text-align: left">可移动、可延迟加锁、可手动解锁，配合条件变量使用</td></tr>
-<tr><td style="text-align: left"><code>std::scoped_lock</code></td><td style="text-align: left">C++17</td><td style="text-align: left">可同时锁定<strong>多个</strong>互斥量，且避免死锁</td></tr>
-<tr><td style="text-align: left"><code>std::shared_lock</code></td><td style="text-align: left">C++14</td><td style="text-align: left">配合 <code>shared_mutex</code> 实现共享锁定</td></tr>
-</tbody>
-</table>
-</div>
-<pre><code class="language-c++">#include &lt;mutex&gt;
-
-std::mutex mtx;
-int counter = 0;
-
-void increment()
-{
-    std::lock_guard&lt;std::mutex&gt; lock(mtx);   // 自动加锁
-    ++counter;
-}   // 自动解锁，即使中途抛异常
-</code></pre>
-<h3 id="3-同时锁定多个互斥量"><a class="header" href="#3-同时锁定多个互斥量">3. 同时锁定多个互斥量</a></h3>
-<p>需要锁定多个互斥量时，用 <code>std::scoped_lock</code>（C++17）可以避免死锁：</p>
-<pre><code class="language-c++">std::mutex m1, m2;
-
-void transfer()
-{
-    // 同时锁定两个，内部使用死锁避免算法
-    std::scoped_lock lock(m1, m2);
-    // 操作共享数据
-}
-</code></pre>
-<p>如果手动按不同顺序加锁，两个线程可能互相等待对方释放，形成<strong>死锁</strong>：</p>
-<pre><code class="language-c++">// 线程 A：lock(m1) 然后 lock(m2)
-// 线程 B：lock(m2) 然后 lock(m1)
-// 可能死锁
-</code></pre>
-<h3 id="4-延迟加锁"><a class="header" href="#4-延迟加锁">4. 延迟加锁</a></h3>
-<p><code>std::unique_lock</code> 支持延迟加锁，这在配合条件变量时是必需的：</p>
-<pre><code class="language-c++">std::unique_lock&lt;std::mutex&gt; lock(mtx, std::defer_lock);   // 暂不加锁
-// ... 做一些准备工作
-lock.lock();   // 手动加锁
-</code></pre>
-<p>可用的标签：<code>std::defer_lock</code>、<code>std::try_to_lock</code>、<code>std::adopt_lock</code>。</p>
-<h3 id="5-call_once"><a class="header" href="#5-call_once">5. call_once</a></h3>
-<p><code>std::call_once</code> 保证某个函数在多线程环境下<strong>只被执行一次</strong>，常用于单例模式初始化：</p>
-<pre><code class="language-c++">std::once_flag flag;
-
-void init()
-{
-    std::call_once(flag, [] {
-        // 只会执行一次
-    });
-}
-</code></pre>
-<h2 id="三条件变量"><a class="header" href="#三条件变量">三、条件变量</a></h2>
-<p>条件变量用于让线程<strong>等待某个条件成立</strong>，需要配合互斥量和谓词使用：</p>
-<pre><code class="language-c++">#include &lt;condition_variable&gt;
-#include &lt;mutex&gt;
-#include &lt;queue&gt;
-
-std::mutex mtx;
-std::condition_variable cv;
-std::queue&lt;int&gt; q;
-
-void producer()
-{
-    {
-        std::lock_guard&lt;std::mutex&gt; lock(mtx);
-        q.push(42);
-    }
-    cv.notify_one();   // 通知等待的线程
-}
-
-void consumer()
-{
-    std::unique_lock&lt;std::mutex&gt; lock(mtx);
-
-    // 必须用谓词循环，防止虚假唤醒
-    cv.wait(lock, [] { return !q.empty(); });
-
-    int value = q.front();
-    q.pop();
-}
-</code></pre>
-<blockquote class="blockquote-tag blockquote-tag-warning">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
-<p><strong>必须使用带谓词的 <code>wait</code></strong></p>
-<p>条件变量可能发生<strong>虚假唤醒（spurious wakeup）</strong>——即使没有 <code>notify</code>，<code>wait</code> 也可能返回。因此必须用循环重新检查条件：</p>
-<pre><code class="language-c++">// 错误：可能被虚假唤醒
-cv.wait(lock);
-if (q.empty()) { /* 条件其实不成立 */ }
-
-// 正确：带谓词的版本内部就是循环
-cv.wait(lock, [] { return !q.empty(); });
-</code></pre>
+<blockquote class="blockquote-tag blockquote-tag-note">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+<p><strong>加锁了也不一定安全</strong></p>
+<p>数据竞争只是并发问题的一类。还有一类更隐蔽的问题叫 <strong>TOCTOU</strong>（检查时刻到使用时刻）：即使每一处访问都加了锁，只要「检查」和「使用」被拆到两个临界区，中间的状态变化仍会导致错误。详见<a href="./Concurrency/Mutex.html">互斥量与锁</a>。</p>
 </blockquote>
-<p><code>condition_variable</code> 只能配合 <code>std::unique_lock&lt;std::mutex&gt;</code>；如果需要配合其它锁类型，使用 <code>std::condition_variable_any</code>。</p>
-<h2 id="四原子操作"><a class="header" href="#四原子操作">四、原子操作</a></h2>
-<h3 id="1-stdatomic"><a class="header" href="#1-stdatomic">1. std::atomic</a></h3>
-<p>对于简单的共享变量，原子操作比加锁更轻量：</p>
-<pre><code class="language-c++">#include &lt;atomic&gt;
-
-std::atomic&lt;int&gt; counter{0};
-
-void increment()
-{
-    ++counter;   // 原子操作，无需加锁
-}
-</code></pre>
-<p><code>std::atomic</code> 支持的类型包括整型、指针、布尔型，C++20 起还包括浮点型。对于自定义类型，可以用 <code>std::atomic&lt;T&gt;</code> 但要求 <code>T</code> 是可平凡复制的，且实现可能使用内部锁。</p>
-<pre><code class="language-c++">std::atomic&lt;bool&gt; flag{false};
-flag.store(true);              // 写
-bool v = flag.load();          // 读
-bool old = flag.exchange(false);  // 交换并返回旧值
-</code></pre>
-<h3 id="2-比较并交换cas"><a class="header" href="#2-比较并交换cas">2. 比较并交换（CAS）</a></h3>
-<p><code>compare_exchange_weak</code> / <code>compare_exchange_strong</code> 是无锁编程的基础，用于实现「读取-修改-写回」的原子版本：</p>
-<pre><code class="language-c++">std::atomic&lt;int&gt; value{0};
-
-void update(int expected, int desired)
-{
-    // 如果 value == expected，则设为 desired，返回 true
-    // 否则把 value 的当前值写入 expected，返回 false
-    value.compare_exchange_strong(expected, desired);
-}
-</code></pre>
-<p><code>weak</code> 版本可能<strong>虚假失败</strong>（即使值相等也返回 false），因此在循环中使用；<code>strong</code> 版本不会虚假失败。</p>
-<h3 id="3-内存序"><a class="header" href="#3-内存序">3. 内存序</a></h3>
-<p>原子操作默认使用 <code>std::memory_order_seq_cst</code>（顺序一致性），这是最严格也最慢的选项。其它选项包括：</p>
+<h2 id="本章内容"><a class="header" href="#本章内容">本章内容</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th style="text-align: left">内存序</th><th style="text-align: left">含义</th></tr>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
 </thead>
 <tbody>
-<tr><td style="text-align: left"><code>memory_order_seq_cst</code></td><td style="text-align: left">顺序一致，所有线程看到相同的操作顺序（默认）</td></tr>
-<tr><td style="text-align: left"><code>memory_order_acquire</code></td><td style="text-align: left">用于读，保证之后的读写不会被重排到它之前</td></tr>
-<tr><td style="text-align: left"><code>memory_order_release</code></td><td style="text-align: left">用于写，保证之前的读写不会被重排到它之后</td></tr>
-<tr><td style="text-align: left"><code>memory_order_acq_rel</code></td><td style="text-align: left">同时具备 acquire 和 release 语义</td></tr>
-<tr><td style="text-align: left"><code>memory_order_relaxed</code></td><td style="text-align: left">只保证操作的原子性，不提供同步</td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Thread.html">线程基础</a></td><td style="text-align: left"><code>std::thread</code> 与 <code>std::jthread</code>、线程局部存储、启动与结束</td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Mutex.html">互斥量与锁</a></td><td style="text-align: left">五种互斥量类型、RAII 包装器、死锁避免、TOCTOU、<code>call_once</code></td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Condition_Variable.html">条件变量</a></td><td style="text-align: left">等待与通知、虚假唤醒、生产者消费者模式</td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Atomic.html">原子操作</a></td><td style="text-align: left"><code>std::atomic</code>、CAS 循环、内存序、无锁编程的限度</td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Async.html">异步任务</a></td><td style="text-align: left">回调 / Future / 协程三种风格、<code>async</code>、<code>promise</code>、<code>packaged_task</code></td></tr>
+<tr><td style="text-align: left"><a href="./Concurrency/Patterns.html">并发模式与陷阱</a></td><td style="text-align: left">线程池、回调与事件驱动、常见模式与错误汇总</td></tr>
 </tbody>
 </table>
 </div>
-<pre><code class="language-c++">std::atomic&lt;bool&gt; ready{false};
-int data = 0;
-
-// 线程 A
-data = 42;
-ready.store(true, std::memory_order_release);   // 之前的写入对读者可见
-
-// 线程 B
-while (!ready.load(std::memory_order_acquire)) { }   // 之后的读取能看到 data = 42
-std::cout &lt;&lt; data;
-</code></pre>
-<p>内存序的细节见 <a href="./Memory/Memory_Model.html">C++内存模型（并发）</a>。</p>
-<h3 id="4-原子操作的局限"><a class="header" href="#4-原子操作的局限">4. 原子操作的局限</a></h3>
+<h2 id="怎么选同步手段"><a class="header" href="#怎么选同步手段">怎么选同步手段</a></h2>
+<p>面对一个并发问题，先想清楚「线程之间需要交换什么」，再选工具：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">需求</th><th style="text-align: left">工具</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">保护一小段临界区</td><td style="text-align: left"><code>std::mutex</code> + <code>lock_guard</code></td><td style="text-align: left">最常用，优先考虑</td></tr>
+<tr><td style="text-align: left">保护多个资源，需要一起加锁</td><td style="text-align: left"><code>std::scoped_lock</code></td><td style="text-align: left">自动避免死锁</td></tr>
+<tr><td style="text-align: left">读多写少</td><td style="text-align: left"><code>std::shared_mutex</code> + <code>shared_lock</code></td><td style="text-align: left">允许多个读者并发</td></tr>
+<tr><td style="text-align: left">等待某个条件成立</td><td style="text-align: left"><code>std::condition_variable</code></td><td style="text-align: left">配合互斥量使用</td></tr>
+<tr><td style="text-align: left">单个变量的原子读写</td><td style="text-align: left"><code>std::atomic</code></td><td style="text-align: left">比加锁轻量</td></tr>
+<tr><td style="text-align: left">需要「稍后取结果」</td><td style="text-align: left"><code>std::future</code></td><td style="text-align: left">配合 <code>async</code> / <code>promise</code></td></tr>
+<tr><td style="text-align: left">等待一批任务完成</td><td style="text-align: left"><code>std::latch</code> / <code>std::barrier</code></td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left">限制并发数量</td><td style="text-align: left"><code>std::counting_semaphore</code></td><td style="text-align: left">C++20</td></tr>
+<tr><td style="text-align: left">请求取消长时间任务</td><td style="text-align: left"><code>std::stop_token</code></td><td style="text-align: left">C++20，配合 <code>jthread</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>默认从互斥量开始</strong>。原子操作和无锁结构看起来更快，但正确性极难保证，除非有明确的性能需求，否则不要轻易尝试。</p>
+<h2 id="几条经验"><a class="header" href="#几条经验">几条经验</a></h2>
 <ul>
-<li><strong>复合操作不是原子的</strong>。<code>counter++</code> 是原子的，但 <code>if (counter &gt; 0) counter--;</code> 不是——两步之间可能被其它线程插入。</li>
-<li><strong>无法保护多个变量</strong>。需要同时修改多个相关变量时，仍应使用互斥量。</li>
-<li><strong><code>std::atomic</code> 不可拷贝</strong>。它没有拷贝构造和拷贝赋值（因为拷贝本身无法原子完成）。</li>
+<li><strong>优先用 <code>std::jthread</code></strong>。它会在析构时自动 join，不会因为忘记 <code>join</code> 而让程序终止，还内置了取消机制。</li>
+<li><strong>不要手动 <code>lock()</code> / <code>unlock()</code></strong>。始终用 RAII 包装器，异常路径才安全。</li>
+<li><strong>共享数据越少越好</strong>。最有效的并发优化是减少共享——用消息传递代替共享内存，或者让每个线程持有自己的数据。</li>
+<li><strong>先保证正确，再考虑性能</strong>。<code>seq_cst</code> 最慢但最安全，确认瓶颈后再降级内存序。</li>
+<li><strong>并发 bug 靠工具找</strong>。用 ThreadSanitizer（<code>-fsanitize=thread</code>）而非肉眼审查。</li>
 </ul>
-<h2 id="五异步任务"><a class="header" href="#五异步任务">五、异步任务</a></h2>
-<p><code>&lt;future&gt;</code> 提供了更高层的并发抽象，让调用者可以「稍后取回结果」，而不必手动管理线程。</p>
-<h3 id="1-stdasync"><a class="header" href="#1-stdasync">1. std::async</a></h3>
-<p>最简单的异步执行方式：</p>
-<pre><code class="language-c++">#include &lt;future&gt;
-#include &lt;iostream&gt;
-
-int compute(int x)
-{
-    return x * x;
-}
-
-int main()
-{
-    // 异步执行，返回 future
-    std::future&lt;int&gt; f = std::async(std::launch::async, compute, 5);
-
-    // ... 做其它事情
-
-    int result = f.get();   // 阻塞等待结果
-    std::cout &lt;&lt; result &lt;&lt; '\n';   // 25
-}
-</code></pre>
-<p>启动策略：</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">策略</th><th style="text-align: left">含义</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>std::launch::async</code></td><td style="text-align: left">强制在新线程中执行</td></tr>
-<tr><td style="text-align: left"><code>std::launch::deferred</code></td><td style="text-align: left">延迟到调用 <code>get()</code> 时才执行（同步）</td></tr>
-<tr><td style="text-align: left"><code>std::launch::async | std::launch::deferred</code></td><td style="text-align: left">由实现决定（默认）</td></tr>
-</tbody>
-</table>
-</div>
-<blockquote class="blockquote-tag blockquote-tag-warning">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
-<p><strong>默认策略可能不启动新线程</strong></p>
-<p>不指定策略时，实现可能选择 <code>deferred</code>，导致任务在 <code>get()</code> 时才同步执行。如果需要真正的并发，必须显式指定 <code>std::launch::async</code>。</p>
-</blockquote>
-<h3 id="2-promise-与-future"><a class="header" href="#2-promise-与-future">2. promise 与 future</a></h3>
-<p><code>std::promise</code> 是写入端，<code>std::future</code> 是读取端，通过共享状态传递值或异常：</p>
-<pre><code class="language-c++">#include &lt;future&gt;
-#include &lt;thread&gt;
-
-void worker(std::promise&lt;int&gt; p)
-{
-    try
-    {
-        p.set_value(42);                              // 设置值
-        // p.set_exception(std::make_exception_ptr(e));  // 或设置异常
-    }
-    catch (...)
-    {
-        p.set_exception(std::current_exception());
-    }
-}
-
-int main()
-{
-    std::promise&lt;int&gt; p;
-    std::future&lt;int&gt; f = p.get_future();
-
-    std::thread t(worker, std::move(p));
-
-    std::cout &lt;&lt; f.get() &lt;&lt; '\n';   // 42，异常会在这里重新抛出
-    t.join();
-}
-</code></pre>
-<h3 id="3-packaged_task"><a class="header" href="#3-packaged_task">3. packaged_task</a></h3>
-<p><code>std::packaged_task</code> 把一个可调用对象包装起来，调用它时结果会自动存入关联的 future：</p>
-<pre><code class="language-c++">#include &lt;future&gt;
-
-int add(int a, int b) { return a + b; }
-
-int main()
-{
-    std::packaged_task&lt;int(int, int)&gt; task(add);
-    std::future&lt;int&gt; f = task.get_future();
-
-    std::thread t(std::move(task), 3, 4);
-    std::cout &lt;&lt; f.get() &lt;&lt; '\n';   // 7
-    t.join();
-}
-</code></pre>
-<h3 id="4-三种方式对比"><a class="header" href="#4-三种方式对比">4. 三种方式对比</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">方式</th><th style="text-align: left">适用场景</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><code>std::async</code></td><td style="text-align: left">简单的「发射后取结果」，最易用</td></tr>
-<tr><td style="text-align: left"><code>std::promise</code> / <code>future</code></td><td style="text-align: left">需要手动控制何时设置结果</td></tr>
-<tr><td style="text-align: left"><code>std::packaged_task</code></td><td style="text-align: left">把已有函数包装成任务，可放入队列由线程池执行</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="六c20-的同步原语"><a class="header" href="#六c20-的同步原语">六、C++20 的同步原语</a></h2>
-<h3 id="1-latch单次闩锁"><a class="header" href="#1-latch单次闩锁">1. latch（单次闩锁）</a></h3>
-<p><code>std::latch</code> 是一个<strong>一次性</strong>的倒计数器，用于等待多个线程完成：</p>
-<pre><code class="language-c++">#include &lt;latch&gt;
-#include &lt;thread&gt;
-#include &lt;vector&gt;
-
-int main()
-{
-    std::latch done(3);   // 计数为 3
-
-    auto worker = [&amp;done] {
-        // 执行任务
-        done.count_down();   // 计数减 1
-    };
-
-    std::vector&lt;std::thread&gt; threads;
-    for (int i = 0; i &lt; 3; ++i)
-        threads.emplace_back(worker);
-
-    done.wait();   // 等待计数归零
-
-    for (auto&amp; t : threads) t.join();
-}
-</code></pre>
-<h3 id="2-barrier可重用屏障"><a class="header" href="#2-barrier可重用屏障">2. barrier（可重用屏障）</a></h3>
-<p><code>std::barrier</code> 与 <code>latch</code> 类似，但<strong>可以重复使用</strong>，适合多轮迭代的并行算法：</p>
-<pre><code class="language-c++">#include &lt;barrier&gt;
-
-std::barrier sync(4);   // 每 4 个线程同步一次
-
-void phase_worker()
-{
-    for (int i = 0; i &lt; 10; ++i)
-    {
-        // 第一阶段工作
-        sync.arrive_and_wait();   // 等待所有线程到达
-
-        // 第二阶段工作
-        sync.arrive_and_wait();
-    }
-}
-</code></pre>
-<h3 id="3-semaphore信号量"><a class="header" href="#3-semaphore信号量">3. semaphore（信号量）</a></h3>
-<p><code>std::counting_semaphore</code> 用于限制对资源的并发访问数量：</p>
-<pre><code class="language-c++">#include &lt;semaphore&gt;
-
-// 最多允许 3 个线程同时访问
-std::counting_semaphore&lt;3&gt; sem(3);
-
-void limited_access()
-{
-    sem.acquire();     // 获取许可，计数为 0 时阻塞
-    // 访问受限资源
-    sem.release();     // 释放许可
-}
-</code></pre>
-<p><code>std::binary_semaphore</code> 是计数为 1 的特例，可用于线程间的信号通知。</p>
-<h2 id="七常见并发问题"><a class="header" href="#七常见并发问题">七、常见并发问题</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th style="text-align: left">问题</th><th style="text-align: left">原因</th><th style="text-align: left">避免方式</th></tr>
-</thead>
-<tbody>
-<tr><td style="text-align: left"><strong>数据竞争</strong></td><td style="text-align: left">多线程无同步地访问同一内存</td><td style="text-align: left">加锁或使用原子操作</td></tr>
-<tr><td style="text-align: left"><strong>死锁</strong></td><td style="text-align: left">多个线程循环等待对方持有的锁</td><td style="text-align: left">用 <code>scoped_lock</code> 同时加锁；统一加锁顺序</td></tr>
-<tr><td style="text-align: left"><strong>活锁</strong></td><td style="text-align: left">线程不断重试但无法推进</td><td style="text-align: left">引入随机退避</td></tr>
-<tr><td style="text-align: left"><strong>虚假唤醒</strong></td><td style="text-align: left">条件变量无故返回</td><td style="text-align: left">使用带谓词的 <code>wait</code></td></tr>
-<tr><td style="text-align: left"><strong>ABA 问题</strong></td><td style="text-align: left">值从 A 改为 B 又改回 A，CAS 无法察觉</td><td style="text-align: left">使用带版本号的原子类型</td></tr>
-<tr><td style="text-align: left"><strong>迭代器失效</strong></td><td style="text-align: left">一个线程修改容器，另一个在遍历</td><td style="text-align: left">遍历时加锁，或使用不可变数据结构</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="八注意事项"><a class="header" href="#八注意事项">八、注意事项</a></h2>
-<ul>
-<li><strong><code>std::thread</code> 必须 join 或 detach</strong>。否则析构时程序终止。优先用 <code>std::jthread</code>。</li>
-<li><strong>不要手动 lock/unlock</strong>。始终使用 RAII 包装器，异常安全才有保障。</li>
-<li><strong>条件变量必须用带谓词的 <code>wait</code></strong>。否则虚假唤醒会导致逻辑错误。</li>
-<li><strong><code>std::async</code> 默认策略不确定</strong>。需要真并发时必须显式指定 <code>std::launch::async</code>。</li>
-<li><strong><code>future</code> 的析构会阻塞</strong>。<code>std::async</code> 返回的 <code>future</code> 如果未调用 <code>get()</code> 就析构，会等待任务完成。</li>
-<li><strong>原子操作不等于无锁</strong>。<code>std::atomic&lt;T&gt;</code> 对某些类型可能内部使用锁，可用 <code>is_lock_free()</code> 检查。</li>
-<li><strong>内存序默认最严格</strong>。<code>seq_cst</code> 最慢但最安全，优化前应先确认正确性。</li>
-<li><strong>并发 bug 难以复现</strong>。应借助 ThreadSanitizer（<code>-fsanitize=thread</code>）等工具检测。</li>
-</ul>
-<h2 id="九相关章节"><a class="header" href="#九相关章节">九、相关章节</a></h2>
-<ul>
-<li><a href="./Memory/Memory_Model.html">C++内存模型（并发）</a>：内存序与 happens-before 关系</li>
-<li><a href="./Exception.html">异常处理</a>：线程函数中异常的传播</li>
-<li><a href="./Memory/Smart_Pointer.html">智能指针</a>：<code>shared_ptr</code> 的线程安全性</li>
-<li><a href="../Practice.html">C++实践 · 多线程</a>：工程中的并发模式</li>
-</ul>
+<h2 id="与内存模型的分工"><a class="header" href="#与内存模型的分工">与内存模型的分工</a></h2>
+<p>本章讲<strong>怎么用</strong>这些并发设施，<a href="./Memory/Memory_Model.html">C++ 内存模型</a> 讲<strong>为什么</strong>它们能工作——happens-before 关系、内存序的语义、编译器与 CPU 的重排规则。</p>
+<p>如果只是想写出正确的并发代码，本章足够；如果需要理解底层机制或做无锁编程，建议两章对照阅读。</p>
 
                     </main>
 
@@ -651,7 +255,7 @@ void limited_access()
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../Advance/Modern_Cpp.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../Advance/Concurrency/Thread.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -665,7 +269,7 @@ void limited_access()
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../Advance/Modern_Cpp.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../Advance/Concurrency/Thread.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

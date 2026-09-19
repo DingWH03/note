@@ -1,0 +1,689 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>并发模式与陷阱 - Note of C++</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../mdbook-admonish-306a1c37.css">
+        <link rel="stylesheet" href="../.././mdbook-admonish.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-3862d85f.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-580a2eac.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Note of C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/DingWH03/note-c-plus-plus/edit/master/src/Advance/Concurrency/Patterns.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="并发模式与陷阱"><a class="header" href="#并发模式与陷阱">并发模式与陷阱</a></h1>
+<p>前面几节讲的是工具：线程、锁、条件变量、原子操作、异步任务。这一节讲怎么把它们组装成能用的东西。</p>
+<h2 id="一线程池"><a class="header" href="#一线程池">一、线程池</a></h2>
+<h3 id="1-为什么需要线程池"><a class="header" href="#1-为什么需要线程池">1. 为什么需要线程池</a></h3>
+<p>每来一个任务就 <code>std::thread</code> 创建一个，看起来简单，实际代价很大：</p>
+<ul>
+<li><strong>创建开销</strong>：一个线程的创建涉及内核对象、栈分配（默认 1~8 MB），大约几十微秒</li>
+<li><strong>销毁开销</strong>：线程退出也要清理</li>
+<li><strong>数量失控</strong>：任务多了线程就多，可能耗尽内存或让调度器崩溃</li>
+</ul>
+<p>线程池的思路是：<strong>预先创建固定数量的线程，任务来了放进队列，空闲线程去取</strong>。</p>
+<pre><code>任务提交 → [任务队列] → 工作线程 1
+                      → 工作线程 2
+                      → 工作线程 3
+</code></pre>
+<h3 id="2-一个可用的实现"><a class="header" href="#2-一个可用的实现">2. 一个可用的实现</a></h3>
+<pre><code class="language-c++">#include &lt;condition_variable&gt;
+#include &lt;functional&gt;
+#include &lt;future&gt;
+#include &lt;mutex&gt;
+#include &lt;queue&gt;
+#include &lt;thread&gt;
+#include &lt;vector&gt;
+
+class ThreadPool
+{
+public:
+    explicit ThreadPool(std::size_t n = std::thread::hardware_concurrency())
+    {
+        for (std::size_t i = 0; i &lt; n; ++i)
+        {
+            workers_.emplace_back([this] { workerLoop(); });
+        }
+    }
+
+    ~ThreadPool()
+    {
+        {
+            std::lock_guard lock(mtx_);
+            stop_ = true;
+        }
+        cv_.notify_all();
+        for (auto&amp; t : workers_)
+            t.join();
+    }
+
+    // 提交任务，返回 future
+    template&lt;class F, class... Args&gt;
+    auto submit(F&amp;&amp; f, Args&amp;&amp;... args)
+        -&gt; std::future&lt;std::invoke_result_t&lt;F, Args...&gt;&gt;
+    {
+        using ReturnType = std::invoke_result_t&lt;F, Args...&gt;;
+
+        // 用 shared_ptr 包装，因为 packaged_task 不可拷贝
+        auto task = std::make_shared&lt;std::packaged_task&lt;ReturnType()&gt;&gt;(
+            std::bind(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...)
+        );
+
+        std::future&lt;ReturnType&gt; fut = task-&gt;get_future();
+
+        {
+            std::lock_guard lock(mtx_);
+            if (stop_)
+                throw std::runtime_error("线程池已停止");
+            tasks_.emplace([task] { (*task)(); });
+        }
+        cv_.notify_one();
+
+        return fut;
+    }
+
+private:
+    void workerLoop()
+    {
+        while (true)
+        {
+            std::function&lt;void()&gt; task;
+
+            {
+                std::unique_lock lock(mtx_);
+                cv_.wait(lock, [this] { return stop_ || !tasks_.empty(); });
+
+                if (stop_ &amp;&amp; tasks_.empty())
+                    return;   // 停止且无剩余任务
+
+                task = std::move(tasks_.front());
+                tasks_.pop();
+            }
+
+            task();   // 在锁外执行
+        }
+    }
+
+    std::vector&lt;std::thread&gt; workers_;
+    std::queue&lt;std::function&lt;void()&gt;&gt; tasks_;
+    std::mutex mtx_;
+    std::condition_variable cv_;
+    bool stop_ = false;
+};
+</code></pre>
+<p>使用：</p>
+<pre><code class="language-c++">ThreadPool pool(4);
+
+std::vector&lt;std::future&lt;int&gt;&gt; results;
+for (int i = 0; i &lt; 10; ++i)
+{
+    results.push_back(pool.submit([i] {
+        return i * i;
+    }));
+}
+
+for (auto&amp; f : results)
+    std::cout &lt;&lt; f.get() &lt;&lt; '\n';
+</code></pre>
+<h3 id="3-几个设计要点"><a class="header" href="#3-几个设计要点">3. 几个设计要点</a></h3>
+<p><strong>任务在锁外执行</strong>。<code>task()</code> 必须在解锁后调用，否则工作线程持锁执行任务，其它线程无法取任务，线程池退化成了单线程。</p>
+<p><strong><code>packaged_task</code> 不可拷贝</strong>。用 <code>shared_ptr</code> 包装才能放进 <code>std::function</code>（它要求可拷贝）。</p>
+<p><strong>析构要等所有任务完成</strong>。<code>stop_</code> 置位后 <code>notify_all</code>，工作线程取完剩余任务才退出。如果直接 <code>detach</code>，析构后任务还在跑，可能访问已销毁的对象。</p>
+<p><strong>线程数怎么定</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">任务类型</th><th style="text-align: left">建议线程数</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">CPU 密集</td><td style="text-align: left"><code>hardware_concurrency()</code></td></tr>
+<tr><td style="text-align: left">I/O 密集</td><td style="text-align: left">更多（2~4 倍）</td></tr>
+<tr><td style="text-align: left">混合</td><td style="text-align: left">分成两个池，分别调优</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-有界队列与背压"><a class="header" href="#4-有界队列与背压">4. 有界队列与背压</a></h3>
+<p>上面的实现队列无界——任务提交太快会耗尽内存。生产环境需要背压：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class BoundedQueue
+{
+public:
+    explicit BoundedQueue(std::size_t cap) : cap_(cap) {}
+
+    void push(T item)
+    {
+        std::unique_lock lock(mtx_);
+        notFull_.wait(lock, [this] { return q_.size() &lt; cap_; });
+        q_.push(std::move(item));
+        notEmpty_.notify_one();
+    }
+
+    T pop()
+    {
+        std::unique_lock lock(mtx_);
+        notEmpty_.wait(lock, [this] { return !q_.empty(); });
+        T item = std::move(q_.front());
+        q_.pop();
+        notFull_.notify_one();
+        return item;
+    }
+
+private:
+    std::mutex mtx_;
+    std::condition_variable notEmpty_, notFull_;
+    std::queue&lt;T&gt; q_;
+    std::size_t cap_;
+};
+</code></pre>
+<p><strong>背压</strong>的意思是：队列满了就让提交者等待，而不是无限堆积。这是保护系统不被打垮的关键机制。</p>
+<h2 id="二回调与事件驱动"><a class="header" href="#二回调与事件驱动">二、回调与事件驱动</a></h2>
+<h3 id="1-回调注册模式"><a class="header" href="#1-回调注册模式">1. 回调注册模式</a></h3>
+<p>事件驱动系统里，组件不直接调用彼此，而是注册回调：</p>
+<pre><code class="language-c++">class EventLoop
+{
+public:
+    using Callback = std::function&lt;void()&gt;;
+
+    void onRead(int fd, Callback cb)
+    {
+        readHandlers_[fd] = std::move(cb);
+    }
+
+    void onWrite(int fd, Callback cb)
+    {
+        writeHandlers_[fd] = std::move(cb);
+    }
+
+    void run()
+    {
+        while (!stop_)
+        {
+            auto events = poll();   // 等待事件
+
+            for (auto&amp; ev : events)
+            {
+                auto it = (ev.type == Event::Read)
+                    ? readHandlers_.find(ev.fd)
+                    : writeHandlers_.find(ev.fd);
+
+                if (it != readHandlers_.end() &amp;&amp; it-&gt;second)
+                    it-&gt;second();   // 调用回调
+            }
+        }
+    }
+
+private:
+    std::unordered_map&lt;int, Callback&gt; readHandlers_;
+    std::unordered_map&lt;int, Callback&gt; writeHandlers_;
+    bool stop_ = false;
+};
+</code></pre>
+<p>这就是 <code>epoll</code> / <code>kqueue</code> / <code>IOCP</code> 这类 I/O 多路复用库的抽象方式。一个线程处理成千上万个连接，靠的是「事件来了才处理」。</p>
+<h3 id="2-回调的线程安全"><a class="header" href="#2-回调的线程安全">2. 回调的线程安全</a></h3>
+<p>回调可能在任意线程被调用，这带来两个问题：</p>
+<p><strong>回调内部访问共享数据要加锁</strong>：</p>
+<pre><code class="language-c++">void onData(Data d)
+{
+    std::lock_guard lock(mtx_);
+    buffer_.push_back(d);
+}
+</code></pre>
+<p><strong>回调注册与调用可能并发</strong>。如果 <code>run()</code> 在遍历 handler 时另一个线程修改了 map，会崩溃。常见做法是：</p>
+<ul>
+<li>用「注册到事件循环线程」的队列，避免跨线程修改</li>
+<li>或者用读写锁保护</li>
+</ul>
+<pre><code class="language-c++">class EventLoop
+{
+    std::shared_mutex mtx_;
+
+    void onRead(int fd, Callback cb)
+    {
+        std::unique_lock lock(mtx_);
+        readHandlers_[fd] = std::move(cb);
+    }
+
+    void dispatch(int fd)
+    {
+        std::shared_lock lock(mtx_);   // 读锁，多个分发可并发
+        auto it = readHandlers_.find(fd);
+        if (it != readHandlers_.end())
+            it-&gt;second();
+    }
+};
+</code></pre>
+<h3 id="3-事件驱动的优势与代价"><a class="header" href="#3-事件驱动的优势与代价">3. 事件驱动的优势与代价</a></h3>
+<p><strong>优势</strong>：</p>
+<ul>
+<li>单线程处理大量连接，无线程切换开销</li>
+<li>内存占用小（每个连接不需要一个线程栈）</li>
+<li>没有锁竞争（如果都在一个线程里）</li>
+</ul>
+<p><strong>代价</strong>：</p>
+<ul>
+<li>一个回调阻塞，所有连接都卡住</li>
+<li>无法利用多核（除非跑多个事件循环）</li>
+<li>控制流被事件切碎，调试困难</li>
+</ul>
+<h2 id="三其它常见模式"><a class="header" href="#三其它常见模式">三、其它常见模式</a></h2>
+<h3 id="1-读写锁保护缓存"><a class="header" href="#1-读写锁保护缓存">1. 读写锁保护缓存</a></h3>
+<pre><code class="language-c++">class Cache
+{
+    std::shared_mutex mtx_;
+    std::unordered_map&lt;int, std::string&gt; data_;
+
+public:
+    std::optional&lt;std::string&gt; get(int key)
+    {
+        std::shared_lock lock(mtx_);   // 读并发
+        auto it = data_.find(key);
+        if (it == data_.end()) return std::nullopt;
+        return it-&gt;second;
+    }
+
+    void put(int key, std::string value)
+    {
+        std::unique_lock lock(mtx_);   // 写独占
+        data_[key] = std::move(value);
+    }
+};
+</code></pre>
+<h3 id="2-双重检查锁定dclp"><a class="header" href="#2-双重检查锁定dclp">2. 双重检查锁定（DCLP）</a></h3>
+<p>延迟初始化的经典写法：</p>
+<pre><code class="language-c++">class Singleton
+{
+public:
+    static Singleton* instance()
+    {
+        Singleton* tmp = instance_.load(std::memory_order_acquire);
+        if (!tmp)   // 第一次检查，避免每次都加锁
+        {
+            std::lock_guard lock(mtx_);
+            tmp = instance_.load(std::memory_order_relaxed);
+            if (!tmp)   // 第二次检查，防止重复初始化
+            {
+                tmp = new Singleton();
+                instance_.store(tmp, std::memory_order_release);
+            }
+        }
+        return tmp;
+    }
+
+private:
+    static std::atomic&lt;Singleton*&gt; instance_;
+    static std::mutex mtx_;
+};
+</code></pre>
+<p><strong>但通常不需要这么写</strong>。C++11 起局部静态变量是线程安全的：</p>
+<pre><code class="language-c++">Singleton&amp; instance()
+{
+    static Singleton inst;
+    return inst;
+}
+</code></pre>
+<p>一行搞定，编译器保证只初始化一次。</p>
+<h3 id="3-future-模式"><a class="header" href="#3-future-模式">3. Future 模式</a></h3>
+<p>把「计算」和「取结果」解耦：</p>
+<pre><code class="language-c++">std::future&lt;Image&gt; loadAsync(const std::string&amp; path)
+{
+    return std::async(std::launch::async, [path] {
+        return decodeImage(readFile(path));
+    });
+}
+
+// 调用者可以先去干别的
+auto fut = loadAsync("photo.jpg");
+doOtherWork();
+Image img = fut.get();
+</code></pre>
+<h2 id="四常见陷阱汇总"><a class="header" href="#四常见陷阱汇总">四、常见陷阱汇总</a></h2>
+<h3 id="1-数据竞争"><a class="header" href="#1-数据竞争">1. 数据竞争</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">表现</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">未同步的共享读写</td><td style="text-align: left">结果不确定、偶发崩溃</td></tr>
+<tr><td style="text-align: left">用 <code>volatile</code> 代替 <code>atomic</code></td><td style="text-align: left">编译器优化导致读写丢失</td></tr>
+<tr><td style="text-align: left">复合操作非原子</td><td style="text-align: left"><code>if (x) x--</code> 整体不加锁</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>排查工具</strong>：ThreadSanitizer（<code>-fsanitize=thread</code>）。</p>
+<h3 id="2-死锁"><a class="header" href="#2-死锁">2. 死锁</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">表现</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">加锁顺序不一致</td><td style="text-align: left">两个线程互相等待</td></tr>
+<tr><td style="text-align: left">异常路径未解锁</td><td style="text-align: left">未用 RAII</td></tr>
+<tr><td style="text-align: left">持锁调用外部代码</td><td style="text-align: left">外部代码又加锁</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>排查工具</strong>：GDB 查看各线程栈、<code>pstack</code>、死锁检测器。</p>
+<h3 id="3-toctou"><a class="header" href="#3-toctou">3. TOCTOU</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">表现</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">检查和使用拆在两个临界区</td><td style="text-align: left">中间状态被改变，逻辑错误</td></tr>
+<tr><td style="text-align: left">返回共享数据的引用</td><td style="text-align: left">指针逃出锁的保护范围</td></tr>
+<tr><td style="text-align: left">异步回调里「先判断后操作」</td><td style="text-align: left">回调触发时判断已过期</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>特点</strong>：加锁了也可能存在。加锁保证单个操作的原子性，不保证「检查 + 使用」这一对操作的原子性。</p>
+<p><strong>应对</strong>：扩大临界区、返回拷贝而非引用、改用 EAFP 风格。详见<a href="./Mutex.html">互斥量与锁</a>。</p>
+<h3 id="4-生命周期"><a class="header" href="#4-生命周期">4. 生命周期</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">表现</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">线程访问已销毁对象</td><td style="text-align: left">悬空指针、随机崩溃</td></tr>
+<tr><td style="text-align: left">回调捕获 <code>this</code></td><td style="text-align: left">对象先于回调销毁</td></tr>
+<tr><td style="text-align: left"><code>detach</code> 后不管</td><td style="text-align: left">程序退出时线程仍在跑</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>原则</strong>：线程和回调的生命周期必须被明确管理，不要 <code>detach</code> 了事。</p>
+<h3 id="5-性能"><a class="header" href="#5-性能">5. 性能</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">问题</th><th style="text-align: left">表现</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">锁粒度过大</td><td style="text-align: left">线程大量串行等待</td></tr>
+<tr><td style="text-align: left">伪共享</td><td style="text-align: left">不同线程写同一缓存行的不同变量</td></tr>
+<tr><td style="text-align: left">线程过多</td><td style="text-align: left">上下文切换开销超过计算收益</td></tr>
+<tr><td style="text-align: left">频繁创建线程</td><td style="text-align: left">创建/销毁开销</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>伪共享</strong>值得单独说：两个线程分别写相邻的两个 <code>int</code>，如果它们落在同一个缓存行（通常 64 字节），CPU 会反复使缓存行失效：</p>
+<pre><code class="language-c++">// 不好：两个计数器可能在同一缓存行
+struct Counters
+{
+    std::atomic&lt;int&gt; a;
+    std::atomic&lt;int&gt; b;
+};
+
+// 好：用填充隔开
+struct Counters
+{
+    alignas(64) std::atomic&lt;int&gt; a;
+    alignas(64) std::atomic&lt;int&gt; b;
+};
+</code></pre>
+<p>C++17 还提供了 <code>std::hardware_destructive_interference_size</code> 表示缓存行大小。</p>
+<h3 id="6-调试困难"><a class="header" href="#6-调试困难">6. 调试困难</a></h3>
+<p>并发 bug 的特点：<strong>偶发、不可复现、换个机器就消失</strong>。</p>
+<p>应对方法：</p>
+<ul>
+<li><strong>ThreadSanitizer</strong>：检测数据竞争，编译时加 <code>-fsanitize=thread</code></li>
+<li><strong>压力测试</strong>：加大并发度和迭代次数</li>
+<li><strong>确定性调度</strong>：用工具（如 rr）记录重放</li>
+<li><strong>代码审查</strong>：重点看共享数据的访问路径</li>
+</ul>
+<h2 id="五几条经验"><a class="header" href="#五几条经验">五、几条经验</a></h2>
+<p><strong>能用简单方案就别用复杂的</strong>。<code>std::mutex</code> 保护一切，往往比精心设计的无锁结构更可靠。</p>
+<p><strong>先测量再优化</strong>。并发性能问题常常不在你猜的地方。</p>
+<p><strong>共享可变状态越少越好</strong>。如果数据可以只被一个线程访问，就根本不需要同步。</p>
+<p><strong>优先用消息传递而非共享内存</strong>。线程间通过队列传数据，比共享数据结构加锁更容易推理。</p>
+<p><strong>给线程和回调明确的归属</strong>。谁创建、谁销毁、什么时候能安全访问，这些必须清楚。</p>
+<h2 id="六常见误区"><a class="header" href="#六常见误区">六、常见误区</a></h2>
+<p><strong>「线程池线程越多越快」</strong> —— 超过核心数后，上下文切换开销会抵消收益。</p>
+<p><strong>「<code>detach</code> 可以省去 join 的麻烦」</strong> —— 它把生命周期问题变成了崩溃。除非线程真的独立于所有对象，否则别 detach。</p>
+<p><strong>「双重检查锁定比局部静态变量好」</strong> —— C++11 起局部静态变量就是线程安全的，且更简洁。</p>
+<p><strong>「无锁队列一定比加锁队列快」</strong> —— 中等争用下往往更慢，且正确性极难保证。</p>
+<p><strong>「伪共享只是理论问题」</strong> —— 在高频写入场景下可以造成数倍性能差距。</p>
+<p><strong>「并发 bug 可以靠加日志调试」</strong> —— 日志会改变时序，bug 可能因此消失。用专门的检测工具。</p>
+<p><strong>「加了锁就不会有并发问题了」</strong> —— 锁只解决数据竞争。检查和操作分离导致的 TOCTOU、以及生命周期问题，加锁都挡不住。</p>
+<h2 id="七相关章节"><a class="header" href="#七相关章节">七、相关章节</a></h2>
+<ul>
+<li><a href="./Thread.html">线程基础</a>：线程的创建、管理与生命周期</li>
+<li><a href="./Mutex.html">互斥量与锁</a>：锁的选择与死锁避免</li>
+<li><a href="./Condition_Variable.html">条件变量</a>：任务队列的等待机制</li>
+<li><a href="./Atomic.html">原子操作</a>：无锁与伪共享</li>
+<li><a href="./Async.html">异步任务</a>：future、回调与协程</li>
+<li><a href="../Memory/Memory_Model.html">内存模型</a>：happens-before 与可见性</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../Advance/Concurrency/Async.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../Advance/Modern_Cpp.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../Advance/Concurrency/Async.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../Advance/Modern_Cpp.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-09f2665d.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
