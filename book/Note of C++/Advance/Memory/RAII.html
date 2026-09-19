@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -184,7 +184,273 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        
+                        <h1 id="raii-与资源管理"><a class="header" href="#raii-与资源管理">RAII 与资源管理</a></h1>
+<p>RAII 是 <strong>Resource Acquisition Is Initialization</strong> 的缩写，直译是「资源获取即初始化」。这个名字起得不太好——它听起来像是在讲初始化，实际上讲的是<strong>析构</strong>。</p>
+<p>它的核心思想只有一句话：<strong>把资源的生命周期绑定到对象的生命周期上</strong>。资源在构造函数里获取，在析构函数里释放。由于栈对象的析构是编译器自动插入的，无论函数是正常返回、提前 return 还是抛异常，资源都会被正确释放。</p>
+<p>这是 C++ 区别于大多数语言的核心特性，也是整个标准库的设计基石。</p>
+<h2 id="一为什么需要-raii"><a class="header" href="#一为什么需要-raii">一、为什么需要 RAII</a></h2>
+<p>先看一段没有 RAII 的代码：</p>
+<pre><code class="language-c++">void process()
+{
+    FILE* f = fopen("data.txt", "r");
+    if (!f) return;
+
+    char* buffer = (char*)malloc(1024);
+    if (!buffer) {
+        fclose(f);          // 每个错误分支都要手动清理
+        return;
+    }
+
+    if (parse(f, buffer) &lt; 0) {
+        free(buffer);       // 又一处
+        fclose(f);
+        return;
+    }
+
+    free(buffer);
+    fclose(f);
+}
+</code></pre>
+<p>问题很明显：</p>
+<ul>
+<li>每个提前返回的分支都要重复写清理代码，漏一个就泄漏</li>
+<li>如果 <code>parse</code> 抛出异常，两处清理都不会执行</li>
+<li>清理顺序必须和获取顺序相反，容易写错</li>
+</ul>
+<p>用 RAII 改写：</p>
+<pre><code class="language-c++">void process()
+{
+    std::ifstream file("data.txt");      // 构造时打开
+    if (!file) return;                   // 自动关闭
+
+    std::vector&lt;char&gt; buffer(1024);      // 构造时分配
+
+    parse(file, buffer);                 // 抛异常也没关系
+}   // 离开作用域，buffer 和 file 自动释放
+</code></pre>
+<p>清理代码消失了，因为编译器会在每个退出路径上插入析构调用。</p>
+<h2 id="二raii-的完整形态"><a class="header" href="#二raii-的完整形态">二、RAII 的完整形态</a></h2>
+<p>一个 RAII 类通常包含四部分：</p>
+<pre><code class="language-c++">class FileHandle
+{
+public:
+    // 1. 构造函数获取资源
+    explicit FileHandle(const char* path)
+        : file_(fopen(path, "r"))
+    {
+        if (!file_)
+            throw std::runtime_error("打开文件失败");
+    }
+
+    // 2. 析构函数释放资源
+    ~FileHandle()
+    {
+        if (file_)
+            fclose(file_);
+    }
+
+    // 3. 禁止拷贝（否则会双重释放）
+    FileHandle(const FileHandle&amp;) = delete;
+    FileHandle&amp; operator=(const FileHandle&amp;) = delete;
+
+    // 4. 允许移动（转移所有权）
+    FileHandle(FileHandle&amp;&amp; other) noexcept
+        : file_(other.file_)
+    {
+        other.file_ = nullptr;
+    }
+
+    FileHandle&amp; operator=(FileHandle&amp;&amp; other) noexcept
+    {
+        if (this != &amp;other) {
+            if (file_) fclose(file_);
+            file_ = other.file_;
+            other.file_ = nullptr;
+        }
+        return *this;
+    }
+
+    FILE* get() const { return file_; }
+
+private:
+    FILE* file_;
+};
+</code></pre>
+<p>这四步是 RAII 类的标准模板：<strong>获取、释放、禁拷贝、允许移动</strong>。</p>
+<h2 id="三raii-的常见形态"><a class="header" href="#三raii-的常见形态">三、RAII 的常见形态</a></h2>
+<p>RAII 不只用于内存，任何「获取后必须释放」的资源都适用。</p>
+<h3 id="1-锁"><a class="header" href="#1-锁">1. 锁</a></h3>
+<pre><code class="language-c++">std::mutex mtx;
+
+void safe_increment()
+{
+    std::lock_guard&lt;std::mutex&gt; lock(mtx);   // 构造时加锁
+    ++shared_counter;
+}   // 析构时自动解锁，异常也安全
+</code></pre>
+<p>手写 <code>lock()</code> / <code>unlock()</code> 的话，中间任何异常都会导致死锁。</p>
+<h3 id="2-文件与流"><a class="header" href="#2-文件与流">2. 文件与流</a></h3>
+<pre><code class="language-c++">{
+    std::ofstream out("log.txt");
+    out &lt;&lt; "写点东西\n";
+}   // 自动关闭并 flush
+</code></pre>
+<h3 id="3-数据库连接网络连接"><a class="header" href="#3-数据库连接网络连接">3. 数据库连接、网络连接</a></h3>
+<pre><code class="language-c++">class Connection
+{
+public:
+    Connection(const std::string&amp; url) : conn_(connect(url)) {}
+    ~Connection() { disconnect(conn_); }
+    // ...
+};
+</code></pre>
+<h3 id="4-临时状态恢复"><a class="header" href="#4-临时状态恢复">4. 临时状态恢复</a></h3>
+<p>RAII 也可以用来「保证状态被还原」：</p>
+<pre><code class="language-c++">class ScopedFlag
+{
+public:
+    ScopedFlag(bool&amp; flag) : flag_(flag), old_(flag) { flag_ = true; }
+    ~ScopedFlag() { flag_ = old_; }
+private:
+    bool&amp; flag_;
+    bool old_;
+};
+
+void process()
+{
+    ScopedFlag guard(is_processing);   // 进入时设为 true
+    // ... 无论怎么退出，都会恢复原值
+}
+</code></pre>
+<h3 id="5-性能计时"><a class="header" href="#5-性能计时">5. 性能计时</a></h3>
+<pre><code class="language-c++">class Timer
+{
+public:
+    Timer(const char* name)
+        : name_(name), start_(std::chrono::steady_clock::now()) {}
+
+    ~Timer()
+    {
+        auto end = std::chrono::steady_clock::now();
+        auto ms = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(end - start_);
+        std::cout &lt;&lt; name_ &lt;&lt; " 耗时 " &lt;&lt; ms.count() &lt;&lt; " ms\n";
+    }
+
+private:
+    const char* name_;
+    std::chrono::steady_clock::time_point start_;
+};
+
+void work()
+{
+    Timer t("work");   // 离开作用域自动打印耗时
+    // ...
+}
+</code></pre>
+<h2 id="四raii-与异常安全"><a class="header" href="#四raii-与异常安全">四、RAII 与异常安全</a></h2>
+<p>RAII 之所以重要，是因为它让<strong>异常安全</strong>变得可行。</p>
+<p>考虑这个函数：</p>
+<pre><code class="language-c++">void bad()
+{
+    Resource* r1 = acquire();
+    Resource* r2 = acquire();   // 抛异常 → r1 泄漏
+
+    use(r1, r2);
+
+    release(r2);
+    release(r1);
+}
+</code></pre>
+<p>改成 RAII：</p>
+<pre><code class="language-c++">void good()
+{
+    auto r1 = acquire();        // 返回 RAII 对象
+    auto r2 = acquire();        // 抛异常 → r1 自动释放
+
+    use(r1, r2);
+}
+</code></pre>
+<p>不需要写 <code>try</code> / <code>catch</code>，资源也不会泄漏。这就是为什么标准库的异常安全保证能够成立——它建立在 RAII 之上。</p>
+<h3 id="析构函数不能抛异常"><a class="header" href="#析构函数不能抛异常">析构函数不能抛异常</a></h3>
+<p>栈展开过程中，如果某个析构函数又抛出异常，而此时已有异常在传播，程序会直接调用 <code>std::terminate</code>。</p>
+<pre><code class="language-c++">~Bad()
+{
+    throw std::runtime_error("oops");   // 危险
+}
+</code></pre>
+<p>C++11 起析构函数默认是 <code>noexcept</code> 的，在其中抛异常会导致终止。如果析构中确实可能失败（比如 <code>fclose</code> 返回值），应该吞掉异常或记录下来，而不是往外抛。</p>
+<h2 id="五raii-与所有权"><a class="header" href="#五raii-与所有权">五、RAII 与所有权</a></h2>
+<p>RAII 的核心是「谁负责释放」。这引出了<strong>所有权</strong>的概念：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">所有权形式</th><th style="text-align: left">含义</th><th style="text-align: left">典型类型</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>独占</strong></td><td style="text-align: left">只有一个对象负责释放</td><td style="text-align: left"><code>std::unique_ptr</code>、<code>std::ifstream</code></td></tr>
+<tr><td style="text-align: left"><strong>共享</strong></td><td style="text-align: left">多个对象共同负责，最后一个释放</td><td style="text-align: left"><code>std::shared_ptr</code></td></tr>
+<tr><td style="text-align: left"><strong>不拥有</strong></td><td style="text-align: left">只使用，不负责释放</td><td style="text-align: left">裸指针、引用、<code>std::string_view</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>设计接口时应该明确表达所有权：</p>
+<pre><code class="language-c++">// 明确：函数接管所有权
+void take(std::unique_ptr&lt;Widget&gt; w);
+
+// 明确：函数只借用，不负责释放
+void use(const Widget&amp; w);
+void use(Widget* w);   // 也常见，但不如引用清晰
+
+// 明确：函数共享所有权
+void share(std::shared_ptr&lt;Widget&gt; w);
+</code></pre>
+<p>裸指针作为参数本身没有错，但要清楚它表示「不拥有」——调用者负责保证对象在调用期间存活。</p>
+<h2 id="六rule-of-three--five--zero"><a class="header" href="#六rule-of-three--five--zero">六、Rule of Three / Five / Zero</a></h2>
+<p>RAII 类需要正确处理拷贝和移动，这引出了几个经验法则。</p>
+<h3 id="rule-of-threec98"><a class="header" href="#rule-of-threec98">Rule of Three（C++98）</a></h3>
+<p>如果类需要自定义<strong>析构函数</strong>、<strong>拷贝构造函数</strong>、<strong>拷贝赋值运算符</strong>中的任何一个，那么通常三个都需要。</p>
+<p>原因：需要自定义析构，说明持有需要手动释放的资源；那么默认的拷贝行为（浅拷贝指针）会导致双重释放，必须一并处理。</p>
+<h3 id="rule-of-fivec11"><a class="header" href="#rule-of-fivec11">Rule of Five（C++11）</a></h3>
+<p>加上<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>，变成五个：</p>
+<pre><code class="language-c++">class Buffer
+{
+public:
+    Buffer(const Buffer&amp;);              // 拷贝构造
+    Buffer&amp; operator=(const Buffer&amp;);   // 拷贝赋值
+    Buffer(Buffer&amp;&amp;) noexcept;          // 移动构造
+    Buffer&amp; operator=(Buffer&amp;&amp;) noexcept;  // 移动赋值
+    ~Buffer();                          // 析构
+};
+</code></pre>
+<p>如果定义了拷贝操作但没定义移动操作，编译器不会自动生成移动版本——此时「移动」会退化为拷贝，损失性能。</p>
+<h3 id="rule-of-zero"><a class="header" href="#rule-of-zero">Rule of Zero</a></h3>
+<p><strong>最好的做法是一个都不写</strong>。</p>
+<p>用现成的 RAII 类型作为成员，编译器生成的默认操作就已经正确了：</p>
+<pre><code class="language-c++">class Widget
+{
+    std::string name_;                    // 自己管理内存
+    std::vector&lt;int&gt; data_;               // 自己管理内存
+    std::unique_ptr&lt;Impl&gt; impl_;          // 独占所有权
+    std::shared_ptr&lt;Config&gt; config_;      // 共享所有权
+};
+// 不需要写析构、拷贝、移动——编译器生成的都对
+</code></pre>
+<p>这是现代 C++ 推荐的风格：<strong>让成员类型去管理资源，自己只管组合</strong>。</p>
+<h2 id="七常见误区"><a class="header" href="#七常见误区">七、常见误区</a></h2>
+<p><strong>「RAII 就是智能指针」</strong> —— 智能指针只是 RAII 的一种应用。锁、文件、连接、临时状态恢复都是 RAII。</p>
+<p><strong>「RAII 会拖慢程序」</strong> —— 析构调用是编译期确定的，和手写 <code>delete</code> 没有性能差异。反而因为减少了错误分支，代码往往更快。</p>
+<p><strong>「析构函数里可以随便做事」</strong> —— 析构函数不能抛异常，也不应该做可能失败的操作。复杂的清理逻辑应该提供显式的 <code>close()</code> 方法，析构只做兜底。</p>
+<p><strong>「移动后源对象不能再用」</strong> —— 移动后的对象处于「有效但未指定」状态，可以重新赋值或析构，但不能假设它的内容。</p>
+<p><strong>「拷贝构造和移动构造可以只写一个」</strong> —— 定义了拷贝构造后，移动构造不会自动生成，此时移动会退化为拷贝。反之亦然。</p>
+<h2 id="八相关章节"><a class="header" href="#八相关章节">八、相关章节</a></h2>
+<ul>
+<li><a href="./Allocation.html">动态内存分配</a>：为什么不该手写 <code>delete</code></li>
+<li><a href="./Smart_Pointer.html">智能指针</a>：RAII 在内存管理上的标准实现</li>
+<li><a href="../Exception.html">异常处理</a>：栈展开与异常安全保证</li>
+<li><a href="../Object/Copy_Control.html">拷贝控制</a>：Rule of Three / Five / Zero 的细节</li>
+<li><a href="../Concurrency.html">多线程与并发</a>：<code>lock_guard</code> 等 RAII 锁</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

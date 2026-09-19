@@ -39,7 +39,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-4694e643.js"></script>
@@ -185,59 +185,185 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
-<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
-<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
-<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
-<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
-<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
-<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
-<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::shared_ptr&lt;Node&gt; next;
-};
+<p><code>std::weak_ptr</code> 是对 <code>shared_ptr</code> 管理对象的<strong>弱引用</strong>。它能看到对象，但不参与所有权——不增加强引用计数，因此不会阻止对象被销毁。</p>
+<p>它主要解决两个问题：打破 <code>shared_ptr</code> 的循环引用，以及在缓存等场景中安全地观察对象是否还活着。</p>
+<h2 id="一基本用法"><a class="header" href="#一基本用法">一、基本用法</a></h2>
+<p><code>weak_ptr</code> 不能直接构造，必须从 <code>shared_ptr</code> 得到：</p>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;MyClass&gt;();
+std::weak_ptr&lt;MyClass&gt; wp = sp;      // 从 shared_ptr 构造
 
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 形成循环引用
-}
+std::cout &lt;&lt; sp.use_count() &lt;&lt; '\n';   // 1，weak_ptr 不影响计数
 </code></pre>
-<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
-};
-
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 现在不会形成循环引用
+<p>访问对象必须先转成 <code>shared_ptr</code>：</p>
+<pre><code class="language-c++">if (auto locked = wp.lock())     // 尝试提升
+{
+    locked-&gt;doSomething();       // 对象还活着
 }
-</code></pre>
-<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
-<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
-<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
-if (ptr) {
-    // 使用 ptr 来访问 MyClass 对象
-} else {
+else
+{
     // 对象已被销毁
 }
 </code></pre>
-<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
-<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
-<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
-std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+<p><code>lock()</code> 是唯一的访问途径，这个设计是刻意的——它把「检查是否存在」和「使用对象」合成一个原子操作，避免了先检查后使用之间的竞态。</p>
+<h2 id="二解决循环引用"><a class="header" href="#二解决循环引用">二、解决循环引用</a></h2>
+<p>这是 <code>weak_ptr</code> 最经典的用途。看一个双向链表或树结构：</p>
+<pre><code class="language-c++">struct Node
+{
+    std::shared_ptr&lt;Node&gt; parent;      // 指向父节点
+    std::vector&lt;std::shared_ptr&lt;Node&gt;&gt; children;
+    ~Node() { std::cout &lt;&lt; "销毁节点\n"; }
+};
 
-// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
+void leak()
+{
+    auto parent = std::make_shared&lt;Node&gt;();
+    auto child = std::make_shared&lt;Node&gt;();
+
+    parent-&gt;children.push_back(child);   // child 计数 = 2
+    child-&gt;parent = parent;              // parent 计数 = 2
+}
+// 函数结束，两个计数都停在 1，对象永不销毁
 </code></pre>
-<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
-<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
-<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
+<p>父节点持有子节点，子节点又持有父节点，形成环。解决办法是把「反向」的那条边改成弱引用：</p>
+<pre><code class="language-c++">struct Node
+{
+    std::weak_ptr&lt;Node&gt; parent;          // 改成 weak_ptr
+    std::vector&lt;std::shared_ptr&lt;Node&gt;&gt; children;
+    ~Node() { std::cout &lt;&lt; "销毁节点\n"; }
+};
+</code></pre>
+<p>现在 <code>child-&gt;parent</code> 不影响 <code>parent</code> 的计数，函数结束时两个对象都能正常销毁。</p>
+<p><strong>怎么判断哪条边该用 <code>weak_ptr</code>？</strong></p>
+<ul>
+<li>树结构：父持有子用 <code>shared_ptr</code>，子指回父用 <code>weak_ptr</code></li>
+<li>观察者模式：被观察者持有观察者用 <code>shared_ptr</code>，观察者持有被观察者用 <code>weak_ptr</code></li>
+<li>一般原则：<strong>让「拥有」的方向用强引用，「引用」的方向用弱引用</strong></li>
+</ul>
+<p>如果两个对象确实需要互相强引用，通常说明设计本身有问题——考虑能否提取出第三个对象来持有它们。</p>
+<h2 id="三常用接口"><a class="header" href="#三常用接口">三、常用接口</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">接口</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>lock()</code></td><td style="text-align: left">返回 <code>shared_ptr</code>，对象已销毁则返回空</td></tr>
+<tr><td style="text-align: left"><code>expired()</code></td><td style="text-align: left">对象是否已销毁</td></tr>
+<tr><td style="text-align: left"><code>use_count()</code></td><td style="text-align: left">强引用计数（调试用）</td></tr>
+<tr><td style="text-align: left"><code>reset()</code></td><td style="text-align: left">放弃观察</td></tr>
+<tr><td style="text-align: left"><code>swap(other)</code></td><td style="text-align: left">交换</td></tr>
+<tr><td style="text-align: left"><code>owner_before(other)</code></td><td style="text-align: left">比较控制块顺序</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;int&gt;(42);
+std::weak_ptr&lt;int&gt; wp = sp;
+
+std::cout &lt;&lt; wp.expired() &lt;&lt; '\n';   // false
+std::cout &lt;&lt; wp.use_count() &lt;&lt; '\n'; // 1
+
+sp.reset();
+std::cout &lt;&lt; wp.expired() &lt;&lt; '\n';   // true
+std::cout &lt;&lt; wp.lock() &lt;&lt; '\n';      // 空指针
+</code></pre>
+<blockquote>
+<p><code>expired()</code> 和 <code>use_count()</code> 在多线程下都不可靠——返回值可能立刻失效。要访问对象，永远用 <code>lock()</code> 再判断。</p>
+</blockquote>
+<h2 id="四缓存场景"><a class="header" href="#四缓存场景">四、缓存场景</a></h2>
+<p><code>weak_ptr</code> 的另一个常见用途是<strong>缓存</strong>：缓存不应该决定对象的生命周期，只应该「顺便记住」还活着的对象。</p>
+<pre><code class="language-c++">class ImageCache
+{
+public:
+    std::shared_ptr&lt;Image&gt; get(const std::string&amp; path)
+    {
+        auto it = cache_.find(path);
+        if (it != cache_.end())
+        {
+            if (auto img = it-&gt;second.lock())   // 缓存还有效
+                return img;
+            cache_.erase(it);                    // 已失效，清掉
+        }
+
+        auto img = loadImage(path);              // 重新加载
+        cache_[path] = img;                      // 存弱引用
+        return img;
+    }
+
+private:
+    std::unordered_map&lt;std::string, std::weak_ptr&lt;Image&gt;&gt; cache_;
+};
+</code></pre>
+<p>如果缓存用 <code>shared_ptr</code>，那么只要缓存还在，图片就永远不会被释放——缓存变成了内存泄漏。用 <code>weak_ptr</code> 则不会：没人用图片时它自然销毁，缓存项随之失效。</p>
+<p>这个模式也适用于对象池、连接池等场景。</p>
+<h2 id="五观察者模式"><a class="header" href="#五观察者模式">五、观察者模式</a></h2>
+<p>观察者需要知道被观察者是否还活着，但不应该影响它的生命周期：</p>
+<pre><code class="language-c++">class Subject;
+
+class Observer
+{
+public:
+    virtual void onNotify() = 0;
+};
+
+class Subject
+{
+public:
+    void subscribe(std::shared_ptr&lt;Observer&gt; obs)
+    {
+        observers_.push_back(obs);
+    }
+
+    void notify()
+    {
+        // 清理已销毁的观察者，同时通知存活的
+        std::erase_if(observers_, [](auto&amp; wp) {
+            if (auto obs = wp.lock()) {
+                obs-&gt;onNotify();
+                return false;
+            }
+            return true;   // 已失效，移除
+        });
+    }
+
+private:
+    std::vector&lt;std::weak_ptr&lt;Observer&gt;&gt; observers_;
+};
+</code></pre>
+<p>如果这里用 <code>shared_ptr</code>，被观察者会一直持有观察者，导致观察者无法销毁。</p>
+<h2 id="六与-shared_ptr-的关系"><a class="header" href="#六与-shared_ptr-的关系">六、与 shared_ptr 的关系</a></h2>
+<p>理解两者关系的关键是<strong>控制块</strong>：</p>
+<pre><code>shared_ptr ──┐
+             ├──→ 控制块 ──→ 对象
+weak_ptr ────┘    ├─ 强引用: 1
+                  ├─ 弱引用: 1
+                  └─ 删除器
+</code></pre>
+<ul>
+<li>强引用归零 → <strong>对象</strong>被销毁（析构函数调用）</li>
+<li>强引用和弱引用都归零 → <strong>控制块</strong>被释放</li>
+</ul>
+<p>所以只要还有 <code>weak_ptr</code> 在观察，控制块就不会释放。这也是 <code>make_shared</code> 的一个副作用：对象和控制块在同一块内存里，控制块不释放，对象的内存也就无法归还给系统。</p>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;BigObject&gt;();
+std::weak_ptr&lt;BigObject&gt; wp = sp;
+
+sp.reset();   // BigObject 析构，但内存还没还给系统
+wp.reset();   // 现在控制块也释放了，内存才真正回收
+</code></pre>
+<p>对象大小较大、且存在长期 <code>weak_ptr</code> 时，用 <code>shared_ptr&lt;T&gt;(new T)</code> 可能比 <code>make_shared</code> 更合适。</p>
+<h2 id="七常见误区"><a class="header" href="#七常见误区">七、常见误区</a></h2>
+<p><strong>「<code>weak_ptr</code> 可以直接解引用」</strong> —— 不行，没有 <code>operator*</code> 和 <code>operator-&gt;</code>。必须先 <code>lock()</code>。</p>
+<p><strong>「<code>expired()</code> 返回 false 就可以安全使用」</strong> —— 不行。检查和使用之间对象可能被销毁，这是典型的竞态。要用 <code>lock()</code> 一次完成。</p>
+<p><strong>「<code>weak_ptr</code> 会增加引用计数」</strong> —— 不增加<strong>强</strong>引用计数，只增加弱引用计数。对象该销毁时照样销毁。</p>
+<p><strong>「<code>use_count()</code> 可以用来判断对象是否存活」</strong> —— 多线程下不可靠。判断存活用 <code>lock()</code> 或 <code>expired()</code>，且前者更安全。</p>
+<p><strong>「循环引用只能靠 <code>weak_ptr</code> 解决」</strong> —— 也可以重新设计对象关系，比如用非拥有指针（裸指针、引用）替代。<code>weak_ptr</code> 只是最方便的方案。</p>
+<p><strong>「<code>weak_ptr</code> 可以独立存在」</strong> —— 它必须从 <code>shared_ptr</code> 或另一个 <code>weak_ptr</code> 构造。凭空创建的 <code>weak_ptr</code> 是空的。</p>
+<h2 id="八相关章节"><a class="header" href="#八相关章节">八、相关章节</a></h2>
+<ul>
+<li><a href="../Smart_Pointer.html">智能指针</a>：三种智能指针的对比与选择</li>
+<li><a href="./shared_ptr.html">shared_ptr</a>：引用计数与控制块</li>
+<li><a href="./unique_ptr.html">unique_ptr</a>：独占所有权</li>
+<li><a href="../RAII.html">RAII 与资源管理</a>：所有权设计的一般原则</li>
+</ul>
 <pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
 if (ptr) {
     // 使用 ptr 来访问 MyClass 对象

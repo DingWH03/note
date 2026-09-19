@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -185,8 +185,376 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="类模板与函数模板高级应用"><a class="header" href="#类模板与函数模板高级应用">类模板与函数模板高级应用</a></h1>
-<p>模板特化与偏特化
-模板与继承结合</p>
+<p>基础语法在 <a href="../../Basis/Template.html">模板</a> 里已经讲过：怎么写函数模板、类模板，怎么做特化。这一章讲的是模板真正发挥威力的部分——<strong>编译期计算、约束与泛型设计</strong>。</p>
+<p>这些技术让 C++ 的泛型能力远超「把类型当参数」的层面。</p>
+<h2 id="一可变参数模板"><a class="header" href="#一可变参数模板">一、可变参数模板</a></h2>
+<p>C++11 引入的<strong>参数包</strong>让模板能接受任意数量的类型或值：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+void print(Args... args)
+{
+    (std::cout &lt;&lt; ... &lt;&lt; args) &lt;&lt; '\n';   // C++17 折叠表达式
+}
+
+print(1, "hello", 3.14, 'c');
+</code></pre>
+<p><code>Args...</code> 是类型参数包，<code>args...</code> 是函数参数包。展开它们有几种方式。</p>
+<h3 id="1-折叠表达式c17"><a class="header" href="#1-折叠表达式c17">1. 折叠表达式（C++17）</a></h3>
+<p>最简洁的展开方式：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+auto sum(Args... args)
+{
+    return (args + ...);           // 一元右折叠：a + (b + (c + ...))
+    // return (... + args);        // 一元左折叠：((a + b) + c) + ...
+    // return (0 + ... + args);    // 二元折叠，带初始值
+}
+</code></pre>
+<p>四种形式：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">形式</th><th style="text-align: left">展开结果</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>(... op pack)</code></td><td style="text-align: left">左折叠，<code>((a op b) op c)</code></td></tr>
+<tr><td style="text-align: left"><code>(pack op ...)</code></td><td style="text-align: left">右折叠，<code>(a op (b op c))</code></td></tr>
+<tr><td style="text-align: left"><code>(init op ... op pack)</code></td><td style="text-align: left">带初值的左折叠</td></tr>
+<tr><td style="text-align: left"><code>(pack op ... op init)</code></td><td style="text-align: left">带初值的右折叠</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-递归展开c11"><a class="header" href="#2-递归展开c11">2. 递归展开（C++11）</a></h3>
+<p>C++17 之前只能用递归：</p>
+<pre><code class="language-c++">// 递归终止
+void print() {}
+
+template&lt;class T, class... Rest&gt;
+void print(const T&amp; first, const Rest&amp;... rest)
+{
+    std::cout &lt;&lt; first &lt;&lt; ' ';
+    print(rest...);   // 递归展开
+}
+</code></pre>
+<h3 id="3-逗号表达式展开"><a class="header" href="#3-逗号表达式展开">3. 逗号表达式展开</a></h3>
+<p>利用初始化列表保证求值顺序：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+void print(Args... args)
+{
+    int dummy[] = { (std::cout &lt;&lt; args &lt;&lt; ' ', 0)... };
+    (void)dummy;
+}
+</code></pre>
+<h3 id="4-sizeof-获取数量"><a class="header" href="#4-sizeof-获取数量">4. sizeof… 获取数量</a></h3>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+constexpr std::size_t count(Args...)
+{
+    return sizeof...(Args);
+}
+
+count(1, 2, 3);   // 3
+</code></pre>
+<h2 id="二sfinae"><a class="header" href="#二sfinae">二、SFINAE</a></h2>
+<p><strong>SFINAE</strong>（Substitution Failure Is Not An Error，替换失败并非错误）是 C++ 模板的核心机制之一。</p>
+<p>它的含义是：当编译器用具体类型替换模板参数时，如果产生的代码无效，<strong>不会立即报错</strong>，而是把这个候选从重载集中移除，继续尝试其他候选。</p>
+<pre><code class="language-c++">// 只有当 T 有 size() 成员时，这个重载才有效
+template&lt;class T&gt;
+auto getSize(const T&amp; container) -&gt; decltype(container.size())
+{
+    return container.size();
+}
+
+// 备选：用于没有 size() 的类型
+template&lt;class T&gt;
+std::size_t getSize(...)
+{
+    return 0;
+}
+
+std::vector&lt;int&gt; v{1, 2, 3};
+getSize(v);      // 调用第一个
+getSize(42);     // 第一个替换失败（int 没有 size()），调用第二个
+</code></pre>
+<h3 id="enable_if"><a class="header" href="#enable_if">enable_if</a></h3>
+<p><code>std::enable_if</code> 是最经典的 SFINAE 工具，用于按条件启用重载：</p>
+<pre><code class="language-c++">#include &lt;type_traits&gt;
+
+// 只对整数类型启用
+template&lt;class T&gt;
+std::enable_if_t&lt;std::is_integral_v&lt;T&gt;, T&gt;
+half(T value)
+{
+    return value / 2;
+}
+
+// 只对浮点类型启用
+template&lt;class T&gt;
+std::enable_if_t&lt;std::is_floating_point_v&lt;T&gt;, T&gt;
+half(T value)
+{
+    return value / 2.0;
+}
+
+half(10);     // 调用整数版本
+half(3.14);   // 调用浮点版本
+</code></pre>
+<p><code>enable_if_t&lt;cond, T&gt;</code> 在 <code>cond</code> 为真时是 <code>T</code>，为假时替换失败，从而移除该候选。</p>
+<h3 id="void_t-检测成员"><a class="header" href="#void_t-检测成员">void_t 检测成员</a></h3>
+<p><code>std::void_t</code> 可以把任意类型映射为 <code>void</code>，常用于检测成员是否存在：</p>
+<pre><code class="language-c++">template&lt;class T, class = void&gt;
+struct has_serialize : std::false_type {};
+
+template&lt;class T&gt;
+struct has_serialize&lt;T, std::void_t&lt;decltype(std::declval&lt;T&gt;().serialize())&gt;&gt;
+    : std::true_type {};
+
+static_assert(has_serialize&lt;MyClass&gt;::value);
+</code></pre>
+<p>如果 <code>T().serialize()</code> 无效，特化版本替换失败，回退到主模板（<code>false_type</code>）。</p>
+<h2 id="三conceptsc20"><a class="header" href="#三conceptsc20">三、Concepts（C++20）</a></h2>
+<p>SFINAE 能工作，但错误信息极其难读。C++20 的 <strong>Concepts</strong> 提供了更清晰的替代方案。</p>
+<h3 id="1-定义与使用"><a class="header" href="#1-定义与使用">1. 定义与使用</a></h3>
+<pre><code class="language-c++">#include &lt;concepts&gt;
+
+// 定义概念
+template&lt;class T&gt;
+concept Numeric = std::is_arithmetic_v&lt;T&gt;;
+
+// 约束模板参数
+template&lt;Numeric T&gt;
+T square(T x) { return x * x; }
+
+// 也可以用在 requires 子句中
+template&lt;class T&gt;
+requires Numeric&lt;T&gt;
+T cube(T x) { return x * x * x; }
+</code></pre>
+<p>违反约束时，编译器会直接告诉你「<code>T</code> 不满足 <code>Numeric</code>」，而不是一堆模板实例化错误。</p>
+<h3 id="2-requires-表达式"><a class="header" href="#2-requires-表达式">2. requires 表达式</a></h3>
+<p>用于描述类型需要支持哪些操作：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+concept Container = requires(T c, const T&amp; cc)
+{
+    { c.begin() } -&gt; std::same_as&lt;typename T::iterator&gt;;
+    { c.end() }   -&gt; std::same_as&lt;typename T::iterator&gt;;
+    { cc.size() } -&gt; std::convertible_to&lt;std::size_t&gt;;
+    typename T::value_type;
+};
+
+template&lt;Container C&gt;
+void process(const C&amp; c) { /* ... */ }
+</code></pre>
+<p><code>requires</code> 块里可以写四类要求：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">形式</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>expr;</code></td><td style="text-align: left">表达式必须合法</td></tr>
+<tr><td style="text-align: left"><code>{ expr } -&gt; Concept;</code></td><td style="text-align: left">表达式合法且返回值满足概念</td></tr>
+<tr><td style="text-align: left"><code>typename T::type;</code></td><td style="text-align: left">类型必须存在</td></tr>
+<tr><td style="text-align: left"><code>requires cond;</code></td><td style="text-align: left">嵌套的进一步约束</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-标准库概念"><a class="header" href="#3-标准库概念">3. 标准库概念</a></h3>
+<p>标准库提供了一批常用概念：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">概念</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::integral</code></td><td style="text-align: left">整数类型</td></tr>
+<tr><td style="text-align: left"><code>std::floating_point</code></td><td style="text-align: left">浮点类型</td></tr>
+<tr><td style="text-align: left"><code>std::same_as&lt;T, U&gt;</code></td><td style="text-align: left">类型相同</td></tr>
+<tr><td style="text-align: left"><code>std::convertible_to&lt;From, To&gt;</code></td><td style="text-align: left">可转换</td></tr>
+<tr><td style="text-align: left"><code>std::derived_from&lt;D, B&gt;</code></td><td style="text-align: left">继承关系</td></tr>
+<tr><td style="text-align: left"><code>std::invocable&lt;F, Args...&gt;</code></td><td style="text-align: left">可调用</td></tr>
+<tr><td style="text-align: left"><code>std::copyable</code> / <code>std::movable</code></td><td style="text-align: left">可拷贝 / 可移动</td></tr>
+<tr><td style="text-align: left"><code>std::ranges::range</code></td><td style="text-align: left">是范围</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-简写形式"><a class="header" href="#4-简写形式">4. 简写形式</a></h3>
+<p>概念可以直接用在参数位置：</p>
+<pre><code class="language-c++">void process(std::integral auto x);        // 等价于 template&lt;std::integral T&gt;
+void handle(std::ranges::range auto&amp;&amp; r);
+</code></pre>
+<h2 id="四模板与继承的结合"><a class="header" href="#四模板与继承的结合">四、模板与继承的结合</a></h2>
+<h3 id="1-crtp静态多态"><a class="header" href="#1-crtp静态多态">1. CRTP：静态多态</a></h3>
+<p><strong>CRTP</strong>（Curiously Recurring Template Pattern，奇异递归模板模式）让基类知道派生类的类型：</p>
+<pre><code class="language-c++">template&lt;class Derived&gt;
+class Shape
+{
+public:
+    void draw() const
+    {
+        // 转换为派生类，调用其实现
+        static_cast&lt;const Derived*&gt;(this)-&gt;drawImpl();
+    }
+};
+
+class Circle : public Shape&lt;Circle&gt;
+{
+public:
+    void drawImpl() const { std::cout &lt;&lt; "画圆\n"; }
+};
+
+class Square : public Shape&lt;Square&gt;
+{
+public:
+    void drawImpl() const { std::cout &lt;&lt; "画方\n"; }
+};
+
+template&lt;class T&gt;
+void render(const Shape&lt;T&gt;&amp; s) { s.draw(); }
+</code></pre>
+<p><strong>好处</strong>：<code>draw()</code> 在编译期绑定，可以内联，没有虚表开销。</p>
+<p><strong>代价</strong>：不能通过基类指针统一存储不同派生类对象——<code>Shape&lt;Circle&gt;</code> 和 <code>Shape&lt;Square&gt;</code> 是完全不同的类型。</p>
+<p>CRTP 的典型应用：</p>
+<ul>
+<li>静态多态（替代虚函数）</li>
+<li>给类批量添加操作符（如 <code>operator!=</code> 由 <code>operator==</code> 推导）</li>
+<li>计数器（统计每个派生类实例化次数）</li>
+</ul>
+<h3 id="2-策略模式"><a class="header" href="#2-策略模式">2. 策略模式</a></h3>
+<p>用模板参数注入行为：</p>
+<pre><code class="language-c++">template&lt;class ComparePolicy&gt;
+class Sorter
+{
+public:
+    template&lt;class Container&gt;
+    void sort(Container&amp; c)
+    {
+        ComparePolicy cmp;
+        std::sort(c.begin(), c.end(), cmp);
+    }
+};
+
+struct Ascending
+{
+    template&lt;class T&gt;
+    bool operator()(const T&amp; a, const T&amp; b) const { return a &lt; b; }
+};
+
+struct Descending
+{
+    template&lt;class T&gt;
+    bool operator()(const T&amp; a, const T&amp; b) const { return a &gt; b; }
+};
+
+Sorter&lt;Ascending&gt; asc;
+Sorter&lt;Descending&gt; desc;
+</code></pre>
+<p>比运行时多态更快（可内联），但同样牺牲了运行期切换的能力。</p>
+<h3 id="3-混入mixin"><a class="header" href="#3-混入mixin">3. 混入（Mixin）</a></h3>
+<p>用可变参数模板叠加多个功能：</p>
+<pre><code class="language-c++">template&lt;class... Mixins&gt;
+class Combined : public Mixins...
+{
+public:
+    Combined(const Mixins&amp;... mixins) : Mixins(mixins)... {}
+};
+
+struct Loggable
+{
+    void log() const { std::cout &lt;&lt; "logging\n"; }
+};
+
+struct Serializable
+{
+    void serialize() const { std::cout &lt;&lt; "serializing\n"; }
+};
+
+Combined&lt;Loggable, Serializable&gt; obj{Loggable{}, Serializable{}};
+obj.log();
+obj.serialize();
+</code></pre>
+<h2 id="五模板元编程"><a class="header" href="#五模板元编程">五、模板元编程</a></h2>
+<p>模板在编译期就能做计算。经典的例子是编译期阶乘：</p>
+<pre><code class="language-c++">template&lt;unsigned N&gt;
+struct Factorial
+{
+    static constexpr unsigned value = N * Factorial&lt;N - 1&gt;::value;
+};
+
+template&lt;&gt;
+struct Factorial&lt;0&gt;
+{
+    static constexpr unsigned value = 1;
+};
+
+static_assert(Factorial&lt;5&gt;::value == 120);
+</code></pre>
+<p>C++11 之后，<code>constexpr</code> 函数更易读，多数场景不再需要这种写法：</p>
+<pre><code class="language-c++">constexpr unsigned factorial(unsigned n)
+{
+    return n &lt;= 1 ? 1 : n * factorial(n - 1);
+}
+
+static_assert(factorial(5) == 120);
+</code></pre>
+<h3 id="类型萃取"><a class="header" href="#类型萃取">类型萃取</a></h3>
+<p><code>&lt;type_traits&gt;</code> 提供了大量编译期类型操作：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+void process(T value)
+{
+    if constexpr (std::is_pointer_v&lt;T&gt;)
+    {
+        // T 是指针
+        if (value) use(*value);
+    }
+    else
+    {
+        use(value);
+    }
+}
+</code></pre>
+<p><code>if constexpr</code>（C++17）让编译期分支写起来像普通 <code>if</code>，比 SFINAE 清晰得多。</p>
+<h3 id="类型列表操作"><a class="header" href="#类型列表操作">类型列表操作</a></h3>
+<pre><code class="language-c++">template&lt;class... Ts&gt;
+struct TypeList {};
+
+// 获取第一个类型
+template&lt;class List&gt;
+struct Front;
+
+template&lt;class Head, class... Tail&gt;
+struct Front&lt;TypeList&lt;Head, Tail...&gt;&gt;
+{
+    using type = Head;
+};
+
+using First = Front&lt;TypeList&lt;int, double, char&gt;&gt;::type;   // int
+</code></pre>
+<p>这类技术是很多库（如 Boost.MPL、range-v3）的基础，日常开发中很少需要手写。</p>
+<h2 id="六编译期成本"><a class="header" href="#六编译期成本">六、编译期成本</a></h2>
+<p>模板的代价是<strong>编译时间</strong>。几个注意点：</p>
+<p><strong>减少实例化次数</strong>。同一个模板用 10 种类型实例化，就生成 10 份代码。如果这些类型的行为相同，考虑用类型擦除（如 <code>std::function</code>）合并。</p>
+<p><strong>避免头文件膨胀</strong>。模板定义必须在头文件里，大量模板会让每个包含它的 <code>.cpp</code> 都变慢。可以用显式实例化减少重复：</p>
+<pre><code class="language-c++">// 在 .cpp 中显式实例化
+template class MyTemplate&lt;int&gt;;
+template class MyTemplate&lt;double&gt;;
+</code></pre>
+<p><strong>注意错误信息长度</strong>。深层嵌套的模板错误可能几百行。Concepts 能显著改善这一点。</p>
+<p><strong>外部模板</strong>（C++11）可以抑制重复实例化：</p>
+<pre><code class="language-c++">extern template class MyTemplate&lt;int&gt;;   // 告诉编译器别在这里实例化
+</code></pre>
+<h2 id="七常见误区"><a class="header" href="#七常见误区">七、常见误区</a></h2>
+<p><strong>「模板只能做泛型容器」</strong> —— 模板能做编译期计算、约束检查、代码生成，远不止容器。</p>
+<p><strong>「SFINAE 已经过时了」</strong> —— 在 C++20 之前它是唯一的手段，大量现有代码仍在用。理解它有助于读懂老代码和标准库实现。</p>
+<p><strong>「Concepts 只是更好看的 enable_if」</strong> —— 除了语法糖，Concepts 还支持子概念、约束的合取与析取、以及重载决议中的偏序规则。</p>
+<p><strong>「CRTP 比虚函数总是更快」</strong> —— 少了虚表间接调用，但代码膨胀更严重。如果类型种类很多，指令缓存反而可能成为瓶颈。</p>
+<p><strong>「模板元编程应该尽量用」</strong> —— 编译期计算有编译期成本。如果运行期开销可以接受，普通代码更易维护。</p>
+<p><strong>「<code>if constexpr</code> 和普通 <code>if</code> 一样」</strong> —— 不同。<code>if constexpr</code> 在编译期选择分支，未选中的分支<strong>不会被实例化</strong>，因此可以包含对当前类型无效的代码。</p>
+<h2 id="八相关章节"><a class="header" href="#八相关章节">八、相关章节</a></h2>
+<ul>
+<li><a href="../../Basis/Template.html">模板</a>：模板基础语法</li>
+<li><a href="./Inheritance.html">继承</a>：运行时多态</li>
+<li><a href="./Virtual_Function.html">虚函数与多态</a>：虚函数与 CRTP 的对比</li>
+<li><a href="./CPP_Modern_Features.html">C++ 新特性</a>：<code>constexpr</code> 与编译期计算</li>
+<li><a href="../Modern_Cpp.html">现代 C++ 演进</a>：Concepts 在标准中的位置</li>
+</ul>
 
                     </main>
 

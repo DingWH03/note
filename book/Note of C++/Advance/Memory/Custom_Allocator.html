@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -184,7 +184,239 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        
+                        <h1 id="自定义内存管理"><a class="header" href="#自定义内存管理">自定义内存管理</a></h1>
+<p>前面几章讲的都是「怎么正确使用内存」。这一章讲另一件事：<strong>怎么让内存分配更快、更可控</strong>。</p>
+<p>标准库的 <code>new</code> 和 <code>malloc</code> 是通用分配器，要应付各种大小、各种模式，因此实现复杂、开销不小。如果你的程序有明确的分配模式（比如大量相同大小的小对象、频繁创建销毁），自己管理内存可以带来数量级的提升。</p>
+<p>不过要先说清楚：<strong>绝大多数程序不需要自定义分配器</strong>。先用 profiler 确认分配真的是瓶颈，再考虑优化。</p>
+<h2 id="一通用分配器的问题"><a class="header" href="#一通用分配器的问题">一、通用分配器的问题</a></h2>
+<p><code>malloc</code> 的典型开销：</p>
+<ul>
+<li><strong>查找空闲块</strong>：维护多个大小类别的空闲链表，需要遍历</li>
+<li><strong>加锁</strong>：多线程下要保护堆结构，即使用了 thread-local cache 也有开销</li>
+<li><strong>元数据</strong>：每块内存前面有头部，记录大小等信息</li>
+<li><strong>碎片化</strong>：反复分配释放不同大小的块，会留下难以利用的空洞</li>
+<li><strong>缓存不友好</strong>：对象分散在堆各处，遍历时 cache miss 频繁</li>
+</ul>
+<p>一个具体例子：分配 100 万个 32 字节的小对象，<code>malloc</code> 实际可能占用 48 字节/个（含头部和对齐），而且每次分配都是一次函数调用加链表操作。</p>
+<h2 id="二分配器接口"><a class="header" href="#二分配器接口">二、分配器接口</a></h2>
+<p>标准库容器允许指定分配器，接口定义在 <code>&lt;memory&gt;</code>：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class MyAllocator
+{
+public:
+    using value_type = T;
+
+    MyAllocator() = default;
+
+    template&lt;class U&gt;
+    MyAllocator(const MyAllocator&lt;U&gt;&amp;) noexcept {}
+
+    T* allocate(std::size_t n);
+    void deallocate(T* p, std::size_t n);
+
+    // C++11 起，相等比较决定分配器能否互换
+    bool operator==(const MyAllocator&amp;) const noexcept { return true; }
+    bool operator!=(const MyAllocator&amp;) const noexcept { return false; }
+};
+</code></pre>
+<p>一个最小实现：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+T* MyAllocator&lt;T&gt;::allocate(std::size_t n)
+{
+    if (n &gt; std::numeric_limits&lt;std::size_t&gt;::max() / sizeof(T))
+        throw std::bad_alloc();
+    if (auto p = static_cast&lt;T*&gt;(std::malloc(n * sizeof(T))))
+        return p;
+    throw std::bad_alloc();
+}
+
+template&lt;class T&gt;
+void MyAllocator&lt;T&gt;::deallocate(T* p, std::size_t) noexcept
+{
+    std::free(p);
+}
+</code></pre>
+<p>用法：</p>
+<pre><code class="language-c++">std::vector&lt;int, MyAllocator&lt;int&gt;&gt; v;
+</code></pre>
+<p><strong>注意</strong>：分配器的 <code>allocate</code> 只分配<strong>原始内存</strong>，不构造对象。构造由容器通过 <code>allocator_traits::construct</code>（内部是 placement new）完成。</p>
+<h2 id="三内存池"><a class="header" href="#三内存池">三、内存池</a></h2>
+<p>内存池的思路很简单：<strong>一次申请一大块，之后从里面切分</strong>。</p>
+<h3 id="1-固定大小内存池"><a class="header" href="#1-固定大小内存池">1. 固定大小内存池</a></h3>
+<p>适合「大量相同大小的对象」场景：</p>
+<pre><code class="language-c++">class FixedPool
+{
+public:
+    explicit FixedPool(std::size_t blockSize, std::size_t blockCount)
+        : blockSize_(std::max(blockSize, sizeof(void*)))
+    {
+        // 一次分配所有内存
+        storage_ = std::malloc(blockSize_ * blockCount);
+
+        // 把空闲块串成链表
+        for (std::size_t i = 0; i &lt; blockCount; ++i)
+        {
+            void* block = static_cast&lt;char*&gt;(storage_) + i * blockSize_;
+            *static_cast&lt;void**&gt;(block) = freeList_;   // 用块本身存 next 指针
+            freeList_ = block;
+        }
+    }
+
+    ~FixedPool() { std::free(storage_); }
+
+    void* allocate()
+    {
+        if (!freeList_)
+            throw std::bad_alloc();
+
+        void* block = freeList_;
+        freeList_ = *static_cast&lt;void**&gt;(freeList_);   // 取出下一个
+        return block;
+    }
+
+    void deallocate(void* p) noexcept
+    {
+        *static_cast&lt;void**&gt;(p) = freeList_;   // 头插回空闲链表
+        freeList_ = p;
+    }
+
+private:
+    void* storage_ = nullptr;
+    void* freeList_ = nullptr;
+    std::size_t blockSize_;
+};
+</code></pre>
+<p>分配和释放都只是链表操作，是<strong>常数时间</strong>，而且没有锁、没有元数据开销。</p>
+<p>这个技巧叫 <strong>free list</strong>，用一个空闲块的前几个字节存下一个空闲块的地址——反正空闲块里的数据已经没用了。</p>
+<h3 id="2-内存池的代价"><a class="header" href="#2-内存池的代价">2. 内存池的代价</a></h3>
+<ul>
+<li><strong>不能释放单块给系统</strong>：整个池要一起释放</li>
+<li><strong>块大小固定</strong>：需要不同大小就得建多个池</li>
+<li><strong>可能浪费</strong>：如果块大小不匹配，会有内部碎片</li>
+</ul>
+<p>所以内存池适合<strong>生命周期一致、大小固定</strong>的对象，不适合通用场景。</p>
+<h2 id="四对象池"><a class="header" href="#四对象池">四、对象池</a></h2>
+<p>内存池管理原始内存，对象池则管理<strong>已构造的对象</strong>，常用于需要频繁创建销毁的场景：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class ObjectPool
+{
+public:
+    template&lt;class... Args&gt;
+    T* create(Args&amp;&amp;... args)
+    {
+        void* mem = pool_.allocate();
+        return new (mem) T(std::forward&lt;Args&gt;(args)...);   // placement new
+    }
+
+    void destroy(T* obj)
+    {
+        obj-&gt;~T();                  // 显式析构
+        pool_.deallocate(obj);
+    }
+
+private:
+    FixedPool pool_{sizeof(T), 1024};
+};
+</code></pre>
+<p>这在游戏开发中很常见——子弹、粒子这类对象每秒创建销毁上千次，用对象池可以避免反复的堆分配。</p>
+<h2 id="五pmr多态内存资源"><a class="header" href="#五pmr多态内存资源">五、pmr：多态内存资源</a></h2>
+<p>C++17 引入了 <code>&lt;memory_resource&gt;</code>，提供了一套<strong>运行时多态</strong>的分配器机制。它解决了传统分配器的一个痛点：分配器类型是容器类型的一部分，改分配器就要改类型。</p>
+<pre><code class="language-c++">#include &lt;memory_resource&gt;
+
+// 传统方式：分配器写进类型
+std::vector&lt;int, MyAllocator&lt;int&gt;&gt; v1;
+
+// pmr 方式：分配器是构造参数
+std::pmr::vector&lt;int&gt; v2{&amp;myResource};
+</code></pre>
+<p><code>std::pmr::vector&lt;T&gt;</code> 就是 <code>std::vector&lt;T, std::pmr::polymorphic_allocator&lt;T&gt;&gt;</code> 的别名。</p>
+<h3 id="内置的内存资源"><a class="header" href="#内置的内存资源">内置的内存资源</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::pmr::new_delete_resource()</code></td><td style="text-align: left">默认，转发到 <code>new</code> / <code>delete</code></td></tr>
+<tr><td style="text-align: left"><code>std::pmr::null_memory_resource()</code></td><td style="text-align: left">任何分配都抛异常，用于测试</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::monotonic_buffer_resource</code></td><td style="text-align: left">单调递增，只增不减，极快</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::unsynchronized_pool_resource</code></td><td style="text-align: left">池化分配，单线程</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::synchronized_pool_resource</code></td><td style="text-align: left">池化分配，线程安全</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="monotonic_buffer_resource"><a class="header" href="#monotonic_buffer_resource">monotonic_buffer_resource</a></h3>
+<p>这是最实用的一个。它在一块预分配的内存上单调递增地分配，<strong>不支持单独释放</strong>，直到整个资源销毁：</p>
+<pre><code class="language-c++">// 用栈上的缓冲区，避免任何堆分配
+std::array&lt;std::byte, 4096&gt; buffer;
+std::pmr::monotonic_buffer_resource pool{buffer.data(), buffer.size()};
+
+std::pmr::vector&lt;int&gt; v{&amp;pool};
+v.push_back(1);   // 从 buffer 分配，不碰堆
+</code></pre>
+<p>典型用法是「处理一批数据，用完整体丢弃」：</p>
+<pre><code class="language-c++">void processRequest(const Request&amp; req)
+{
+    std::pmr::monotonic_buffer_resource pool;
+
+    // 这一堆临时对象都从 pool 分配
+    std::pmr::vector&lt;Item&gt; items{&amp;pool};
+    std::pmr::string name{&amp;pool};
+    std::pmr::map&lt;int, Detail&gt; details{&amp;pool};
+
+    // ... 处理
+
+}   // pool 析构，所有内存一次性释放
+</code></pre>
+<p>这样避免了多次 <code>new</code> / <code>delete</code>，也避免了内存碎片。</p>
+<h2 id="六对齐分配"><a class="header" href="#六对齐分配">六、对齐分配</a></h2>
+<p>有时需要特定对齐的内存，比如 SIMD 类型要求 16 或 32 字节对齐。</p>
+<p>C++17 提供了对齐版本的分配：</p>
+<pre><code class="language-c++">void* p = operator new(size, std::align_val_t{64});
+operator delete(p, std::align_val_t{64});
+</code></pre>
+<p>C 风格接口：</p>
+<pre><code class="language-c++">// C11 / C++17
+void* p = std::aligned_alloc(64, size);
+std::free(p);
+</code></pre>
+<p>或者用 C++11 的 <code>std::align</code> 手动调整：</p>
+<pre><code class="language-c++">void* ptr = buffer;
+std::size_t space = sizeof(buffer);
+void* aligned = std::align(64, size, ptr, space);
+</code></pre>
+<h2 id="七什么时候值得自定义分配"><a class="header" href="#七什么时候值得自定义分配">七、什么时候值得自定义分配</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">是否值得</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">通用业务代码</td><td style="text-align: left">❌ 用默认分配器</td></tr>
+<tr><td style="text-align: left">大量同大小小对象（&gt; 10 万）</td><td style="text-align: left">✅ 固定大小池</td></tr>
+<tr><td style="text-align: left">频繁创建销毁的短期对象</td><td style="text-align: left">✅ 对象池</td></tr>
+<tr><td style="text-align: left">批处理、请求级临时数据</td><td style="text-align: left">✅ <code>monotonic_buffer_resource</code></td></tr>
+<tr><td style="text-align: left">实时系统、不能有分配抖动</td><td style="text-align: left">✅ 预分配池</td></tr>
+<tr><td style="text-align: left">嵌入式、内存受限</td><td style="text-align: left">✅ 定制分配器</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>先测量再优化</strong>。用 profiler 看分配热点，确认 <code>malloc</code> 真的占了可观的时间，再考虑动手。</p>
+<p>一个常见的误判是「我的程序分配很频繁，所以需要内存池」。但如果每次分配只花 50 纳秒，100 万次也才 50 毫秒——可能根本不是瓶颈。</p>
+<h2 id="八常见误区"><a class="header" href="#八常见误区">八、常见误区</a></h2>
+<p><strong>「自定义分配器一定更快」</strong> —— 通用分配器经过几十年优化，对一般场景已经很好。自定义分配器的优势来自<strong>针对特定模式</strong>的优化，模式不匹配反而更慢。</p>
+<p><strong>「内存池可以随便释放单块」</strong> —— 大多数池不支持单独归还给系统，只能整池释放。需要单独释放就得用更复杂的结构（如 slab 分配器）。</p>
+<p><strong>「<code>allocate</code> 会构造对象」</strong> —— 不会。它只给原始内存，构造由容器负责。</p>
+<p><strong>「pmr 比普通分配器慢」</strong> —— 多一层虚函数调用，但省去了分配器类型污染。在批处理场景下，<code>monotonic_buffer_resource</code> 通常比默认分配快得多。</p>
+<p><strong>「内存池不会有碎片」</strong> —— 固定大小池不会有外部碎片，但可能有内部碎片（块大小不匹配）。而且池本身如果长期运行、反复分配释放，空闲链表也可能变得分散。</p>
+<h2 id="九相关章节"><a class="header" href="#九相关章节">九、相关章节</a></h2>
+<ul>
+<li><a href="./Allocation.html">动态内存分配</a>：<code>new</code> / <code>delete</code> 与 <code>operator new</code></li>
+<li><a href="./Layout.html">内存布局与模型</a>：对齐与对象布局</li>
+<li><a href="./Debugging.html">内存调试与诊断</a>：分配器的调试支持</li>
+<li><a href="./RAII.html">RAII 与资源管理</a>：分配器也需要 RAII 封装</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

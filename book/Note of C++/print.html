@@ -40,7 +40,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-4694e643.js"></script>
@@ -4740,31 +4740,476 @@ Pair p2(1, 2.3); // 编译器推导为 Pair&lt;int, double&gt;
 <p>在 C++ 中，静态内存管理主要涉及由编译器管理的栈内存，通常用于存储局部变量和函数调用的相关信息。与此不同，动态内存管理则涉及到程序运行时动态分配的内存区域，这通常需要程序员显式地分配和释放内存。</p>
 <p>C++ 提供了一些工具来帮助开发者更高效地管理内存，避免内存泄漏、悬空指针和野指针等常见问题。在传统的内存管理方式中，开发者需要通过 new 和 delete 来手动管理动态内存的分配和释放。而为了提高开发效率和安全性，C++11 引入了<code>智能指针</code>，如 <code>std::unique_ptr</code>、<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code>，它们自动管理内存的生命周期，减少了人为错误的可能性。</p>
 <p>此外，C++ 还提供了内存池和内存对齐等更底层的内存管理技术，使得开发者可以根据需要进一步优化程序的内存使用。</p>
-<p>在本章中，将深入探讨 C++ 中的内存管理机制，重点介绍手动内存管理和智能指针的使用。</p>
+<h2 id="本章内容-2"><a class="header" href="#本章内容-2">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#内存布局与模型">内存布局与模型</a></td><td style="text-align: left">栈、堆、全局区、常量区与代码段的划分，对象在内存中的排布</td></tr>
+<tr><td style="text-align: left"><a href="#动态内存分配">动态内存分配</a></td><td style="text-align: left"><code>new</code> / <code>delete</code> 的机制、<code>operator new</code> 与 placement new、数组与对齐</td></tr>
+<tr><td style="text-align: left"><a href="#raii-与资源管理">RAII 与资源管理</a></td><td style="text-align: left">用对象生命周期管理资源的核心思想，以及它的各种应用形态</td></tr>
+<tr><td style="text-align: left"><a href="#smart-pointer">智能指针</a></td><td style="text-align: left"><code>unique_ptr</code>、<code>shared_ptr</code>、<code>weak_ptr</code> 的用法与取舍</td></tr>
+<tr><td style="text-align: left"><a href="#自定义内存管理">自定义内存管理</a></td><td style="text-align: left">分配器、内存池、<code>pmr</code> 与对象池</td></tr>
+<tr><td style="text-align: left"><a href="#内存调试与诊断">内存调试与诊断</a></td><td style="text-align: left">常见内存错误的成因与检测工具</td></tr>
+<tr><td style="text-align: left"><a href="#c-内存模型并发">C++ 内存模型（并发）</a></td><td style="text-align: left">原子操作、内存序与 happens-before 关系</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="几条经验"><a class="header" href="#几条经验">几条经验</a></h2>
+<p>在展开细节之前，先把结论摆在这里。后面各章基本都是在解释这几条为什么成立：</p>
+<ul>
+<li><strong>能用栈就别用堆</strong>。栈上分配几乎零成本，而且天然异常安全。只有当对象需要活过当前作用域、或者体积过大时，才考虑堆。</li>
+<li><strong>不要手写 <code>delete</code></strong>。用 RAII 把资源交给对象管理，让析构函数去释放。手动 <code>delete</code> 的代码在异常路径上几乎必然出错。</li>
+<li><strong>所有权要明确</strong>。一个资源归谁管、什么时候释放，应该在类型上就能看出来。<code>unique_ptr</code> 表示独占，<code>shared_ptr</code> 表示共享，裸指针只表示「我不负责释放」。</li>
+<li><strong>先想清楚生命周期，再想性能</strong>。绝大多数内存 bug 都源于生命周期没理顺，而不是分配次数太多。</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="内存布局与模型"><a class="header" href="#内存布局与模型">内存布局与模型</a></h1>
 <p>C++ 程序的内存管理建立在计算机的<strong>存储模型</strong>(Memory Model)之上。理解程序在内存中的布局，是掌握变量生命周期、作用域、动态分配与释放机制的基础。
 一个典型的 C++ 程序在运行时会被划分为多个区域，每个区域负责存储不同类型的数据，并具有各自的生命周期与访问特性。</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="动态内存分配"><a href="#动态内存分配" class="header">动态内存分配</a></h1>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
-<p>内存管理是 C++ 编程中的一个关键问题，尤其是当涉及到动态分配的内存时，程序员需要确保及时释放资源以避免内存泄漏或其他潜在问题。为了解决这个问题，C++ 引入了智能指针，它们通过自动管理内存的生命周期来帮助开发者更安全地进行内存操作。智能指针不仅简化了内存管理的复杂性，还提高了程序的安全性，避免了许多常见的内存错误。</p>
-<p>智能指针是 C++ 标准库中的模板类，它们的作用是通过自动释放所持有的资源来管理动态分配的内存。智能指针的核心特点是，它们会在不再需要资源时自动释放内存，从而减少内存泄漏的风险。C++11 引入了三种主要类型的智能指针：std::unique_ptr、std::shared_ptr 和 std::weak_ptr，它们适用于不同的使用场景。除此之外，std::auto_ptr 是 C++98 中的一个智能指针，但由于设计缺陷，它在 C++11 中被弃用了。</p>
-<p>在本节中，我们将详细介绍这四种智能指针的特点、适用场景以及如何使用它们。</p>
+<h2 id="一程序的五个内存区域"><a class="header" href="#一程序的五个内存区域">一、程序的五个内存区域</a></h2>
+<p>一个进程的地址空间大致可以分成五块：</p>
+<pre><code>高地址
+┌──────────────────┐
+│      栈 Stack     │  ← 向下增长
+├──────────────────┤
+│        ↓         │
+│                  │
+│        ↑         │
+├──────────────────┤
+│      堆 Heap      │  ← 向上增长
+├──────────────────┤
+│  BSS 段（未初始化） │
+├──────────────────┤
+│  Data 段（已初始化）│
+├──────────────────┤
+│   常量区 .rodata   │
+├──────────────────┤
+│   代码段 .text     │
+└──────────────────┘
+低地址
+</code></pre>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>智能指针类型</th><th>所有权类型</th><th>主要特点</th><th>适用场景</th><th>创建方式</th></tr>
+<tr><th style="text-align: left">区域</th><th style="text-align: left">存放内容</th><th style="text-align: left">生命周期</th><th style="text-align: left">大小</th></tr>
 </thead>
 <tbody>
-<tr><td><code>std::auto_ptr</code></td><td>独占所有权（已弃用）</td><td>自动管理内存，但存在隐式所有权转移的问题，已在 C++11 中弃用</td><td>不推荐使用（已被 <code>std::unique_ptr</code> 取代）</td><td><code>std::auto_ptr&lt;T&gt; ptr(new T);</code></td></tr>
-<tr><td><code>std::unique_ptr</code></td><td>独占所有权</td><td>不能拷贝，只能移动，自动销毁所管理的资源</td><td>单一所有者的资源管理，适用于工厂模式等</td><td><code>std::unique_ptr&lt;T&gt; ptr = std::make_unique&lt;T&gt;();</code></td></tr>
-<tr><td><code>std::shared_ptr</code></td><td>共享所有权</td><td>引用计数，多个指针共享同一资源，最后一个销毁时释放资源</td><td>多个对象共享资源，如缓存、资源池</td><td><code>std::shared_ptr&lt;T&gt; ptr = std::make_shared&lt;T&gt;();</code></td></tr>
-<tr><td><code>std::weak_ptr</code></td><td>不管理资源生命周期</td><td>防止 <code>shared_ptr</code> 引用计数循环引用，不能直接访问资源</td><td>避免 <code>shared_ptr</code> 的循环引用问题</td><td><code>std::weak_ptr&lt;T&gt; weak_ptr = shared_ptr;</code></td></tr>
+<tr><td style="text-align: left"><strong>栈</strong></td><td style="text-align: left">局部变量、函数参数、返回地址</td><td style="text-align: left">随作用域结束</td><td style="text-align: left">编译期确定，通常 1~8 MB</td></tr>
+<tr><td style="text-align: left"><strong>堆</strong></td><td style="text-align: left"><code>new</code> / <code>malloc</code> 分配的对象</td><td style="text-align: left">手动控制</td><td style="text-align: left">受限于可用内存</td></tr>
+<tr><td style="text-align: left"><strong>BSS 段</strong></td><td style="text-align: left">未初始化的全局/静态变量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>Data 段</strong></td><td style="text-align: left">已初始化的全局/静态变量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>常量区</strong></td><td style="text-align: left">字符串字面量、<code>const</code> 全局量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>代码段</strong></td><td style="text-align: left">机器指令</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
 </tbody>
 </table>
 </div>
+<p>看一段代码，把变量对号入座：</p>
+<pre><code class="language-c++">int global_init = 42;        // Data 段
+int global_uninit;           // BSS 段
+const char* msg = "hello";   // 指针在 Data 段，"hello" 在常量区
+
+void func()
+{
+    int local = 1;                    // 栈
+    static int static_local = 2;      // Data 段（只初始化一次）
+    const char* p = "world";          // 指针在栈，"world" 在常量区
+
+    int* heap = new int(3);           // 指针在栈，对象在堆
+    delete heap;
+}
+</code></pre>
+<blockquote>
+<p>常量区的字符串是<strong>只读</strong>的。<code>"hello"[0] = 'H'</code> 是未定义行为，在多数平台上会直接段错误。</p>
+</blockquote>
+<h2 id="二栈"><a class="header" href="#二栈">二、栈</a></h2>
+<p>栈由编译器自动管理，分配和释放只是移动栈指针，因此<strong>极快</strong>——通常就是一条指令。</p>
+<h3 id="栈帧"><a class="header" href="#栈帧">栈帧</a></h3>
+<p>每次函数调用都会在栈上压入一个<strong>栈帧</strong>（stack frame），包含：</p>
+<pre><code>高地址
+┌──────────────────┐
+│   调用者的局部变量  │
+├──────────────────┤
+│   函数参数         │
+├──────────────────┤
+│   返回地址         │
+├──────────────────┤
+│   保存的寄存器      │
+├──────────────────┤
+│   被调用者的局部变量 │
+└──────────────────┘
+低地址
+</code></pre>
+<p>函数返回时整个栈帧被弹出，其中的局部对象按<strong>逆序</strong>析构。</p>
+<h3 id="栈溢出"><a class="header" href="#栈溢出">栈溢出</a></h3>
+<p>栈空间有限（Linux 默认 8 MB），以下情况会导致<strong>栈溢出</strong>：</p>
+<pre><code class="language-c++">void recurse(int n)
+{
+    int buffer[10000];   // 每次调用占用 40 KB 栈空间
+    recurse(n + 1);      // 无限递归，很快耗尽栈
+}
+
+int main()
+{
+    int huge[10'000'000];   // 约 40 MB，直接溢出
+}
+</code></pre>
+<p>大数组应该放到堆上，或者用 <code>std::vector</code>：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; huge(10'000'000);   // 数据在堆上，安全
+</code></pre>
+<h3 id="栈上的对象天然异常安全"><a class="header" href="#栈上的对象天然异常安全">栈上的对象天然异常安全</a></h3>
+<p>栈对象的析构由编译器插入，无论函数是正常返回还是异常退出，析构都会执行。这是 RAII 能成立的前提。</p>
+<h2 id="三堆"><a class="header" href="#三堆">三、堆</a></h2>
+<p>堆是程序运行时可以自由申请的内存区域。它的大小只受限于系统可用内存，代价是：</p>
+<ul>
+<li><strong>分配慢</strong>：需要在空闲链表中找合适的块，可能触发系统调用</li>
+<li><strong>需要手动管理</strong>：必须显式释放，否则泄漏</li>
+<li><strong>容易碎片化</strong>：反复分配释放不同大小的块，会留下难以利用的空洞</li>
+</ul>
+<pre><code class="language-c++">int* p = new int(42);   // 分配
+// ... 使用
+delete p;               // 释放，忘记这步就泄漏了
+</code></pre>
+<p>堆的分配器实现相当复杂（glibc 的 <code>malloc</code> 有几千行），但基本思路是维护若干<strong>空闲链表</strong>，按大小分类管理。</p>
+<h2 id="四对象的内存布局"><a class="header" href="#四对象的内存布局">四、对象的内存布局</a></h2>
+<h3 id="1-成员排布与填充"><a class="header" href="#1-成员排布与填充">1. 成员排布与填充</a></h3>
+<p>编译器会按成员声明顺序排布，但为了<strong>对齐</strong>，可能插入填充字节：</p>
+<pre><code class="language-c++">struct A
+{
+    char  c;   // 1 字节
+    // 3 字节填充
+    int   i;   // 4 字节
+    char  d;   // 1 字节
+    // 3 字节填充（尾部对齐到 4 的倍数）
+};
+// sizeof(A) == 12，而不是 6
+</code></pre>
+<p>调整成员顺序可以减小体积：</p>
+<pre><code class="language-c++">struct B
+{
+    int   i;   // 4
+    char  c;   // 1
+    char  d;   // 1
+    // 2 字节填充
+};
+// sizeof(B) == 8
+</code></pre>
+<h3 id="2-对齐规则"><a class="header" href="#2-对齐规则">2. 对齐规则</a></h3>
+<p>每个类型都有一个<strong>对齐要求</strong>（<code>alignof(T)</code>），通常是其大小的约数。规则是：</p>
+<ul>
+<li>成员的偏移量必须是其对齐值的整数倍</li>
+<li>结构体的总大小必须是最大成员对齐值的整数倍</li>
+</ul>
+<pre><code class="language-c++">std::cout &lt;&lt; alignof(int)    &lt;&lt; '\n';   // 4
+std::cout &lt;&lt; alignof(double) &lt;&lt; '\n';   // 8
+std::cout &lt;&lt; alignof(char)   &lt;&lt; '\n';   // 1
+</code></pre>
+<p>C++11 起可以用 <code>alignas</code> 强制指定对齐：</p>
+<pre><code class="language-c++">struct alignas(16) Vec4
+{
+    float x, y, z, w;   // 16 字节，正好对齐到 SIMD 寄存器宽度
+};
+</code></pre>
+<h3 id="3-空类与继承"><a class="header" href="#3-空类与继承">3. 空类与继承</a></h3>
+<p>空类的大小是 <strong>1</strong> 而不是 0——因为每个对象必须有唯一地址：</p>
+<pre><code class="language-c++">struct Empty {};
+std::cout &lt;&lt; sizeof(Empty);   // 1
+</code></pre>
+<p>但空基类优化（EBO）可以让空基类不占空间：</p>
+<pre><code class="language-c++">struct Empty {};
+
+struct WithMember : Empty
+{
+    int x;
+};
+std::cout &lt;&lt; sizeof(WithMember);   // 4，Empty 被优化掉了
+</code></pre>
+<h3 id="4-虚函数与虚表指针"><a class="header" href="#4-虚函数与虚表指针">4. 虚函数与虚表指针</a></h3>
+<p>含有虚函数的类，对象里会多一个<strong>虚表指针</strong>（<code>vptr</code>），指向该类的虚函数表：</p>
+<pre><code class="language-c++">struct Base
+{
+    virtual void f();
+    int x;
+};
+
+std::cout &lt;&lt; sizeof(Base);   // 16（64 位系统：8 字节 vptr + 4 字节 int + 4 填充）
+</code></pre>
+<p>多个虚函数不会增加对象大小——它们共享同一张虚表。</p>
+<h3 id="5-查看实际布局"><a class="header" href="#5-查看实际布局">5. 查看实际布局</a></h3>
+<p><code>offsetof</code> 可以查看成员偏移：</p>
+<pre><code class="language-c++">#include &lt;cstddef&gt;
+
+struct A { char c; int i; };
+
+std::cout &lt;&lt; offsetof(A, c) &lt;&lt; '\n';   // 0
+std::cout &lt;&lt; offsetof(A, i) &lt;&lt; '\n';   // 4
+</code></pre>
+<h2 id="五字节序"><a class="header" href="#五字节序">五、字节序</a></h2>
+<p>多字节整数在内存中的排列顺序有两种：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">低字节位置</th><th style="text-align: left">典型平台</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>小端</strong>（little-endian）</td><td style="text-align: left">低地址</td><td style="text-align: left">x86、ARM（默认）</td></tr>
+<tr><td style="text-align: left"><strong>大端</strong>（big-endian）</td><td style="text-align: left">高地址</td><td style="text-align: left">部分嵌入式、网络字节序</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">int x = 0x12345678;
+
+// 小端内存布局（从低地址到高地址）：
+// 78 56 34 12
+</code></pre>
+<p>C++20 提供了 <code>std::endian</code> 检测：</p>
+<pre><code class="language-c++">#include &lt;bit&gt;
+
+if constexpr (std::endian::native == std::endian::little)
+    std::cout &lt;&lt; "小端\n";
+</code></pre>
+<p>字节序只在<strong>跨平台传输数据</strong>时才需要关心。同一平台内的内存操作不受影响。</p>
+<h2 id="六常见误区"><a class="header" href="#六常见误区">六、常见误区</a></h2>
+<p><strong>「栈比堆快，所以尽量用栈」</strong> —— 分配本身确实是栈快，但如果对象很大，栈的拷贝成本可能更高。而且栈空间有限，几十 MB 的数组只能放堆上。</p>
+<p><strong>「<code>sizeof</code> 就是成员大小之和」</strong> —— 忽略了填充。结构体大小取决于成员顺序和对齐要求。</p>
+<p><strong>「指针大小等于所指向对象的大小」</strong> —— 指针大小固定（64 位系统上是 8 字节），与指向什么无关。</p>
+<p><strong>「<code>new</code> 一定返回连续内存」</strong> —— 单次 <code>new T[n]</code> 是连续的，但多次 <code>new</code> 之间没有任何位置保证。</p>
+<p><strong>「局部变量的地址可以返回」</strong> —— 函数返回后栈帧被回收，返回局部变量的指针或引用是悬垂引用。</p>
+<h2 id="七相关章节"><a class="header" href="#七相关章节">七、相关章节</a></h2>
+<ul>
+<li><a href="#动态内存分配">动态内存分配</a>：<code>new</code> / <code>delete</code> 的细节</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：利用栈对象的析构自动释放资源</li>
+<li><a href="#内存调试与诊断">内存调试与诊断</a>：越界、泄漏等问题的排查</li>
+<li><a href="#c-内存模型并发">C++ 内存模型（并发）</a>：多线程下的内存可见性</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="动态内存分配"><a class="header" href="#动态内存分配">动态内存分配</a></h1>
+<p>栈上的对象由编译器管理，出了作用域就自动销毁。但有些对象必须活得更久——比如跨函数传递的数据、大小在运行时才能确定的数组。这类对象需要放在<strong>堆</strong>上，由程序员（或封装好的工具）负责申请和释放。</p>
+<p>这一章讲 <code>new</code> / <code>delete</code> 到底做了什么，以及它们有哪些容易踩的地方。</p>
+<h2 id="一new-和-delete-做了什么"><a class="header" href="#一new-和-delete-做了什么">一、new 和 delete 做了什么</a></h2>
+<p>很多人以为 <code>new</code> 就是「分配内存」，其实它做两件事：</p>
+<ol>
+<li>调用 <code>operator new</code> 分配原始内存</li>
+<li>在这块内存上<strong>构造对象</strong>（调用构造函数）</li>
+</ol>
+<p><code>delete</code> 同样做两件事，顺序相反：</p>
+<ol>
+<li>调用对象的<strong>析构函数</strong></li>
+<li>调用 <code>operator delete</code> 释放内存</li>
+</ol>
+<pre><code class="language-c++">MyClass* p = new MyClass(42);
+// 等价于：
+// void* mem = operator new(sizeof(MyClass));
+// MyClass* p = new (mem) MyClass(42);   // placement new
+
+delete p;
+// 等价于：
+// p-&gt;~MyClass();
+// operator delete(p);
+</code></pre>
+<p>理解这个分解很重要，后面几个话题都建立在它之上。</p>
+<h2 id="二operator-new-与-operator-delete"><a class="header" href="#二operator-new-与-operator-delete">二、operator new 与 operator delete</a></h2>
+<p><code>operator new</code> 是<strong>可以重载的全局函数</strong>，默认实现就是调用 <code>malloc</code>：</p>
+<pre><code class="language-c++">// 全局 operator new 的签名
+void* operator new(std::size_t size);
+void* operator new[](std::size_t size);
+
+void operator delete(void* ptr) noexcept;
+void operator delete[](void* ptr) noexcept;
+</code></pre>
+<p>重载它们可以接管整个程序的堆分配：</p>
+<pre><code class="language-c++">void* operator new(std::size_t size)
+{
+    std::cout &lt;&lt; "分配 " &lt;&lt; size &lt;&lt; " 字节\n";
+    if (void* p = std::malloc(size))
+        return p;
+    throw std::bad_alloc();
+}
+
+void operator delete(void* ptr) noexcept
+{
+    std::free(ptr);
+}
+</code></pre>
+<p>也可以只为某个类重载：</p>
+<pre><code class="language-c++">class Pooled
+{
+public:
+    static void* operator new(std::size_t size);
+    static void operator delete(void* ptr) noexcept;
+};
+</code></pre>
+<p>这常用于对象池、内存追踪等场景。</p>
+<blockquote>
+<p><code>new</code> 失败时默认抛 <code>std::bad_alloc</code>。如果希望像 <code>malloc</code> 那样返回 <code>nullptr</code>，可以用 <code>new (std::nothrow) T</code>。</p>
+</blockquote>
+<h2 id="三placement-new"><a class="header" href="#三placement-new">三、placement new</a></h2>
+<p>placement new 允许在<strong>已分配的内存</strong>上构造对象，不分配新内存：</p>
+<pre><code class="language-c++">#include &lt;new&gt;
+
+// 1. 先分配原始内存
+void* buffer = std::malloc(sizeof(MyClass));
+
+// 2. 在已有内存上构造对象
+MyClass* p = new (buffer) MyClass(42);
+
+// 3. 手动析构（不能 delete！）
+p-&gt;~MyClass();
+
+// 4. 释放原始内存
+std::free(buffer);
+</code></pre>
+<p>这里<strong>绝对不能调用 <code>delete p</code></strong>——因为内存不是 <code>operator new</code> 分配的，<code>delete</code> 会试图释放一块不属于它的内存。必须手动调用析构函数，再自己释放缓冲区。</p>
+<p>标准库容器正是这样实现的：<code>std::vector</code> 先分配一块原始内存，再用 placement new 逐个构造元素。</p>
+<h2 id="四new-与-delete"><a class="header" href="#四new-与-delete">四、new[] 与 delete[]</a></h2>
+<p>数组版本的 <code>new</code> 会在内存头部额外记录元素个数，<code>delete[]</code> 需要这个信息来逐个调用析构函数：</p>
+<pre><code class="language-c++">MyClass* arr = new MyClass[10];
+delete[] arr;   // 正确：析构 10 个对象
+// delete arr;  // 错误：只析构 1 个，且释放方式不匹配
+</code></pre>
+<p><strong>必须配对使用</strong>。用 <code>new[]</code> 分配却用 <code>delete</code> 释放（或反之）是未定义行为。</p>
+<p>对于没有析构函数的类型（如 <code>int</code>），编译器通常不会额外记录长度，但<strong>混用仍然是未定义行为</strong>，不要依赖这一点。</p>
+<p>现代 C++ 中，几乎不需要手写 <code>new[]</code>——用 <code>std::vector</code> 或 <code>std::make_unique&lt;T[]&gt;</code> 更安全：</p>
+<pre><code class="language-c++">auto arr = std::make_unique&lt;int[]&gt;(10);   // 自动管理
+</code></pre>
+<h2 id="五内存对齐"><a class="header" href="#五内存对齐">五、内存对齐</a></h2>
+<p>有些类型要求内存地址必须是某个值的整数倍。比如 SIMD 类型通常要求 16 或 32 字节对齐。</p>
+<p>C++17 起，<code>new</code> 会自动处理<strong>过度对齐类型</strong>：</p>
+<pre><code class="language-c++">struct alignas(64) CacheLine
+{
+    char data[64];
+};
+
+CacheLine* p = new CacheLine;   // C++17 保证 64 字节对齐
+</code></pre>
+<p>C++17 之前需要手动指定：</p>
+<pre><code class="language-c++">void* mem = aligned_alloc(64, sizeof(CacheLine));
+</code></pre>
+<p>如果需要手动管理对齐内存：</p>
+<pre><code class="language-c++">#include &lt;memory&gt;
+
+// 分配 64 字节对齐、能放下 10 个 CacheLine 的内存
+void* mem = std::aligned_alloc(64, sizeof(CacheLine) * 10);
+std::free(mem);
+</code></pre>
+<h2 id="六常见错误"><a class="header" href="#六常见错误">六、常见错误</a></h2>
+<h3 id="1-忘记释放"><a class="header" href="#1-忘记释放">1. 忘记释放</a></h3>
+<pre><code class="language-c++">void leak()
+{
+    int* p = new int(42);
+    // 忘记 delete p
+}
+</code></pre>
+<p>短命程序里泄漏可能无所谓，但长期运行的服务会慢慢吃光内存。</p>
+<h3 id="2-重复释放"><a class="header" href="#2-重复释放">2. 重复释放</a></h3>
+<pre><code class="language-c++">int* p = new int(42);
+delete p;
+delete p;   // 未定义行为，通常直接崩溃
+</code></pre>
+<p>释放后应该把指针置空，或者干脆用智能指针：</p>
+<pre><code class="language-c++">delete p;
+p = nullptr;   // 至少让第二次 delete 变成安全的空操作
+</code></pre>
+<h3 id="3-释放后继续使用"><a class="header" href="#3-释放后继续使用">3. 释放后继续使用</a></h3>
+<pre><code class="language-c++">int* p = new int(42);
+delete p;
+std::cout &lt;&lt; *p;   // 悬垂指针，未定义行为
+</code></pre>
+<p>这块内存可能已被重新分配给别的对象，读到的值无法预料。</p>
+<h3 id="4-释放非堆内存"><a class="header" href="#4-释放非堆内存">4. 释放非堆内存</a></h3>
+<pre><code class="language-c++">int local = 42;
+int* p = &amp;local;
+delete p;   // 灾难：试图释放栈内存
+</code></pre>
+<h3 id="5-混用-mallocfree-与-newdelete"><a class="header" href="#5-混用-mallocfree-与-newdelete">5. 混用 malloc/free 与 new/delete</a></h3>
+<pre><code class="language-c++">int* p = (int*)std::malloc(sizeof(int));
+delete p;   // 错误：malloc 配 free，new 配 delete
+
+int* q = new int(42);
+std::free(q);   // 错误
+</code></pre>
+<p>两套机制的内存管理方式不同，混用是未定义行为。</p>
+<h2 id="七异常安全"><a class="header" href="#七异常安全">七、异常安全</a></h2>
+<p><code>new</code> 可能抛出 <code>std::bad_alloc</code>，这让手动管理内存更容易出错：</p>
+<pre><code class="language-c++">void risky()
+{
+    MyClass* a = new MyClass();
+    MyClass* b = new MyClass();   // 如果这里抛异常，a 就泄漏了
+
+    // ... 使用
+
+    delete b;
+    delete a;
+}
+</code></pre>
+<p>如果第二个 <code>new</code> 失败，<code>a</code> 指向的内存永远不会被释放。正确做法是用 RAII：</p>
+<pre><code class="language-c++">void safe()
+{
+    auto a = std::make_unique&lt;MyClass&gt;();
+    auto b = std::make_unique&lt;MyClass&gt;();   // 抛异常时 a 会自动释放
+}
+</code></pre>
+<p>这是「不要手写 <code>delete</code>」这条建议的核心理由——异常路径上的清理太容易遗漏了。</p>
+<h2 id="八什么时候该用堆"><a class="header" href="#八什么时候该用堆">八、什么时候该用堆</a></h2>
+<p>堆分配有成本，不是所有对象都该放堆上：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">建议</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">局部临时对象</td><td style="text-align: left">栈</td></tr>
+<tr><td style="text-align: left">大小在编译期确定的小对象</td><td style="text-align: left">栈</td></tr>
+<tr><td style="text-align: left">需要活过作用域的对象</td><td style="text-align: left">堆（用智能指针）</td></tr>
+<tr><td style="text-align: left">大小运行时才能确定</td><td style="text-align: left">堆（用 <code>std::vector</code>）</td></tr>
+<tr><td style="text-align: left">体积很大（几 MB 以上）</td><td style="text-align: left">堆</td></tr>
+<tr><td style="text-align: left">多态对象的动态创建</td><td style="text-align: left">堆（用智能指针）</td></tr>
+</tbody>
+</table>
+</div>
+<p>一个经验法则：<strong>如果对象的生命周期不需要超出当前作用域，就别放堆上</strong>。</p>
+<h2 id="九相关章节-1"><a class="header" href="#九相关章节-1">九、相关章节</a></h2>
+<ul>
+<li><a href="#内存布局与模型">内存布局与模型</a>：栈与堆的区别</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：用对象管理资源，避免手写 delete</li>
+<li><a href="#smart-pointer">智能指针</a>：<code>unique_ptr</code> 与 <code>shared_ptr</code></li>
+<li><a href="#自定义内存管理">自定义内存管理</a>：内存池与分配器</li>
+<li><a href="#内存调试与诊断">内存调试与诊断</a>：泄漏与越界的排查</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="smart-pointer"><a class="header" href="#smart-pointer">Smart Pointer</a></h1>
+<p>智能指针是 RAII 在内存管理上的标准实现。它把「指向对象的指针」和「负责释放」这两件事绑在一起，让堆对象的生命周期由对象自己管理，而不是靠程序员记得写 <code>delete</code>。</p>
+<p>C++11 引入了三种智能指针，各有明确的使用场景：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">所有权</th><th style="text-align: left">拷贝</th><th style="text-align: left">适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#stdunique_ptr"><code>std::unique_ptr</code></a></td><td style="text-align: left">独占</td><td style="text-align: left">不可拷贝，可移动</td><td style="text-align: left"><strong>默认选择</strong>，单一所有者</td></tr>
+<tr><td style="text-align: left"><a href="#stdshared_ptr"><code>std::shared_ptr</code></a></td><td style="text-align: left">共享</td><td style="text-align: left">可拷贝，引用计数</td><td style="text-align: left">多个对象共享同一资源</td></tr>
+<tr><td style="text-align: left"><a href="#stdweak_ptr"><code>std::weak_ptr</code></a></td><td style="text-align: left">不拥有</td><td style="text-align: left">可拷贝</td><td style="text-align: left">打破 <code>shared_ptr</code> 的循环引用</td></tr>
+</tbody>
+</table>
+</div>
+<p>此外还有 <code>std::auto_ptr</code>，它是 C++98 的产物，因为拷贝时隐式转移所有权这一设计缺陷，在 C++11 被弃用、C++17 被移除。现在只作为历史知识了解即可，见 <a href="#stdauto_ptr">auto_ptr</a>。</p>
+<h2 id="怎么选"><a class="header" href="#怎么选">怎么选</a></h2>
+<p>大部分情况下答案很简单：</p>
+<ul>
+<li><strong>优先用 <code>unique_ptr</code></strong>。它没有额外开销（大小和裸指针一样），语义清晰。需要转移所有权时用 <code>std::move</code>。</li>
+<li><strong>确实需要共享时才用 <code>shared_ptr</code></strong>。它要维护控制块和引用计数，有原子操作开销。</li>
+<li><strong>出现循环引用时用 <code>weak_ptr</code> 打破</strong>。它不增加引用计数，只观察对象是否还活着。</li>
+</ul>
+<p>一个常见的误区是「<code>shared_ptr</code> 更安全所以都用它」。实际上共享所有权会让生命周期变得难以推理——你不知道对象什么时候被销毁。能用独占就用独占。</p>
+<h2 id="本章内容-3"><a class="header" href="#本章内容-3">本章内容</a></h2>
+<ul>
+<li><a href="#stdunique_ptr">unique_ptr</a>：独占所有权、自定义删除器、工厂函数</li>
+<li><a href="#stdshared_ptr">shared_ptr</a>：引用计数、控制块、线程安全、<code>enable_shared_from_this</code></li>
+<li><a href="#stdweak_ptr">weak_ptr</a>：打破循环引用、缓存场景、<code>lock()</code> 用法</li>
+<li><a href="#stdauto_ptr">auto_ptr</a>：被移除的旧智能指针，以及它为什么被移除</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="stdauto_ptr"><a class="header" href="#stdauto_ptr">std::auto_ptr</a></h1>
 <p><code>std::auto_ptr</code> 是 C++98 中引入的智能指针类型，它提供了一种自动管理动态内存的方式。其主要功能是通过自动销毁对象来避免内存泄漏。然而，由于其所有权转移的语义问题（例如，拷贝操作时所有权隐式转移），<code>std::auto_ptr</code> 在 C++11 中被 <strong>弃用</strong>，并且在 C++17 中被 <strong>完全移除</strong>。因此，建议开发者使用 <code>std::unique_ptr</code> 来替代 <code>std::auto_ptr</code>。</p>
@@ -4861,159 +5306,588 @@ int main() {
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="stdunique_ptr"><a class="header" href="#stdunique_ptr">std::unique_ptr</a></h1>
-<p><code>std::unique_ptr</code> 是 C++11 引入的智能指针类型，它为动态内存提供了更加安全和高效的管理方式。与 <code>std::auto_ptr</code> 相比，<code>std::unique_ptr</code> 引入了更严格的所有权管理机制，避免了隐式所有权转移的问题，并且仅支持通过移动语义来转移资源的所有权。这使得 <code>std::unique_ptr</code> 在现代 C++ 中成为管理动态内存的推荐方式。</p>
-<h2 id="定义与基本功能"><a class="header" href="#定义与基本功能">定义与基本功能</a></h2>
-<p><code>std::unique_ptr</code> 是一个模板类，用于管理指向动态分配内存的指针。它确保在其生命周期结束时自动释放资源，避免了开发者手动管理内存的复杂性。该类型的主要目标是明确地控制资源的所有权，确保资源只会被一个指针持有，避免内存泄漏和资源重复释放的风险。</p>
-<pre><code class="language-cpp">template&lt;
-    class T,
-    class Deleter = std::default_delete&lt;T&gt;
-&gt; class unique_ptr;
+<p><code>std::unique_ptr</code> 是 C++11 引入的智能指针，表示对资源的<strong>独占所有权</strong>。它应该是你管理堆对象时的默认选择——没有额外开销，语义清晰，不会出现「不知道谁负责释放」的问题。</p>
+<h2 id="一基本用法"><a class="header" href="#一基本用法">一、基本用法</a></h2>
+<pre><code class="language-c++">#include &lt;memory&gt;
+
+// 推荐：用 make_unique 创建（C++14）
+auto p = std::make_unique&lt;MyClass&gt;(42);
+
+// 也可以用裸指针构造（C++11）
+std::unique_ptr&lt;MyClass&gt; p2(new MyClass(42));
+
+p-&gt;doSomething();   // 像普通指针一样使用
+(*p).doSomething();
 </code></pre>
-<pre><code class="language-cpp">template &lt;
-    class T,
-    class Deleter
-&gt; class unique_ptr&lt;T[], Deleter&gt;;
+<p><code>unique_ptr</code> 的大小和裸指针一样（64 位系统上 8 字节），因为它不需要存引用计数之类的额外信息——所有权是唯一的，销毁时机在编译期就确定了。</p>
+<blockquote>
+<p>优先用 <code>std::make_unique</code> 而不是 <code>new</code>。除了更简洁，它还能避免一个微妙的异常安全问题：</p>
+<pre><code class="language-c++">// 危险：如果 MyClass 构造抛异常，或者 g() 抛异常，
+// 都可能让 new 出来的内存泄漏
+f(std::unique_ptr&lt;MyClass&gt;(new MyClass()), g());
+
+// 安全
+f(std::make_unique&lt;MyClass&gt;(), g());
 </code></pre>
-<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 不允许拷贝操作，它只支持移动操作。这样，<code>std::unique_ptr</code> 可以避免由于不明确的所有权转移所引发的错误和 bug。资源的所有权转移只能通过 <code>std::move</code> 完成，这使得程序员可以清晰地看到何时发生了所有权的转移，避免了拷贝构造和赋值操作带来的隐式问题。</p>
-<h2 id="资源管理的所有权控制"><a class="header" href="#资源管理的所有权控制">资源管理的所有权控制</a></h2>
-<p><code>std::unique_ptr</code> 的核心特性之一就是它持有资源的 <strong>唯一所有权</strong>。每个 <code>std::unique_ptr</code> 都确保它是唯一拥有所指向对象的所有者。当 <code>std::unique_ptr</code> 被销毁时，它会自动释放所管理的内存，无需开发者手动调用 <code>delete</code>，从而降低了内存泄漏的风险。由于不允许拷贝构造或拷贝赋值操作，<code>std::unique_ptr</code> 使得资源的所有权在多个指针之间的共享变得不可能，从而避免了多个指针指向同一资源时可能导致的多重释放或悬空指针问题。</p>
-<p>例如，考虑以下代码片段：</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 转移所有权
+</blockquote>
+<h2 id="二所有权转移"><a class="header" href="#二所有权转移">二、所有权转移</a></h2>
+<p><code>unique_ptr</code> <strong>不能拷贝</strong>，只能移动：</p>
+<pre><code class="language-c++">auto p1 = std::make_unique&lt;MyClass&gt;();
+// auto p2 = p1;                 // 编译错误：不能拷贝
+auto p2 = std::move(p1);         // 正确：转移所有权
+
+// 此时 p1 变为 nullptr
+if (!p1)
+    std::cout &lt;&lt; "p1 已失去所有权\n";
 </code></pre>
-<p>在这段代码中，<code>ptr1</code> 的所有权通过 <code>std::move</code> 转移给 <code>ptr2</code>，<code>ptr1</code> 变为一个空指针，无法再访问原始资源。资源的所有权不再在多个指针之间共享，因此 <code>ptr1</code> 不再需要释放资源。</p>
-<h2 id="移动语义"><a class="header" href="#移动语义">移动语义</a></h2>
-<p><code>std::unique_ptr</code> 支持 <strong>移动语义</strong>，意味着资源的所有权可以从一个 <code>unique_ptr</code> 移动到另一个 <code>unique_ptr</code>。通过移动构造函数或移动赋值操作，资源的所有权会被安全地转移，而不会引发不必要的复制操作。与拷贝构造不同，移动操作并不会增加资源的引用计数，也不会创建多个指针指向同一个对象。移动语义使得内存管理更加高效，并避免了性能上的冗余开销。</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 使用移动语义转移所有权
-</code></pre>
-<p>这里，<code>ptr1</code> 的所有权被移动到 <code>ptr2</code>，<code>ptr1</code> 被置为空。这样，<code>std::unique_ptr</code> 能够在不产生冗余复制的情况下实现资源所有权的转移。</p>
-<h2 id="自动销毁与内存管理"><a class="header" href="#自动销毁与内存管理">自动销毁与内存管理</a></h2>
-<p><code>std::unique_ptr</code> 在其生命周期结束时会自动释放它所持有的资源。它的析构函数会在 <code>unique_ptr</code> 被销毁时自动调用所管理对象的析构函数，这意味着开发者无需手动管理内存的释放操作。通过这种方式，<code>std::unique_ptr</code> 减少了内存泄漏的可能性，也避免了因为忘记释放内存而导致的错误。</p>
-<p>例如，在函数的作用域结束时，<code>std::unique_ptr</code> 会自动释放它管理的资源：</p>
-<pre><code class="language-cpp">void createObject() {
-    std::unique_ptr&lt;MyClass&gt; ptr(new MyClass());
-    // 自动释放 ptr 管理的内存
+<p>这个限制是有意设计的。如果允许拷贝，两个 <code>unique_ptr</code> 会指向同一对象，销毁时就会重复释放。用 <code>std::move</code> 显式转移，代码里所有权流转一目了然。</p>
+<h3 id="作为函数参数与返回值"><a class="header" href="#作为函数参数与返回值">作为函数参数与返回值</a></h3>
+<pre><code class="language-c++">// 接管所有权：调用者不能再使用
+void takeOwnership(std::unique_ptr&lt;MyClass&gt; p);
+
+// 只借用：不涉及所有权转移
+void useObject(const MyClass&amp; obj);
+void useObject(MyClass* obj);
+
+// 返回所有权：把资源交给调用者
+std::unique_ptr&lt;MyClass&gt; create()
+{
+    return std::make_unique&lt;MyClass&gt;();   // 移动语义，无拷贝开销
 }
 </code></pre>
-<p>当 <code>createObject</code> 函数结束时，<code>ptr</code> 会被销毁，它所管理的 <code>MyClass</code> 对象也会被自动释放。</p>
-<h2 id="不支持复制支持移动"><a class="header" href="#不支持复制支持移动">不支持复制，支持移动</a></h2>
-<p>与 <code>std::auto_ptr</code> 不同，<code>std::unique_ptr</code> 设计上不支持拷贝构造和拷贝赋值操作，因此不会发生隐式所有权转移的问题。若需要转移所有权，开发者必须显式地使用 <code>std::move</code> 进行资源的转移，这使得代码中资源所有权的转移变得更加明确和安全。这种设计使得 <code>std::unique_ptr</code> 在资源管理上更加清晰，避免了由于误用或隐式操作而引发的错误。</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 编译错误，不能拷贝
+<p>函数返回局部 <code>unique_ptr</code> 时不需要写 <code>std::move</code>，编译器会自动应用移动（NRVO 或隐式移动）。</p>
+<h2 id="三常用接口"><a class="header" href="#三常用接口">三、常用接口</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">接口</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>get()</code></td><td style="text-align: left">返回裸指针，不转移所有权</td></tr>
+<tr><td style="text-align: left"><code>release()</code></td><td style="text-align: left">放弃所有权并返回裸指针，<strong>需要手动 delete</strong></td></tr>
+<tr><td style="text-align: left"><code>reset(p)</code></td><td style="text-align: left">释放当前对象，接管新指针 <code>p</code>（默认 <code>nullptr</code>）</td></tr>
+<tr><td style="text-align: left"><code>swap(other)</code></td><td style="text-align: left">交换两个 <code>unique_ptr</code></td></tr>
+<tr><td style="text-align: left"><code>operator bool</code></td><td style="text-align: left">是否持有对象</td></tr>
+<tr><td style="text-align: left"><code>operator*</code> / <code>operator-&gt;</code></td><td style="text-align: left">访问对象</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">auto p = std::make_unique&lt;int&gt;(42);
+
+int* raw = p.get();          // 只读，p 仍然拥有
+
+p.reset();                   // 释放对象，p 变为空
+p.reset(new int(100));       // 释放旧的，接管新的
+
+if (p)                       // 判空
+    std::cout &lt;&lt; *p &lt;&lt; '\n';
 </code></pre>
-<p>这段代码会编译错误，因为 <code>std::unique_ptr</code> 不允许拷贝构造。唯一的方式是使用 <code>std::move</code> 来进行所有权的转移：</p>
-<pre><code class="language-cpp">std::unique_ptr&lt;MyClass&gt; ptr1(new MyClass());
-std::unique_ptr&lt;MyClass&gt; ptr2 = std::move(ptr1);  // 通过移动操作转移所有权
+<p><code>release()</code> 要小心使用——它把所有权交还给裸指针，之后必须自己 <code>delete</code>：</p>
+<pre><code class="language-c++">auto p = std::make_unique&lt;int&gt;(42);
+int* raw = p.release();   // p 变空，raw 需要手动管理
+delete raw;               // 别忘了
 </code></pre>
+<p>它主要用于与 C 风格接口交接所有权。</p>
+<h2 id="四数组支持"><a class="header" href="#四数组支持">四、数组支持</a></h2>
+<p><code>unique_ptr</code> 有数组特化版本 <code>unique_ptr&lt;T[]&gt;</code>，它使用 <code>delete[]</code> 而非 <code>delete</code>：</p>
+<pre><code class="language-c++">auto arr = std::make_unique&lt;int[]&gt;(10);   // 10 个 int
+
+arr[0] = 1;      // 支持 operator[]
+arr[9] = 10;
+// 自动 delete[]，无需手动管理
+</code></pre>
+<p>不过大多数情况下 <code>std::vector</code> 是更好的选择——它知道自己的大小，支持迭代器和算法。</p>
+<h2 id="五自定义删除器"><a class="header" href="#五自定义删除器">五、自定义删除器</a></h2>
+<p><code>unique_ptr</code> 的第二个模板参数是删除器，可以自定义释放方式：</p>
+<pre><code class="language-c++">template&lt;class T, class Deleter = std::default_delete&lt;T&gt;&gt;
+class unique_ptr;
+</code></pre>
+<p>这让 <code>unique_ptr</code> 能管理任何「需要释放」的资源，不限于 <code>new</code> 出来的内存：</p>
+<pre><code class="language-c++">// 管理文件
+auto fileDeleter = [](FILE* f) { if (f) fclose(f); };
+std::unique_ptr&lt;FILE, decltype(fileDeleter)&gt; file(fopen("a.txt", "r"), fileDeleter);
+
+// 管理 malloc 的内存
+std::unique_ptr&lt;int, decltype(&amp;std::free)&gt; buf(
+    (int*)std::malloc(sizeof(int) * 10), &amp;std::free);
+
+// 管理 socket
+auto socketDeleter = [](int* fd) { if (*fd &gt;= 0) close(*fd); delete fd; };
+std::unique_ptr&lt;int, decltype(socketDeleter)&gt; sock(new int(fd), socketDeleter);
+</code></pre>
+<p>注意：<strong>使用自定义删除器后，<code>unique_ptr</code> 的大小可能变大</strong>（需要存储删除器对象）。无状态的删除器（如函数指针、无捕获 lambda）通常不增加大小，因为编译器可以做空基类优化。</p>
+<h2 id="六作为类成员"><a class="header" href="#六作为类成员">六、作为类成员</a></h2>
+<p><code>unique_ptr</code> 常用于实现 <strong>Pimpl 惯用法</strong>（Pointer to Implementation），把实现细节隐藏起来：</p>
+<pre><code class="language-c++">// widget.h
+class Widget
+{
+public:
+    Widget();
+    ~Widget();                          // 必须在 .cpp 中定义
+    Widget(Widget&amp;&amp;) noexcept;          // 同上
+    Widget&amp; operator=(Widget&amp;&amp;) noexcept;
+
+    void doSomething();
+
+private:
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; impl_;        // 只暴露前置声明
+};
+
+// widget.cpp
+struct Widget::Impl
+{
+    std::string data;
+    // 复杂的实现细节
+};
+
+Widget::Widget() : impl_(std::make_unique&lt;Impl&gt;()) {}
+Widget::~Widget() = default;            // Impl 在这里才是完整类型
+</code></pre>
+<p>这样做的好处：</p>
+<ul>
+<li>头文件不需要包含实现依赖，加快编译</li>
+<li>修改实现不会导致使用方重新编译</li>
+<li>保持 ABI 稳定</li>
+</ul>
+<p>注意析构函数必须在 <code>.cpp</code> 中定义——因为在头文件里 <code>Impl</code> 还是不完整类型，<code>unique_ptr</code> 的析构需要完整类型。</p>
+<h2 id="七作为工厂函数返回值"><a class="header" href="#七作为工厂函数返回值">七、作为工厂函数返回值</a></h2>
+<p>工厂函数返回 <code>unique_ptr</code> 是标准做法，把所有权明确交给调用者：</p>
+<pre><code class="language-c++">class Shape
+{
+public:
+    virtual ~Shape() = default;
+    virtual void draw() const = 0;
+};
+
+std::unique_ptr&lt;Shape&gt; createShape(const std::string&amp; type)
+{
+    if (type == "circle")
+        return std::make_unique&lt;Circle&gt;();
+    if (type == "square")
+        return std::make_unique&lt;Square&gt;();
+    return nullptr;
+}
+
+// 使用
+auto shape = createShape("circle");
+if (shape)
+    shape-&gt;draw();
+</code></pre>
+<p>这里基类的析构函数必须是 <code>virtual</code>，否则通过基类指针删除派生类对象是未定义行为。</p>
+<h2 id="八常见误区"><a class="header" href="#八常见误区">八、常见误区</a></h2>
+<p><strong>「<code>unique_ptr</code> 不能放进容器」</strong> —— 可以，但容器需要支持移动。<code>std::vector&lt;std::unique_ptr&lt;T&gt;&gt;</code> 是合法的，只是不能用需要拷贝的操作（如 <code>std::copy</code>）。</p>
+<p><strong>「返回 <code>unique_ptr</code> 一定要写 <code>std::move</code>」</strong> —— 返回局部变量时不需要，编译器会隐式移动。写 <code>std::move</code> 反而可能阻止 NRVO 优化。</p>
+<p><strong>「<code>get()</code> 返回的指针可以随便用」</strong> —— <code>get()</code> 只是借用，<code>unique_ptr</code> 销毁后该指针立刻悬垂。不要保存它。</p>
+<p><strong>「<code>release()</code> 之后 <code>unique_ptr</code> 还会释放」</strong> —— 不会。<code>release()</code> 就是放弃所有权，之后必须自己管理。</p>
+<p><strong>「自定义删除器不影响大小」</strong> —— 有状态的删除器会增加 <code>unique_ptr</code> 的大小。无状态删除器通常不增加。</p>
+<p><strong>「<code>unique_ptr</code> 可以拷贝到 <code>shared_ptr</code>」</strong> —— 可以，用移动：<code>std::shared_ptr&lt;T&gt; sp = std::move(up);</code>。这是把独占所有权升级为共享所有权的唯一方式。</p>
+<h2 id="九相关章节-2"><a class="header" href="#九相关章节-2">九、相关章节</a></h2>
+<ul>
+<li><a href="#smart-pointer">智能指针</a>：三种智能指针的对比与选择</li>
+<li><a href="#stdshared_ptr">shared_ptr</a>：需要共享所有权时</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：<code>unique_ptr</code> 背后的设计思想</li>
+<li><a href="#拷贝控制">拷贝控制</a>：移动语义与 Rule of Five</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="stdshared_ptr"><a class="header" href="#stdshared_ptr">std::shared_ptr</a></h1>
-<p><code>std::shared_ptr</code> 是 C++11 中引入的智能指针类型，用于管理动态分配的内存。它与 <code>std::unique_ptr</code> 和 <code>std::auto_ptr</code> 的主要区别在于，<code>std::shared_ptr</code> 支持 <strong>共享所有权</strong>，即多个 <code>shared_ptr</code> 可以共同拥有同一个资源。当最后一个持有该资源的 <code>shared_ptr</code> 被销毁时，资源会被自动释放。因此，<code>std::shared_ptr</code> 适用于需要多个指针共同管理同一资源的场景。</p>
-<h2 id="定义与基本功能-1"><a class="header" href="#定义与基本功能-1">定义与基本功能</a></h2>
-<p><code>std::shared_ptr</code> 是一个模板类，能够在多个 <code>shared_ptr</code> 之间共享资源的所有权, 其定义如下：</p>
-<pre><code class="language-cpp">template&lt; class T &gt; class shared_ptr;
-</code></pre>
-<p>它通过 <strong>引用计数</strong> 机制来管理资源，确保在多个指针指向同一个对象时，资源只有在最后一个指针被销毁时才会被释放。每当一个新的 <code>shared_ptr</code> 被创建或拷贝时，引用计数会增加；当一个 <code>shared_ptr</code> 被销毁或被重置时，引用计数会减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动释放资源。</p>
-<p>这种共享所有权的特性使得 <code>std::shared_ptr</code> 特别适用于需要多个对象共同管理资源的场景，而不必担心资源在多个指针之间的管理冲突。</p>
-<h2 id="引用计数机制"><a class="header" href="#引用计数机制">引用计数机制</a></h2>
-<p><code>std::shared_ptr</code> 的核心特点是它的 <strong>引用计数</strong> 机制。每个 <code>shared_ptr</code> 都维护着一个与资源关联的引用计数，记录当前有多少个 <code>shared_ptr</code> 正在共享同一资源。每当一个新的 <code>shared_ptr</code> 被拷贝或赋值时，引用计数增加；当一个 <code>shared_ptr</code> 被销毁时，引用计数减少。当引用计数降到 0 时，<code>std::shared_ptr</code> 会自动删除所指向的对象，从而避免了内存泄漏。</p>
-<p>例如，考虑以下代码：</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
-std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
-</code></pre>
-<p>此时，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象，引用计数为 2。当 <code>ptr1</code> 或 <code>ptr2</code> 被销毁时，引用计数会减少。只有当最后一个 <code>shared_ptr</code> 被销毁时，所管理的对象才会被释放。</p>
-<h2 id="共享所有权"><a class="header" href="#共享所有权">共享所有权</a></h2>
-<p><code>std::shared_ptr</code> 允许 <strong>多个指针共享同一资源的所有权</strong>。这种共享所有权的特性使得它在一些需要多个对象共同访问资源的场景中非常有用。例如，在多线程环境中，多个线程可能需要访问共享资源，而 <code>std::shared_ptr</code> 可以确保该资源在没有明确的所有权控制的情况下得到正确管理。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
-std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 多个 shared_ptr 共享同一资源
-</code></pre>
-<p>在上面的例子中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个对象，它们共享对资源的所有权，引用计数增加为 2。即使某个 <code>shared_ptr</code> 被销毁，另一个 <code>shared_ptr</code> 仍然可以访问资源。</p>
-<h2 id="自动销毁与内存管理-1"><a class="header" href="#自动销毁与内存管理-1">自动销毁与内存管理</a></h2>
-<p>与 <code>std::unique_ptr</code> 相似，<code>std::shared_ptr</code> 会在其生命周期结束时自动释放它所管理的资源。资源的释放是通过引用计数机制来实现的，当最后一个指向资源的 <code>shared_ptr</code> 被销毁时，资源会自动释放，从而避免内存泄漏的风险。</p>
-<p>这一点非常适合需要共享资源的场景，因为 <code>shared_ptr</code> 会自动管理资源的生命周期，不需要开发者显式地调用 <code>delete</code>。</p>
-<pre><code class="language-cpp">void createObject() {
-    std::shared_ptr&lt;MyClass&gt; ptr1 = std::make_shared&lt;MyClass&gt;();
-    std::shared_ptr&lt;MyClass&gt; ptr2 = ptr1;  // 引用计数增加
+<p><code>std::shared_ptr</code> 表示<strong>共享所有权</strong>：多个 <code>shared_ptr</code> 可以指向同一个对象，引用计数降到 0 时对象才被销毁。</p>
+<p>它解决的是「这个对象到底该由谁释放」的问题——当多个模块都需要访问同一个对象，又无法确定谁活得最久时，共享所有权是自然的答案。代价是额外的控制块和原子操作开销。</p>
+<h2 id="一基本用法-1"><a class="header" href="#一基本用法-1">一、基本用法</a></h2>
+<pre><code class="language-c++">#include &lt;memory&gt;
 
-    // ptr1 和 ptr2 都会在函数结束时自动销毁
-    // 当最后一个 shared_ptr 被销毁时，MyClass 对象将被自动删除
-}
+// 推荐：用 make_shared 创建
+auto p1 = std::make_shared&lt;MyClass&gt;(42);
+
+// 也可以从裸指针构造
+std::shared_ptr&lt;MyClass&gt; p2(new MyClass(42));
+
+// 拷贝：引用计数增加
+auto p3 = p1;
+std::cout &lt;&lt; p1.use_count();   // 3
+
+p1.reset();                    // 计数减到 2
+p3 = nullptr;                  // 计数减到 1
+// p2 销毁时计数归零，对象被释放
 </code></pre>
-<p>在上述示例中，<code>ptr1</code> 和 <code>ptr2</code> 都指向同一个 <code>MyClass</code> 对象。当这两个 <code>shared_ptr</code> 都超出作用域并被销毁时，引用计数变为 0，<code>MyClass</code> 对象会被自动销毁。</p>
-<h2 id="线程安全"><a class="header" href="#线程安全">线程安全</a></h2>
-<p><code>std::shared_ptr</code> 的引用计数机制是线程安全的，即多个线程可以安全地同时操作同一个 <code>shared_ptr</code>，而不必担心引用计数的竞争条件。这使得 <code>std::shared_ptr</code> 非常适合多线程程序中的共享资源管理。</p>
-<p>然而，值得注意的是，虽然 <code>std::shared_ptr</code> 在引用计数方面是线程安全的，但并不是对资源本身的访问是线程安全的。如果多个线程需要同时访问资源的成员，则需要额外的同步机制（如互斥锁）来保护资源。</p>
-<h2 id="不支持循环引用"><a class="header" href="#不支持循环引用">不支持循环引用</a></h2>
-<p>一个需要注意的事项是，<code>std::shared_ptr</code> 可能会导致 <strong>循环引用</strong> 的问题。如果两个或多个 <code>shared_ptr</code> 互相持有对方的引用，且它们的引用计数永远不会降到 0，那么这些资源将无法释放，从而导致内存泄漏。</p>
-<p>例如，考虑以下代码：</p>
-<pre><code class="language-cpp">struct Node {
+<p><code>shared_ptr</code> 的大小通常是裸指针的两倍（16 字节）——一个指向对象，一个指向控制块。</p>
+<h2 id="二引用计数与控制块"><a class="header" href="#二引用计数与控制块">二、引用计数与控制块</a></h2>
+<p><code>shared_ptr</code> 内部维护一个<strong>控制块</strong>，记录：</p>
+<ul>
+<li>强引用计数（<code>shared_ptr</code> 的数量）</li>
+<li>弱引用计数（<code>weak_ptr</code> 的数量）</li>
+<li>删除器</li>
+<li>分配器</li>
+</ul>
+<p>对象在<strong>强引用计数归零</strong>时销毁，控制块在<strong>强弱引用计数都归零</strong>时才释放。</p>
+<pre><code>shared_ptr p1 ──┐
+                ├──→ 控制块 ──→ 对象
+shared_ptr p2 ──┘    ├─ 强引用: 2
+                     ├─ 弱引用: 0
+                     └─ 删除器
+</code></pre>
+<h3 id="make_shared-与-new-的差别"><a class="header" href="#make_shared-与-new-的差别">make_shared 与 new 的差别</a></h3>
+<pre><code class="language-c++">auto p1 = std::make_shared&lt;MyClass&gt;();              // 一次分配
+std::shared_ptr&lt;MyClass&gt; p2(new MyClass());         // 两次分配
+</code></pre>
+<p><code>make_shared</code> 把对象和控制块放在<strong>同一块内存</strong>里，只分配一次。这更快，缓存局部性也更好。</p>
+<p>但它有个副作用：<strong>对象的内存要等控制块也释放后才能回收</strong>。如果存在 <code>weak_ptr</code> 长期观察，对象已经析构但内存不会归还。</p>
+<p>另外，<code>make_shared</code> 无法指定自定义删除器。需要自定义删除器时只能用 <code>new</code> 构造。</p>
+<h2 id="三线程安全"><a class="header" href="#三线程安全">三、线程安全</a></h2>
+<p>这是最容易误解的一点。<code>shared_ptr</code> 的线程安全性要分两个层面看：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">操作</th><th style="text-align: left">是否线程安全</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">多个线程读取同一个 <code>shared_ptr</code> 对象</td><td style="text-align: left">✅ 安全</td></tr>
+<tr><td style="text-align: left">多个线程操作<strong>不同的</strong> <code>shared_ptr</code> 对象（即使指向同一资源）</td><td style="text-align: left">✅ 安全</td></tr>
+<tr><td style="text-align: left">多个线程操作<strong>同一个</strong> <code>shared_ptr</code> 对象</td><td style="text-align: left">❌ 不安全，需要加锁</td></tr>
+<tr><td style="text-align: left">通过 <code>shared_ptr</code> 访问对象内容</td><td style="text-align: left">❌ 不安全，需要自行同步</td></tr>
+</tbody>
+</table>
+</div>
+<p>引用计数本身是原子的，所以「拷贝/销毁不同的 <code>shared_ptr</code> 实例」是安全的。但如果多个线程同时读写<strong>同一个</strong> <code>shared_ptr</code> 变量（比如一个线程 <code>reset()</code>，另一个线程拷贝），就会产生数据竞争。</p>
+<pre><code class="language-c++">std::shared_ptr&lt;Data&gt; g_data;
+
+// 线程 A
+g_data = std::make_shared&lt;Data&gt;();   // 写
+
+// 线程 B
+auto local = g_data;                 // 读 —— 与 A 竞争！
+</code></pre>
+<p>正确做法是加锁，或者用 <code>std::atomic&lt;std::shared_ptr&lt;T&gt;&gt;</code>（C++20）：</p>
+<pre><code class="language-c++">std::atomic&lt;std::shared_ptr&lt;Data&gt;&gt; g_data;
+
+g_data.store(std::make_shared&lt;Data&gt;());   // 原子写
+auto local = g_data.load();               // 原子读
+</code></pre>
+<blockquote>
+<p>注意：<code>std::atomic&lt;std::shared_ptr&lt;T&gt;&gt;</code> 在 C++20 才被正式支持。在此之前只能用 <code>std::atomic_load</code> / <code>std::atomic_store</code> 这些自由函数。</p>
+</blockquote>
+<p>至于<strong>对象内容</strong>的访问，<code>shared_ptr</code> 完全不提供保护。多个线程同时修改同一个对象，仍然需要 <code>mutex</code> 等同步手段。</p>
+<h2 id="四循环引用"><a class="header" href="#四循环引用">四、循环引用</a></h2>
+<p><code>shared_ptr</code> 最经典的坑是<strong>循环引用</strong>：</p>
+<pre><code class="language-c++">struct Node
+{
     std::shared_ptr&lt;Node&gt; next;
+    ~Node() { std::cout &lt;&lt; "销毁\n"; }
 };
 
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
+void leak()
+{
+    auto a = std::make_shared&lt;Node&gt;();
+    auto b = std::make_shared&lt;Node&gt;();
 
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 形成循环引用
+    a-&gt;next = b;   // b 的计数 = 2
+    b-&gt;next = a;   // a 的计数 = 2
 }
+// 函数结束，a 和 b 各自减 1，计数都是 1
+// 对象永远不会销毁，析构函数不会调用
 </code></pre>
-<p>在这个例子中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，这将导致它们的引用计数永远不为 0，因此资源无法自动释放，造成内存泄漏。为了避免这种情况，可以使用 <code>std::weak_ptr</code> 来解决循环引用问题。</p>
+<p>两个对象互相持有对方的 <code>shared_ptr</code>，计数永远降不到 0。</p>
+<p>解决办法是把其中一条边改成 <code>weak_ptr</code>：</p>
+<pre><code class="language-c++">struct Node
+{
+    std::weak_ptr&lt;Node&gt; next;   // 不增加计数
+    ~Node() { std::cout &lt;&lt; "销毁\n"; }
+};
+</code></pre>
+<p>现在 <code>b-&gt;next</code> 不影响 <code>a</code> 的计数，函数结束时两个对象都能正常销毁。</p>
+<p><strong>判断原则</strong>：如果两个对象是「父子」或「主从」关系，让子/从指向父/主用 <code>weak_ptr</code>。如果确实需要双向强引用，说明设计可能有问题。</p>
+<h2 id="五enable_shared_from_this"><a class="header" href="#五enable_shared_from_this">五、enable_shared_from_this</a></h2>
+<p>有时类内部需要返回指向自己的 <code>shared_ptr</code>：</p>
+<pre><code class="language-c++">class Widget
+{
+public:
+    std::shared_ptr&lt;Widget&gt; getSelf()
+    {
+        return std::shared_ptr&lt;Widget&gt;(this);   // 错误！
+    }
+};
+</code></pre>
+<p>这样写会创建<strong>第二个控制块</strong>，导致同一个对象被释放两次。</p>
+<p>正确做法是继承 <code>enable_shared_from_this</code>：</p>
+<pre><code class="language-c++">class Widget : public std::enable_shared_from_this&lt;Widget&gt;
+{
+public:
+    std::shared_ptr&lt;Widget&gt; getSelf()
+    {
+        return shared_from_this();   // 复用已有的控制块
+    }
+};
+</code></pre>
+<p>使用时必须确保对象已经由 <code>shared_ptr</code> 管理：</p>
+<pre><code class="language-c++">auto p = std::make_shared&lt;Widget&gt;();
+auto q = p-&gt;getSelf();   // 正确，q 和 p 共享控制块
+
+Widget w;
+auto bad = w.getSelf();  // 错误：w 不是 shared_ptr 管理的，抛 bad_weak_ptr
+</code></pre>
+<p>这个模式在异步回调中很常见——回调需要持有 <code>this</code> 的 <code>shared_ptr</code> 以保证对象存活。</p>
+<h2 id="六常用接口"><a class="header" href="#六常用接口">六、常用接口</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">接口</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>get()</code></td><td style="text-align: left">返回裸指针</td></tr>
+<tr><td style="text-align: left"><code>use_count()</code></td><td style="text-align: left">返回强引用计数（调试用，多线程下不可靠）</td></tr>
+<tr><td style="text-align: left"><code>unique()</code></td><td style="text-align: left">是否独占（C++20 弃用）</td></tr>
+<tr><td style="text-align: left"><code>reset()</code></td><td style="text-align: left">释放当前对象</td></tr>
+<tr><td style="text-align: left"><code>swap(other)</code></td><td style="text-align: left">交换</td></tr>
+<tr><td style="text-align: left"><code>operator bool</code></td><td style="text-align: left">是否持有对象</td></tr>
+<tr><td style="text-align: left"><code>owner_before(other)</code></td><td style="text-align: left">比较控制块顺序（用于有序容器）</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">auto p = std::make_shared&lt;int&gt;(42);
+
+std::cout &lt;&lt; p.use_count() &lt;&lt; '\n';   // 1
+
+auto q = p;
+std::cout &lt;&lt; p.use_count() &lt;&lt; '\n';   // 2
+
+p.reset();
+std::cout &lt;&lt; q.use_count() &lt;&lt; '\n';   // 1
+</code></pre>
+<p><code>use_count()</code> 只应用于调试。多线程环境下它的返回值随时可能失效，不要用它做逻辑判断。</p>
+<h2 id="七类型转换"><a class="header" href="#七类型转换">七、类型转换</a></h2>
+<p><code>shared_ptr</code> 之间的转换需要专用函数，不能用 <code>static_cast</code>：</p>
+<pre><code class="language-c++">std::shared_ptr&lt;Base&gt; base = std::make_shared&lt;Derived&gt;();
+
+// 向下转换
+auto derived = std::dynamic_pointer_cast&lt;Derived&gt;(base);   // 失败返回 nullptr
+if (derived)
+    derived-&gt;derivedMethod();
+
+// 静态转换
+auto d2 = std::static_pointer_cast&lt;Derived&gt;(base);
+
+// const 转换
+auto c = std::const_pointer_cast&lt;Derived&gt;(base);
+</code></pre>
+<p>这些函数会<strong>共享控制块</strong>，引用计数正确维护。直接用 <code>static_cast</code> 得到裸指针再构造新的 <code>shared_ptr</code> 会导致双重释放。</p>
+<h2 id="八什么时候不该用"><a class="header" href="#八什么时候不该用">八、什么时候不该用</a></h2>
+<p><code>shared_ptr</code> 很方便，但共享所有权会让生命周期推理变难：</p>
+<ul>
+<li><strong>对象什么时候销毁？</strong> —— 计数归零时，但归零的时机可能很晚，甚至超出你的预期。</li>
+<li><strong>谁在持有？</strong> —— 需要看所有拷贝点，代码量一大就很难追踪。</li>
+</ul>
+<p>因此：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">建议</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">单一所有者</td><td style="text-align: left"><code>unique_ptr</code></td></tr>
+<tr><td style="text-align: left">明确的父子关系</td><td style="text-align: left">父持有 <code>unique_ptr</code>，子持有裸指针或引用</td></tr>
+<tr><td style="text-align: left">需要跨模块共享且生命周期不定</td><td style="text-align: left"><code>shared_ptr</code></td></tr>
+<tr><td style="text-align: left">缓存、观察者</td><td style="text-align: left"><code>weak_ptr</code></td></tr>
+<tr><td style="text-align: left">函数参数只是借用</td><td style="text-align: left"><code>const T&amp;</code> 或 <code>T*</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>不要把 <code>shared_ptr</code> 当默认选择</strong>。它应该用在确实需要共享所有权的地方，而不是「懒得想清楚生命周期」时。</p>
+<h2 id="九常见误区"><a class="header" href="#九常见误区">九、常见误区</a></h2>
+<p><strong>「<code>shared_ptr</code> 是线程安全的」</strong> —— 只有引用计数是原子的。同一个 <code>shared_ptr</code> 对象的并发读写、以及对象内容的并发访问都不安全。</p>
+<p><strong>「<code>use_count()</code> 可以用来判断是否独占」</strong> —— 多线程下不可靠，标准明确说它只用于调试。</p>
+<p><strong>「<code>make_shared</code> 总是更好」</strong> —— 它无法指定自定义删除器，且在有 <code>weak_ptr</code> 长期存在时会延迟内存回收。</p>
+<p><strong>「用 <code>get()</code> 得到的指针可以构造新的 <code>shared_ptr</code>」</strong> —— 会创建独立控制块，导致双重释放。要用 <code>enable_shared_from_this</code> 或 <code>shared_ptr</code> 的别名构造函数。</p>
+<p><strong>「<code>shared_ptr</code> 可以替代 <code>unique_ptr</code>」</strong> —— 技术上可以，但会带来不必要的开销和难以推理的生命周期。能用独占就用独占。</p>
+<p><strong>「两个 <code>shared_ptr</code> 指向同一对象就共享控制块」</strong> —— 只有通过拷贝或 <code>make_shared</code> 才共享。分别用同一个裸指针构造两次，会得到两个独立控制块。</p>
+<h2 id="十相关章节"><a class="header" href="#十相关章节">十、相关章节</a></h2>
+<ul>
+<li><a href="#smart-pointer">智能指针</a>：三种智能指针的对比与选择</li>
+<li><a href="#stdunique_ptr">unique_ptr</a>：独占所有权，默认选择</li>
+<li><a href="#stdweak_ptr">weak_ptr</a>：打破循环引用</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：共享所有权的设计思想</li>
+<li><a href="#多线程与并发">多线程与并发</a>：<code>shared_ptr</code> 在并发中的正确用法</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="stdweak_ptr"><a class="header" href="#stdweak_ptr">std::weak_ptr</a></h1>
-<p><code>std::weak_ptr</code> 是 C++11 中引入的智能指针类型，它与 <code>std::shared_ptr</code> 紧密相关，用于解决共享指针管理过程中可能出现的 <strong>循环引用</strong> 问题。<code>std::weak_ptr</code> 本身不拥有所指向的对象，它只作为 <code>std::shared_ptr</code> 的辅助工具，允许观察某个对象而不改变其引用计数。因此，<code>std::weak_ptr</code> 可以防止由于多个 <code>std::shared_ptr</code> 相互引用而导致的内存泄漏。</p>
-<h2 id="定义与基本功能-2"><a class="header" href="#定义与基本功能-2">定义与基本功能</a></h2>
-<p><code>std::weak_ptr</code> 是一个模板类，它与 <code>std::shared_ptr</code> 配合使用，提供对对象的弱引用。弱引用不增加所管理对象的引用计数，因此不会阻止对象的销毁。<code>std::weak_ptr</code> 的主要功能是：它允许你“观察”一个 <code>std::shared_ptr</code> 管理的对象，而不会影响该对象的生命周期管理。通过 <code>std::weak_ptr</code>，你可以检查对象是否仍然存在，但不需要担心导致资源不会被销毁。</p>
-<p><code>std::weak_ptr</code> 的最大应用场景就是避免 <strong>循环引用</strong>，这是当两个或多个 <code>std::shared_ptr</code> 互相持有对方时所导致的问题，通常会使得对象无法被释放。</p>
-<h2 id="解决循环引用问题"><a class="header" href="#解决循环引用问题">解决循环引用问题</a></h2>
-<p>循环引用是 <code>std::shared_ptr</code> 的一个典型问题。例如，当两个 <code>std::shared_ptr</code> 互相引用对方时，它们的引用计数永远不会降到零，导致对象无法被销毁，造成内存泄漏。为了避免这种情况，<code>std::weak_ptr</code> 可以作为一种“观察者”角色，用于打破循环引用。</p>
-<p>考虑以下示例，假设 <code>Node</code> 类有一个指向另一个 <code>Node</code> 对象的指针，如果两个节点互相持有 <code>std::shared_ptr</code>，就会形成一个循环引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::shared_ptr&lt;Node&gt; next;
-};
+<p><code>std::weak_ptr</code> 是对 <code>shared_ptr</code> 管理对象的<strong>弱引用</strong>。它能看到对象，但不参与所有权——不增加强引用计数，因此不会阻止对象被销毁。</p>
+<p>它主要解决两个问题：打破 <code>shared_ptr</code> 的循环引用，以及在缓存等场景中安全地观察对象是否还活着。</p>
+<h2 id="一基本用法-2"><a class="header" href="#一基本用法-2">一、基本用法</a></h2>
+<p><code>weak_ptr</code> 不能直接构造，必须从 <code>shared_ptr</code> 得到：</p>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;MyClass&gt;();
+std::weak_ptr&lt;MyClass&gt; wp = sp;      // 从 shared_ptr 构造
 
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 形成循环引用
-}
+std::cout &lt;&lt; sp.use_count() &lt;&lt; '\n';   // 1，weak_ptr 不影响计数
 </code></pre>
-<p>在上述代码中，<code>node1</code> 和 <code>node2</code> 互相持有对方的 <code>shared_ptr</code>，导致它们的引用计数永远不会为 0，造成内存泄漏。为了解决这个问题，我们可以使用 <code>std::weak_ptr</code> 来消除循环引用。例如，改用 <code>std::weak_ptr</code> 来表示 <code>node1</code> 对 <code>node2</code> 的引用：</p>
-<pre><code class="language-cpp">struct Node {
-    std::weak_ptr&lt;Node&gt; next;  // 使用 weak_ptr 代替 shared_ptr
-};
-
-void createCircularReference() {
-    std::shared_ptr&lt;Node&gt; node1 = std::make_shared&lt;Node&gt;();
-    std::shared_ptr&lt;Node&gt; node2 = std::make_shared&lt;Node&gt;();
-
-    node1-&gt;next = node2;
-    node2-&gt;next = node1;  // 现在不会形成循环引用
+<p>访问对象必须先转成 <code>shared_ptr</code>：</p>
+<pre><code class="language-c++">if (auto locked = wp.lock())     // 尝试提升
+{
+    locked-&gt;doSomething();       // 对象还活着
 }
-</code></pre>
-<p>通过将 <code>next</code> 指针改为 <code>std::weak_ptr</code>，我们打破了循环引用。现在，当 <code>node1</code> 和 <code>node2</code> 被销毁时，它们的引用计数会正常降到 0，资源将被正确释放。</p>
-<h2 id="访问管理对象"><a class="header" href="#访问管理对象">访问管理对象</a></h2>
-<p>尽管 <code>std::weak_ptr</code> 本身并不管理资源的生命周期，它可以通过 <code>std::shared_ptr</code> 来访问所管理的对象。当你想要访问一个由 <code>std::weak_ptr</code> 观察的对象时，必须先将其转换为 <code>std::shared_ptr</code>。这个转换过程称为 <strong>提升（lock）</strong>，通过 <code>std::weak_ptr::lock()</code> 函数完成。该函数返回一个 <code>std::shared_ptr</code>，如果原始对象仍然存在，则该 <code>shared_ptr</code> 会指向它；否则，返回一个空的 <code>shared_ptr</code>。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = weakPtr.lock();
-if (ptr) {
-    // 使用 ptr 来访问 MyClass 对象
-} else {
+else
+{
     // 对象已被销毁
 }
 </code></pre>
-<p>这里，<code>lock()</code> 方法会尝试从 <code>std::weak_ptr</code> 获取一个有效的 <code>std::shared_ptr</code>，如果对象已经被销毁（即引用计数为 0），则返回一个空的 <code>shared_ptr</code>。</p>
-<h2 id="不增加引用计数"><a class="header" href="#不增加引用计数">不增加引用计数</a></h2>
-<p><code>std::weak_ptr</code> 通过不增加引用计数来提供弱引用，因此它不会干扰对象生命周期的管理。它只用作对对象的观察者，让你能够安全地检查对象是否仍然存在。换句话说，<code>std::weak_ptr</code> 不控制对象的生命周期，只是“看”着它，并且通过 <code>lock()</code> 函数来查询对象是否有效。</p>
-<pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; sp1 = std::make_shared&lt;MyClass&gt;();
-std::weak_ptr&lt;MyClass&gt; wp1 = sp1;  // weak_ptr 不增加引用计数
+<p><code>lock()</code> 是唯一的访问途径，这个设计是刻意的——它把「检查是否存在」和「使用对象」合成一个原子操作，避免了先检查后使用之间的竞态。</p>
+<h2 id="二解决循环引用"><a class="header" href="#二解决循环引用">二、解决循环引用</a></h2>
+<p>这是 <code>weak_ptr</code> 最经典的用途。看一个双向链表或树结构：</p>
+<pre><code class="language-c++">struct Node
+{
+    std::shared_ptr&lt;Node&gt; parent;      // 指向父节点
+    std::vector&lt;std::shared_ptr&lt;Node&gt;&gt; children;
+    ~Node() { std::cout &lt;&lt; "销毁节点\n"; }
+};
 
-// 当 sp1 超出作用域时，wp1 不再有效，且 MyClass 对象会被销毁
+void leak()
+{
+    auto parent = std::make_shared&lt;Node&gt;();
+    auto child = std::make_shared&lt;Node&gt;();
+
+    parent-&gt;children.push_back(child);   // child 计数 = 2
+    child-&gt;parent = parent;              // parent 计数 = 2
+}
+// 函数结束，两个计数都停在 1，对象永不销毁
 </code></pre>
-<p>在这个例子中，<code>wp1</code> 观察了 <code>sp1</code> 管理的对象，但并没有增加引用计数。这样，当 <code>sp1</code> 被销毁时，<code>wp1</code> 变得无效，所管理的对象也会被正确释放。</p>
-<h2 id="转换为-stdshared_ptr"><a class="header" href="#转换为-stdshared_ptr">转换为 <code>std::shared_ptr</code></a></h2>
-<p>通常，我们使用 <code>std::weak_ptr</code> 来避免循环引用，但如果需要，我们可以将其转换回 <code>std::shared_ptr</code> 来访问资源。转换过程是通过 <code>std::weak_ptr::lock()</code> 完成的，这将返回一个新的 <code>std::shared_ptr</code>，并增加该资源的引用计数。如果资源已经被销毁（即引用计数为 0），则返回一个空的 <code>std::shared_ptr</code>。</p>
+<p>父节点持有子节点，子节点又持有父节点，形成环。解决办法是把「反向」的那条边改成弱引用：</p>
+<pre><code class="language-c++">struct Node
+{
+    std::weak_ptr&lt;Node&gt; parent;          // 改成 weak_ptr
+    std::vector&lt;std::shared_ptr&lt;Node&gt;&gt; children;
+    ~Node() { std::cout &lt;&lt; "销毁节点\n"; }
+};
+</code></pre>
+<p>现在 <code>child-&gt;parent</code> 不影响 <code>parent</code> 的计数，函数结束时两个对象都能正常销毁。</p>
+<p><strong>怎么判断哪条边该用 <code>weak_ptr</code>？</strong></p>
+<ul>
+<li>树结构：父持有子用 <code>shared_ptr</code>，子指回父用 <code>weak_ptr</code></li>
+<li>观察者模式：被观察者持有观察者用 <code>shared_ptr</code>，观察者持有被观察者用 <code>weak_ptr</code></li>
+<li>一般原则：<strong>让「拥有」的方向用强引用，「引用」的方向用弱引用</strong></li>
+</ul>
+<p>如果两个对象确实需要互相强引用，通常说明设计本身有问题——考虑能否提取出第三个对象来持有它们。</p>
+<h2 id="三常用接口-1"><a class="header" href="#三常用接口-1">三、常用接口</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">接口</th><th style="text-align: left">作用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>lock()</code></td><td style="text-align: left">返回 <code>shared_ptr</code>，对象已销毁则返回空</td></tr>
+<tr><td style="text-align: left"><code>expired()</code></td><td style="text-align: left">对象是否已销毁</td></tr>
+<tr><td style="text-align: left"><code>use_count()</code></td><td style="text-align: left">强引用计数（调试用）</td></tr>
+<tr><td style="text-align: left"><code>reset()</code></td><td style="text-align: left">放弃观察</td></tr>
+<tr><td style="text-align: left"><code>swap(other)</code></td><td style="text-align: left">交换</td></tr>
+<tr><td style="text-align: left"><code>owner_before(other)</code></td><td style="text-align: left">比较控制块顺序</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;int&gt;(42);
+std::weak_ptr&lt;int&gt; wp = sp;
+
+std::cout &lt;&lt; wp.expired() &lt;&lt; '\n';   // false
+std::cout &lt;&lt; wp.use_count() &lt;&lt; '\n'; // 1
+
+sp.reset();
+std::cout &lt;&lt; wp.expired() &lt;&lt; '\n';   // true
+std::cout &lt;&lt; wp.lock() &lt;&lt; '\n';      // 空指针
+</code></pre>
+<blockquote>
+<p><code>expired()</code> 和 <code>use_count()</code> 在多线程下都不可靠——返回值可能立刻失效。要访问对象，永远用 <code>lock()</code> 再判断。</p>
+</blockquote>
+<h2 id="四缓存场景"><a class="header" href="#四缓存场景">四、缓存场景</a></h2>
+<p><code>weak_ptr</code> 的另一个常见用途是<strong>缓存</strong>：缓存不应该决定对象的生命周期，只应该「顺便记住」还活着的对象。</p>
+<pre><code class="language-c++">class ImageCache
+{
+public:
+    std::shared_ptr&lt;Image&gt; get(const std::string&amp; path)
+    {
+        auto it = cache_.find(path);
+        if (it != cache_.end())
+        {
+            if (auto img = it-&gt;second.lock())   // 缓存还有效
+                return img;
+            cache_.erase(it);                    // 已失效，清掉
+        }
+
+        auto img = loadImage(path);              // 重新加载
+        cache_[path] = img;                      // 存弱引用
+        return img;
+    }
+
+private:
+    std::unordered_map&lt;std::string, std::weak_ptr&lt;Image&gt;&gt; cache_;
+};
+</code></pre>
+<p>如果缓存用 <code>shared_ptr</code>，那么只要缓存还在，图片就永远不会被释放——缓存变成了内存泄漏。用 <code>weak_ptr</code> 则不会：没人用图片时它自然销毁，缓存项随之失效。</p>
+<p>这个模式也适用于对象池、连接池等场景。</p>
+<h2 id="五观察者模式"><a class="header" href="#五观察者模式">五、观察者模式</a></h2>
+<p>观察者需要知道被观察者是否还活着，但不应该影响它的生命周期：</p>
+<pre><code class="language-c++">class Subject;
+
+class Observer
+{
+public:
+    virtual void onNotify() = 0;
+};
+
+class Subject
+{
+public:
+    void subscribe(std::shared_ptr&lt;Observer&gt; obs)
+    {
+        observers_.push_back(obs);
+    }
+
+    void notify()
+    {
+        // 清理已销毁的观察者，同时通知存活的
+        std::erase_if(observers_, [](auto&amp; wp) {
+            if (auto obs = wp.lock()) {
+                obs-&gt;onNotify();
+                return false;
+            }
+            return true;   // 已失效，移除
+        });
+    }
+
+private:
+    std::vector&lt;std::weak_ptr&lt;Observer&gt;&gt; observers_;
+};
+</code></pre>
+<p>如果这里用 <code>shared_ptr</code>，被观察者会一直持有观察者，导致观察者无法销毁。</p>
+<h2 id="六与-shared_ptr-的关系"><a class="header" href="#六与-shared_ptr-的关系">六、与 shared_ptr 的关系</a></h2>
+<p>理解两者关系的关键是<strong>控制块</strong>：</p>
+<pre><code>shared_ptr ──┐
+             ├──→ 控制块 ──→ 对象
+weak_ptr ────┘    ├─ 强引用: 1
+                  ├─ 弱引用: 1
+                  └─ 删除器
+</code></pre>
+<ul>
+<li>强引用归零 → <strong>对象</strong>被销毁（析构函数调用）</li>
+<li>强引用和弱引用都归零 → <strong>控制块</strong>被释放</li>
+</ul>
+<p>所以只要还有 <code>weak_ptr</code> 在观察，控制块就不会释放。这也是 <code>make_shared</code> 的一个副作用：对象和控制块在同一块内存里，控制块不释放，对象的内存也就无法归还给系统。</p>
+<pre><code class="language-c++">auto sp = std::make_shared&lt;BigObject&gt;();
+std::weak_ptr&lt;BigObject&gt; wp = sp;
+
+sp.reset();   // BigObject 析构，但内存还没还给系统
+wp.reset();   // 现在控制块也释放了，内存才真正回收
+</code></pre>
+<p>对象大小较大、且存在长期 <code>weak_ptr</code> 时，用 <code>shared_ptr&lt;T&gt;(new T)</code> 可能比 <code>make_shared</code> 更合适。</p>
+<h2 id="七常见误区"><a class="header" href="#七常见误区">七、常见误区</a></h2>
+<p><strong>「<code>weak_ptr</code> 可以直接解引用」</strong> —— 不行，没有 <code>operator*</code> 和 <code>operator-&gt;</code>。必须先 <code>lock()</code>。</p>
+<p><strong>「<code>expired()</code> 返回 false 就可以安全使用」</strong> —— 不行。检查和使用之间对象可能被销毁，这是典型的竞态。要用 <code>lock()</code> 一次完成。</p>
+<p><strong>「<code>weak_ptr</code> 会增加引用计数」</strong> —— 不增加<strong>强</strong>引用计数，只增加弱引用计数。对象该销毁时照样销毁。</p>
+<p><strong>「<code>use_count()</code> 可以用来判断对象是否存活」</strong> —— 多线程下不可靠。判断存活用 <code>lock()</code> 或 <code>expired()</code>，且前者更安全。</p>
+<p><strong>「循环引用只能靠 <code>weak_ptr</code> 解决」</strong> —— 也可以重新设计对象关系，比如用非拥有指针（裸指针、引用）替代。<code>weak_ptr</code> 只是最方便的方案。</p>
+<p><strong>「<code>weak_ptr</code> 可以独立存在」</strong> —— 它必须从 <code>shared_ptr</code> 或另一个 <code>weak_ptr</code> 构造。凭空创建的 <code>weak_ptr</code> 是空的。</p>
+<h2 id="八相关章节-1"><a class="header" href="#八相关章节-1">八、相关章节</a></h2>
+<ul>
+<li><a href="#smart-pointer">智能指针</a>：三种智能指针的对比与选择</li>
+<li><a href="#stdshared_ptr">shared_ptr</a>：引用计数与控制块</li>
+<li><a href="#stdunique_ptr">unique_ptr</a>：独占所有权</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：所有权设计的一般原则</li>
+</ul>
 <pre><code class="language-cpp">std::shared_ptr&lt;MyClass&gt; ptr = wp.lock();  // 转换为 shared_ptr
 if (ptr) {
     // 使用 ptr 来访问 MyClass 对象
@@ -5021,13 +5895,1069 @@ if (ptr) {
 </code></pre>
 <p>通过这种方式，我们可以在必要时访问由 <code>std::weak_ptr</code> 管理的对象，但前提是该对象仍然存在。</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="自定义内存管理"><a href="#自定义内存管理" class="header">自定义内存管理</a></h1>
+<h1 id="自定义内存管理"><a class="header" href="#自定义内存管理">自定义内存管理</a></h1>
+<p>前面几章讲的都是「怎么正确使用内存」。这一章讲另一件事：<strong>怎么让内存分配更快、更可控</strong>。</p>
+<p>标准库的 <code>new</code> 和 <code>malloc</code> 是通用分配器，要应付各种大小、各种模式，因此实现复杂、开销不小。如果你的程序有明确的分配模式（比如大量相同大小的小对象、频繁创建销毁），自己管理内存可以带来数量级的提升。</p>
+<p>不过要先说清楚：<strong>绝大多数程序不需要自定义分配器</strong>。先用 profiler 确认分配真的是瓶颈，再考虑优化。</p>
+<h2 id="一通用分配器的问题"><a class="header" href="#一通用分配器的问题">一、通用分配器的问题</a></h2>
+<p><code>malloc</code> 的典型开销：</p>
+<ul>
+<li><strong>查找空闲块</strong>：维护多个大小类别的空闲链表，需要遍历</li>
+<li><strong>加锁</strong>：多线程下要保护堆结构，即使用了 thread-local cache 也有开销</li>
+<li><strong>元数据</strong>：每块内存前面有头部，记录大小等信息</li>
+<li><strong>碎片化</strong>：反复分配释放不同大小的块，会留下难以利用的空洞</li>
+<li><strong>缓存不友好</strong>：对象分散在堆各处，遍历时 cache miss 频繁</li>
+</ul>
+<p>一个具体例子：分配 100 万个 32 字节的小对象，<code>malloc</code> 实际可能占用 48 字节/个（含头部和对齐），而且每次分配都是一次函数调用加链表操作。</p>
+<h2 id="二分配器接口"><a class="header" href="#二分配器接口">二、分配器接口</a></h2>
+<p>标准库容器允许指定分配器，接口定义在 <code>&lt;memory&gt;</code>：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class MyAllocator
+{
+public:
+    using value_type = T;
+
+    MyAllocator() = default;
+
+    template&lt;class U&gt;
+    MyAllocator(const MyAllocator&lt;U&gt;&amp;) noexcept {}
+
+    T* allocate(std::size_t n);
+    void deallocate(T* p, std::size_t n);
+
+    // C++11 起，相等比较决定分配器能否互换
+    bool operator==(const MyAllocator&amp;) const noexcept { return true; }
+    bool operator!=(const MyAllocator&amp;) const noexcept { return false; }
+};
+</code></pre>
+<p>一个最小实现：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+T* MyAllocator&lt;T&gt;::allocate(std::size_t n)
+{
+    if (n &gt; std::numeric_limits&lt;std::size_t&gt;::max() / sizeof(T))
+        throw std::bad_alloc();
+    if (auto p = static_cast&lt;T*&gt;(std::malloc(n * sizeof(T))))
+        return p;
+    throw std::bad_alloc();
+}
+
+template&lt;class T&gt;
+void MyAllocator&lt;T&gt;::deallocate(T* p, std::size_t) noexcept
+{
+    std::free(p);
+}
+</code></pre>
+<p>用法：</p>
+<pre><code class="language-c++">std::vector&lt;int, MyAllocator&lt;int&gt;&gt; v;
+</code></pre>
+<p><strong>注意</strong>：分配器的 <code>allocate</code> 只分配<strong>原始内存</strong>，不构造对象。构造由容器通过 <code>allocator_traits::construct</code>（内部是 placement new）完成。</p>
+<h2 id="三内存池"><a class="header" href="#三内存池">三、内存池</a></h2>
+<p>内存池的思路很简单：<strong>一次申请一大块，之后从里面切分</strong>。</p>
+<h3 id="1-固定大小内存池"><a class="header" href="#1-固定大小内存池">1. 固定大小内存池</a></h3>
+<p>适合「大量相同大小的对象」场景：</p>
+<pre><code class="language-c++">class FixedPool
+{
+public:
+    explicit FixedPool(std::size_t blockSize, std::size_t blockCount)
+        : blockSize_(std::max(blockSize, sizeof(void*)))
+    {
+        // 一次分配所有内存
+        storage_ = std::malloc(blockSize_ * blockCount);
+
+        // 把空闲块串成链表
+        for (std::size_t i = 0; i &lt; blockCount; ++i)
+        {
+            void* block = static_cast&lt;char*&gt;(storage_) + i * blockSize_;
+            *static_cast&lt;void**&gt;(block) = freeList_;   // 用块本身存 next 指针
+            freeList_ = block;
+        }
+    }
+
+    ~FixedPool() { std::free(storage_); }
+
+    void* allocate()
+    {
+        if (!freeList_)
+            throw std::bad_alloc();
+
+        void* block = freeList_;
+        freeList_ = *static_cast&lt;void**&gt;(freeList_);   // 取出下一个
+        return block;
+    }
+
+    void deallocate(void* p) noexcept
+    {
+        *static_cast&lt;void**&gt;(p) = freeList_;   // 头插回空闲链表
+        freeList_ = p;
+    }
+
+private:
+    void* storage_ = nullptr;
+    void* freeList_ = nullptr;
+    std::size_t blockSize_;
+};
+</code></pre>
+<p>分配和释放都只是链表操作，是<strong>常数时间</strong>，而且没有锁、没有元数据开销。</p>
+<p>这个技巧叫 <strong>free list</strong>，用一个空闲块的前几个字节存下一个空闲块的地址——反正空闲块里的数据已经没用了。</p>
+<h3 id="2-内存池的代价"><a class="header" href="#2-内存池的代价">2. 内存池的代价</a></h3>
+<ul>
+<li><strong>不能释放单块给系统</strong>：整个池要一起释放</li>
+<li><strong>块大小固定</strong>：需要不同大小就得建多个池</li>
+<li><strong>可能浪费</strong>：如果块大小不匹配，会有内部碎片</li>
+</ul>
+<p>所以内存池适合<strong>生命周期一致、大小固定</strong>的对象，不适合通用场景。</p>
+<h2 id="四对象池"><a class="header" href="#四对象池">四、对象池</a></h2>
+<p>内存池管理原始内存，对象池则管理<strong>已构造的对象</strong>，常用于需要频繁创建销毁的场景：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class ObjectPool
+{
+public:
+    template&lt;class... Args&gt;
+    T* create(Args&amp;&amp;... args)
+    {
+        void* mem = pool_.allocate();
+        return new (mem) T(std::forward&lt;Args&gt;(args)...);   // placement new
+    }
+
+    void destroy(T* obj)
+    {
+        obj-&gt;~T();                  // 显式析构
+        pool_.deallocate(obj);
+    }
+
+private:
+    FixedPool pool_{sizeof(T), 1024};
+};
+</code></pre>
+<p>这在游戏开发中很常见——子弹、粒子这类对象每秒创建销毁上千次，用对象池可以避免反复的堆分配。</p>
+<h2 id="五pmr多态内存资源"><a class="header" href="#五pmr多态内存资源">五、pmr：多态内存资源</a></h2>
+<p>C++17 引入了 <code>&lt;memory_resource&gt;</code>，提供了一套<strong>运行时多态</strong>的分配器机制。它解决了传统分配器的一个痛点：分配器类型是容器类型的一部分，改分配器就要改类型。</p>
+<pre><code class="language-c++">#include &lt;memory_resource&gt;
+
+// 传统方式：分配器写进类型
+std::vector&lt;int, MyAllocator&lt;int&gt;&gt; v1;
+
+// pmr 方式：分配器是构造参数
+std::pmr::vector&lt;int&gt; v2{&amp;myResource};
+</code></pre>
+<p><code>std::pmr::vector&lt;T&gt;</code> 就是 <code>std::vector&lt;T, std::pmr::polymorphic_allocator&lt;T&gt;&gt;</code> 的别名。</p>
+<h3 id="内置的内存资源"><a class="header" href="#内置的内存资源">内置的内存资源</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::pmr::new_delete_resource()</code></td><td style="text-align: left">默认，转发到 <code>new</code> / <code>delete</code></td></tr>
+<tr><td style="text-align: left"><code>std::pmr::null_memory_resource()</code></td><td style="text-align: left">任何分配都抛异常，用于测试</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::monotonic_buffer_resource</code></td><td style="text-align: left">单调递增，只增不减，极快</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::unsynchronized_pool_resource</code></td><td style="text-align: left">池化分配，单线程</td></tr>
+<tr><td style="text-align: left"><code>std::pmr::synchronized_pool_resource</code></td><td style="text-align: left">池化分配，线程安全</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="monotonic_buffer_resource"><a class="header" href="#monotonic_buffer_resource">monotonic_buffer_resource</a></h3>
+<p>这是最实用的一个。它在一块预分配的内存上单调递增地分配，<strong>不支持单独释放</strong>，直到整个资源销毁：</p>
+<pre><code class="language-c++">// 用栈上的缓冲区，避免任何堆分配
+std::array&lt;std::byte, 4096&gt; buffer;
+std::pmr::monotonic_buffer_resource pool{buffer.data(), buffer.size()};
+
+std::pmr::vector&lt;int&gt; v{&amp;pool};
+v.push_back(1);   // 从 buffer 分配，不碰堆
+</code></pre>
+<p>典型用法是「处理一批数据，用完整体丢弃」：</p>
+<pre><code class="language-c++">void processRequest(const Request&amp; req)
+{
+    std::pmr::monotonic_buffer_resource pool;
+
+    // 这一堆临时对象都从 pool 分配
+    std::pmr::vector&lt;Item&gt; items{&amp;pool};
+    std::pmr::string name{&amp;pool};
+    std::pmr::map&lt;int, Detail&gt; details{&amp;pool};
+
+    // ... 处理
+
+}   // pool 析构，所有内存一次性释放
+</code></pre>
+<p>这样避免了多次 <code>new</code> / <code>delete</code>，也避免了内存碎片。</p>
+<h2 id="六对齐分配"><a class="header" href="#六对齐分配">六、对齐分配</a></h2>
+<p>有时需要特定对齐的内存，比如 SIMD 类型要求 16 或 32 字节对齐。</p>
+<p>C++17 提供了对齐版本的分配：</p>
+<pre><code class="language-c++">void* p = operator new(size, std::align_val_t{64});
+operator delete(p, std::align_val_t{64});
+</code></pre>
+<p>C 风格接口：</p>
+<pre><code class="language-c++">// C11 / C++17
+void* p = std::aligned_alloc(64, size);
+std::free(p);
+</code></pre>
+<p>或者用 C++11 的 <code>std::align</code> 手动调整：</p>
+<pre><code class="language-c++">void* ptr = buffer;
+std::size_t space = sizeof(buffer);
+void* aligned = std::align(64, size, ptr, space);
+</code></pre>
+<h2 id="七什么时候值得自定义分配"><a class="header" href="#七什么时候值得自定义分配">七、什么时候值得自定义分配</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">场景</th><th style="text-align: left">是否值得</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">通用业务代码</td><td style="text-align: left">❌ 用默认分配器</td></tr>
+<tr><td style="text-align: left">大量同大小小对象（&gt; 10 万）</td><td style="text-align: left">✅ 固定大小池</td></tr>
+<tr><td style="text-align: left">频繁创建销毁的短期对象</td><td style="text-align: left">✅ 对象池</td></tr>
+<tr><td style="text-align: left">批处理、请求级临时数据</td><td style="text-align: left">✅ <code>monotonic_buffer_resource</code></td></tr>
+<tr><td style="text-align: left">实时系统、不能有分配抖动</td><td style="text-align: left">✅ 预分配池</td></tr>
+<tr><td style="text-align: left">嵌入式、内存受限</td><td style="text-align: left">✅ 定制分配器</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>先测量再优化</strong>。用 profiler 看分配热点，确认 <code>malloc</code> 真的占了可观的时间，再考虑动手。</p>
+<p>一个常见的误判是「我的程序分配很频繁，所以需要内存池」。但如果每次分配只花 50 纳秒，100 万次也才 50 毫秒——可能根本不是瓶颈。</p>
+<h2 id="八常见误区-1"><a class="header" href="#八常见误区-1">八、常见误区</a></h2>
+<p><strong>「自定义分配器一定更快」</strong> —— 通用分配器经过几十年优化，对一般场景已经很好。自定义分配器的优势来自<strong>针对特定模式</strong>的优化，模式不匹配反而更慢。</p>
+<p><strong>「内存池可以随便释放单块」</strong> —— 大多数池不支持单独归还给系统，只能整池释放。需要单独释放就得用更复杂的结构（如 slab 分配器）。</p>
+<p><strong>「<code>allocate</code> 会构造对象」</strong> —— 不会。它只给原始内存，构造由容器负责。</p>
+<p><strong>「pmr 比普通分配器慢」</strong> —— 多一层虚函数调用，但省去了分配器类型污染。在批处理场景下，<code>monotonic_buffer_resource</code> 通常比默认分配快得多。</p>
+<p><strong>「内存池不会有碎片」</strong> —— 固定大小池不会有外部碎片，但可能有内部碎片（块大小不匹配）。而且池本身如果长期运行、反复分配释放，空闲链表也可能变得分散。</p>
+<h2 id="九相关章节-3"><a class="header" href="#九相关章节-3">九、相关章节</a></h2>
+<ul>
+<li><a href="#动态内存分配">动态内存分配</a>：<code>new</code> / <code>delete</code> 与 <code>operator new</code></li>
+<li><a href="#内存布局与模型">内存布局与模型</a>：对齐与对象布局</li>
+<li><a href="#内存调试与诊断">内存调试与诊断</a>：分配器的调试支持</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：分配器也需要 RAII 封装</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="raii与资源管理"><a href="#raii与资源管理" class="header">RAII与资源管理</a></h1>
+<h1 id="raii-与资源管理"><a class="header" href="#raii-与资源管理">RAII 与资源管理</a></h1>
+<p>RAII 是 <strong>Resource Acquisition Is Initialization</strong> 的缩写，直译是「资源获取即初始化」。这个名字起得不太好——它听起来像是在讲初始化，实际上讲的是<strong>析构</strong>。</p>
+<p>它的核心思想只有一句话：<strong>把资源的生命周期绑定到对象的生命周期上</strong>。资源在构造函数里获取，在析构函数里释放。由于栈对象的析构是编译器自动插入的，无论函数是正常返回、提前 return 还是抛异常，资源都会被正确释放。</p>
+<p>这是 C++ 区别于大多数语言的核心特性，也是整个标准库的设计基石。</p>
+<h2 id="一为什么需要-raii"><a class="header" href="#一为什么需要-raii">一、为什么需要 RAII</a></h2>
+<p>先看一段没有 RAII 的代码：</p>
+<pre><code class="language-c++">void process()
+{
+    FILE* f = fopen("data.txt", "r");
+    if (!f) return;
+
+    char* buffer = (char*)malloc(1024);
+    if (!buffer) {
+        fclose(f);          // 每个错误分支都要手动清理
+        return;
+    }
+
+    if (parse(f, buffer) &lt; 0) {
+        free(buffer);       // 又一处
+        fclose(f);
+        return;
+    }
+
+    free(buffer);
+    fclose(f);
+}
+</code></pre>
+<p>问题很明显：</p>
+<ul>
+<li>每个提前返回的分支都要重复写清理代码，漏一个就泄漏</li>
+<li>如果 <code>parse</code> 抛出异常，两处清理都不会执行</li>
+<li>清理顺序必须和获取顺序相反，容易写错</li>
+</ul>
+<p>用 RAII 改写：</p>
+<pre><code class="language-c++">void process()
+{
+    std::ifstream file("data.txt");      // 构造时打开
+    if (!file) return;                   // 自动关闭
+
+    std::vector&lt;char&gt; buffer(1024);      // 构造时分配
+
+    parse(file, buffer);                 // 抛异常也没关系
+}   // 离开作用域，buffer 和 file 自动释放
+</code></pre>
+<p>清理代码消失了，因为编译器会在每个退出路径上插入析构调用。</p>
+<h2 id="二raii-的完整形态"><a class="header" href="#二raii-的完整形态">二、RAII 的完整形态</a></h2>
+<p>一个 RAII 类通常包含四部分：</p>
+<pre><code class="language-c++">class FileHandle
+{
+public:
+    // 1. 构造函数获取资源
+    explicit FileHandle(const char* path)
+        : file_(fopen(path, "r"))
+    {
+        if (!file_)
+            throw std::runtime_error("打开文件失败");
+    }
+
+    // 2. 析构函数释放资源
+    ~FileHandle()
+    {
+        if (file_)
+            fclose(file_);
+    }
+
+    // 3. 禁止拷贝（否则会双重释放）
+    FileHandle(const FileHandle&amp;) = delete;
+    FileHandle&amp; operator=(const FileHandle&amp;) = delete;
+
+    // 4. 允许移动（转移所有权）
+    FileHandle(FileHandle&amp;&amp; other) noexcept
+        : file_(other.file_)
+    {
+        other.file_ = nullptr;
+    }
+
+    FileHandle&amp; operator=(FileHandle&amp;&amp; other) noexcept
+    {
+        if (this != &amp;other) {
+            if (file_) fclose(file_);
+            file_ = other.file_;
+            other.file_ = nullptr;
+        }
+        return *this;
+    }
+
+    FILE* get() const { return file_; }
+
+private:
+    FILE* file_;
+};
+</code></pre>
+<p>这四步是 RAII 类的标准模板：<strong>获取、释放、禁拷贝、允许移动</strong>。</p>
+<h2 id="三raii-的常见形态"><a class="header" href="#三raii-的常见形态">三、RAII 的常见形态</a></h2>
+<p>RAII 不只用于内存，任何「获取后必须释放」的资源都适用。</p>
+<h3 id="1-锁"><a class="header" href="#1-锁">1. 锁</a></h3>
+<pre><code class="language-c++">std::mutex mtx;
+
+void safe_increment()
+{
+    std::lock_guard&lt;std::mutex&gt; lock(mtx);   // 构造时加锁
+    ++shared_counter;
+}   // 析构时自动解锁，异常也安全
+</code></pre>
+<p>手写 <code>lock()</code> / <code>unlock()</code> 的话，中间任何异常都会导致死锁。</p>
+<h3 id="2-文件与流"><a class="header" href="#2-文件与流">2. 文件与流</a></h3>
+<pre><code class="language-c++">{
+    std::ofstream out("log.txt");
+    out &lt;&lt; "写点东西\n";
+}   // 自动关闭并 flush
+</code></pre>
+<h3 id="3-数据库连接网络连接"><a class="header" href="#3-数据库连接网络连接">3. 数据库连接、网络连接</a></h3>
+<pre><code class="language-c++">class Connection
+{
+public:
+    Connection(const std::string&amp; url) : conn_(connect(url)) {}
+    ~Connection() { disconnect(conn_); }
+    // ...
+};
+</code></pre>
+<h3 id="4-临时状态恢复"><a class="header" href="#4-临时状态恢复">4. 临时状态恢复</a></h3>
+<p>RAII 也可以用来「保证状态被还原」：</p>
+<pre><code class="language-c++">class ScopedFlag
+{
+public:
+    ScopedFlag(bool&amp; flag) : flag_(flag), old_(flag) { flag_ = true; }
+    ~ScopedFlag() { flag_ = old_; }
+private:
+    bool&amp; flag_;
+    bool old_;
+};
+
+void process()
+{
+    ScopedFlag guard(is_processing);   // 进入时设为 true
+    // ... 无论怎么退出，都会恢复原值
+}
+</code></pre>
+<h3 id="5-性能计时"><a class="header" href="#5-性能计时">5. 性能计时</a></h3>
+<pre><code class="language-c++">class Timer
+{
+public:
+    Timer(const char* name)
+        : name_(name), start_(std::chrono::steady_clock::now()) {}
+
+    ~Timer()
+    {
+        auto end = std::chrono::steady_clock::now();
+        auto ms = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(end - start_);
+        std::cout &lt;&lt; name_ &lt;&lt; " 耗时 " &lt;&lt; ms.count() &lt;&lt; " ms\n";
+    }
+
+private:
+    const char* name_;
+    std::chrono::steady_clock::time_point start_;
+};
+
+void work()
+{
+    Timer t("work");   // 离开作用域自动打印耗时
+    // ...
+}
+</code></pre>
+<h2 id="四raii-与异常安全"><a class="header" href="#四raii-与异常安全">四、RAII 与异常安全</a></h2>
+<p>RAII 之所以重要，是因为它让<strong>异常安全</strong>变得可行。</p>
+<p>考虑这个函数：</p>
+<pre><code class="language-c++">void bad()
+{
+    Resource* r1 = acquire();
+    Resource* r2 = acquire();   // 抛异常 → r1 泄漏
+
+    use(r1, r2);
+
+    release(r2);
+    release(r1);
+}
+</code></pre>
+<p>改成 RAII：</p>
+<pre><code class="language-c++">void good()
+{
+    auto r1 = acquire();        // 返回 RAII 对象
+    auto r2 = acquire();        // 抛异常 → r1 自动释放
+
+    use(r1, r2);
+}
+</code></pre>
+<p>不需要写 <code>try</code> / <code>catch</code>，资源也不会泄漏。这就是为什么标准库的异常安全保证能够成立——它建立在 RAII 之上。</p>
+<h3 id="析构函数不能抛异常"><a class="header" href="#析构函数不能抛异常">析构函数不能抛异常</a></h3>
+<p>栈展开过程中，如果某个析构函数又抛出异常，而此时已有异常在传播，程序会直接调用 <code>std::terminate</code>。</p>
+<pre><code class="language-c++">~Bad()
+{
+    throw std::runtime_error("oops");   // 危险
+}
+</code></pre>
+<p>C++11 起析构函数默认是 <code>noexcept</code> 的，在其中抛异常会导致终止。如果析构中确实可能失败（比如 <code>fclose</code> 返回值），应该吞掉异常或记录下来，而不是往外抛。</p>
+<h2 id="五raii-与所有权"><a class="header" href="#五raii-与所有权">五、RAII 与所有权</a></h2>
+<p>RAII 的核心是「谁负责释放」。这引出了<strong>所有权</strong>的概念：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">所有权形式</th><th style="text-align: left">含义</th><th style="text-align: left">典型类型</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>独占</strong></td><td style="text-align: left">只有一个对象负责释放</td><td style="text-align: left"><code>std::unique_ptr</code>、<code>std::ifstream</code></td></tr>
+<tr><td style="text-align: left"><strong>共享</strong></td><td style="text-align: left">多个对象共同负责，最后一个释放</td><td style="text-align: left"><code>std::shared_ptr</code></td></tr>
+<tr><td style="text-align: left"><strong>不拥有</strong></td><td style="text-align: left">只使用，不负责释放</td><td style="text-align: left">裸指针、引用、<code>std::string_view</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>设计接口时应该明确表达所有权：</p>
+<pre><code class="language-c++">// 明确：函数接管所有权
+void take(std::unique_ptr&lt;Widget&gt; w);
+
+// 明确：函数只借用，不负责释放
+void use(const Widget&amp; w);
+void use(Widget* w);   // 也常见，但不如引用清晰
+
+// 明确：函数共享所有权
+void share(std::shared_ptr&lt;Widget&gt; w);
+</code></pre>
+<p>裸指针作为参数本身没有错，但要清楚它表示「不拥有」——调用者负责保证对象在调用期间存活。</p>
+<h2 id="六rule-of-three--five--zero"><a class="header" href="#六rule-of-three--five--zero">六、Rule of Three / Five / Zero</a></h2>
+<p>RAII 类需要正确处理拷贝和移动，这引出了几个经验法则。</p>
+<h3 id="rule-of-threec98"><a class="header" href="#rule-of-threec98">Rule of Three（C++98）</a></h3>
+<p>如果类需要自定义<strong>析构函数</strong>、<strong>拷贝构造函数</strong>、<strong>拷贝赋值运算符</strong>中的任何一个，那么通常三个都需要。</p>
+<p>原因：需要自定义析构，说明持有需要手动释放的资源；那么默认的拷贝行为（浅拷贝指针）会导致双重释放，必须一并处理。</p>
+<h3 id="rule-of-fivec11"><a class="header" href="#rule-of-fivec11">Rule of Five（C++11）</a></h3>
+<p>加上<strong>移动构造函数</strong>和<strong>移动赋值运算符</strong>，变成五个：</p>
+<pre><code class="language-c++">class Buffer
+{
+public:
+    Buffer(const Buffer&amp;);              // 拷贝构造
+    Buffer&amp; operator=(const Buffer&amp;);   // 拷贝赋值
+    Buffer(Buffer&amp;&amp;) noexcept;          // 移动构造
+    Buffer&amp; operator=(Buffer&amp;&amp;) noexcept;  // 移动赋值
+    ~Buffer();                          // 析构
+};
+</code></pre>
+<p>如果定义了拷贝操作但没定义移动操作，编译器不会自动生成移动版本——此时「移动」会退化为拷贝，损失性能。</p>
+<h3 id="rule-of-zero"><a class="header" href="#rule-of-zero">Rule of Zero</a></h3>
+<p><strong>最好的做法是一个都不写</strong>。</p>
+<p>用现成的 RAII 类型作为成员，编译器生成的默认操作就已经正确了：</p>
+<pre><code class="language-c++">class Widget
+{
+    std::string name_;                    // 自己管理内存
+    std::vector&lt;int&gt; data_;               // 自己管理内存
+    std::unique_ptr&lt;Impl&gt; impl_;          // 独占所有权
+    std::shared_ptr&lt;Config&gt; config_;      // 共享所有权
+};
+// 不需要写析构、拷贝、移动——编译器生成的都对
+</code></pre>
+<p>这是现代 C++ 推荐的风格：<strong>让成员类型去管理资源，自己只管组合</strong>。</p>
+<h2 id="七常见误区-1"><a class="header" href="#七常见误区-1">七、常见误区</a></h2>
+<p><strong>「RAII 就是智能指针」</strong> —— 智能指针只是 RAII 的一种应用。锁、文件、连接、临时状态恢复都是 RAII。</p>
+<p><strong>「RAII 会拖慢程序」</strong> —— 析构调用是编译期确定的，和手写 <code>delete</code> 没有性能差异。反而因为减少了错误分支，代码往往更快。</p>
+<p><strong>「析构函数里可以随便做事」</strong> —— 析构函数不能抛异常，也不应该做可能失败的操作。复杂的清理逻辑应该提供显式的 <code>close()</code> 方法，析构只做兜底。</p>
+<p><strong>「移动后源对象不能再用」</strong> —— 移动后的对象处于「有效但未指定」状态，可以重新赋值或析构，但不能假设它的内容。</p>
+<p><strong>「拷贝构造和移动构造可以只写一个」</strong> —— 定义了拷贝构造后，移动构造不会自动生成，此时移动会退化为拷贝。反之亦然。</p>
+<h2 id="八相关章节-2"><a class="header" href="#八相关章节-2">八、相关章节</a></h2>
+<ul>
+<li><a href="#动态内存分配">动态内存分配</a>：为什么不该手写 <code>delete</code></li>
+<li><a href="#smart-pointer">智能指针</a>：RAII 在内存管理上的标准实现</li>
+<li><a href="#异常处理">异常处理</a>：栈展开与异常安全保证</li>
+<li><a href="#拷贝控制">拷贝控制</a>：Rule of Three / Five / Zero 的细节</li>
+<li><a href="#多线程与并发">多线程与并发</a>：<code>lock_guard</code> 等 RAII 锁</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="内存调试与诊断"><a href="#内存调试与诊断" class="header">内存调试与诊断</a></h1>
+<h1 id="内存调试与诊断"><a class="header" href="#内存调试与诊断">内存调试与诊断</a></h1>
+<p>内存错误的特点是<strong>症状和原因往往离得很远</strong>。程序可能在一个完全无关的地方崩溃，或者运行几小时后才慢慢泄漏光内存。这一章讲几类常见错误的成因，以及怎么把它们揪出来。</p>
+<h2 id="一常见内存错误"><a class="header" href="#一常见内存错误">一、常见内存错误</a></h2>
+<h3 id="1-内存泄漏"><a class="header" href="#1-内存泄漏">1. 内存泄漏</a></h3>
+<p>分配了内存却忘记释放：</p>
+<pre><code class="language-c++">void leak()
+{
+    int* p = new int(42);
+    // 忘记 delete
+}
+</code></pre>
+<p>后果是进程内存持续增长。短命程序可能无所谓，但服务端程序会慢慢吃光内存。</p>
+<p><strong>隐蔽的泄漏</strong>往往来自异常路径：</p>
+<pre><code class="language-c++">void subtleLeak()
+{
+    auto* a = new Resource();
+    auto* b = new Resource();   // 如果这里抛异常，a 泄漏了
+    // ...
+    delete b;
+    delete a;
+}
+</code></pre>
+<p>还有一种是<strong>逻辑泄漏</strong>——内存还被引用着，但已经没用了：</p>
+<pre><code class="language-c++">std::vector&lt;Connection&gt; connections;
+
+void cleanup()
+{
+    connections.clear();   // 如果 Connection 持有裸指针，指针指向的资源泄漏了
+}
+</code></pre>
+<h3 id="2-悬垂指针"><a class="header" href="#2-悬垂指针">2. 悬垂指针</a></h3>
+<p>指针指向的对象已经销毁：</p>
+<pre><code class="language-c++">int* dangling()
+{
+    int local = 42;
+    return &amp;local;   // 栈帧已回收
+}
+
+int* p = dangling();
+std::cout &lt;&lt; *p;     // 未定义行为
+</code></pre>
+<p>堆上的版本更隐蔽：</p>
+<pre><code class="language-c++">int* p = new int(42);
+int* q = p;
+delete p;
+std::cout &lt;&lt; *q;   // q 悬垂
+</code></pre>
+<p>释放后内存可能被重新分配给别的对象，读到的值无法预料。这类 bug 在测试环境常常「看起来正常」，上线后才爆发。</p>
+<h3 id="3-缓冲区越界"><a class="header" href="#3-缓冲区越界">3. 缓冲区越界</a></h3>
+<p>读写超出分配范围：</p>
+<pre><code class="language-c++">int* arr = new int[10];
+arr[10] = 1;        // 越界写，破坏了相邻内存
+
+char buf[8];
+strcpy(buf, "这是一个很长的字符串");   // 栈溢出
+</code></pre>
+<p>越界写会破坏相邻对象的元数据或内容，症状可能在很久之后才出现。</p>
+<p><code>std::vector</code> 的 <code>operator[]</code> 不做检查，<code>at()</code> 会检查并抛异常：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; v(10);
+v[10] = 1;      // 未定义行为
+v.at(10) = 1;   // 抛 std::out_of_range
+</code></pre>
+<h3 id="4-重复释放"><a class="header" href="#4-重复释放">4. 重复释放</a></h3>
+<pre><code class="language-c++">int* p = new int(42);
+delete p;
+delete p;   // 未定义行为
+</code></pre>
+<p>如果两个指针指向同一块内存，各自都以为该由自己释放：</p>
+<pre><code class="language-c++">void bad(std::unique_ptr&lt;int&gt; a, int* raw)
+{
+    // raw 是 a.get()，函数结束时 a 释放了内存
+}
+// 调用者又 delete raw → 重复释放
+</code></pre>
+<h3 id="5-释放方式不匹配"><a class="header" href="#5-释放方式不匹配">5. 释放方式不匹配</a></h3>
+<pre><code class="language-c++">int* p1 = new int[10];
+delete p1;          // 应该用 delete[]
+
+int* p2 = (int*)malloc(sizeof(int));
+delete p2;          // 应该用 free
+
+int* p3 = new int(42);
+free(p3);           // 应该用 delete
+</code></pre>
+<h3 id="6-未初始化内存"><a class="header" href="#6-未初始化内存">6. 未初始化内存</a></h3>
+<pre><code class="language-c++">int* p = new int;      // 未初始化
+std::cout &lt;&lt; *p;       // 读到垃圾值
+
+int arr[10];
+std::cout &lt;&lt; arr[0];   // 同上
+</code></pre>
+<p>用 <code>new int()</code> 或 <code>new int{}</code> 可以值初始化：</p>
+<pre><code class="language-c++">int* p = new int();    // 初始化为 0
+int* q = new int{};    // 同上
+</code></pre>
+<h2 id="二检测工具"><a class="header" href="#二检测工具">二、检测工具</a></h2>
+<h3 id="1-addresssanitizerasan"><a class="header" href="#1-addresssanitizerasan">1. AddressSanitizer（ASan）</a></h3>
+<p>最推荐的入门工具，GCC 和 Clang 都内置：</p>
+<pre><code class="language-bash">g++ -fsanitize=address -g main.cpp -o main
+./main
+</code></pre>
+<p>它能检测：</p>
+<ul>
+<li>堆缓冲区越界</li>
+<li>栈缓冲区越界</li>
+<li>释放后使用（use-after-free）</li>
+<li>重复释放</li>
+<li>内存泄漏（配合 <code>-fsanitize=leak</code>）</li>
+</ul>
+<p>输出示例：</p>
+<pre><code>==12345==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000018
+WRITE of size 4 at 0x602000000018 thread T0
+    #0 0x400abc in main main.cpp:5
+</code></pre>
+<p>ASan 会给出<strong>精确的出错位置和调用栈</strong>，代价是程序变慢 2~3 倍、内存占用增加。适合在测试环境常开。</p>
+<h3 id="2-undefinedbehaviorsanitizerubsan"><a class="header" href="#2-undefinedbehaviorsanitizerubsan">2. UndefinedBehaviorSanitizer（UBSan）</a></h3>
+<p>检测未定义行为：</p>
+<pre><code class="language-bash">g++ -fsanitize=undefined -g main.cpp -o main
+</code></pre>
+<p>能捕获整数溢出、空指针解引用、越界移位等。可以和 ASan 一起用：</p>
+<pre><code class="language-bash">g++ -fsanitize=address,undefined -g main.cpp -o main
+</code></pre>
+<h3 id="3-valgrind"><a class="header" href="#3-valgrind">3. Valgrind</a></h3>
+<p>老牌工具，不需要重新编译：</p>
+<pre><code class="language-bash">valgrind --leak-check=full ./main
+</code></pre>
+<p>输出：</p>
+<pre><code>==12345== HEAP SUMMARY:
+==12345==     in use at exit: 4 bytes in 1 blocks
+==12345==   total heap usage: 1 allocs, 0 frees, 4 bytes allocated
+==12345==
+==12345== 4 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==12345==    at 0x4C2A2BB: operator new(unsigned long) (vg_replace_malloc.c:334)
+==12345==    by 0x400ABC: main (main.cpp:4)
+</code></pre>
+<p>优点是能检测「可能泄漏」（still reachable）等 ASan 不报的情况，缺点是慢 10~50 倍。</p>
+<h3 id="4-工具对比"><a class="header" href="#4-工具对比">4. 工具对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">工具</th><th style="text-align: left">速度</th><th style="text-align: left">检测能力</th><th style="text-align: left">需要重编译</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>ASan</strong></td><td style="text-align: left">慢 2~3 倍</td><td style="text-align: left">越界、UAF、重复释放、泄漏</td><td style="text-align: left">是</td></tr>
+<tr><td style="text-align: left"><strong>UBSan</strong></td><td style="text-align: left">慢约 20%</td><td style="text-align: left">未定义行为</td><td style="text-align: left">是</td></tr>
+<tr><td style="text-align: left"><strong>Valgrind</strong></td><td style="text-align: left">慢 10~50 倍</td><td style="text-align: left">全面，含未初始化读取</td><td style="text-align: left">否</td></tr>
+<tr><td style="text-align: left"><strong>TSan</strong></td><td style="text-align: left">慢 5~10 倍</td><td style="text-align: left">数据竞争</td><td style="text-align: left">是</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>建议</strong>：日常开发用 ASan + UBSan，CI 里跑一遍 Valgrind 兜底，多线程代码用 TSan。</p>
+<h3 id="5-threadsanitizertsan"><a class="header" href="#5-threadsanitizertsan">5. ThreadSanitizer（TSan）</a></h3>
+<p>专门检测数据竞争：</p>
+<pre><code class="language-bash">g++ -fsanitize=thread -g main.cpp -o main -pthread
+</code></pre>
+<p>输出会指出竞争的两个位置：</p>
+<pre><code>WARNING: ThreadSanitizer: data race
+  Write of size 4 at 0x7b0400000000 by thread T1:
+    #0 increment() main.cpp:8
+  Previous read of size 4 at 0x7b0400000000 by main thread:
+    #0 main main.cpp:15
+</code></pre>
+<p>注意 TSan 和 ASan <strong>不能同时使用</strong>，需要分开跑。</p>
+<h2 id="三静态分析"><a class="header" href="#三静态分析">三、静态分析</a></h2>
+<p>编译器的警告是第一道防线，务必打开：</p>
+<pre><code class="language-bash">g++ -Wall -Wextra -Wpedantic -Wshadow -Wconversion main.cpp
+</code></pre>
+<p>Clang 的静态分析器能发现更深的问题：</p>
+<pre><code class="language-bash">clang++ --analyze main.cpp
+</code></pre>
+<p>它能识别出「分配后未释放」「空指针解引用」等模式，不需要运行程序。</p>
+<h2 id="四自己写分配器钩子"><a class="header" href="#四自己写分配器钩子">四、自己写分配器钩子</a></h2>
+<p>重载全局 <code>operator new</code> / <code>operator delete</code> 可以记录所有分配：</p>
+<pre><code class="language-c++">#include &lt;cstdlib&gt;
+#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;mutex&gt;
+
+namespace {
+std::mutex g_mutex;
+std::map&lt;void*, std::size_t&gt; g_allocations;
+}
+
+void* operator new(std::size_t size)
+{
+    void* p = std::malloc(size);
+    if (!p) throw std::bad_alloc();
+
+    std::lock_guard&lt;std::mutex&gt; lock(g_mutex);
+    g_allocations[p] = size;
+    return p;
+}
+
+void operator delete(void* p) noexcept
+{
+    if (!p) return;
+
+    std::lock_guard&lt;std::mutex&gt; lock(g_mutex);
+    g_allocations.erase(p);
+    std::free(p);
+}
+
+// 程序退出时打印未释放的分配
+struct Reporter
+{
+    ~Reporter()
+    {
+        if (!g_allocations.empty())
+        {
+            std::cerr &lt;&lt; "泄漏 " &lt;&lt; g_allocations.size() &lt;&lt; " 处分配:\n";
+            for (const auto&amp; [p, size] : g_allocations)
+                std::cerr &lt;&lt; "  " &lt;&lt; p &lt;&lt; " (" &lt;&lt; size &lt;&lt; " 字节)\n";
+        }
+    }
+};
+Reporter g_reporter;
+</code></pre>
+<p>这个简易追踪器能告诉你<strong>有没有泄漏、泄漏了多少处</strong>，但拿不到调用栈。生产级的实现（如 ASan）会记录栈回溯。</p>
+<h2 id="五预防措施"><a class="header" href="#五预防措施">五、预防措施</a></h2>
+<p>工具能帮你抓 bug，但更好的做法是<strong>让 bug 写不出来</strong>。</p>
+<h3 id="1-用智能指针"><a class="header" href="#1-用智能指针">1. 用智能指针</a></h3>
+<pre><code class="language-c++">// 容易出错
+Widget* w = new Widget();
+// ...
+delete w;
+
+// 不可能忘记释放
+auto w = std::make_unique&lt;Widget&gt;();
+</code></pre>
+<h3 id="2-用容器代替裸数组"><a class="header" href="#2-用容器代替裸数组">2. 用容器代替裸数组</a></h3>
+<pre><code class="language-c++">// 容易越界
+int* arr = new int[n];
+arr[i] = 1;
+delete[] arr;
+
+// 有边界检查（at）、自动管理
+std::vector&lt;int&gt; arr(n);
+arr.at(i) = 1;
+</code></pre>
+<h3 id="3-用-string-代替-char"><a class="header" href="#3-用-string-代替-char">3. 用 string 代替 char*</a></h3>
+<pre><code class="language-c++">// 容易溢出
+char buf[100];
+strcpy(buf, input.c_str());
+
+// 自动扩容
+std::string buf = input;
+</code></pre>
+<h3 id="4-遵循-rule-of-zero"><a class="header" href="#4-遵循-rule-of-zero">4. 遵循 Rule of Zero</a></h3>
+<p>让成员类型管理资源，自己不写析构和拷贝：</p>
+<pre><code class="language-c++">class Widget
+{
+    std::string name_;
+    std::vector&lt;int&gt; data_;
+    std::unique_ptr&lt;Impl&gt; impl_;
+    // 不需要写析构、拷贝、移动
+};
+</code></pre>
+<h3 id="5-编译期检查"><a class="header" href="#5-编译期检查">5. 编译期检查</a></h3>
+<pre><code class="language-c++">// 数组大小用常量表达式
+constexpr std::size_t N = 10;
+std::array&lt;int, N&gt; arr;
+
+// 用 span 传递数组，避免退化成指针丢失大小
+void process(std::span&lt;int&gt; data);
+</code></pre>
+<h2 id="六排查思路"><a class="header" href="#六排查思路">六、排查思路</a></h2>
+<p>遇到内存问题时，按这个顺序排查：</p>
+<ol>
+<li><strong>打开所有警告</strong>，先看编译器报什么</li>
+<li><strong>跑 ASan</strong>，多数越界和 UAF 会立即暴露</li>
+<li><strong>跑 Valgrind</strong>，看有没有泄漏和未初始化读取</li>
+<li><strong>如果是并发问题</strong>，跑 TSan</li>
+<li><strong>如果还找不到</strong>，用 <code>operator new</code> 钩子记录分配，缩小范围</li>
+<li><strong>最后手段</strong>：二分注释代码，定位问题区间</li>
+</ol>
+<p>一个实用技巧：<strong>崩溃位置往往不是出错位置</strong>。如果 ASan 报告「堆缓冲区溢出」，重点看那块内存是谁分配的、谁写的，而不是崩溃的那一行。</p>
+<h2 id="七常见误区-2"><a class="header" href="#七常见误区-2">七、常见误区</a></h2>
+<p><strong>「测试通过就没内存问题」</strong> —— 内存错误高度依赖具体的内存布局和执行时序，测试环境跑通不代表生产环境安全。</p>
+<p><strong>「用 <code>delete</code> 后置空就没问题了」</strong> —— 置空只防止重复释放，防止不了其他指针的悬垂。</p>
+<p><strong>「ASan 太慢不能常开」</strong> —— 在 CI 和本地测试环境开启完全可行，代价远小于线上排查一个内存 bug。</p>
+<p><strong>「Valgrind 能替代 ASan」</strong> —— 两者互补。Valgrind 不需要重编译、能检测未初始化读取；ASan 更快、栈信息更准。</p>
+<p><strong>「内存泄漏只影响内存」</strong> —— 泄漏的往往不只是内存。文件描述符、socket、锁、数据库连接泄漏同样致命。</p>
+<p><strong>「智能指针能解决所有问题」</strong> —— 智能指针解决的是「忘记释放」，解决不了循环引用、逻辑泄漏、越界访问。</p>
+<h2 id="八相关章节-3"><a class="header" href="#八相关章节-3">八、相关章节</a></h2>
+<ul>
+<li><a href="#动态内存分配">动态内存分配</a>：<code>new</code> / <code>delete</code> 的常见错误</li>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：从设计上避免泄漏</li>
+<li><a href="#smart-pointer">智能指针</a>：自动内存管理</li>
+<li><a href="#自定义内存管理">自定义内存管理</a>：分配器中的调试钩子</li>
+<li><a href="#c-内存模型并发">C++ 内存模型（并发）</a>：数据竞争与 TSan</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="c内存模型并发"><a href="#c内存模型并发" class="header">C++内存模型（并发）</a></h1>
+<h1 id="c-内存模型并发"><a class="header" href="#c-内存模型并发">C++ 内存模型（并发）</a></h1>
+<p>单线程程序里，「代码按顺序执行」是理所当然的。但在多线程环境下，编译器会重排指令、CPU 会乱序执行、缓存会让不同核心看到不同的值——你以为的顺序，在硬件层面完全不存在。</p>
+<p>C++11 引入的<strong>内存模型</strong>（memory model）就是用来约束这些行为的：它规定了多线程程序在什么条件下能观察到什么值。理解它是写出正确并发代码的前提。</p>
+<p>这一章偏理论，但每个概念都会落到实际用法上。</p>
+<h2 id="一数据竞争"><a class="header" href="#一数据竞争">一、数据竞争</a></h2>
+<p><strong>数据竞争</strong>（data race）的定义很明确：</p>
+<blockquote>
+<p>两个线程同时访问同一内存位置，其中至少一个是写操作，且没有同步措施。</p>
+</blockquote>
+<p>数据竞争的后果是<strong>未定义行为</strong>——不是「读到旧值」这么简单，而是编译器可以做任何假设，程序行为完全不可预测。</p>
+<pre><code class="language-c++">int counter = 0;   // 普通 int
+
+void increment()
+{
+    for (int i = 0; i &lt; 100000; ++i)
+        ++counter;    // 数据竞争
+}
+
+int main()
+{
+    std::thread t1(increment);
+    std::thread t2(increment);
+    t1.join();
+    t2.join();
+
+    std::cout &lt;&lt; counter &lt;&lt; '\n';   // 大概率不是 200000
+}
+</code></pre>
+<p><code>++counter</code> 实际是「读-改-写」三步，两个线程可能同时读到相同的值，导致丢失更新。</p>
+<p>消除数据竞争只有两条路：<strong>加锁</strong>或<strong>用原子操作</strong>。</p>
+<h2 id="二happens-before-关系"><a class="header" href="#二happens-before-关系">二、happens-before 关系</a></h2>
+<p>内存模型的核心概念是 <strong>happens-before</strong>。如果操作 A happens-before 操作 B，那么 A 的所有内存写入对 B 都可见。</p>
+<p>happens-before 由几种关系组合而成：</p>
+<h3 id="1-同线程内的顺序"><a class="header" href="#1-同线程内的顺序">1. 同线程内的顺序</a></h3>
+<p>同一线程中，前面的语句 happens-before 后面的语句：</p>
+<pre><code class="language-c++">int x = 1;      // A
+int y = x + 1;  // B：A happens-before B
+</code></pre>
+<h3 id="2-锁的同步"><a class="header" href="#2-锁的同步">2. 锁的同步</a></h3>
+<p>一个线程解锁，另一个线程加同一个锁，则解锁 happens-before 加锁：</p>
+<pre><code class="language-c++">std::mutex mtx;
+int data = 0;
+
+// 线程 A
+{
+    std::lock_guard&lt;std::mutex&gt; lock(mtx);
+    data = 42;          // 写
+}                       // 解锁
+
+// 线程 B
+{
+    std::lock_guard&lt;std::mutex&gt; lock(mtx);
+    std::cout &lt;&lt; data;  // 保证读到 42
+}                       // 加锁
+</code></pre>
+<p>这是互斥量能保证可见性的原因——它不只是「互斥」，还建立了同步关系。</p>
+<h3 id="3-原子操作的同步"><a class="header" href="#3-原子操作的同步">3. 原子操作的同步</a></h3>
+<p>原子操作可以建立跨线程的 happens-before：</p>
+<pre><code class="language-c++">std::atomic&lt;bool&gt; ready{false};
+int data = 0;
+
+// 线程 A
+data = 42;
+ready.store(true, std::memory_order_release);   // 释放
+
+// 线程 B
+while (!ready.load(std::memory_order_acquire)) { }  // 获取
+std::cout &lt;&lt; data;   // 保证读到 42
+</code></pre>
+<p><code>release</code> 和 <code>acquire</code> 配对，建立起 A 到 B 的同步关系。</p>
+<h3 id="4-传递性"><a class="header" href="#4-传递性">4. 传递性</a></h3>
+<p>happens-before 具有传递性：如果 A → B 且 B → C，那么 A → C。</p>
+<h2 id="三内存序"><a class="header" href="#三内存序">三、内存序</a></h2>
+<p>原子操作默认使用 <code>std::memory_order_seq_cst</code>（顺序一致），这是最严格也最慢的。C++ 提供了六种内存序：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">内存序</th><th style="text-align: left">用途</th><th style="text-align: left">保证</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>memory_order_relaxed</code></td><td style="text-align: left">只需要原子性</td><td style="text-align: left">无同步，只保证操作不可分割</td></tr>
+<tr><td style="text-align: left"><code>memory_order_consume</code></td><td style="text-align: left">数据依赖（很少用）</td><td style="text-align: left">已不推荐</td></tr>
+<tr><td style="text-align: left"><code>memory_order_acquire</code></td><td style="text-align: left">读操作</td><td style="text-align: left">之后的读写不能重排到它之前</td></tr>
+<tr><td style="text-align: left"><code>memory_order_release</code></td><td style="text-align: left">写操作</td><td style="text-align: left">之前的读写不能重排到它之后</td></tr>
+<tr><td style="text-align: left"><code>memory_order_acq_rel</code></td><td style="text-align: left">读-改-写操作</td><td style="text-align: left">兼具 acquire 和 release</td></tr>
+<tr><td style="text-align: left"><code>memory_order_seq_cst</code></td><td style="text-align: left">默认，最安全</td><td style="text-align: left">全局统一顺序</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="1-relaxed只要原子性"><a class="header" href="#1-relaxed只要原子性">1. relaxed：只要原子性</a></h3>
+<pre><code class="language-c++">std::atomic&lt;int&gt; counter{0};
+
+void increment()
+{
+    for (int i = 0; i &lt; 100000; ++i)
+        counter.fetch_add(1, std::memory_order_relaxed);
+}
+// 结果是确定的 200000，但不保证与其他变量的顺序关系
+</code></pre>
+<p><code>relaxed</code> 只保证「计数不会丢失」，不建立任何同步。适合纯粹的计数器。</p>
+<h3 id="2-acquire--release建立同步"><a class="header" href="#2-acquire--release建立同步">2. acquire / release：建立同步</a></h3>
+<p>这是最常用的一对，用于「生产者写完数据，通知消费者」：</p>
+<pre><code class="language-c++">std::atomic&lt;bool&gt; ready{false};
+int payload = 0;
+
+// 生产者
+void produce()
+{
+    payload = 42;                                    // 先写数据
+    ready.store(true, std::memory_order_release);    // 再发布
+}
+
+// 消费者
+void consume()
+{
+    while (!ready.load(std::memory_order_acquire)) { }  // 等待发布
+    std::cout &lt;&lt; payload;   // 保证看到 42
+}
+</code></pre>
+<p>关键点：<strong><code>release</code> 之前的写入，对执行 <code>acquire</code> 的线程可见</strong>。如果这里用 <code>relaxed</code>，消费者可能看到 <code>ready == true</code> 但 <code>payload</code> 还是 0。</p>
+<h3 id="3-seq_cst全局一致顺序"><a class="header" href="#3-seq_cst全局一致顺序">3. seq_cst：全局一致顺序</a></h3>
+<pre><code class="language-c++">std::atomic&lt;bool&gt; x{false}, y{false};
+std::atomic&lt;int&gt; z{0};
+
+// 线程 A
+x.store(true);   // 默认 seq_cst
+
+// 线程 B
+y.store(true);
+
+// 线程 C
+while (!x.load()) { }
+if (y.load())
+    ++z;
+</code></pre>
+<p><code>seq_cst</code> 保证所有线程看到<strong>同一个全局操作顺序</strong>。这让推理变简单，但代价是需要内存屏障，性能比 <code>acquire</code>/<code>release</code> 差。</p>
+<p><strong>建议</strong>：默认用 <code>seq_cst</code>，确认是瓶颈后再降级到 <code>acquire</code>/<code>release</code>。</p>
+<h2 id="四内存屏障"><a class="header" href="#四内存屏障">四、内存屏障</a></h2>
+<p>有时需要在没有原子操作的情况下插入同步点：</p>
+<pre><code class="language-c++">std::atomic_thread_fence(std::memory_order_release);
+</code></pre>
+<p>屏障本身不操作数据，只是限制重排。典型用法：</p>
+<pre><code class="language-c++">// 生产者
+payload = 42;
+std::atomic_thread_fence(std::memory_order_release);
+flag.store(true, std::memory_order_relaxed);   // 用 relaxed 存
+</code></pre>
+<p>效果和直接在 <code>store</code> 上用 <code>release</code> 类似，但把同步点独立出来了。实际代码中很少需要，直接用 <code>acquire</code>/<code>release</code> 更清晰。</p>
+<h2 id="五volatile-不是同步手段"><a class="header" href="#五volatile-不是同步手段">五、volatile 不是同步手段</a></h2>
+<p>这是最经典的误解。<code>volatile</code> 在 C++ 中的含义是：</p>
+<ul>
+<li>告诉编译器「这个变量可能被外部修改」，不要优化掉对它的访问</li>
+<li><strong>不提供任何原子性</strong></li>
+<li><strong>不提供任何线程间同步</strong></li>
+<li><strong>不建立 happens-before 关系</strong></li>
+</ul>
+<pre><code class="language-c++">volatile int counter = 0;
+
+void increment()
+{
+    ++counter;   // 仍然是数据竞争！
+}
+</code></pre>
+<p><code>volatile</code> 的正确用途是访问<strong>内存映射的硬件寄存器</strong>，或者配合 <code>setjmp</code>/<code>longjmp</code>。多线程同步必须用 <code>std::atomic</code> 或互斥量。</p>
+<h2 id="六实际应用"><a class="header" href="#六实际应用">六、实际应用</a></h2>
+<h3 id="1-双重检查锁定"><a class="header" href="#1-双重检查锁定">1. 双重检查锁定</a></h3>
+<p>单例模式中常见的写法，但很容易写错：</p>
+<pre><code class="language-c++">class Singleton
+{
+public:
+    static Singleton&amp; instance()
+    {
+        if (!instance_)                              // 第一次检查（无锁）
+        {
+            std::lock_guard&lt;std::mutex&gt; lock(mtx_);
+            if (!instance_)                          // 第二次检查
+                instance_ = std::make_unique&lt;Singleton&gt;();
+        }
+        return *instance_;
+    }
+
+private:
+    static std::unique_ptr&lt;Singleton&gt; instance_;
+    static std::mutex mtx_;
+};
+</code></pre>
+<p>这里的 <code>instance_</code> 是普通指针，第一次检查是<strong>数据竞争</strong>。正确做法是用原子指针：</p>
+<pre><code class="language-c++">static std::atomic&lt;Singleton*&gt; instance_;
+
+static Singleton&amp; instance()
+{
+    Singleton* p = instance_.load(std::memory_order_acquire);
+    if (!p)
+    {
+        std::lock_guard&lt;std::mutex&gt; lock(mtx_);
+        p = instance_.load(std::memory_order_relaxed);
+        if (!p)
+        {
+            p = new Singleton();
+            instance_.store(p, std::memory_order_release);
+        }
+    }
+    return *p;
+}
+</code></pre>
+<p>不过更简单的做法是用 C++11 的<strong>局部静态变量</strong>——标准保证它是线程安全的：</p>
+<pre><code class="language-c++">static Singleton&amp; instance()
+{
+    static Singleton inst;   // 线程安全的初始化
+    return inst;
+}
+</code></pre>
+<h3 id="2-无锁队列"><a class="header" href="#2-无锁队列">2. 无锁队列</a></h3>
+<p>用原子操作实现的生产者-消费者队列，核心是 CAS 循环：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+class LockFreeStack
+{
+    struct Node
+    {
+        T data;
+        Node* next;
+    };
+
+    std::atomic&lt;Node*&gt; head_{nullptr};
+
+public:
+    void push(T value)
+    {
+        Node* newNode = new Node{std::move(value), nullptr};
+        newNode-&gt;next = head_.load(std::memory_order_relaxed);
+
+        // CAS 循环：如果 head_ 还是 newNode-&gt;next，就换成 newNode
+        while (!head_.compare_exchange_weak(newNode-&gt;next, newNode,
+                                            std::memory_order_release,
+                                            std::memory_order_relaxed))
+        { }
+    }
+};
+</code></pre>
+<p>无锁编程极其困难，上面这个栈还有 ABA 问题。<strong>除非有明确的性能需求，否则用互斥量</strong>。</p>
+<h3 id="3-原子计数器"><a class="header" href="#3-原子计数器">3. 原子计数器</a></h3>
+<p>最简单的场景：</p>
+<pre><code class="language-c++">std::atomic&lt;std::size_t&gt; requestCount{0};
+
+void handleRequest()
+{
+    requestCount.fetch_add(1, std::memory_order_relaxed);   // 只需原子性
+    // ...
+}
+</code></pre>
+<p>这里 <code>relaxed</code> 就够了——我们只关心计数正确，不关心它和其他变量的顺序。</p>
+<h2 id="七常见误区-3"><a class="header" href="#七常见误区-3">七、常见误区</a></h2>
+<p><strong>「<code>volatile</code> 可以用于多线程同步」</strong> —— 不能。它不提供原子性，也不建立 happens-before。这是 Java 程序员最常带入 C++ 的错误。</p>
+<p><strong>「原子操作就是无锁」</strong> —— 不一定。<code>std::atomic&lt;T&gt;</code> 对某些类型可能内部用锁实现，可以用 <code>is_lock_free()</code> 检查。</p>
+<p><strong>「<code>relaxed</code> 是没用的」</strong> —— 它保证了原子性，适合纯计数器场景，性能最好。</p>
+<p><strong>「<code>seq_cst</code> 太慢，应该都用 <code>acquire</code>/<code>release</code>」</strong> —— 在 x86 上两者性能差异很小，在 ARM 上才明显。先保证正确性，再考虑优化。</p>
+<p><strong>「<code>atomic</code> 变量的所有操作都是原子的」</strong> —— 单个操作是原子的，但复合操作不是：</p>
+<pre><code class="language-c++">std::atomic&lt;int&gt; x{0};
+
+if (x &gt; 0)      // 原子读
+    x--;        // 原子写
+// 但「检查再减」整体不是原子的，中间可能被插入
+</code></pre>
+<p><strong>「多个原子变量之间有一致性」</strong> —— 没有。两个独立的原子变量之间不保证任何顺序关系，除非用 <code>seq_cst</code> 或显式同步。</p>
+<h2 id="八相关章节-4"><a class="header" href="#八相关章节-4">八、相关章节</a></h2>
+<ul>
+<li><a href="#多线程与并发">多线程与并发</a>：线程、互斥量、条件变量的使用</li>
+<li><a href="#内存布局与模型">内存布局与模型</a>：单线程视角的内存布局</li>
+<li><a href="#内存调试与诊断">内存调试与诊断</a>：用 TSan 检测数据竞争</li>
+<li><a href="#smart-pointer">智能指针</a>：<code>shared_ptr</code> 的线程安全性</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="面向对象进阶"><a class="header" href="#面向对象进阶">面向对象进阶</a></h1>
 <p>在这一阶段，需要解决的问题不再是“能不能用类”，而是“如何让类体系设计得更合理、更高效、更安全”。</p>
@@ -5070,6 +7000,24 @@ if (ptr) {
 <blockquote>
 <p>“当我写下一个类、继承一个父类、重载一个函数时，编译器究竟在背后做了什么？”</p>
 </blockquote>
+<h2 id="本章内容-4"><a class="header" href="#本章内容-4">本章内容</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">章节</th><th style="text-align: left">说明</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><a href="#运算符重载operator-overloading">运算符重载</a></td><td style="text-align: left">成员函数与友元函数的选择、各类运算符的重载方式、返回值设计</td></tr>
+<tr><td style="text-align: left"><a href="#继承">继承</a></td><td style="text-align: left">继承方式、构造析构顺序、多重继承与菱形问题、虚继承</td></tr>
+<tr><td style="text-align: left"><a href="#虚函数与多态">虚函数与多态</a></td><td style="text-align: left">虚表机制、动态绑定、虚析构、纯虚函数与抽象类</td></tr>
+<tr><td style="text-align: left"><a href="#友元与类关系">友元与类关系</a></td><td style="text-align: left">友元函数与友元类、组合/聚合/依赖关系的选择</td></tr>
+<tr><td style="text-align: left"><a href="#类模板与函数模板高级应用">类模板与函数模板高级应用</a></td><td style="text-align: left">可变参数模板、SFINAE、Concepts、CRTP 与模板元编程</td></tr>
+<tr><td style="text-align: left"><a href="#类型转换与转换运算符">类型转换与转换运算符</a></td><td style="text-align: left">转换构造函数、<code>operator type()</code>、<code>explicit</code> 与二义性</td></tr>
+<tr><td style="text-align: left"><a href="#拷贝控制">拷贝控制</a></td><td style="text-align: left">五个特殊成员函数、深浅拷贝、Rule of Three/Five/Zero</td></tr>
+<tr><td style="text-align: left"><a href="#c新特性">C++ 新特性</a></td><td style="text-align: left">值类别、移动语义、<code>constexpr</code>、<code>noexcept</code> 与类设计</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="运算符重载operator-overloading"><a class="header" href="#运算符重载operator-overloading">运算符重载（Operator Overloading）</a></h1>
 <h2 id="一概述"><a class="header" href="#一概述">一、概述</a></h2>
@@ -5660,22 +7608,1059 @@ delete p;  // 1. 动态绑定调用 Derived::~Derived() 2. 调用 Base::~Base()
 <p>因此，只有当确实需要多态特性时，才应该将函数声明为虚函数。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="友元与类关系"><a class="header" href="#友元与类关系">友元与类关系</a></h1>
-<p>友元函数与友元类
-类的组合与聚合</p>
+<p>封装是面向对象的基础——把数据藏起来，只暴露必要的接口。但有时两个类确实需要共享内部状态，比如容器和它的迭代器、对象和它的工厂函数。</p>
+<p><code>friend</code> 就是为这种情况准备的：它允许指定的函数或类访问私有成员。但它的代价是<strong>打破封装</strong>，所以用之前要想清楚是不是真的必要。</p>
+<p>这一章还讨论类之间的几种关系——组合、聚合、依赖——它们决定了对象之间该怎么互相持有。</p>
+<h2 id="一友元函数"><a class="header" href="#一友元函数">一、友元函数</a></h2>
+<p>友元函数不是成员函数，但能访问类的私有成员：</p>
+<pre><code class="language-c++">class Point
+{
+private:
+    double x_, y_;
+
+public:
+    Point(double x, double y) : x_(x), y_(y) {}
+
+    // 声明友元
+    friend double distance(const Point&amp; a, const Point&amp; b);
+};
+
+// 定义（不需要 friend 关键字）
+double distance(const Point&amp; a, const Point&amp; b)
+{
+    double dx = a.x_ - b.x_;   // 可以访问私有成员
+    double dy = a.y_ - b.y_;
+    return std::sqrt(dx * dx + dy * dy);
+}
+</code></pre>
+<h3 id="什么时候需要友元函数"><a class="header" href="#什么时候需要友元函数">什么时候需要友元函数</a></h3>
+<p><strong>运算符重载</strong>是最常见的场景。当运算符的左操作数不是类对象时，必须用非成员函数：</p>
+<pre><code class="language-c++">class Complex
+{
+    double re_, im_;
+
+public:
+    Complex(double re, double im) : re_(re), im_(im) {}
+
+    // 需要访问私有成员，所以声明为友元
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Complex&amp; c);
+    friend Complex operator+(double lhs, const Complex&amp; rhs);
+};
+
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Complex&amp; c)
+{
+    return os &lt;&lt; c.re_ &lt;&lt; "+" &lt;&lt; c.im_ &lt;&lt; "i";
+}
+
+// 支持 2.0 + complex，而不仅仅是 complex + 2.0
+Complex operator+(double lhs, const Complex&amp; rhs)
+{
+    return Complex(lhs + rhs.re_, rhs.im_);
+}
+</code></pre>
+<p><code>operator&lt;&lt;</code> 的左操作数是 <code>ostream</code>，<code>double + Complex</code> 的左操作数是 <code>double</code>——都不是 <code>Complex</code> 对象，所以不能定义为成员函数。</p>
+<h3 id="友元的几个特性"><a class="header" href="#友元的几个特性">友元的几个特性</a></h3>
+<ul>
+<li><strong>友元关系不可传递</strong>：A 是 B 的友元，B 是 C 的友元，不代表 A 是 C 的友元</li>
+<li><strong>友元关系不可继承</strong>：基类的友元不能访问派生类的私有成员</li>
+<li><strong>友元声明不受访问控制影响</strong>：可以放在 <code>private</code>、<code>protected</code> 或 <code>public</code> 区域，效果相同</li>
+<li><strong>友元不是成员</strong>：不受 <code>this</code> 指针影响，调用方式与普通函数一致</li>
+</ul>
+<h2 id="二友元类"><a class="header" href="#二友元类">二、友元类</a></h2>
+<p>整个类都可以成为友元：</p>
+<pre><code class="language-c++">class Matrix
+{
+private:
+    double* data_;
+    int rows_, cols_;
+
+    friend class MatrixIterator;   // 迭代器需要访问内部数据
+    friend class MatrixFactory;    // 工厂需要直接构造
+};
+</code></pre>
+<p>友元类中的所有成员函数都能访问对方的私有成员。</p>
+<p>一个典型场景是<strong>迭代器</strong>：</p>
+<pre><code class="language-c++">class Container
+{
+    int* data_;
+    std::size_t size_;
+
+public:
+    class Iterator
+    {
+        int* ptr_;
+    public:
+        int&amp; operator*() { return *ptr_; }
+        Iterator&amp; operator++() { ++ptr_; return *this; }
+        // ...
+    };
+
+    Iterator begin() { return Iterator{data_}; }
+    Iterator end()   { return Iterator{data_ + size_}; }
+};
+</code></pre>
+<p>这里迭代器用嵌套类实现，作为成员类天然可以访问外部类的私有成员，不需要 <code>friend</code>。</p>
+<h3 id="友元成员函数"><a class="header" href="#友元成员函数">友元成员函数</a></h3>
+<p>也可以只让某个类的特定成员函数成为友元：</p>
+<pre><code class="language-c++">class A;
+
+class B
+{
+public:
+    void accessA(A&amp; a);
+};
+
+class A
+{
+    int secret_ = 42;
+
+    // 只让 B::accessA 成为友元
+    friend void B::accessA(A&amp; a);
+};
+</code></pre>
+<p>这种写法需要前置声明，且顺序敏感，实际中较少使用。</p>
+<h2 id="三友元的代价"><a class="header" href="#三友元的代价">三、友元的代价</a></h2>
+<p>友元打破封装，这是它的本质。用之前先问几个问题：</p>
+<p><strong>能不能通过公开接口实现？</strong> 如果加个 <code>getX()</code> 就够了，就不需要友元。</p>
+<p><strong>是不是设计有问题？</strong> 如果两个类需要频繁互相访问私有成员，说明它们的职责可能没分清楚，也许应该合并成一个类，或者提取出共同的部分。</p>
+<p><strong>能不能缩小范围？</strong> 与其把整个类设为友元，不如只开放一两个成员函数。</p>
+<p>不过友元也不是洪水猛兽。标准库中就有大量友元——<code>operator&lt;&lt;</code>、比较运算符、<code>swap</code> 函数通常都是友元。关键判断标准是：<strong>这个外部函数在概念上是不是这个类的一部分</strong>。</p>
+<p><code>operator&lt;&lt;</code> 显然是 <code>Complex</code> 的一部分（它就是用来打印 <code>Complex</code> 的），所以作为友元是合理的。反过来，如果某个业务函数需要访问类的私有数据，那就值得怀疑了。</p>
+<h2 id="四类之间的关系"><a class="header" href="#四类之间的关系">四、类之间的关系</a></h2>
+<p>两个类之间可能有几种关系，选择合适的表达方式很重要。</p>
+<h3 id="1-组合composition-是一个部分"><a class="header" href="#1-组合composition-是一个部分">1. 组合（Composition）—— 「是一个部分」</a></h3>
+<p>组合表示<strong>强拥有</strong>关系：整体销毁时部分也随之销毁。</p>
+<pre><code class="language-c++">class Engine
+{
+public:
+    void start();
+};
+
+class Car
+{
+    Engine engine_;   // 直接持有对象
+public:
+    void start() { engine_.start(); }
+};
+</code></pre>
+<p>特点：</p>
+<ul>
+<li>成员是<strong>值</strong>，不是指针</li>
+<li>生命周期完全绑定：<code>Car</code> 销毁，<code>Engine</code> 也销毁</li>
+<li>通常用 <code>unique_ptr</code> 表示需要延迟构造或多态的组合</li>
+</ul>
+<pre><code class="language-c++">class Car
+{
+    std::unique_ptr&lt;Engine&gt; engine_;   // 独占所有权
+public:
+    Car() : engine_(std::make_unique&lt;V8Engine&gt;()) {}
+};
+</code></pre>
+<h3 id="2-聚合aggregation-有一个"><a class="header" href="#2-聚合aggregation-有一个">2. 聚合（Aggregation）—— 「有一个」</a></h3>
+<p>聚合表示<strong>弱拥有</strong>关系：部分可以独立于整体存在。</p>
+<pre><code class="language-c++">class Department;
+
+class University
+{
+    std::vector&lt;Department*&gt; departments_;   // 不拥有
+public:
+    void addDepartment(Department* d) { departments_.push_back(d); }
+};
+</code></pre>
+<p>特点：</p>
+<ul>
+<li>成员是指针或引用，<strong>不负责生命周期</strong></li>
+<li>被持有的对象可以在外部创建和销毁</li>
+<li>需要调用者保证对象存活</li>
+</ul>
+<p>如果生命周期不确定，可以用 <code>shared_ptr</code>；如果只是观察，用 <code>weak_ptr</code>。</p>
+<h3 id="3-依赖dependency-用一下"><a class="header" href="#3-依赖dependency-用一下">3. 依赖（Dependency）—— 「用一下」</a></h3>
+<p>依赖是临时关系，通常通过函数参数体现：</p>
+<pre><code class="language-c++">class ReportGenerator
+{
+public:
+    void generate(const Database&amp; db, std::ostream&amp; out);
+};
+</code></pre>
+<p><code>ReportGenerator</code> 不持有 <code>Database</code>，只是在调用时使用它。</p>
+<h3 id="4-继承inheritance-是一个"><a class="header" href="#4-继承inheritance-是一个">4. 继承（Inheritance）—— 「是一个」</a></h3>
+<p>继承表示 <strong>is-a</strong> 关系：</p>
+<pre><code class="language-c++">class Shape { public: virtual void draw() = 0; };
+class Circle : public Shape { public: void draw() override; };
+</code></pre>
+<p>继承的细节见 <a href="#继承">继承</a>。</p>
+<h3 id="关系对照"><a class="header" href="#关系对照">关系对照</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">关系</th><th style="text-align: left">语义</th><th style="text-align: left">实现方式</th><th style="text-align: left">生命周期</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">组合</td><td style="text-align: left">is-a-part-of</td><td style="text-align: left">值成员 / <code>unique_ptr</code></td><td style="text-align: left">绑定</td></tr>
+<tr><td style="text-align: left">聚合</td><td style="text-align: left">has-a</td><td style="text-align: left">裸指针 / 引用 / <code>shared_ptr</code></td><td style="text-align: left">独立</td></tr>
+<tr><td style="text-align: left">依赖</td><td style="text-align: left">uses-a</td><td style="text-align: left">函数参数</td><td style="text-align: left">临时</td></tr>
+<tr><td style="text-align: left">继承</td><td style="text-align: left">is-a</td><td style="text-align: left">公有继承</td><td style="text-align: left">绑定</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="五设计建议"><a class="header" href="#五设计建议">五、设计建议</a></h2>
+<p><strong>优先用组合而非继承</strong>。继承会带来强耦合，基类的改动会影响所有派生类。组合更灵活，也更容易测试。</p>
+<p><strong>明确表达所有权</strong>。用值成员表示「我拥有」，用裸指针表示「我不拥有」，用 <code>unique_ptr</code> 表示「独占但延迟构造」。不要让读者去猜。</p>
+<p><strong>避免双向强引用</strong>。A 持有 B，B 又持有 A，会导致循环引用和生命周期混乱。如果确实需要双向访问，让一方用弱引用。</p>
+<p><strong>友元是最后手段</strong>。先考虑公开接口、成员函数、嵌套类，都不行再用友元。</p>
+<h2 id="六常见误区-1"><a class="header" href="#六常见误区-1">六、常见误区</a></h2>
+<p><strong>「友元破坏了封装，所以绝对不能用」</strong> —— 友元是语言提供的工具，用在对的地方（如 <code>operator&lt;&lt;</code>）是合理的。关键是判断这个函数在概念上是否属于这个类。</p>
+<p><strong>「友元关系可以继承」</strong> —— 不能。派生类不会继承基类的友元关系。</p>
+<p><strong>「友元关系可以传递」</strong> —— 不能。A 是 B 的友元，B 是 C 的友元，A 不能访问 C 的私有成员。</p>
+<p><strong>「友元声明的位置影响访问权限」</strong> —— 不影响。放在 <code>private</code> 还是 <code>public</code> 区域都一样。</p>
+<p><strong>「组合就是用一个指针成员」</strong> —— 用指针不一定表示组合。裸指针通常表示不拥有（聚合），<code>unique_ptr</code> 才表示强拥有。</p>
+<p><strong>「两个类互相是友元就没问题了」</strong> —— 互相友元通常意味着设计有问题，两个类的职责可能没分清。</p>
+<h2 id="七相关章节-1"><a class="header" href="#七相关章节-1">七、相关章节</a></h2>
+<ul>
+<li><a href="#继承">继承</a>：is-a 关系的细节</li>
+<li><a href="#运算符重载operator-overloading">运算符重载</a>：为什么 <code>operator&lt;&lt;</code> 需要友元</li>
+<li><a href="#拷贝控制">拷贝控制</a>：成员对象的拷贝与移动</li>
+<li><a href="#smart-pointer">智能指针</a>：用智能指针表达所有权</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="类模板与函数模板高级应用"><a class="header" href="#类模板与函数模板高级应用">类模板与函数模板高级应用</a></h1>
-<p>模板特化与偏特化
-模板与继承结合</p>
+<p>基础语法在 <a href="#模板-template">模板</a> 里已经讲过：怎么写函数模板、类模板，怎么做特化。这一章讲的是模板真正发挥威力的部分——<strong>编译期计算、约束与泛型设计</strong>。</p>
+<p>这些技术让 C++ 的泛型能力远超「把类型当参数」的层面。</p>
+<h2 id="一可变参数模板"><a class="header" href="#一可变参数模板">一、可变参数模板</a></h2>
+<p>C++11 引入的<strong>参数包</strong>让模板能接受任意数量的类型或值：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+void print(Args... args)
+{
+    (std::cout &lt;&lt; ... &lt;&lt; args) &lt;&lt; '\n';   // C++17 折叠表达式
+}
+
+print(1, "hello", 3.14, 'c');
+</code></pre>
+<p><code>Args...</code> 是类型参数包，<code>args...</code> 是函数参数包。展开它们有几种方式。</p>
+<h3 id="1-折叠表达式c17"><a class="header" href="#1-折叠表达式c17">1. 折叠表达式（C++17）</a></h3>
+<p>最简洁的展开方式：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+auto sum(Args... args)
+{
+    return (args + ...);           // 一元右折叠：a + (b + (c + ...))
+    // return (... + args);        // 一元左折叠：((a + b) + c) + ...
+    // return (0 + ... + args);    // 二元折叠，带初始值
+}
+</code></pre>
+<p>四种形式：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">形式</th><th style="text-align: left">展开结果</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>(... op pack)</code></td><td style="text-align: left">左折叠，<code>((a op b) op c)</code></td></tr>
+<tr><td style="text-align: left"><code>(pack op ...)</code></td><td style="text-align: left">右折叠，<code>(a op (b op c))</code></td></tr>
+<tr><td style="text-align: left"><code>(init op ... op pack)</code></td><td style="text-align: left">带初值的左折叠</td></tr>
+<tr><td style="text-align: left"><code>(pack op ... op init)</code></td><td style="text-align: left">带初值的右折叠</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-递归展开c11"><a class="header" href="#2-递归展开c11">2. 递归展开（C++11）</a></h3>
+<p>C++17 之前只能用递归：</p>
+<pre><code class="language-c++">// 递归终止
+void print() {}
+
+template&lt;class T, class... Rest&gt;
+void print(const T&amp; first, const Rest&amp;... rest)
+{
+    std::cout &lt;&lt; first &lt;&lt; ' ';
+    print(rest...);   // 递归展开
+}
+</code></pre>
+<h3 id="3-逗号表达式展开"><a class="header" href="#3-逗号表达式展开">3. 逗号表达式展开</a></h3>
+<p>利用初始化列表保证求值顺序：</p>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+void print(Args... args)
+{
+    int dummy[] = { (std::cout &lt;&lt; args &lt;&lt; ' ', 0)... };
+    (void)dummy;
+}
+</code></pre>
+<h3 id="4-sizeof-获取数量"><a class="header" href="#4-sizeof-获取数量">4. sizeof… 获取数量</a></h3>
+<pre><code class="language-c++">template&lt;class... Args&gt;
+constexpr std::size_t count(Args...)
+{
+    return sizeof...(Args);
+}
+
+count(1, 2, 3);   // 3
+</code></pre>
+<h2 id="二sfinae"><a class="header" href="#二sfinae">二、SFINAE</a></h2>
+<p><strong>SFINAE</strong>（Substitution Failure Is Not An Error，替换失败并非错误）是 C++ 模板的核心机制之一。</p>
+<p>它的含义是：当编译器用具体类型替换模板参数时，如果产生的代码无效，<strong>不会立即报错</strong>，而是把这个候选从重载集中移除，继续尝试其他候选。</p>
+<pre><code class="language-c++">// 只有当 T 有 size() 成员时，这个重载才有效
+template&lt;class T&gt;
+auto getSize(const T&amp; container) -&gt; decltype(container.size())
+{
+    return container.size();
+}
+
+// 备选：用于没有 size() 的类型
+template&lt;class T&gt;
+std::size_t getSize(...)
+{
+    return 0;
+}
+
+std::vector&lt;int&gt; v{1, 2, 3};
+getSize(v);      // 调用第一个
+getSize(42);     // 第一个替换失败（int 没有 size()），调用第二个
+</code></pre>
+<h3 id="enable_if"><a class="header" href="#enable_if">enable_if</a></h3>
+<p><code>std::enable_if</code> 是最经典的 SFINAE 工具，用于按条件启用重载：</p>
+<pre><code class="language-c++">#include &lt;type_traits&gt;
+
+// 只对整数类型启用
+template&lt;class T&gt;
+std::enable_if_t&lt;std::is_integral_v&lt;T&gt;, T&gt;
+half(T value)
+{
+    return value / 2;
+}
+
+// 只对浮点类型启用
+template&lt;class T&gt;
+std::enable_if_t&lt;std::is_floating_point_v&lt;T&gt;, T&gt;
+half(T value)
+{
+    return value / 2.0;
+}
+
+half(10);     // 调用整数版本
+half(3.14);   // 调用浮点版本
+</code></pre>
+<p><code>enable_if_t&lt;cond, T&gt;</code> 在 <code>cond</code> 为真时是 <code>T</code>，为假时替换失败，从而移除该候选。</p>
+<h3 id="void_t-检测成员"><a class="header" href="#void_t-检测成员">void_t 检测成员</a></h3>
+<p><code>std::void_t</code> 可以把任意类型映射为 <code>void</code>，常用于检测成员是否存在：</p>
+<pre><code class="language-c++">template&lt;class T, class = void&gt;
+struct has_serialize : std::false_type {};
+
+template&lt;class T&gt;
+struct has_serialize&lt;T, std::void_t&lt;decltype(std::declval&lt;T&gt;().serialize())&gt;&gt;
+    : std::true_type {};
+
+static_assert(has_serialize&lt;MyClass&gt;::value);
+</code></pre>
+<p>如果 <code>T().serialize()</code> 无效，特化版本替换失败，回退到主模板（<code>false_type</code>）。</p>
+<h2 id="三conceptsc20"><a class="header" href="#三conceptsc20">三、Concepts（C++20）</a></h2>
+<p>SFINAE 能工作，但错误信息极其难读。C++20 的 <strong>Concepts</strong> 提供了更清晰的替代方案。</p>
+<h3 id="1-定义与使用"><a class="header" href="#1-定义与使用">1. 定义与使用</a></h3>
+<pre><code class="language-c++">#include &lt;concepts&gt;
+
+// 定义概念
+template&lt;class T&gt;
+concept Numeric = std::is_arithmetic_v&lt;T&gt;;
+
+// 约束模板参数
+template&lt;Numeric T&gt;
+T square(T x) { return x * x; }
+
+// 也可以用在 requires 子句中
+template&lt;class T&gt;
+requires Numeric&lt;T&gt;
+T cube(T x) { return x * x * x; }
+</code></pre>
+<p>违反约束时，编译器会直接告诉你「<code>T</code> 不满足 <code>Numeric</code>」，而不是一堆模板实例化错误。</p>
+<h3 id="2-requires-表达式"><a class="header" href="#2-requires-表达式">2. requires 表达式</a></h3>
+<p>用于描述类型需要支持哪些操作：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+concept Container = requires(T c, const T&amp; cc)
+{
+    { c.begin() } -&gt; std::same_as&lt;typename T::iterator&gt;;
+    { c.end() }   -&gt; std::same_as&lt;typename T::iterator&gt;;
+    { cc.size() } -&gt; std::convertible_to&lt;std::size_t&gt;;
+    typename T::value_type;
+};
+
+template&lt;Container C&gt;
+void process(const C&amp; c) { /* ... */ }
+</code></pre>
+<p><code>requires</code> 块里可以写四类要求：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">形式</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>expr;</code></td><td style="text-align: left">表达式必须合法</td></tr>
+<tr><td style="text-align: left"><code>{ expr } -&gt; Concept;</code></td><td style="text-align: left">表达式合法且返回值满足概念</td></tr>
+<tr><td style="text-align: left"><code>typename T::type;</code></td><td style="text-align: left">类型必须存在</td></tr>
+<tr><td style="text-align: left"><code>requires cond;</code></td><td style="text-align: left">嵌套的进一步约束</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-标准库概念"><a class="header" href="#3-标准库概念">3. 标准库概念</a></h3>
+<p>标准库提供了一批常用概念：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">概念</th><th style="text-align: left">含义</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>std::integral</code></td><td style="text-align: left">整数类型</td></tr>
+<tr><td style="text-align: left"><code>std::floating_point</code></td><td style="text-align: left">浮点类型</td></tr>
+<tr><td style="text-align: left"><code>std::same_as&lt;T, U&gt;</code></td><td style="text-align: left">类型相同</td></tr>
+<tr><td style="text-align: left"><code>std::convertible_to&lt;From, To&gt;</code></td><td style="text-align: left">可转换</td></tr>
+<tr><td style="text-align: left"><code>std::derived_from&lt;D, B&gt;</code></td><td style="text-align: left">继承关系</td></tr>
+<tr><td style="text-align: left"><code>std::invocable&lt;F, Args...&gt;</code></td><td style="text-align: left">可调用</td></tr>
+<tr><td style="text-align: left"><code>std::copyable</code> / <code>std::movable</code></td><td style="text-align: left">可拷贝 / 可移动</td></tr>
+<tr><td style="text-align: left"><code>std::ranges::range</code></td><td style="text-align: left">是范围</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-简写形式"><a class="header" href="#4-简写形式">4. 简写形式</a></h3>
+<p>概念可以直接用在参数位置：</p>
+<pre><code class="language-c++">void process(std::integral auto x);        // 等价于 template&lt;std::integral T&gt;
+void handle(std::ranges::range auto&amp;&amp; r);
+</code></pre>
+<h2 id="四模板与继承的结合"><a class="header" href="#四模板与继承的结合">四、模板与继承的结合</a></h2>
+<h3 id="1-crtp静态多态"><a class="header" href="#1-crtp静态多态">1. CRTP：静态多态</a></h3>
+<p><strong>CRTP</strong>（Curiously Recurring Template Pattern，奇异递归模板模式）让基类知道派生类的类型：</p>
+<pre><code class="language-c++">template&lt;class Derived&gt;
+class Shape
+{
+public:
+    void draw() const
+    {
+        // 转换为派生类，调用其实现
+        static_cast&lt;const Derived*&gt;(this)-&gt;drawImpl();
+    }
+};
+
+class Circle : public Shape&lt;Circle&gt;
+{
+public:
+    void drawImpl() const { std::cout &lt;&lt; "画圆\n"; }
+};
+
+class Square : public Shape&lt;Square&gt;
+{
+public:
+    void drawImpl() const { std::cout &lt;&lt; "画方\n"; }
+};
+
+template&lt;class T&gt;
+void render(const Shape&lt;T&gt;&amp; s) { s.draw(); }
+</code></pre>
+<p><strong>好处</strong>：<code>draw()</code> 在编译期绑定，可以内联，没有虚表开销。</p>
+<p><strong>代价</strong>：不能通过基类指针统一存储不同派生类对象——<code>Shape&lt;Circle&gt;</code> 和 <code>Shape&lt;Square&gt;</code> 是完全不同的类型。</p>
+<p>CRTP 的典型应用：</p>
+<ul>
+<li>静态多态（替代虚函数）</li>
+<li>给类批量添加操作符（如 <code>operator!=</code> 由 <code>operator==</code> 推导）</li>
+<li>计数器（统计每个派生类实例化次数）</li>
+</ul>
+<h3 id="2-策略模式"><a class="header" href="#2-策略模式">2. 策略模式</a></h3>
+<p>用模板参数注入行为：</p>
+<pre><code class="language-c++">template&lt;class ComparePolicy&gt;
+class Sorter
+{
+public:
+    template&lt;class Container&gt;
+    void sort(Container&amp; c)
+    {
+        ComparePolicy cmp;
+        std::sort(c.begin(), c.end(), cmp);
+    }
+};
+
+struct Ascending
+{
+    template&lt;class T&gt;
+    bool operator()(const T&amp; a, const T&amp; b) const { return a &lt; b; }
+};
+
+struct Descending
+{
+    template&lt;class T&gt;
+    bool operator()(const T&amp; a, const T&amp; b) const { return a &gt; b; }
+};
+
+Sorter&lt;Ascending&gt; asc;
+Sorter&lt;Descending&gt; desc;
+</code></pre>
+<p>比运行时多态更快（可内联），但同样牺牲了运行期切换的能力。</p>
+<h3 id="3-混入mixin"><a class="header" href="#3-混入mixin">3. 混入（Mixin）</a></h3>
+<p>用可变参数模板叠加多个功能：</p>
+<pre><code class="language-c++">template&lt;class... Mixins&gt;
+class Combined : public Mixins...
+{
+public:
+    Combined(const Mixins&amp;... mixins) : Mixins(mixins)... {}
+};
+
+struct Loggable
+{
+    void log() const { std::cout &lt;&lt; "logging\n"; }
+};
+
+struct Serializable
+{
+    void serialize() const { std::cout &lt;&lt; "serializing\n"; }
+};
+
+Combined&lt;Loggable, Serializable&gt; obj{Loggable{}, Serializable{}};
+obj.log();
+obj.serialize();
+</code></pre>
+<h2 id="五模板元编程"><a class="header" href="#五模板元编程">五、模板元编程</a></h2>
+<p>模板在编译期就能做计算。经典的例子是编译期阶乘：</p>
+<pre><code class="language-c++">template&lt;unsigned N&gt;
+struct Factorial
+{
+    static constexpr unsigned value = N * Factorial&lt;N - 1&gt;::value;
+};
+
+template&lt;&gt;
+struct Factorial&lt;0&gt;
+{
+    static constexpr unsigned value = 1;
+};
+
+static_assert(Factorial&lt;5&gt;::value == 120);
+</code></pre>
+<p>C++11 之后，<code>constexpr</code> 函数更易读，多数场景不再需要这种写法：</p>
+<pre><code class="language-c++">constexpr unsigned factorial(unsigned n)
+{
+    return n &lt;= 1 ? 1 : n * factorial(n - 1);
+}
+
+static_assert(factorial(5) == 120);
+</code></pre>
+<h3 id="类型萃取"><a class="header" href="#类型萃取">类型萃取</a></h3>
+<p><code>&lt;type_traits&gt;</code> 提供了大量编译期类型操作：</p>
+<pre><code class="language-c++">template&lt;class T&gt;
+void process(T value)
+{
+    if constexpr (std::is_pointer_v&lt;T&gt;)
+    {
+        // T 是指针
+        if (value) use(*value);
+    }
+    else
+    {
+        use(value);
+    }
+}
+</code></pre>
+<p><code>if constexpr</code>（C++17）让编译期分支写起来像普通 <code>if</code>，比 SFINAE 清晰得多。</p>
+<h3 id="类型列表操作"><a class="header" href="#类型列表操作">类型列表操作</a></h3>
+<pre><code class="language-c++">template&lt;class... Ts&gt;
+struct TypeList {};
+
+// 获取第一个类型
+template&lt;class List&gt;
+struct Front;
+
+template&lt;class Head, class... Tail&gt;
+struct Front&lt;TypeList&lt;Head, Tail...&gt;&gt;
+{
+    using type = Head;
+};
+
+using First = Front&lt;TypeList&lt;int, double, char&gt;&gt;::type;   // int
+</code></pre>
+<p>这类技术是很多库（如 Boost.MPL、range-v3）的基础，日常开发中很少需要手写。</p>
+<h2 id="六编译期成本"><a class="header" href="#六编译期成本">六、编译期成本</a></h2>
+<p>模板的代价是<strong>编译时间</strong>。几个注意点：</p>
+<p><strong>减少实例化次数</strong>。同一个模板用 10 种类型实例化，就生成 10 份代码。如果这些类型的行为相同，考虑用类型擦除（如 <code>std::function</code>）合并。</p>
+<p><strong>避免头文件膨胀</strong>。模板定义必须在头文件里，大量模板会让每个包含它的 <code>.cpp</code> 都变慢。可以用显式实例化减少重复：</p>
+<pre><code class="language-c++">// 在 .cpp 中显式实例化
+template class MyTemplate&lt;int&gt;;
+template class MyTemplate&lt;double&gt;;
+</code></pre>
+<p><strong>注意错误信息长度</strong>。深层嵌套的模板错误可能几百行。Concepts 能显著改善这一点。</p>
+<p><strong>外部模板</strong>（C++11）可以抑制重复实例化：</p>
+<pre><code class="language-c++">extern template class MyTemplate&lt;int&gt;;   // 告诉编译器别在这里实例化
+</code></pre>
+<h2 id="七常见误区-4"><a class="header" href="#七常见误区-4">七、常见误区</a></h2>
+<p><strong>「模板只能做泛型容器」</strong> —— 模板能做编译期计算、约束检查、代码生成，远不止容器。</p>
+<p><strong>「SFINAE 已经过时了」</strong> —— 在 C++20 之前它是唯一的手段，大量现有代码仍在用。理解它有助于读懂老代码和标准库实现。</p>
+<p><strong>「Concepts 只是更好看的 enable_if」</strong> —— 除了语法糖，Concepts 还支持子概念、约束的合取与析取、以及重载决议中的偏序规则。</p>
+<p><strong>「CRTP 比虚函数总是更快」</strong> —— 少了虚表间接调用，但代码膨胀更严重。如果类型种类很多，指令缓存反而可能成为瓶颈。</p>
+<p><strong>「模板元编程应该尽量用」</strong> —— 编译期计算有编译期成本。如果运行期开销可以接受，普通代码更易维护。</p>
+<p><strong>「<code>if constexpr</code> 和普通 <code>if</code> 一样」</strong> —— 不同。<code>if constexpr</code> 在编译期选择分支，未选中的分支<strong>不会被实例化</strong>，因此可以包含对当前类型无效的代码。</p>
+<h2 id="八相关章节-5"><a class="header" href="#八相关章节-5">八、相关章节</a></h2>
+<ul>
+<li><a href="#模板-template">模板</a>：模板基础语法</li>
+<li><a href="#继承">继承</a>：运行时多态</li>
+<li><a href="#虚函数与多态">虚函数与多态</a>：虚函数与 CRTP 的对比</li>
+<li><a href="#c新特性">C++ 新特性</a>：<code>constexpr</code> 与编译期计算</li>
+<li><a href="#现代-c-演进">现代 C++ 演进</a>：Concepts 在标准中的位置</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="类型转换与转换运算符"><a class="header" href="#类型转换与转换运算符">类型转换与转换运算符</a></h1>
-<p>显式转换
-转换构造函数与 <code>operator type()</code></p>
+<p>C++ 允许在类型之间自动转换，这带来了便利，也埋下了隐患。一个构造函数可能让编译器在你没意识到的情况下做转换；一个转换运算符可能让对象在意外的地方变成别的类型。</p>
+<p>这一章讲清两件事：<strong>怎么定义类型转换</strong>，以及<strong>怎么防止它们失控</strong>。</p>
+<h2 id="一转换构造函数"><a class="header" href="#一转换构造函数">一、转换构造函数</a></h2>
+<p>只接受<strong>单个参数</strong>的构造函数，会同时充当隐式转换的入口：</p>
+<pre><code class="language-c++">class Complex
+{
+public:
+    Complex(double re, double im = 0) : re_(re), im_(im) {}
+
+private:
+    double re_, im_;
+};
+
+void print(const Complex&amp; c);
+
+print(3.14);   // 隐式转换：3.14 → Complex(3.14, 0)
+</code></pre>
+<p><code>3.14</code> 是 <code>double</code>，但函数要 <code>Complex</code>，编译器发现 <code>Complex</code> 有个能接受 <code>double</code> 的构造函数，就自动调用了它。</p>
+<p>这看起来方便，但会带来意外：</p>
+<pre><code class="language-c++">Complex a(1, 2);
+Complex b = a + 3.0;   // 3.0 被隐式转成 Complex(3.0)
+// 如果没定义 operator+，编译器会尝试各种转换组合
+</code></pre>
+<h3 id="explicit禁止隐式转换"><a class="header" href="#explicit禁止隐式转换">explicit：禁止隐式转换</a></h3>
+<p>C++11 起，用 <code>explicit</code> 可以禁止这种自动转换：</p>
+<pre><code class="language-c++">class Complex
+{
+public:
+    explicit Complex(double re, double im = 0) : re_(re), im_(im) {}
+};
+
+print(3.14);              // 编译错误
+print(Complex(3.14));     // 显式构造，OK
+Complex c = 3.14;         // 编译错误
+Complex c{3.14};          // OK：直接初始化
+</code></pre>
+<p><strong>经验法则</strong>：除非转换在语义上完全自然（比如 <code>std::string</code> 接受 <code>const char*</code>），否则构造函数都应该加 <code>explicit</code>。</p>
+<p>C++17 起，<code>explicit</code> 还能用于<strong>条件性显式</strong>，配合类型转换运算符使用。</p>
+<h2 id="二转换运算符"><a class="header" href="#二转换运算符">二、转换运算符</a></h2>
+<p>反过来，让对象能转换成别的类型：</p>
+<pre><code class="language-c++">class Fraction
+{
+public:
+    Fraction(int num, int den) : num_(num), den_(den) {}
+
+    // 转换运算符：Fraction → double
+    operator double() const
+    {
+        return static_cast&lt;double&gt;(num_) / den_;
+    }
+
+private:
+    int num_, den_;
+};
+
+Fraction f(1, 2);
+double d = f;              // 隐式调用 operator double()
+std::cout &lt;&lt; f + 0.5;      // 1.0
+</code></pre>
+<p>转换运算符的语法是 <code>operator 目标类型()</code>：没有返回类型（返回类型就是目标类型），没有参数，通常加 <code>const</code>。</p>
+<h3 id="explicit-转换运算符"><a class="header" href="#explicit-转换运算符">explicit 转换运算符</a></h3>
+<p>同样可以加 <code>explicit</code> 防止隐式转换：</p>
+<pre><code class="language-c++">class SafeBool
+{
+public:
+    explicit operator bool() const { return valid_; }
+
+private:
+    bool valid_;
+};
+
+SafeBool sb;
+if (sb) { }              // OK：条件语句中允许显式转换
+bool b = sb;             // 编译错误
+bool b2 = static_cast&lt;bool&gt;(sb);   // OK
+</code></pre>
+<p><code>operator bool</code> 是转换运算符中最常见的一个，用于让对象能用在条件判断中。</p>
+<h2 id="三二义性问题"><a class="header" href="#三二义性问题">三、二义性问题</a></h2>
+<p>多个转换路径会导致编译器无法选择：</p>
+<pre><code class="language-c++">class A
+{
+public:
+    A(int);
+    operator int() const;
+};
+
+A a(1);
+int x = a + 1;   // 歧义：是把 a 转成 int，还是把 1 转成 A？
+</code></pre>
+<p>编译器会报「ambiguous」错误。解决办法是<strong>减少隐式转换的入口</strong>——该加 <code>explicit</code> 就加。</p>
+<p>另一个常见问题是有多个可行的转换序列：</p>
+<pre><code class="language-c++">class B
+{
+public:
+    B(double);
+    B(long);
+};
+
+B b = 42;   // 歧义：int → double 还是 int → long？
+</code></pre>
+<h2 id="四转换中的隐式步骤"><a class="header" href="#四转换中的隐式步骤">四、转换中的隐式步骤</a></h2>
+<p>一次隐式转换最多包含一个「用户定义转换」。但标准转换可以叠加：</p>
+<pre><code class="language-c++">class Widget
+{
+public:
+    Widget(int);
+};
+
+void use(const Widget&amp; w);
+
+short s = 42;
+use(s);   // short → int（标准转换）→ Widget（用户定义转换）
+</code></pre>
+<p>如果路径需要<strong>两个</strong>用户定义转换，编译器会拒绝：</p>
+<pre><code class="language-c++">class A { public: A(int); };
+class B { public: B(const A&amp;); };
+
+void use(const B&amp; b);
+
+use(42);   // 错误：需要 int → A → B，两次用户定义转换
+</code></pre>
+<h2 id="五实际应用"><a class="header" href="#五实际应用">五、实际应用</a></h2>
+<h3 id="1-智能指针的-operator-bool"><a class="header" href="#1-智能指针的-operator-bool">1. 智能指针的 operator bool</a></h3>
+<pre><code class="language-c++">auto p = std::make_unique&lt;Widget&gt;();
+
+if (p)              // 调用 operator bool
+    p-&gt;doSomething();
+
+bool b = p;         // 编译错误：explicit 阻止了隐式转换
+</code></pre>
+<p>标准库的智能指针都用 <code>explicit operator bool</code>，这样既能用在条件判断中，又不会意外转换成整数。</p>
+<h3 id="2-string_view-的转换"><a class="header" href="#2-string_view-的转换">2. string_view 的转换</a></h3>
+<pre><code class="language-c++">class MyString
+{
+public:
+    operator std::string_view() const   // 隐式转换到视图
+    {
+        return std::string_view(data_, size_);
+    }
+
+private:
+    const char* data_;
+    std::size_t size_;
+};
+</code></pre>
+<p>这样 <code>MyString</code> 能直接传给接受 <code>string_view</code> 的函数，无需拷贝。</p>
+<h3 id="3-数值类型的包装"><a class="header" href="#3-数值类型的包装">3. 数值类型的包装</a></h3>
+<pre><code class="language-c++">class Meters
+{
+public:
+    explicit Meters(double value) : value_(value) {}
+
+    double value() const { return value_; }
+
+private:
+    double value_;
+};
+
+class Seconds
+{
+public:
+    explicit Seconds(double value) : value_(value) {}
+    double value() const { return value_; }
+
+private:
+    double value_;
+};
+
+// 用了 explicit，编译器不会允许这个：
+// Meters m(10);
+// Seconds s = m;   // 编译错误，防止单位混用
+</code></pre>
+<p>这是<strong>强类型</strong>的常见做法——用 <code>explicit</code> 防止不同单位的数值互相转换。</p>
+<h2 id="六安全建议"><a class="header" href="#六安全建议">六、安全建议</a></h2>
+<p><strong>构造函数默认加 <code>explicit</code></strong>。除非转换在语义上完全自然，否则不要开放隐式转换。</p>
+<p><strong>转换运算符也加 <code>explicit</code></strong>。特别是 <code>operator bool</code>，几乎所有情况下都该是 explicit。</p>
+<p><strong>避免定义多个转换路径</strong>。如果类既能从 <code>int</code> 构造，又能转成 <code>int</code>，很容易产生歧义。</p>
+<p><strong>用命名函数代替转换运算符</strong>。<code>toString()</code> 比 <code>operator std::string()</code> 更明确，也更容易搜索。</p>
+<pre><code class="language-c++">// 不推荐：隐式转换，调用点看不出发生了什么
+std::string s = widget;
+
+// 推荐：明确
+std::string s = widget.toString();
+</code></pre>
+<p><strong>注意 <code>operator bool</code> 的特殊性</strong>。它是唯一允许在「上下文转换」中使用的转换运算符：</p>
+<pre><code class="language-c++">if (obj) { }              // OK
+while (obj) { }           // OK
+bool b = obj;             // 仅当非 explicit 时 OK
+int i = obj;              // 错误：不会转成 int
+</code></pre>
+<h2 id="七常见误区-5"><a class="header" href="#七常见误区-5">七、常见误区</a></h2>
+<p><strong>「单参数构造函数不会引起问题」</strong> —— 它是最常见的隐式转换来源，应该默认加 <code>explicit</code>。</p>
+<p><strong>「转换运算符比命名函数方便」</strong> —— 方便的另一面是难以追踪。代码里突然出现类型转换，往往需要翻头文件才能搞清发生了什么。</p>
+<p><strong>「<code>explicit</code> 会阻止所有转换」</strong> —— 只阻止隐式转换。显式构造、<code>static_cast</code>、直接初始化都不受影响。</p>
+<p><strong>「<code>operator bool</code> 不加 <code>explicit</code> 也没事」</strong> —— 会导致对象能隐式转成 <code>int</code>，进而参与算术运算，产生难以发现的 bug。</p>
+<p><strong>「转换运算符可以重载多个」</strong> —— 可以，但多个转换目标很容易造成歧义。</p>
+<p><strong>「隐式转换没有性能开销」</strong> —— 转换构造函数会创建临时对象，可能有拷贝开销。<code>explicit</code> 不一定更快，但至少让开销可见。</p>
+<h2 id="八相关章节-6"><a class="header" href="#八相关章节-6">八、相关章节</a></h2>
+<ul>
+<li><a href="#类型转换">类型转换</a>：<code>static_cast</code>、<code>dynamic_cast</code> 等类型转换运算符</li>
+<li><a href="#运算符重载operator-overloading">运算符重载</a>：转换运算符的重载规则</li>
+<li><a href="#拷贝控制">拷贝控制</a>：转换产生的临时对象的生命周期</li>
+<li><a href="#继承">继承</a>：派生类到基类的转换</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="拷贝控制"><a class="header" href="#拷贝控制">拷贝控制</a></h1>
-<p>拷贝构造函数
-赋值运算符
-析构函数
-Rule of Three / Five / Zero</p>
+<p>一个类如果持有资源（堆内存、文件句柄、socket），就必须自己决定：<strong>拷贝它时会发生什么？销毁它时该做什么？</strong></p>
+<p>编译器会为每个类自动生成一组特殊成员函数，但默认行为是「逐成员拷贝」——对指针来说就是拷贝地址，而不是拷贝指向的内容。这往往不是我们想要的。</p>
+<p>拷贝控制就是关于这组函数的规则：什么时候该自己写，怎么写才不出错。</p>
+<h2 id="一五个特殊成员函数"><a class="header" href="#一五个特殊成员函数">一、五个特殊成员函数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">函数</th><th style="text-align: left">签名</th><th style="text-align: left">何时调用</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>拷贝构造</strong></td><td style="text-align: left"><code>T(const T&amp;)</code></td><td style="text-align: left">用同类型对象初始化新对象</td></tr>
+<tr><td style="text-align: left"><strong>移动构造</strong></td><td style="text-align: left"><code>T(T&amp;&amp;)</code></td><td style="text-align: left">用右值初始化新对象</td></tr>
+<tr><td style="text-align: left"><strong>拷贝赋值</strong></td><td style="text-align: left"><code>T&amp; operator=(const T&amp;)</code></td><td style="text-align: left">已有对象被赋值</td></tr>
+<tr><td style="text-align: left"><strong>移动赋值</strong></td><td style="text-align: left"><code>T&amp; operator=(T&amp;&amp;)</code></td><td style="text-align: left">已有对象被右值赋值</td></tr>
+<tr><td style="text-align: left"><strong>析构</strong></td><td style="text-align: left"><code>~T()</code></td><td style="text-align: left">对象生命周期结束</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">class Widget
+{
+public:
+    Widget(const Widget&amp; other);              // 拷贝构造
+    Widget(Widget&amp;&amp; other) noexcept;          // 移动构造
+    Widget&amp; operator=(const Widget&amp; other);   // 拷贝赋值
+    Widget&amp; operator=(Widget&amp;&amp; other) noexcept;  // 移动赋值
+    ~Widget();                                // 析构
+};
+</code></pre>
+<p>编译器生成的默认版本是这样的：</p>
+<ul>
+<li><strong>拷贝构造/赋值</strong>：逐个成员拷贝</li>
+<li><strong>移动构造/赋值</strong>：逐个成员移动</li>
+<li><strong>析构</strong>：逐个成员析构</li>
+</ul>
+<p>对只含 <code>int</code>、<code>std::string</code> 这类成员的类，默认版本完全正确。问题出在持有<strong>裸资源</strong>的类上。</p>
+<h2 id="二默认行为为什么出错"><a class="header" href="#二默认行为为什么出错">二、默认行为为什么出错</a></h2>
+<p>看一个自己管理内存的类：</p>
+<pre><code class="language-c++">class Buffer
+{
+public:
+    explicit Buffer(std::size_t n) : data_(new int[n]), size_(n) {}
+    ~Buffer() { delete[] data_; }
+
+private:
+    int* data_;
+    std::size_t size_;
+};
+</code></pre>
+<p>这个类用了默认的拷贝构造和赋值，会出大问题：</p>
+<pre><code class="language-c++">Buffer a(10);
+Buffer b = a;      // 默认拷贝构造：b.data_ 和 a.data_ 指向同一块内存
+
+// 函数结束，b 先析构，delete[] b.data_
+// 然后 a 析构，delete[] a.data_ —— 重复释放！
+</code></pre>
+<p>即使侥幸没崩溃，<code>a</code> 和 <code>b</code> 共享同一块内存也是灾难：修改 <code>b</code> 会影响 <code>a</code>，而这显然不是「拷贝」该有的语义。</p>
+<p>这叫<strong>浅拷贝</strong>问题——拷贝了指针本身，而不是指针指向的内容。</p>
+<h2 id="三拷贝构造与拷贝赋值"><a class="header" href="#三拷贝构造与拷贝赋值">三、拷贝构造与拷贝赋值</a></h2>
+<h3 id="1-拷贝构造"><a class="header" href="#1-拷贝构造">1. 拷贝构造</a></h3>
+<pre><code class="language-c++">Buffer(const Buffer&amp; other)
+    : data_(new int[other.size_])    // 分配新内存
+    , size_(other.size_)
+{
+    std::copy(other.data_, other.data_ + size_, data_);   // 拷贝内容
+}
+</code></pre>
+<p>要点：</p>
+<ul>
+<li>参数必须是<strong>引用</strong>。如果按值传参，会无限递归（拷贝实参时又要调用拷贝构造）</li>
+<li>通常加 <code>const</code>，因为不应该修改源对象</li>
+<li>用<strong>初始化列表</strong>初始化成员，而不是在函数体里赋值</li>
+</ul>
+<h3 id="2-拷贝赋值"><a class="header" href="#2-拷贝赋值">2. 拷贝赋值</a></h3>
+<pre><code class="language-c++">Buffer&amp; operator=(const Buffer&amp; other)
+{
+    if (this != &amp;other)              // 1. 自赋值检查
+    {
+        int* newData = new int[other.size_];   // 2. 先分配新内存
+        std::copy(other.data_, other.data_ + other.size_, newData);
+
+        delete[] data_;              // 3. 再释放旧内存
+        data_ = newData;
+        size_ = other.size_;
+    }
+    return *this;                    // 4. 返回 *this 以支持链式赋值
+}
+</code></pre>
+<p>四个关键点：</p>
+<p><strong>自赋值检查</strong>。<code>a = a</code> 是合法的，如果不检查，会先 <code>delete[] data_</code> 再拷贝 <code>other.data_</code>——但 <code>other</code> 就是自己，数据已经被删了。</p>
+<p><strong>先分配再释放</strong>。如果先 <code>delete[]</code> 再 <code>new</code>，而 <code>new</code> 抛异常，对象就处于「data_ 悬垂」的无效状态。反过来则异常安全——分配失败时对象原封不动。</p>
+<p><strong>返回 <code>*this</code> 的引用</strong>。这样才能支持 <code>a = b = c</code> 这样的链式赋值。返回值而非引用会导致额外的拷贝（对某些类型还可能编译失败）。</p>
+<p><strong>不能返回 <code>const</code> 引用</strong>。否则 <code>(a = b) = c</code> 无法编译，与内置类型行为不一致。</p>
+<h3 id="3-更简洁的写法copy-and-swap"><a class="header" href="#3-更简洁的写法copy-and-swap">3. 更简洁的写法：copy-and-swap</a></h3>
+<pre><code class="language-c++">Buffer&amp; operator=(Buffer other)   // 注意：按值传参
+{
+    swap(*this, other);
+    return *this;
+}
+
+friend void swap(Buffer&amp; a, Buffer&amp; b) noexcept
+{
+    using std::swap;
+    swap(a.data_, b.data_);
+    swap(a.size_, b.size_);
+}
+</code></pre>
+<p>这个写法自动处理了自赋值（因为 <code>other</code> 是副本），而且天然异常安全。缺点是可能多一次拷贝，但现代编译器通常能优化掉。</p>
+<h2 id="四移动构造与移动赋值"><a class="header" href="#四移动构造与移动赋值">四、移动构造与移动赋值</a></h2>
+<p>拷贝的代价是「分配 + 复制全部内容」。但如果源对象马上就要销毁，我们完全可以<strong>直接接管它的资源</strong>：</p>
+<pre><code class="language-c++">Buffer(Buffer&amp;&amp; other) noexcept
+    : data_(other.data_)          // 接管指针
+    , size_(other.size_)
+{
+    other.data_ = nullptr;        // 关键：置空，避免重复释放
+    other.size_ = 0;
+}
+
+Buffer&amp; operator=(Buffer&amp;&amp; other) noexcept
+{
+    if (this != &amp;other)
+    {
+        delete[] data_;           // 释放自己的资源
+        data_ = other.data_;      // 接管对方的
+        size_ = other.size_;
+        other.data_ = nullptr;
+        other.size_ = 0;
+    }
+    return *this;
+}
+</code></pre>
+<p>两个要点：</p>
+<p><strong>必须置空源对象</strong>。否则源对象析构时会 <code>delete[]</code> 一块已经不属于它的内存。</p>
+<p><strong>应该标记 <code>noexcept</code></strong>。这直接影响 <code>std::vector</code> 的行为——如果移动构造可能抛异常，<code>vector</code> 扩容时会退化为拷贝，性能差很多。</p>
+<pre><code class="language-c++">class Good { Good(Good&amp;&amp;) noexcept; };   // vector 会移动
+class Bad  { Bad(Bad&amp;&amp;); };              // vector 会选择拷贝
+</code></pre>
+<h3 id="移动后的对象状态"><a class="header" href="#移动后的对象状态">移动后的对象状态</a></h3>
+<p>被移动的对象处于「<strong>有效但未指定</strong>」状态：</p>
+<ul>
+<li>可以安全析构 ✅</li>
+<li>可以重新赋值 ✅</li>
+<li>不应该假设它的内容 ❌</li>
+</ul>
+<pre><code class="language-c++">Buffer a(10);
+Buffer b = std::move(a);
+// a.data_ 是 nullptr，a.size_ 是 0
+// 但这是实现细节，不要依赖
+a = Buffer(5);   // 合法：重新赋值
+</code></pre>
+<h2 id="五rule-of-three--five--zero"><a class="header" href="#五rule-of-three--five--zero">五、Rule of Three / Five / Zero</a></h2>
+<h3 id="rule-of-threec98-1"><a class="header" href="#rule-of-threec98-1">Rule of Three（C++98）</a></h3>
+<blockquote>
+<p>如果需要自定义<strong>析构函数</strong>、<strong>拷贝构造</strong>、<strong>拷贝赋值</strong>中的任何一个，那么通常三个都需要。</p>
+</blockquote>
+<p>原因：需要自定义析构，说明持有需要手动释放的资源；那么默认的浅拷贝会导致重复释放，必须一并处理。</p>
+<h3 id="rule-of-fivec11-1"><a class="header" href="#rule-of-fivec11-1">Rule of Five（C++11）</a></h3>
+<blockquote>
+<p>加上<strong>移动构造</strong>和<strong>移动赋值</strong>，变成五个。</p>
+</blockquote>
+<p>如果定义了拷贝操作但没定义移动操作，编译器<strong>不会</strong>生成移动版本——此时「移动」会静默退化为拷贝：</p>
+<pre><code class="language-c++">class OnlyCopy
+{
+public:
+    OnlyCopy(const OnlyCopy&amp;);              // 自定义拷贝构造
+    OnlyCopy&amp; operator=(const OnlyCopy&amp;);
+    // 没有移动构造 → std::move 会调用拷贝构造
+};
+
+OnlyCopy a;
+OnlyCopy b = std::move(a);   // 实际调用的是拷贝构造，不是移动
+</code></pre>
+<h3 id="rule-of-zero-1"><a class="header" href="#rule-of-zero-1">Rule of Zero</a></h3>
+<blockquote>
+<p><strong>最好的做法是一个都不写。</strong></p>
+</blockquote>
+<p>用现成的 RAII 类型作为成员，编译器生成的默认操作就已经正确：</p>
+<pre><code class="language-c++">class Widget
+{
+    std::string name_;                 // 自己管理内存
+    std::vector&lt;int&gt; data_;            // 自己管理内存
+    std::unique_ptr&lt;Impl&gt; impl_;       // 独占所有权
+    std::shared_ptr&lt;Config&gt; config_;   // 共享所有权
+};
+// 不需要写任何特殊成员函数
+</code></pre>
+<p>这是现代 C++ 推荐的风格：<strong>让成员类型去管理资源，自己只管组合</strong>。</p>
+<p>判断标准很简单：<strong>如果你的类里有裸指针、裸文件句柄、裸 socket，才需要写这五个函数</strong>。否则遵循 Rule of Zero。</p>
+<h2 id="六什么时候编译器不生成"><a class="header" href="#六什么时候编译器不生成">六、什么时候编译器不生成</a></h2>
+<p>编译器生成默认版本是有条件的：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">情况</th><th style="text-align: left">影响</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">定义了拷贝构造</td><td style="text-align: left">不生成移动构造（但拷贝构造仍默认生成）</td></tr>
+<tr><td style="text-align: left">定义了移动构造</td><td style="text-align: left">拷贝构造被<strong>删除</strong></td></tr>
+<tr><td style="text-align: left">定义了析构</td><td style="text-align: left">不生成移动操作（C++11 起仍生成拷贝，但已弃用）</td></tr>
+<tr><td style="text-align: left">成员不可拷贝</td><td style="text-align: left">拷贝操作被删除</td></tr>
+<tr><td style="text-align: left">成员不可移动</td><td style="text-align: left">移动操作被删除</td></tr>
+</tbody>
+</table>
+</div>
+<p>一个容易踩的坑：<strong>只写了析构函数，移动操作就没了</strong>。</p>
+<pre><code class="language-c++">class Widget
+{
+public:
+    ~Widget() { /* 清理 */ }
+    // 移动构造不会被生成！
+};
+</code></pre>
+<p>此时 <code>std::vector&lt;Widget&gt;</code> 扩容会退化为拷贝。修复方法是显式声明：</p>
+<pre><code class="language-c++">class Widget
+{
+public:
+    ~Widget() { /* 清理 */ }
+    Widget(Widget&amp;&amp;) noexcept = default;
+    Widget&amp; operator=(Widget&amp;&amp;) noexcept = default;
+};
+</code></pre>
+<h2 id="七-default-与--delete"><a class="header" href="#七-default-与--delete">七、= default 与 = delete</a></h2>
+<p>C++11 允许显式控制这些函数：</p>
+<pre><code class="language-c++">class Widget
+{
+public:
+    Widget() = default;                              // 使用默认实现
+    Widget(const Widget&amp;) = default;
+    Widget&amp; operator=(const Widget&amp;) = default;
+    ~Widget() = default;
+};
+</code></pre>
+<p><code>= delete</code> 则用于禁止某个操作：</p>
+<pre><code class="language-c++">class NonCopyable
+{
+public:
+    NonCopyable() = default;
+    NonCopyable(const NonCopyable&amp;) = delete;             // 禁止拷贝
+    NonCopyable&amp; operator=(const NonCopyable&amp;) = delete;
+};
+
+NonCopyable a;
+// NonCopyable b = a;   // 编译错误
+</code></pre>
+<p>这比 C++98 时代「声明为 private 且不实现」的做法清晰得多——错误在编译期就暴露，而不是链接期。</p>
+<h2 id="八常见误区-2"><a class="header" href="#八常见误区-2">八、常见误区</a></h2>
+<p><strong>「拷贝构造的参数可以按值传递」</strong> —— 会导致无限递归。必须是引用。</p>
+<p><strong>「赋值运算符不需要自赋值检查」</strong> —— <code>a = a</code> 合法且常见（比如通过引用间接赋值），不检查会先释放自己的资源再读取已释放的数据。</p>
+<p><strong>「移动构造不需要置空源对象」</strong> —— 会导致源对象析构时重复释放。</p>
+<p><strong>「移动构造不标 noexcept 也没关系」</strong> —— <code>vector</code> 会检测这个标记，没标就退化为拷贝，性能损失可能很大。</p>
+<p><strong>「Rule of Three 只是建议，可以不遵守」</strong> —— 违反它会导致重复释放、内存泄漏等未定义行为，不是风格问题。</p>
+<p><strong>「写了析构函数，编译器还会生成移动操作」</strong> —— 不会。这是 C++11 的一个常见陷阱。</p>
+<p><strong>「<code>= default</code> 和什么都不写是一样的」</strong> —— 不完全一样。<code>= default</code> 是显式声明，会影响其他特殊成员函数的生成规则。</p>
+<h2 id="九相关章节-4"><a class="header" href="#九相关章节-4">九、相关章节</a></h2>
+<ul>
+<li><a href="#raii-与资源管理">RAII 与资源管理</a>：拷贝控制背后的设计思想</li>
+<li><a href="#c新特性">C++ 新特性</a>：移动语义与右值引用的细节</li>
+<li><a href="#运算符重载operator-overloading">运算符重载</a>：赋值运算符的重载</li>
+<li><a href="#虚函数与多态">虚函数与多态</a>：为什么基类析构函数要声明为 virtual</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="c新特性"><a class="header" href="#c新特性">C++新特性</a></h1>
 <p>C++11 是语言历史上最大的一次修订。它引入的<strong>移动语义</strong>、<strong>右值引用</strong>、<code>constexpr</code>、<code>noexcept</code> 等特性，彻底改变了 C++ 的类设计方式——从「如何正确管理资源」转向「如何让编译器自动帮你管理资源」。</p>
@@ -5975,12 +8960,12 @@ for (const auto&amp; [key, value] : m)
 <li><strong>返回局部对象不需要 <code>std::move</code></strong>。编译器会做 NRVO（返回值优化），写 <code>std::move</code> 反而可能阻止优化。</li>
 <li><strong><code>constexpr</code> 函数要放在头文件</strong>。它隐含 <code>inline</code>，否则会违反 ODR。</li>
 </ul>
-<h2 id="九相关章节-1"><a class="header" href="#九相关章节-1">九、相关章节</a></h2>
+<h2 id="九相关章节-5"><a class="header" href="#九相关章节-5">九、相关章节</a></h2>
 <ul>
 <li><a href="#拷贝控制">拷贝控制</a>：拷贝构造、赋值运算符与 Rule of Three/Five/Zero</li>
 <li><a href="#异常处理">异常处理</a>：<code>noexcept</code> 说明符与异常安全保证</li>
 <li><a href="#smart-pointer">智能指针</a>：移动语义在资源管理中的应用</li>
-<li><a href="#raii与资源管理">RAII与资源管理</a>：资源所有权的转移</li>
+<li><a href="#raii-与资源管理">RAII与资源管理</a>：资源所有权的转移</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="异常处理"><a class="header" href="#异常处理">异常处理</a></h1>
@@ -6258,9 +9243,9 @@ private:
 <li><strong><code>noexcept</code> 是承诺而非检查</strong>。编译器不会验证函数体是否真的不抛异常，违背承诺只在运行时报错。</li>
 <li><strong>性能考量</strong>。异常在<strong>不抛出</strong>时几乎没有开销（零成本异常模型），但抛出时的栈展开代价较高。因此热路径上的正常情况不应依赖异常。</li>
 </ul>
-<h2 id="九相关章节-2"><a class="header" href="#九相关章节-2">九、相关章节</a></h2>
+<h2 id="九相关章节-6"><a class="header" href="#九相关章节-6">九、相关章节</a></h2>
 <ul>
-<li><a href="#raii与资源管理">RAII与资源管理</a>：栈展开与资源自动释放</li>
+<li><a href="#raii-与资源管理">RAII与资源管理</a>：栈展开与资源自动释放</li>
 <li><a href="#拷贝控制">拷贝控制</a>：移动构造函数与 <code>noexcept</code> 的关系</li>
 <li><a href="#smart-pointer">智能指针</a>：异常安全的资源管理</li>
 <li><a href="#c新特性">C++ 新特性</a>：<code>noexcept</code> 在类设计中的应用</li>
@@ -6526,7 +9511,7 @@ ready.store(true, std::memory_order_release);   // 之前的写入对读者可�
 while (!ready.load(std::memory_order_acquire)) { }   // 之后的读取能看到 data = 42
 std::cout &lt;&lt; data;
 </code></pre>
-<p>内存序的细节见 <a href="#c内存模型并发">C++内存模型（并发）</a>。</p>
+<p>内存序的细节见 <a href="#c-内存模型并发">C++内存模型（并发）</a>。</p>
 <h3 id="4-原子操作的局限"><a class="header" href="#4-原子操作的局限">4. 原子操作的局限</a></h3>
 <ul>
 <li><strong>复合操作不是原子的</strong>。<code>counter++</code> 是原子的，但 <code>if (counter &gt; 0) counter--;</code> 不是——两步之间可能被其它线程插入。</li>
@@ -6717,9 +9702,9 @@ void limited_access()
 <li><strong>内存序默认最严格</strong>。<code>seq_cst</code> 最慢但最安全，优化前应先确认正确性。</li>
 <li><strong>并发 bug 难以复现</strong>。应借助 ThreadSanitizer（<code>-fsanitize=thread</code>）等工具检测。</li>
 </ul>
-<h2 id="九相关章节-3"><a class="header" href="#九相关章节-3">九、相关章节</a></h2>
+<h2 id="九相关章节-7"><a class="header" href="#九相关章节-7">九、相关章节</a></h2>
 <ul>
-<li><a href="#c内存模型并发">C++内存模型（并发）</a>：内存序与 happens-before 关系</li>
+<li><a href="#c-内存模型并发">C++内存模型（并发）</a>：内存序与 happens-before 关系</li>
 <li><a href="#异常处理">异常处理</a>：线程函数中异常的传播</li>
 <li><a href="#smart-pointer">智能指针</a>：<code>shared_ptr</code> 的线程安全性</li>
 <li><a href="#c实践">C++实践 · 多线程</a>：工程中的并发模式</li>
@@ -7054,7 +10039,7 @@ for (auto [i, x] : std::views::enumerate(data))
 <li><strong>ABI 兼容性</strong>。升级标准可能影响二进制兼容，尤其是涉及标准库类型的接口。</li>
 <li><strong><code>constexpr</code> 能力持续增强</strong>。C++14 允许循环，C++17 允许 lambda，C++20 允许 <code>try</code>（C++26 起允许抛异常），编译器支持度需确认。</li>
 </ul>
-<h2 id="十相关章节"><a class="header" href="#十相关章节">十、相关章节</a></h2>
+<h2 id="十相关章节-1"><a class="header" href="#十相关章节-1">十、相关章节</a></h2>
 <ul>
 <li><a href="#c新特性">C++ 新特性</a>：移动语义、右值引用、<code>constexpr</code>、<code>noexcept</code> 的详细用法</li>
 <li><a href="#ranges">Ranges</a>：Ranges 视图与管道语法</li>
@@ -7079,7 +10064,7 @@ for (auto [i, x] : std::views::enumerate(data))
 </tbody>
 </table>
 </div>
-<h2 id="本章内容-2"><a class="header" href="#本章内容-2">本章内容</a></h2>
+<h2 id="本章内容-5"><a class="header" href="#本章内容-5">本章内容</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -11495,7 +14480,7 @@ std::iter_difference_t&lt;It&gt;     // 距离类型
 <li><strong><code>auto&amp;&amp;</code> 与代理迭代器</strong>。<code>vector&lt;bool&gt;</code> 的迭代器返回代理对象而非 <code>bool&amp;</code>，<code>for (auto&amp; x : vec)</code> 无法编译，详见 <a href="#stdvector">Vector</a>。</li>
 <li><strong>警惕悬垂迭代器</strong>。容器销毁或元素被删除后，指向它的迭代器立即失效。</li>
 </ul>
-<h2 id="九相关章节-4"><a class="header" href="#九相关章节-4">九、相关章节</a></h2>
+<h2 id="九相关章节-8"><a class="header" href="#九相关章节-8">九、相关章节</a></h2>
 <ul>
 <li><a href="#containers">Containers</a>：各容器的迭代器类别与失效规则</li>
 <li><a href="#algorithms">Algorithms</a>：算法对迭代器的要求</li>
@@ -11724,7 +14709,7 @@ std::ranges::copy(view, std::back_inserter(result));
 <li><strong>C++23 的适配器需要编译器支持</strong>。<code>views::zip</code>、<code>views::enumerate</code> 等在 GCC 13+、Clang 17+ 才可用。</li>
 <li><strong><code>views::join</code> 与 <code>views::split</code> 性能有差异</strong>。<code>lazy_split</code> 比 <code>split</code> 更省内存，但某些操作受限。</li>
 </ul>
-<h2 id="八相关章节-1"><a class="header" href="#八相关章节-1">八、相关章节</a></h2>
+<h2 id="八相关章节-7"><a class="header" href="#八相关章节-7">八、相关章节</a></h2>
 <ul>
 <li><a href="#algorithms">Algorithms</a>：Ranges 版本的算法</li>
 <li><a href="#iterators">Iterators</a>：迭代器分类与 C++20 概念</li>
@@ -17427,7 +20412,7 @@ static_assert(f() == 42);
 </tbody>
 </table>
 </div>
-<h2 id="本章内容-3"><a class="header" href="#本章内容-3">本章内容</a></h2>
+<h2 id="本章内容-6"><a class="header" href="#本章内容-6">本章内容</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>

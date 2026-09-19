@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -185,8 +185,220 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="友元与类关系"><a class="header" href="#友元与类关系">友元与类关系</a></h1>
-<p>友元函数与友元类
-类的组合与聚合</p>
+<p>封装是面向对象的基础——把数据藏起来，只暴露必要的接口。但有时两个类确实需要共享内部状态，比如容器和它的迭代器、对象和它的工厂函数。</p>
+<p><code>friend</code> 就是为这种情况准备的：它允许指定的函数或类访问私有成员。但它的代价是<strong>打破封装</strong>，所以用之前要想清楚是不是真的必要。</p>
+<p>这一章还讨论类之间的几种关系——组合、聚合、依赖——它们决定了对象之间该怎么互相持有。</p>
+<h2 id="一友元函数"><a class="header" href="#一友元函数">一、友元函数</a></h2>
+<p>友元函数不是成员函数，但能访问类的私有成员：</p>
+<pre><code class="language-c++">class Point
+{
+private:
+    double x_, y_;
+
+public:
+    Point(double x, double y) : x_(x), y_(y) {}
+
+    // 声明友元
+    friend double distance(const Point&amp; a, const Point&amp; b);
+};
+
+// 定义（不需要 friend 关键字）
+double distance(const Point&amp; a, const Point&amp; b)
+{
+    double dx = a.x_ - b.x_;   // 可以访问私有成员
+    double dy = a.y_ - b.y_;
+    return std::sqrt(dx * dx + dy * dy);
+}
+</code></pre>
+<h3 id="什么时候需要友元函数"><a class="header" href="#什么时候需要友元函数">什么时候需要友元函数</a></h3>
+<p><strong>运算符重载</strong>是最常见的场景。当运算符的左操作数不是类对象时，必须用非成员函数：</p>
+<pre><code class="language-c++">class Complex
+{
+    double re_, im_;
+
+public:
+    Complex(double re, double im) : re_(re), im_(im) {}
+
+    // 需要访问私有成员，所以声明为友元
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Complex&amp; c);
+    friend Complex operator+(double lhs, const Complex&amp; rhs);
+};
+
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Complex&amp; c)
+{
+    return os &lt;&lt; c.re_ &lt;&lt; "+" &lt;&lt; c.im_ &lt;&lt; "i";
+}
+
+// 支持 2.0 + complex，而不仅仅是 complex + 2.0
+Complex operator+(double lhs, const Complex&amp; rhs)
+{
+    return Complex(lhs + rhs.re_, rhs.im_);
+}
+</code></pre>
+<p><code>operator&lt;&lt;</code> 的左操作数是 <code>ostream</code>，<code>double + Complex</code> 的左操作数是 <code>double</code>——都不是 <code>Complex</code> 对象，所以不能定义为成员函数。</p>
+<h3 id="友元的几个特性"><a class="header" href="#友元的几个特性">友元的几个特性</a></h3>
+<ul>
+<li><strong>友元关系不可传递</strong>：A 是 B 的友元，B 是 C 的友元，不代表 A 是 C 的友元</li>
+<li><strong>友元关系不可继承</strong>：基类的友元不能访问派生类的私有成员</li>
+<li><strong>友元声明不受访问控制影响</strong>：可以放在 <code>private</code>、<code>protected</code> 或 <code>public</code> 区域，效果相同</li>
+<li><strong>友元不是成员</strong>：不受 <code>this</code> 指针影响，调用方式与普通函数一致</li>
+</ul>
+<h2 id="二友元类"><a class="header" href="#二友元类">二、友元类</a></h2>
+<p>整个类都可以成为友元：</p>
+<pre><code class="language-c++">class Matrix
+{
+private:
+    double* data_;
+    int rows_, cols_;
+
+    friend class MatrixIterator;   // 迭代器需要访问内部数据
+    friend class MatrixFactory;    // 工厂需要直接构造
+};
+</code></pre>
+<p>友元类中的所有成员函数都能访问对方的私有成员。</p>
+<p>一个典型场景是<strong>迭代器</strong>：</p>
+<pre><code class="language-c++">class Container
+{
+    int* data_;
+    std::size_t size_;
+
+public:
+    class Iterator
+    {
+        int* ptr_;
+    public:
+        int&amp; operator*() { return *ptr_; }
+        Iterator&amp; operator++() { ++ptr_; return *this; }
+        // ...
+    };
+
+    Iterator begin() { return Iterator{data_}; }
+    Iterator end()   { return Iterator{data_ + size_}; }
+};
+</code></pre>
+<p>这里迭代器用嵌套类实现，作为成员类天然可以访问外部类的私有成员，不需要 <code>friend</code>。</p>
+<h3 id="友元成员函数"><a class="header" href="#友元成员函数">友元成员函数</a></h3>
+<p>也可以只让某个类的特定成员函数成为友元：</p>
+<pre><code class="language-c++">class A;
+
+class B
+{
+public:
+    void accessA(A&amp; a);
+};
+
+class A
+{
+    int secret_ = 42;
+
+    // 只让 B::accessA 成为友元
+    friend void B::accessA(A&amp; a);
+};
+</code></pre>
+<p>这种写法需要前置声明，且顺序敏感，实际中较少使用。</p>
+<h2 id="三友元的代价"><a class="header" href="#三友元的代价">三、友元的代价</a></h2>
+<p>友元打破封装，这是它的本质。用之前先问几个问题：</p>
+<p><strong>能不能通过公开接口实现？</strong> 如果加个 <code>getX()</code> 就够了，就不需要友元。</p>
+<p><strong>是不是设计有问题？</strong> 如果两个类需要频繁互相访问私有成员，说明它们的职责可能没分清楚，也许应该合并成一个类，或者提取出共同的部分。</p>
+<p><strong>能不能缩小范围？</strong> 与其把整个类设为友元，不如只开放一两个成员函数。</p>
+<p>不过友元也不是洪水猛兽。标准库中就有大量友元——<code>operator&lt;&lt;</code>、比较运算符、<code>swap</code> 函数通常都是友元。关键判断标准是：<strong>这个外部函数在概念上是不是这个类的一部分</strong>。</p>
+<p><code>operator&lt;&lt;</code> 显然是 <code>Complex</code> 的一部分（它就是用来打印 <code>Complex</code> 的），所以作为友元是合理的。反过来，如果某个业务函数需要访问类的私有数据，那就值得怀疑了。</p>
+<h2 id="四类之间的关系"><a class="header" href="#四类之间的关系">四、类之间的关系</a></h2>
+<p>两个类之间可能有几种关系，选择合适的表达方式很重要。</p>
+<h3 id="1-组合composition-是一个部分"><a class="header" href="#1-组合composition-是一个部分">1. 组合（Composition）—— 「是一个部分」</a></h3>
+<p>组合表示<strong>强拥有</strong>关系：整体销毁时部分也随之销毁。</p>
+<pre><code class="language-c++">class Engine
+{
+public:
+    void start();
+};
+
+class Car
+{
+    Engine engine_;   // 直接持有对象
+public:
+    void start() { engine_.start(); }
+};
+</code></pre>
+<p>特点：</p>
+<ul>
+<li>成员是<strong>值</strong>，不是指针</li>
+<li>生命周期完全绑定：<code>Car</code> 销毁，<code>Engine</code> 也销毁</li>
+<li>通常用 <code>unique_ptr</code> 表示需要延迟构造或多态的组合</li>
+</ul>
+<pre><code class="language-c++">class Car
+{
+    std::unique_ptr&lt;Engine&gt; engine_;   // 独占所有权
+public:
+    Car() : engine_(std::make_unique&lt;V8Engine&gt;()) {}
+};
+</code></pre>
+<h3 id="2-聚合aggregation-有一个"><a class="header" href="#2-聚合aggregation-有一个">2. 聚合（Aggregation）—— 「有一个」</a></h3>
+<p>聚合表示<strong>弱拥有</strong>关系：部分可以独立于整体存在。</p>
+<pre><code class="language-c++">class Department;
+
+class University
+{
+    std::vector&lt;Department*&gt; departments_;   // 不拥有
+public:
+    void addDepartment(Department* d) { departments_.push_back(d); }
+};
+</code></pre>
+<p>特点：</p>
+<ul>
+<li>成员是指针或引用，<strong>不负责生命周期</strong></li>
+<li>被持有的对象可以在外部创建和销毁</li>
+<li>需要调用者保证对象存活</li>
+</ul>
+<p>如果生命周期不确定，可以用 <code>shared_ptr</code>；如果只是观察，用 <code>weak_ptr</code>。</p>
+<h3 id="3-依赖dependency-用一下"><a class="header" href="#3-依赖dependency-用一下">3. 依赖（Dependency）—— 「用一下」</a></h3>
+<p>依赖是临时关系，通常通过函数参数体现：</p>
+<pre><code class="language-c++">class ReportGenerator
+{
+public:
+    void generate(const Database&amp; db, std::ostream&amp; out);
+};
+</code></pre>
+<p><code>ReportGenerator</code> 不持有 <code>Database</code>，只是在调用时使用它。</p>
+<h3 id="4-继承inheritance-是一个"><a class="header" href="#4-继承inheritance-是一个">4. 继承（Inheritance）—— 「是一个」</a></h3>
+<p>继承表示 <strong>is-a</strong> 关系：</p>
+<pre><code class="language-c++">class Shape { public: virtual void draw() = 0; };
+class Circle : public Shape { public: void draw() override; };
+</code></pre>
+<p>继承的细节见 <a href="./Inheritance.html">继承</a>。</p>
+<h3 id="关系对照"><a class="header" href="#关系对照">关系对照</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">关系</th><th style="text-align: left">语义</th><th style="text-align: left">实现方式</th><th style="text-align: left">生命周期</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">组合</td><td style="text-align: left">is-a-part-of</td><td style="text-align: left">值成员 / <code>unique_ptr</code></td><td style="text-align: left">绑定</td></tr>
+<tr><td style="text-align: left">聚合</td><td style="text-align: left">has-a</td><td style="text-align: left">裸指针 / 引用 / <code>shared_ptr</code></td><td style="text-align: left">独立</td></tr>
+<tr><td style="text-align: left">依赖</td><td style="text-align: left">uses-a</td><td style="text-align: left">函数参数</td><td style="text-align: left">临时</td></tr>
+<tr><td style="text-align: left">继承</td><td style="text-align: left">is-a</td><td style="text-align: left">公有继承</td><td style="text-align: left">绑定</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="五设计建议"><a class="header" href="#五设计建议">五、设计建议</a></h2>
+<p><strong>优先用组合而非继承</strong>。继承会带来强耦合，基类的改动会影响所有派生类。组合更灵活，也更容易测试。</p>
+<p><strong>明确表达所有权</strong>。用值成员表示「我拥有」，用裸指针表示「我不拥有」，用 <code>unique_ptr</code> 表示「独占但延迟构造」。不要让读者去猜。</p>
+<p><strong>避免双向强引用</strong>。A 持有 B，B 又持有 A，会导致循环引用和生命周期混乱。如果确实需要双向访问，让一方用弱引用。</p>
+<p><strong>友元是最后手段</strong>。先考虑公开接口、成员函数、嵌套类，都不行再用友元。</p>
+<h2 id="六常见误区"><a class="header" href="#六常见误区">六、常见误区</a></h2>
+<p><strong>「友元破坏了封装，所以绝对不能用」</strong> —— 友元是语言提供的工具，用在对的地方（如 <code>operator&lt;&lt;</code>）是合理的。关键是判断这个函数在概念上是否属于这个类。</p>
+<p><strong>「友元关系可以继承」</strong> —— 不能。派生类不会继承基类的友元关系。</p>
+<p><strong>「友元关系可以传递」</strong> —— 不能。A 是 B 的友元，B 是 C 的友元，A 不能访问 C 的私有成员。</p>
+<p><strong>「友元声明的位置影响访问权限」</strong> —— 不影响。放在 <code>private</code> 还是 <code>public</code> 区域都一样。</p>
+<p><strong>「组合就是用一个指针成员」</strong> —— 用指针不一定表示组合。裸指针通常表示不拥有（聚合），<code>unique_ptr</code> 才表示强拥有。</p>
+<p><strong>「两个类互相是友元就没问题了」</strong> —— 互相友元通常意味着设计有问题，两个类的职责可能没分清。</p>
+<h2 id="七相关章节"><a class="header" href="#七相关章节">七、相关章节</a></h2>
+<ul>
+<li><a href="./Inheritance.html">继承</a>：is-a 关系的细节</li>
+<li><a href="./Operator_Overloading.html">运算符重载</a>：为什么 <code>operator&lt;&lt;</code> 需要友元</li>
+<li><a href="./Copy_Control.html">拷贝控制</a>：成员对象的拷贝与移动</li>
+<li><a href="../Memory/Smart_Pointer.html">智能指针</a>：用智能指针表达所有权</li>
+</ul>
 
                     </main>
 

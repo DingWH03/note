@@ -39,7 +39,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b576ca81.js";
+            window.path_to_searchindex_js = "../../searchindex-8b9f2bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-4694e643.js"></script>
@@ -187,6 +187,221 @@
                         <h1 id="内存布局与模型"><a class="header" href="#内存布局与模型">内存布局与模型</a></h1>
 <p>C++ 程序的内存管理建立在计算机的<strong>存储模型</strong>(Memory Model)之上。理解程序在内存中的布局，是掌握变量生命周期、作用域、动态分配与释放机制的基础。
 一个典型的 C++ 程序在运行时会被划分为多个区域，每个区域负责存储不同类型的数据，并具有各自的生命周期与访问特性。</p>
+<h2 id="一程序的五个内存区域"><a class="header" href="#一程序的五个内存区域">一、程序的五个内存区域</a></h2>
+<p>一个进程的地址空间大致可以分成五块：</p>
+<pre><code>高地址
+┌──────────────────┐
+│      栈 Stack     │  ← 向下增长
+├──────────────────┤
+│        ↓         │
+│                  │
+│        ↑         │
+├──────────────────┤
+│      堆 Heap      │  ← 向上增长
+├──────────────────┤
+│  BSS 段（未初始化） │
+├──────────────────┤
+│  Data 段（已初始化）│
+├──────────────────┤
+│   常量区 .rodata   │
+├──────────────────┤
+│   代码段 .text     │
+└──────────────────┘
+低地址
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">区域</th><th style="text-align: left">存放内容</th><th style="text-align: left">生命周期</th><th style="text-align: left">大小</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>栈</strong></td><td style="text-align: left">局部变量、函数参数、返回地址</td><td style="text-align: left">随作用域结束</td><td style="text-align: left">编译期确定，通常 1~8 MB</td></tr>
+<tr><td style="text-align: left"><strong>堆</strong></td><td style="text-align: left"><code>new</code> / <code>malloc</code> 分配的对象</td><td style="text-align: left">手动控制</td><td style="text-align: left">受限于可用内存</td></tr>
+<tr><td style="text-align: left"><strong>BSS 段</strong></td><td style="text-align: left">未初始化的全局/静态变量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>Data 段</strong></td><td style="text-align: left">已初始化的全局/静态变量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>常量区</strong></td><td style="text-align: left">字符串字面量、<code>const</code> 全局量</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+<tr><td style="text-align: left"><strong>代码段</strong></td><td style="text-align: left">机器指令</td><td style="text-align: left">整个程序运行期</td><td style="text-align: left">编译期确定</td></tr>
+</tbody>
+</table>
+</div>
+<p>看一段代码，把变量对号入座：</p>
+<pre><code class="language-c++">int global_init = 42;        // Data 段
+int global_uninit;           // BSS 段
+const char* msg = "hello";   // 指针在 Data 段，"hello" 在常量区
+
+void func()
+{
+    int local = 1;                    // 栈
+    static int static_local = 2;      // Data 段（只初始化一次）
+    const char* p = "world";          // 指针在栈，"world" 在常量区
+
+    int* heap = new int(3);           // 指针在栈，对象在堆
+    delete heap;
+}
+</code></pre>
+<blockquote>
+<p>常量区的字符串是<strong>只读</strong>的。<code>"hello"[0] = 'H'</code> 是未定义行为，在多数平台上会直接段错误。</p>
+</blockquote>
+<h2 id="二栈"><a class="header" href="#二栈">二、栈</a></h2>
+<p>栈由编译器自动管理，分配和释放只是移动栈指针，因此<strong>极快</strong>——通常就是一条指令。</p>
+<h3 id="栈帧"><a class="header" href="#栈帧">栈帧</a></h3>
+<p>每次函数调用都会在栈上压入一个<strong>栈帧</strong>（stack frame），包含：</p>
+<pre><code>高地址
+┌──────────────────┐
+│   调用者的局部变量  │
+├──────────────────┤
+│   函数参数         │
+├──────────────────┤
+│   返回地址         │
+├──────────────────┤
+│   保存的寄存器      │
+├──────────────────┤
+│   被调用者的局部变量 │
+└──────────────────┘
+低地址
+</code></pre>
+<p>函数返回时整个栈帧被弹出，其中的局部对象按<strong>逆序</strong>析构。</p>
+<h3 id="栈溢出"><a class="header" href="#栈溢出">栈溢出</a></h3>
+<p>栈空间有限（Linux 默认 8 MB），以下情况会导致<strong>栈溢出</strong>：</p>
+<pre><code class="language-c++">void recurse(int n)
+{
+    int buffer[10000];   // 每次调用占用 40 KB 栈空间
+    recurse(n + 1);      // 无限递归，很快耗尽栈
+}
+
+int main()
+{
+    int huge[10'000'000];   // 约 40 MB，直接溢出
+}
+</code></pre>
+<p>大数组应该放到堆上，或者用 <code>std::vector</code>：</p>
+<pre><code class="language-c++">std::vector&lt;int&gt; huge(10'000'000);   // 数据在堆上，安全
+</code></pre>
+<h3 id="栈上的对象天然异常安全"><a class="header" href="#栈上的对象天然异常安全">栈上的对象天然异常安全</a></h3>
+<p>栈对象的析构由编译器插入，无论函数是正常返回还是异常退出，析构都会执行。这是 RAII 能成立的前提。</p>
+<h2 id="三堆"><a class="header" href="#三堆">三、堆</a></h2>
+<p>堆是程序运行时可以自由申请的内存区域。它的大小只受限于系统可用内存，代价是：</p>
+<ul>
+<li><strong>分配慢</strong>：需要在空闲链表中找合适的块，可能触发系统调用</li>
+<li><strong>需要手动管理</strong>：必须显式释放，否则泄漏</li>
+<li><strong>容易碎片化</strong>：反复分配释放不同大小的块，会留下难以利用的空洞</li>
+</ul>
+<pre><code class="language-c++">int* p = new int(42);   // 分配
+// ... 使用
+delete p;               // 释放，忘记这步就泄漏了
+</code></pre>
+<p>堆的分配器实现相当复杂（glibc 的 <code>malloc</code> 有几千行），但基本思路是维护若干<strong>空闲链表</strong>，按大小分类管理。</p>
+<h2 id="四对象的内存布局"><a class="header" href="#四对象的内存布局">四、对象的内存布局</a></h2>
+<h3 id="1-成员排布与填充"><a class="header" href="#1-成员排布与填充">1. 成员排布与填充</a></h3>
+<p>编译器会按成员声明顺序排布，但为了<strong>对齐</strong>，可能插入填充字节：</p>
+<pre><code class="language-c++">struct A
+{
+    char  c;   // 1 字节
+    // 3 字节填充
+    int   i;   // 4 字节
+    char  d;   // 1 字节
+    // 3 字节填充（尾部对齐到 4 的倍数）
+};
+// sizeof(A) == 12，而不是 6
+</code></pre>
+<p>调整成员顺序可以减小体积：</p>
+<pre><code class="language-c++">struct B
+{
+    int   i;   // 4
+    char  c;   // 1
+    char  d;   // 1
+    // 2 字节填充
+};
+// sizeof(B) == 8
+</code></pre>
+<h3 id="2-对齐规则"><a class="header" href="#2-对齐规则">2. 对齐规则</a></h3>
+<p>每个类型都有一个<strong>对齐要求</strong>（<code>alignof(T)</code>），通常是其大小的约数。规则是：</p>
+<ul>
+<li>成员的偏移量必须是其对齐值的整数倍</li>
+<li>结构体的总大小必须是最大成员对齐值的整数倍</li>
+</ul>
+<pre><code class="language-c++">std::cout &lt;&lt; alignof(int)    &lt;&lt; '\n';   // 4
+std::cout &lt;&lt; alignof(double) &lt;&lt; '\n';   // 8
+std::cout &lt;&lt; alignof(char)   &lt;&lt; '\n';   // 1
+</code></pre>
+<p>C++11 起可以用 <code>alignas</code> 强制指定对齐：</p>
+<pre><code class="language-c++">struct alignas(16) Vec4
+{
+    float x, y, z, w;   // 16 字节，正好对齐到 SIMD 寄存器宽度
+};
+</code></pre>
+<h3 id="3-空类与继承"><a class="header" href="#3-空类与继承">3. 空类与继承</a></h3>
+<p>空类的大小是 <strong>1</strong> 而不是 0——因为每个对象必须有唯一地址：</p>
+<pre><code class="language-c++">struct Empty {};
+std::cout &lt;&lt; sizeof(Empty);   // 1
+</code></pre>
+<p>但空基类优化（EBO）可以让空基类不占空间：</p>
+<pre><code class="language-c++">struct Empty {};
+
+struct WithMember : Empty
+{
+    int x;
+};
+std::cout &lt;&lt; sizeof(WithMember);   // 4，Empty 被优化掉了
+</code></pre>
+<h3 id="4-虚函数与虚表指针"><a class="header" href="#4-虚函数与虚表指针">4. 虚函数与虚表指针</a></h3>
+<p>含有虚函数的类，对象里会多一个<strong>虚表指针</strong>（<code>vptr</code>），指向该类的虚函数表：</p>
+<pre><code class="language-c++">struct Base
+{
+    virtual void f();
+    int x;
+};
+
+std::cout &lt;&lt; sizeof(Base);   // 16（64 位系统：8 字节 vptr + 4 字节 int + 4 填充）
+</code></pre>
+<p>多个虚函数不会增加对象大小——它们共享同一张虚表。</p>
+<h3 id="5-查看实际布局"><a class="header" href="#5-查看实际布局">5. 查看实际布局</a></h3>
+<p><code>offsetof</code> 可以查看成员偏移：</p>
+<pre><code class="language-c++">#include &lt;cstddef&gt;
+
+struct A { char c; int i; };
+
+std::cout &lt;&lt; offsetof(A, c) &lt;&lt; '\n';   // 0
+std::cout &lt;&lt; offsetof(A, i) &lt;&lt; '\n';   // 4
+</code></pre>
+<h2 id="五字节序"><a class="header" href="#五字节序">五、字节序</a></h2>
+<p>多字节整数在内存中的排列顺序有两种：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">类型</th><th style="text-align: left">低字节位置</th><th style="text-align: left">典型平台</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><strong>小端</strong>（little-endian）</td><td style="text-align: left">低地址</td><td style="text-align: left">x86、ARM（默认）</td></tr>
+<tr><td style="text-align: left"><strong>大端</strong>（big-endian）</td><td style="text-align: left">高地址</td><td style="text-align: left">部分嵌入式、网络字节序</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-c++">int x = 0x12345678;
+
+// 小端内存布局（从低地址到高地址）：
+// 78 56 34 12
+</code></pre>
+<p>C++20 提供了 <code>std::endian</code> 检测：</p>
+<pre><code class="language-c++">#include &lt;bit&gt;
+
+if constexpr (std::endian::native == std::endian::little)
+    std::cout &lt;&lt; "小端\n";
+</code></pre>
+<p>字节序只在<strong>跨平台传输数据</strong>时才需要关心。同一平台内的内存操作不受影响。</p>
+<h2 id="六常见误区"><a class="header" href="#六常见误区">六、常见误区</a></h2>
+<p><strong>「栈比堆快，所以尽量用栈」</strong> —— 分配本身确实是栈快，但如果对象很大，栈的拷贝成本可能更高。而且栈空间有限，几十 MB 的数组只能放堆上。</p>
+<p><strong>「<code>sizeof</code> 就是成员大小之和」</strong> —— 忽略了填充。结构体大小取决于成员顺序和对齐要求。</p>
+<p><strong>「指针大小等于所指向对象的大小」</strong> —— 指针大小固定（64 位系统上是 8 字节），与指向什么无关。</p>
+<p><strong>「<code>new</code> 一定返回连续内存」</strong> —— 单次 <code>new T[n]</code> 是连续的，但多次 <code>new</code> 之间没有任何位置保证。</p>
+<p><strong>「局部变量的地址可以返回」</strong> —— 函数返回后栈帧被回收，返回局部变量的指针或引用是悬垂引用。</p>
+<h2 id="七相关章节"><a class="header" href="#七相关章节">七、相关章节</a></h2>
+<ul>
+<li><a href="./Allocation.html">动态内存分配</a>：<code>new</code> / <code>delete</code> 的细节</li>
+<li><a href="./RAII.html">RAII 与资源管理</a>：利用栈对象的析构自动释放资源</li>
+<li><a href="./Debugging.html">内存调试与诊断</a>：越界、泄漏等问题的排查</li>
+<li><a href="./Memory_Model.html">C++ 内存模型（并发）</a>：多线程下的内存可见性</li>
+</ul>
 
                     </main>
 
